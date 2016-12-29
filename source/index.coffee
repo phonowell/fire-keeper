@@ -319,10 +319,10 @@ $$.use = (gulp) ->
   # getBase
   $$.getBase = (path) ->
     if ~path.search /\*/
-      return source.replace /\/\*.*/, ''
+      return path.replace /\/\*.*/, ''
 
     if ~path.search /\//
-      arr = source.split '/'
+      arr = path.split '/'
       arr.pop()
       return arr.join '/'
 

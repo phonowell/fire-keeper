@@ -26,4 +26,11 @@ gulp.task 'prepare', co ->
   yield $$.compile './gulpfile.coffee'
   yield $$.compile './coffeelint.yml'
 
+gulp.task 'set', co ->
+
+  if !(ver = $$.argv.version) then return
+
+  yield $$.replace './package.json'
+  , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
+
 gulp.task 'noop', -> null
