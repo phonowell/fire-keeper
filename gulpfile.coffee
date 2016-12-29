@@ -12,16 +12,20 @@ $$.use gulp
 
 #build
 gulp.task 'build', co ->
-  yield $$.build
-    coffee: null
+  yield $$.delete [
+    './index.js'
+    './source/index.js'
+  ]
+  yield $$.compile './source/index.coffee'
+  yield $$.copy './source/index.js'
 
 # lint
 gulp.task 'lint', co -> yield $$.lint 'coffee'
 
 # prepare
 gulp.task 'prepare', co ->
-  yield $$.compile 'gulpfile'
-  yield $$.compile 'coffeelint'
+  yield $$.compile './gulpfile.coffee'
+  yield $$.compile './coffeelint.yml'
 
 # noop
 gulp.task 'noop', -> null

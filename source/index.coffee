@@ -6,14 +6,17 @@ Promise = require 'bluebird'
 co = Promise.coroutine
 
 # require
+del = require 'del'
+
 require 'gulp-util'
 watch = require 'gulp-watch'
 plumber = require 'gulp-plumber'
 ignore = require 'gulp-plumber'
 rename = require 'gulp-rename'
 include = require 'gulp-include'
+search = require 'gulp-search'
 replace = require 'gulp-replace'
-using = require 'gulp-using'
+gulpif = require 'gulp-if'
 
 _jade = require 'gulp-jade'
 _coffee = require 'gulp-coffee'
@@ -25,7 +28,9 @@ coffee = -> _coffee map: false
 stylus = -> _stylus compress: true
 yaml = -> _yaml safe: true
 
-uglify = require 'gulp-uglify'
+_uglify = require 'gulp-uglify'
+
+uglify = -> gulpif !~search(/yield /), _uglify()
 minCss = require 'gulp-clean-css'
 
 coffeelint = require 'gulp-coffeelint'
@@ -82,7 +87,6 @@ $$.use = (gulp) ->
       deb = _.debounce ->
         gulp.src path = fn.upper src
         .pipe plumber()
-        .pipe using()
         .pipe include()
         .pipe coffee()
         .pipe gulp.dest path
@@ -93,7 +97,6 @@ $$.use = (gulp) ->
       deb = _.debounce ->
         gulp.src path = fn.upper src
         .pipe plumber()
-        .pipe using()
         .pipe stylus()
         .pipe gulp.dest path
       , 1e3
@@ -103,7 +106,6 @@ $$.use = (gulp) ->
       deb = _.debounce ->
         gulp.src path = fn.upper src
         .pipe plumber()
-        .pipe using()
         .pipe yaml()
         .pipe gulp.dest path
       , 1e3
@@ -163,7 +165,6 @@ $$.use = (gulp) ->
         base = $$.path.source
         gulp.src src, base: base
         .pipe plumber()
-        .pipe using()
         .pipe gulp.dest base
         .on 'end', -> resolve()
 
@@ -199,100 +200,108 @@ $$.use = (gulp) ->
       new Promise (resolve) ->
         gulp.src $$.path.coffee
         .pipe plumber()
-        .pipe using()
         .pipe coffeelint()
         .pipe coffeelint.reporter()
         .on 'end', -> resolve()
 
   # compile
   do ->
-    fn = $$.compile = (key, target) -> fn[key] target
+    fn = $$.compile = co (source, target) ->
 
-    fn.gulpfile = (target = '') ->
-      new Promise (resolve) ->
-        gulp.src './gulpfile.coffee'
-        .pipe plumber()
-        .pipe using()
-        .pipe coffee()
-        .pipe gulp.dest target
-        .on 'end', -> resolve()
+      if !~source.search /\./ then throw 'got no suffix'
 
-    fn.coffeelint = (target = '') ->
+      suffix = source.replace /.*\./, ''
+      method = switch suffix
+        when 'yml' then 'yaml'
+        when 'styl' then 'stylus'
+        else suffix
+
+      target or= do ->
+        if ~source.search /\*/
+          return source.replace /\/\*.*/, ''
+
+        if ~source.search /\//
+          arr = source.split '/'
+          arr.pop()
+          return arr.join '/'
+
+        ''
+
+      yield fn[method] source, target
+
+      $.info 'compile', "compiled '#{source}' to '#{target}/'"
+
+
+    fn.yaml = (source, target) ->
       new Promise (resolve) ->
-        gulp.src './coffeelint.yml'
+        gulp.src source
         .pipe plumber()
-        .pipe using()
         .pipe yaml()
         .pipe gulp.dest target
         .on 'end', -> resolve()
 
-    fn.secret = (target = $$.path.secret) ->
+    fn.stylus = (source, target) ->
       new Promise (resolve) ->
-        base = $$.path.secret
-        gulp.src "#{base}/**/*.yml", base: base
-        .pipe plumber()
-        .pipe using()
-        .pipe yaml()
-        .pipe gulp.dest target
-        .on 'end', -> resolve()
-
-    fn.stylus = (target = $$.path.source) ->
-      new Promise (resolve) ->
-        base = $$.path.source
-        gulp.src "#{base}/**/*.styl", base: base
+        gulp.src source
         .pipe plumber()
         .pipe ignore '**/include/**'
-        .pipe using()
         .pipe stylus()
         .pipe gulp.dest target
         .on 'end', -> resolve()
 
-    fn.css = (target = $$.path.source) ->
+    fn.css = (source, target) ->
       new Promise (resolve) ->
-        base = $$.path.source
-        gulp.src "#{base}/**/*.css", base: base
+        gulp.src source
         .pipe plumber()
         .pipe ignore '**/include/**'
         .pipe ignore '**/*.min.css'
-        .pipe using()
         .pipe minCss()
         .pipe gulp.dest target
         .on 'end', -> resolve()
 
-    fn.coffee = (target = $$.path.source) ->
+    fn.coffee = (source, target) ->
       new Promise (resolve) ->
-        base = $$.path.source
-        gulp.src "#{base}/**/*.coffee", base: base
+        gulp.src source
         .pipe plumber()
         .pipe ignore '**/include/**'
-        .pipe using()
         .pipe include()
         .pipe coffee()
         .pipe uglify()
         .pipe gulp.dest target
         .on 'end', -> resolve()
 
-    fn.js = (target = $$.path.source) ->
+    fn.js = (source, target) ->
       new Promise (resolve) ->
-        base = $$.path.source
-        gulp.src "#{base}/**/*.js", base: base
+        gulp.src source
         .pipe plumber()
         .pipe ignore '**/include/**'
         .pipe ignore '**/*.min.js'
-        .pipe using()
         .pipe uglify()
         .pipe gulp.dest target
         .on 'end', -> resolve()
 
-    fn.jade = (target = $$.path.source) ->
+    fn.jade = (source, target) ->
       new Promise (resolve) ->
-        base = $$.path.source
-        gulp.src "#{base}/**/*.jade", base: base
+        gulp.src source
         .pipe plumber()
         .pipe ignore '**/include/**'
-        .pipe using()
         .pipe jade()
         .pipe gulp.dest target
         .on 'end', -> resolve()
+
+  # copy
+  $$.copy = co (source, target) ->
+    target or= './'
+    yield new Promise (resolve) ->
+      gulp.src source
+      .pipe plumber()
+      .pipe gulp.dest target
+      .on 'end', -> resolve()
+    $.info 'copy', "copied '#{source}' to '#{target}'"
+
+  # delete
+  $$.delete = co (source) ->
+    yield del source, force: true
+    $.info 'delete', "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
 
 module.exports = $$
