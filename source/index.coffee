@@ -330,9 +330,11 @@ $$.use = (gulp) ->
 
     ''
 
-    # shell
+  # shell
   $$.shell = (cmd) ->
     new Promise (resolve) ->
       $.shell cmd, -> resolve()
+
+  $$ # return
 
 module.exports = $$
