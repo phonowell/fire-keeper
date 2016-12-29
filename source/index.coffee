@@ -302,19 +302,21 @@ $$.use = (gulp) ->
     $.info 'delete', "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
 
   # replace
-  $$.replace = (args...) ->
+  $$.replace = co (args...) ->
 
     [pathSource, pathTarget, target, replacement] = switch args.length
       when 3 then [args[0], $$.getBase(args[0]), args[1], args[2]]
       when 4 then args
       else throw 'invalid arguments length'
 
-    new Promise (resolve) ->
+    yield new Promise (resolve) ->
       gulp.src pathSource
       .pipe plumber()
       .pipe replace target, replacement
       .pipe gulp.dest pathTarget
       .on 'end', -> resolve()
+
+    $.info 'replace', "replaced '#{target}' to '#{replacement}', from '#{pathSource}' to '#{pathTarget}/'"
 
   # getBase
   $$.getBase = (path) ->
@@ -327,5 +329,10 @@ $$.use = (gulp) ->
       return arr.join '/'
 
     ''
+
+    # shell
+  $$.shell = (cmd) ->
+    new Promise (resolve) ->
+      $.shell cmd, -> resolve()
 
 module.exports = $$
