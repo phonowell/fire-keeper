@@ -10,7 +10,8 @@ gulp = require 'gulp'
 $$ = require './source/index'
 $$.use gulp
 
-#build
+# task
+
 gulp.task 'build', co ->
   yield $$.delete [
     './index.js'
@@ -19,13 +20,10 @@ gulp.task 'build', co ->
   yield $$.compile './source/index.coffee'
   yield $$.copy './source/index.js'
 
-# lint
 gulp.task 'lint', co -> yield $$.lint 'coffee'
 
-# prepare
 gulp.task 'prepare', co ->
   yield $$.compile './gulpfile.coffee'
   yield $$.compile './coffeelint.yml'
 
-# noop
 gulp.task 'noop', -> null
