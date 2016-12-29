@@ -7,6 +7,7 @@ co = Promise.coroutine
 
 # require
 del = require 'del'
+argv = require('minimist')(process.argv.slice 2)
 
 require 'gulp-util'
 watch = require 'gulp-watch'
@@ -42,6 +43,8 @@ $$.use = (gulp) ->
 
   # variable
 
+  $$.argv = argv
+
   # os
   $$.os = do ->
     string = process.platform
@@ -65,6 +68,9 @@ $$.use = (gulp) ->
 
   $$.divide = -> $.log $$.divide['__string__']
   $$.divide['__string__'] = _.trim _.repeat '- ', 16
+
+  # watch
+  $$.watch = watch
 
   # listen
   do ->
@@ -216,16 +222,7 @@ $$.use = (gulp) ->
         when 'styl' then 'stylus'
         else suffix
 
-      target or= do ->
-        if ~source.search /\*/
-          return source.replace /\/\*.*/, ''
-
-        if ~source.search /\//
-          arr = source.split '/'
-          arr.pop()
-          return arr.join '/'
-
-        ''
+      target or= $$.getBase source
 
       yield fn[method] source, target
 
@@ -303,5 +300,32 @@ $$.use = (gulp) ->
   $$.delete = co (source) ->
     yield del source, force: true
     $.info 'delete', "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
+
+  # replace
+  $$.replace = (args...) ->
+
+    [pathSource, pathTarget, target, replacement] = switch args.length
+      when 3 then [args[0], $$.getBase(args[0]), args[1], args[2]]
+      when 4 then args
+      else throw 'invalid arguments length'
+
+    new Promise (resolve) ->
+      gulp.src pathSource
+      .pipe plumber()
+      .pipe replace target, replacement
+      .pipe gulp.dest pathTarget
+      .on 'end', -> resolve()
+
+  # getBase
+  $$.getBase = (path) ->
+    if ~path.search /\*/
+      return source.replace /\/\*.*/, ''
+
+    if ~path.search /\//
+      arr = source.split '/'
+      arr.pop()
+      return arr.join '/'
+
+    ''
 
 module.exports = $$
