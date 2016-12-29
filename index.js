@@ -1,5 +1,6 @@
 (function() {
-  var $, $$, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, co, coffee, coffeelint, del, gulpif, ignore, include, jade, minCss, plumber, reload, rename, replace, search, stylus, uglify, watch, yaml;
+  var $, $$, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, argv, co, coffee, coffeelint, del, gulpif, ignore, include, jade, minCss, plumber, reload, rename, replace, search, stylus, uglify, watch, yaml,
+    slice = [].slice;
 
   $ = require('node-jquery-extend');
 
@@ -10,6 +11,8 @@
   co = Promise.coroutine;
 
   del = require('del');
+
+  argv = require('minimist')(process.argv.slice(2));
 
   require('gulp-util');
 
@@ -78,6 +81,7 @@
   };
 
   $$.use = function(gulp) {
+    $$.argv = argv;
     $$.os = (function() {
       var string;
       string = process.platform;
@@ -103,6 +107,7 @@
       return $.log($$.divide['__string__']);
     };
     $$.divide['__string__'] = _.trim(_.repeat('- ', 16));
+    $$.watch = watch;
     (function() {
       var fn;
       fn = $$.listen = function(list) {
@@ -307,18 +312,7 @@
               return suffix;
           }
         })();
-        target || (target = (function() {
-          var arr;
-          if (~source.search(/\*/)) {
-            return source.replace(/\/\*.*/, '');
-          }
-          if (~source.search(/\//)) {
-            arr = source.split('/');
-            arr.pop();
-            return arr.join('/');
-          }
-          return '';
-        })());
+        target || (target = $$.getBase(source));
         yield fn[method](source, target);
         return $.info('compile', "compiled '" + source + "' to '" + target + "/'");
       });
@@ -374,12 +368,43 @@
       });
       return $.info('copy', "copied '" + source + "' to '" + target + "'");
     });
-    return $$["delete"] = co(function*(source) {
+    $$["delete"] = co(function*(source) {
       yield del(source, {
         force: true
       });
       return $.info('delete', "deleted '" + ($.type(source) === 'array' ? source.join("', '") : source) + "'");
     });
+    $$.replace = function() {
+      var args, pathSource, pathTarget, ref, replacement, target;
+      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      ref = (function() {
+        switch (args.length) {
+          case 3:
+            return [args[0], $$.getBase(args[0]), args[1], args[2]];
+          case 4:
+            return args;
+          default:
+            throw 'invalid arguments length';
+        }
+      })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
+      return new Promise(function(resolve) {
+        return gulp.src(pathSource).pipe(plumber()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    return $$.getBase = function(path) {
+      var arr;
+      if (~path.search(/\*/)) {
+        return path.replace(/\/\*.*/, '');
+      }
+      if (~path.search(/\//)) {
+        arr = path.split('/');
+        arr.pop();
+        return arr.join('/');
+      }
+      return '';
+    };
   };
 
   module.exports = $$;
