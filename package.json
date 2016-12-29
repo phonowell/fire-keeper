@@ -39,7 +39,6 @@
     "gulp-util": "^3.0.8",
     "gulp-watch": "^4.3.11",
     "gulp-yaml": "^1.0.1",
-    "node-jquery-extend": "^0.0.3",
-    "uglify-js-harmony": "^2.6.2"
+    "node-jquery-extend": "^0.0.3"
   }
 }
