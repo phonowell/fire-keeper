@@ -1,36 +1,49 @@
-# require
-$ = require 'node-jquery-extend'
-_ = $._
-
-Promise = require 'bluebird'
-co = Promise.coroutine
-
-gulp = require 'gulp'
+#gulp = require 'gulp'
+#include = require 'gulp-include'
+#coffee = require 'gulp-coffee'
+#
+#gulp.task 'default', ->
+#  gulp.src './source/index.coffee'
+#  .pipe include()
+#  .pipe coffee()
+#  .pipe gulp.dest './source/'
+#
+#return
 
 $$ = require './source/index'
-$$.use gulp
+
+{$, _, Promise} = $$.library
+co = Promise.coroutine
+
+# config
+
+$$.config 'useHarmony', true
 
 # task
 
-gulp.task 'build', co ->
-  yield $$.delete [
-    './index.js'
-    './source/index.js'
-  ]
+$$.task 'work', co -> yield $$.shell 'gulp watch'
+
+$$.task 'watch', ->
+  _.deb = _.debounce $$.task('build'), 1e3
+  $$.watch ['./source/index.coffee', './source/include/*.coffee'], _.deb
+
+$$.task 'build', co ->
   yield $$.compile './source/index.coffee'
   yield $$.copy './source/index.js'
 
-gulp.task 'lint', co -> yield $$.lint 'coffee'
+$$.task 'lint', co -> yield $$.lint 'coffee'
 
-gulp.task 'prepare', co ->
+$$.task 'prepare', co ->
   yield $$.compile './gulpfile.coffee'
   yield $$.compile './coffeelint.yml'
 
-gulp.task 'set', co ->
+$$.task 'set', co ->
 
   if !(ver = $$.argv.version) then return
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
 
-gulp.task 'noop', -> null
+$$.task 'test', co ->
+  yield $$.delete './test.js'
+  yield $$.compile './test.coffee'

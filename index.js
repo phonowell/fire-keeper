@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, argv, co, coffee, coffeelint, del, gulpif, ignore, include, jade, minCss, plumber, reload, rename, replace, search, stylus, uglify, watch, yaml,
+  var $, $$, $p, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, replace, stylus, uglify, yaml,
     slice = [].slice;
 
   $ = require('node-jquery-extend');
@@ -10,35 +10,34 @@
 
   co = Promise.coroutine;
 
-  del = require('del');
+  gulp = require('gulp');
 
-  argv = require('minimist')(process.argv.slice(2));
+  module.exports = $$ = {};
 
-  require('gulp-util');
+  $$.library = {
+    $: $,
+    _: _,
+    Promise: Promise,
+    gulp: gulp
+  };
 
-  watch = require('gulp-watch');
+  $p = $$.plugin = require('gulp-load-plugins')();
 
-  plumber = require('gulp-plumber');
+  del = $p.del = require('del');
 
-  ignore = require('gulp-plumber');
+  $p.yargs = require('yargs');
 
-  rename = require('gulp-rename');
+  plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, cleanCss = $p.cleanCss, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
-  include = require('gulp-include');
+  gulpif = $p["if"];
 
-  search = require('gulp-search');
+  _jade = $p.jade;
 
-  replace = require('gulp-replace');
+  _coffee = $p.coffee;
 
-  gulpif = require('gulp-if');
+  _stylus = $p.stylus;
 
-  _jade = require('gulp-jade');
-
-  _coffee = require('gulp-coffee');
-
-  _stylus = require('gulp-stylus');
-
-  _yaml = require('gulp-yaml');
+  _yaml = $p.yaml;
 
   jade = function() {
     return _jade({
@@ -64,358 +63,250 @@
     });
   };
 
-  _uglify = require('gulp-uglify');
+  _uglify = $p.uglify;
 
   uglify = function() {
-    return gulpif(!~search(/yield /), _uglify());
+    return gulpif(!$$.config('useHarmony'), _uglify());
   };
 
-  minCss = require('gulp-clean-css');
+  $$.argv = $p.yargs.argv;
 
-  coffeelint = require('gulp-coffeelint');
+  $$.os = (function() {
+    var string;
+    string = process.platform;
+    if (~string.search('darwin')) {
+      return 'macos';
+    } else if (~string.search('win')) {
+      return 'windows';
+    } else {
+      return 'linux';
+    }
+  })();
 
-  reload = require('gulp-livereload');
-
-  $$ = function(arg) {
-    return $$.use(arg);
+  $$.path = {
+    gulp: './gulpfile.js',
+    source: './source',
+    build: './build',
+    secret: './secret'
   };
 
-  $$.use = function(gulp) {
-    $$.argv = argv;
-    $$.os = (function() {
-      var string;
-      string = process.platform;
-      if (~string.search('darwin')) {
-        return 'macos';
-      } else if (~string.search('win')) {
-        return 'windows';
-      } else {
-        return 'linux';
-      }
-    })();
-    $$.path = {
-      gulp: './gulpfile.js',
-      source: './source',
-      build: './build',
-      secret: './secret'
-    };
-    $$.path.jade = $$.path.source + "/**/*.jade";
-    $$.path.stylus = $$.path.source + "/**/*.styl";
-    $$.path.coffee = $$.path.source + "/**/*.coffee";
-    $$.path.yaml = $$.path.secret + "/**/*.yml";
-    $$.divide = function() {
-      return $.log($$.divide['__string__']);
-    };
-    $$.divide['__string__'] = _.trim(_.repeat('- ', 16));
-    $$.watch = watch;
-    (function() {
-      var fn;
-      fn = $$.listen = function(list) {
-        var a, j, len, results;
-        if ($.type(list) !== 'array') {
-          list = [list];
-        }
-        results = [];
-        for (j = 0, len = list.length; j < len; j++) {
-          a = list[j];
-          if (~a.search(/\.coffee/)) {
-            results.push(fn.coffee(a));
-          } else if (~a.search(/\.styl/)) {
-            results.push(fn.stylus(a));
-          } else if (~a.search(/\.yml/)) {
-            results.push(fn.yaml(a));
-          } else {
-            throw 'type error';
-          }
-        }
-        return results;
-      };
-      fn.upper = function(src) {
-        var arr;
-        arr = src.split('/');
-        arr.pop();
-        return arr.join('/');
-      };
-      fn.coffee = function(src) {
-        var deb;
-        deb = _.debounce(function() {
-          var path;
-          return gulp.src(path = fn.upper(src)).pipe(plumber()).pipe(include()).pipe(coffee()).pipe(gulp.dest(path));
-        }, 1e3);
-        return watch(path + "/include/**/*.coffee", deb);
-      };
-      fn.stylus = function(src) {
-        var deb;
-        deb = _.debounce(function() {
-          var path;
-          return gulp.src(path = fn.upper(src)).pipe(plumber()).pipe(stylus()).pipe(gulp.dest(path));
-        }, 1e3);
-        return watch(path + "/include/**/*.coffee", deb);
-      };
-      return fn.yaml = function(src) {
-        var deb;
-        deb = _.debounce(function() {
-          var path;
-          return gulp.src(path = fn.upper(src)).pipe(plumber()).pipe(yaml()).pipe(gulp.dest(path));
-        }, 1e3);
-        return watch(path + "/include/**/*.yml", deb);
-      };
-    })();
-    $$.reload = function() {
-      reload.listen();
-      return watch($$.path.source + "/**/*.css").pipe(reload());
-    };
-    (function() {
-      var fn;
-      fn = $$.build = function(map) {
-        return fn.reduce(map);
-      };
-      fn['__map__'] = {};
-      fn.reduce = co(function(map) {
-        var i, key, list, step;
-        list = (function() {
-          var results;
-          results = [];
-          for (key in map) {
-            results.push(key);
-          }
-          return results;
-        })();
-        i = 0;
-        return (step = co(function*() {
-          var isEnded;
-          isEnded = i >= list.length;
-          $$.divide();
-          $.info('step', "run step <" + (isEnded ? 'callback' : key = list[i]) + ">");
-          if (isEnded) {
-            return;
-          }
-          yield (fn.select(key))(map[key]);
-          i++;
-          return step();
-        }))();
-      });
-      fn.select = function(key) {
-        return fn['__map__'][key];
-      };
-      fn.add = function(key, func) {
-        if (fn.select(key)) {
-          throw 'function already existed';
-        }
-        return fn['__map__'][key] = func;
-      };
-      fn.remove = function(key) {
-        return delete fn['__map__'][key];
-      };
-      fn.add('prepare', co(function*() {
-        var path;
-        path = $$.path.build;
-        yield del(path, {
-          force: true
-        });
-        $.info('mkdir', path);
-        return fs.mkdirSync(path);
-      }));
-      fn.add('copy', function(src) {
-        return new Promise(function(resolve) {
-          var base;
-          base = $$.path.source;
-          return gulp.src(src, {
-            base: base
-          }).pipe(plumber()).pipe(gulp.dest(base)).on('end', function() {
-            return resolve();
-          });
-        });
-      });
-      fn.add('other', co(function*(list) {
-        var a;
-        if (list == null) {
-          list = [];
-        }
-        list = _.uniq(list.concat(['png', 'jpg', 'gif', 'json', 'ttf']), true);
-        return (yield (fn.select('copy'))((function() {
-          var j, len, results;
-          results = [];
-          for (j = 0, len = list.length; j < len; j++) {
-            a = list[j];
-            results.push($$.path.source + "/**/*." + a);
-          }
-          return results;
-        })()));
-      }));
-      fn.add('yaml', co(function*() {
-        return (yield $$.compile('secret'));
-      }));
-      fn.add('stylus', function() {
-        return co(function*() {
-          return (yield $$.compile('stylus', $$.path.build));
-        });
-      });
-      fn.add('css', co(function*() {
-        yield $$.compile('css', $$.path.build);
-        return (yield (fn.select('copy'))($$.path.source + "/**/*.min.css"));
-      }));
-      fn.add('coffee', co(function*() {
-        return (yield $$.compile('coffee', $$.path.build));
-      }));
-      fn.add('js', co(function*() {
-        yield $$.compile('js', $$.path.build);
-        return (yield (fn.select('copy'))($$.path.source + "/**/*.min.js"));
-      }));
-      fn.add('jade', co(function*() {
-        return (yield $$.compile('jade', $$.path.build));
-      }));
-      return fn.add('clean', co(function*(list) {
-        var a;
-        yield del(list, {
-          force: true
-        });
-        return $.info('clean', ((function() {
-          var j, len, results;
-          results = [];
-          for (j = 0, len = list.length; j < len; j++) {
-            a = list[j];
-            results.push(a);
-          }
-          return results;
-        })()).join(', '));
-      }));
-    })();
-    (function() {
-      var fn;
-      fn = $$.lint = function(key) {
-        return fn[key]();
-      };
-      return fn.coffee = function() {
-        return new Promise(function(resolve) {
-          return gulp.src($$.path.coffee).pipe(plumber()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-    })();
-    (function() {
-      var fn;
-      fn = $$.compile = co(function*(source, target) {
-        var method, suffix;
-        if (!~source.search(/\./)) {
-          throw 'got no suffix';
-        }
-        suffix = source.replace(/.*\./, '');
-        method = (function() {
-          switch (suffix) {
-            case 'yml':
-              return 'yaml';
-            case 'styl':
-              return 'stylus';
-            default:
-              return suffix;
-          }
-        })();
-        target || (target = $$.getBase(source));
-        yield fn[method](source, target);
-        return $.info('compile', "compiled '" + source + "' to '" + target + "/'");
-      });
-      fn.yaml = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(yaml()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-      fn.stylus = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(stylus()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-      fn.css = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(minCss()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-      fn.coffee = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(include()).pipe(coffee()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-      fn.js = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-      return fn.jade = function(source, target) {
-        return new Promise(function(resolve) {
-          return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(jade()).pipe(gulp.dest(target)).on('end', function() {
-            return resolve();
-          });
-        });
-      };
-    })();
-    $$.copy = co(function*(source, target) {
-      target || (target = './');
-      yield new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(gulp.dest(target)).on('end', function() {
-          return resolve();
-        });
-      });
-      return $.info('copy', "copied '" + source + "' to '" + target + "'");
-    });
-    $$["delete"] = co(function*(source) {
-      yield del(source, {
-        force: true
-      });
-      return $.info('delete', "deleted '" + ($.type(source) === 'array' ? source.join("', '") : source) + "'");
-    });
-    $$.replace = co(function*() {
-      var args, pathSource, pathTarget, ref, replacement, target;
+  $$.path.jade = $$.path.source + "/**/*.jade";
+
+  $$.path.stylus = $$.path.source + "/**/*.styl";
+
+  $$.path.coffee = $$.path.source + "/**/*.coffee";
+
+  $$.path.yaml = $$.path.secret + "/**/*.yml";
+
+  $$.task = function() {
+    var args;
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    switch (args.length) {
+      case 1:
+        return gulp.tasks[args[0]].fn;
+      case 2:
+        return gulp.task.apply(gulp, args);
+      default:
+        throw 'invalid arguments length';
+    }
+  };
+
+  $$.task('default', function() {
+    var key, list;
+    list = [];
+    for (key in gulp.tasks) {
+      list.push(key);
+    }
+    list.sort();
+    return $.info('task', list.join(', '));
+  });
+
+  $$.task('noop', function() {
+    return null;
+  });
+
+  (function() {
+    var fn, namespace;
+    namespace = '__data__';
+    fn = $$.config = function() {
+      var args;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      ref = (function() {
-        switch (args.length) {
-          case 3:
-            return [args[0], $$.getBase(args[0]), args[1], args[2]];
-          case 4:
-            return args;
+      switch (args.length) {
+        case 1:
+          return fn.get.apply(fn, args);
+        case 2:
+          return fn.set.apply(fn, args);
+        default:
+          throw 'invalid arguments length';
+      }
+    };
+    fn[namespace] = {};
+    fn.get = function(key) {
+      return fn[namespace][key];
+    };
+    return fn.set = function(key, value) {
+      return fn[namespace][key] = value;
+    };
+  })();
+
+  (function() {
+    var fn;
+    fn = $$.compile = co(function*(source, target) {
+      var method, suffix;
+      if (!~source.search(/\./)) {
+        throw 'got no suffix';
+      }
+      suffix = source.replace(/.*\./, '');
+      method = (function() {
+        switch (suffix) {
+          case 'yml':
+            return 'yaml';
+          case 'styl':
+            return 'stylus';
           default:
-            throw 'invalid arguments length';
+            return suffix;
         }
-      })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
-      yield new Promise(function(resolve) {
-        return gulp.src(pathSource).pipe(plumber()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
-          return resolve();
-        });
-      });
-      return $.info('replace', "replaced '" + target + "' to '" + replacement + "', from '" + pathSource + "' to '" + pathTarget + "/'");
+      })();
+      target || (target = $$.getBase(source));
+      yield fn[method](source, target);
+      return $.info('compile', "compiled '" + source + "' to '" + target + "/'");
     });
-    $$.getBase = function(path) {
-      var arr;
-      if (~path.search(/\*/)) {
-        return path.replace(/\/\*.*/, '');
-      }
-      if (~path.search(/\//)) {
-        arr = path.split('/');
-        arr.pop();
-        return arr.join('/');
-      }
-      return '';
-    };
-    $$.shell = function(cmd) {
+    fn.yaml = function(source, target) {
       return new Promise(function(resolve) {
-        return $.shell(cmd, function() {
+        return gulp.src(source).pipe(plumber()).pipe(yaml()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    return $$;
+    fn.stylus = function(source, target) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(stylus()).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.css = function(source, target) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(cleanCss()).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.coffee = function(source, target) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(include()).pipe(coffee()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.js = function(source, target) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    return fn.jade = function(source, target) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(jade()).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+  })();
+
+  $$.divide = function() {
+    return $.log($$.divide['__string__']);
   };
 
-  module.exports = $$;
+  $$.divide['__string__'] = _.trim(_.repeat('- ', 16));
+
+  $$.watch = $p.watch;
+
+  $$.reload = function() {
+    livereload.listen();
+    return watch($$.path.source + "/**/*.css").pipe(livereload());
+  };
+
+  (function() {
+    var fn;
+    fn = $$.lint = function(key) {
+      return fn[key]();
+    };
+    return fn.coffee = function() {
+      return new Promise(function(resolve) {
+        return gulp.src($$.path.coffee).pipe(plumber()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+  })();
+
+  $$.copy = co(function*(source, target) {
+    target || (target = './');
+    yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(gulp.dest(target)).on('end', function() {
+        return resolve();
+      });
+    });
+    return $.info('copy', "copied '" + source + "' to '" + target + "'");
+  });
+
+  $$["delete"] = co(function*(source) {
+    yield del(source, {
+      force: true
+    });
+    return $.info('delete', "deleted '" + ($.type(source) === 'array' ? source.join("', '") : source) + "'");
+  });
+
+  $$.replace = co(function*() {
+    var args, pathSource, pathTarget, ref, replacement, target;
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (args.length) {
+        case 3:
+          return [args[0], $$.getBase(args[0]), args[1], args[2]];
+        case 4:
+          return args;
+        default:
+          throw 'invalid arguments length';
+      }
+    })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
+    yield new Promise(function(resolve) {
+      return gulp.src(pathSource).pipe(plumber()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
+        return resolve();
+      });
+    });
+    return $.info('replace', "replaced '" + target + "' to '" + replacement + "', from '" + pathSource + "' to '" + pathTarget + "/'");
+  });
+
+  $$.getBase = function(path) {
+    var arr;
+    if (~path.search(/\*/)) {
+      return path.replace(/\/\*.*/, '');
+    }
+    if (~path.search(/\//)) {
+      arr = path.split('/');
+      arr.pop();
+      return arr.join('/');
+    }
+    return '';
+  };
+
+  $$.shell = function(cmd) {
+    return new Promise(function(resolve) {
+      return $.shell(cmd, function() {
+        return resolve();
+      });
+    });
+  };
+
+  $$.createFolder = function(path) {
+    return new Promise(function(resolve) {
+      fs.mkdirSync(path);
+      $.info('create', "create '" + path + "'");
+      return resolve();
+    });
+  };
 
 }).call(this);
