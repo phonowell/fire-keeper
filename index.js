@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, replace, stylus, uglify, yaml,
+  var $, $$, $p, Promise, _, _coffee, _jade, _stylus, _uglify, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, replace, stylus, uglify, using, yaml,
     slice = [].slice;
 
   $ = require('node-jquery-extend');
@@ -27,7 +27,7 @@
 
   $p.yargs = require('yargs');
 
-  plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, cleanCss = $p.cleanCss, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, cleanCss = $p.cleanCss, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
@@ -173,42 +173,42 @@
     });
     fn.yaml = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(yaml()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.stylus = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(stylus()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(stylus()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.css = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(cleanCss()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(cleanCss()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.coffee = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(include()).pipe(coffee()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(include()).pipe(coffee()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.js = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     return fn.jade = function(source, target) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(jade()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade()).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -225,7 +225,7 @@
 
   $$.reload = function() {
     livereload.listen();
-    return watch($$.path.source + "/**/*.css").pipe(livereload());
+    return $$.watch($$.path.source + "/**/*.css").pipe(livereload());
   };
 
   (function() {
@@ -235,7 +235,7 @@
     };
     return fn.coffee = function() {
       return new Promise(function(resolve) {
-        return gulp.src($$.path.coffee).pipe(plumber()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
+        return gulp.src($$.path.coffee).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
           return resolve();
         });
       });
@@ -245,7 +245,7 @@
   $$.copy = co(function*(source, target) {
     target || (target = './');
     yield new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(gulp.dest(target)).on('end', function() {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulp.dest(target)).on('end', function() {
         return resolve();
       });
     });
@@ -273,7 +273,7 @@
       }
     })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
     yield new Promise(function(resolve) {
-      return gulp.src(pathSource).pipe(plumber()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
+      return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
         return resolve();
       });
     });

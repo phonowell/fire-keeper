@@ -4,9 +4,10 @@ del = $p.del = require 'del'
 $p.yargs = require 'yargs'
 
 {
-plumber, ignore, include, replace
-cleanCss
-coffeelint, livereload
+  using
+  plumber, ignore, include, replace
+  cleanCss
+  coffeelint, livereload
 } = $p
 
 gulpif = $p.if

@@ -5,7 +5,7 @@ $$.watch = $p.watch
 
 $$.reload = ->
   livereload.listen()
-  watch "#{$$.path.source}/**/*.css"
+  $$.watch "#{$$.path.source}/**/*.css"
   .pipe livereload()
 
 # lint
@@ -16,6 +16,7 @@ do ->
     new Promise (resolve) ->
       gulp.src $$.path.coffee
       .pipe plumber()
+      .pipe using()
       .pipe coffeelint()
       .pipe coffeelint.reporter()
       .on 'end', -> resolve()
@@ -25,6 +26,7 @@ $$.copy = co (source, target) ->
   yield new Promise (resolve) ->
     gulp.src source
     .pipe plumber()
+    .pipe using()
     .pipe gulp.dest target
     .on 'end', -> resolve()
   $.info 'copy', "copied '#{source}' to '#{target}'"
@@ -43,6 +45,7 @@ $$.replace = co (args...) ->
   yield new Promise (resolve) ->
     gulp.src pathSource
     .pipe plumber()
+    .pipe using()
     .pipe replace target, replacement
     .pipe gulp.dest pathTarget
     .on 'end', -> resolve()

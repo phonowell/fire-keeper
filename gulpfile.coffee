@@ -12,7 +12,8 @@
 
 $$ = require './source/index'
 
-{$, _, Promise} = $$.library
+{_, Promise} = $$.library
+
 co = Promise.coroutine
 
 # config
@@ -24,8 +25,11 @@ $$.config 'useHarmony', true
 $$.task 'work', co -> yield $$.shell 'gulp watch'
 
 $$.task 'watch', ->
-  _.deb = _.debounce $$.task('build'), 1e3
-  $$.watch ['./source/index.coffee', './source/include/*.coffee'], _.deb
+  deb = _.debounce $$.task('build'), 1e3
+  $$.watch [
+    './source/index.coffee'
+    './source/include/*.coffee'
+  ], deb
 
 $$.task 'build', co ->
   yield $$.compile './source/index.coffee'

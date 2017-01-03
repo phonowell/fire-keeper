@@ -20,6 +20,7 @@ do ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
+      .pipe using()
       .pipe yaml()
       .pipe gulp.dest target
       .on 'end', -> resolve()
@@ -29,6 +30,7 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
+      .pipe using()
       .pipe stylus()
       .pipe gulp.dest target
       .on 'end', -> resolve()
@@ -39,6 +41,7 @@ do ->
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe ignore '**/*.min.css'
+      .pipe using()
       .pipe cleanCss()
       .pipe gulp.dest target
       .on 'end', -> resolve()
@@ -48,6 +51,7 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
+      .pipe using()
       .pipe include()
       .pipe coffee()
       .pipe uglify()
@@ -60,6 +64,7 @@ do ->
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe ignore '**/*.min.js'
+      .pipe using()
       .pipe uglify()
       .pipe gulp.dest target
       .on 'end', -> resolve()
@@ -69,6 +74,7 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
+      .pipe using()
       .pipe jade()
       .pipe gulp.dest target
       .on 'end', -> resolve()

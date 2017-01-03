@@ -45,6 +45,7 @@ do ->
       base = $$.path.source
       gulp.src src, base: base
       .pipe plumber()
+      .pipe using()
       .pipe gulp.dest base
       .on 'end', -> resolve()
 
