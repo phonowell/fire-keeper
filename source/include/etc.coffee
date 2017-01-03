@@ -69,6 +69,7 @@ $$.shell = (cmd) ->
 
 $$.createFolder = (path) ->
   new Promise (resolve) ->
+    fs = require 'fs'
     fs.mkdirSync path
     $.info 'create', "create '#{path}'"
     resolve()

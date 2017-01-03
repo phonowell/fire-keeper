@@ -303,6 +303,8 @@
 
   $$.createFolder = function(path) {
     return new Promise(function(resolve) {
+      var fs;
+      fs = require('fs');
       fs.mkdirSync(path);
       $.info('create', "create '" + path + "'");
       return resolve();
