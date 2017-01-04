@@ -15,7 +15,6 @@ do ->
 
     $.info 'compile', "compiled '#{source}' to '#{target}/'"
 
-
   fn.yaml = (source, target) ->
     new Promise (resolve) ->
       gulp.src source
@@ -54,6 +53,7 @@ do ->
       .pipe using()
       .pipe include()
       .pipe coffee()
+      .pipe regen()
       .pipe uglify()
       .pipe gulp.dest target
       .on 'end', -> resolve()
@@ -65,6 +65,7 @@ do ->
       .pipe ignore '**/include/**'
       .pipe ignore '**/*.min.js'
       .pipe using()
+      .pipe regen()
       .pipe uglify()
       .pipe gulp.dest target
       .on 'end', -> resolve()

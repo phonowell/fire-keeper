@@ -22,6 +22,8 @@ coffee = -> _coffee map: false
 stylus = -> _stylus compress: true
 yaml = -> _yaml safe: true
 
-_uglify = $p.uglify
+_regen = $p.regenerator
+regen = -> gulpif $$.config('useGenerator'), _regen()
 
+_uglify = $p.uglify
 uglify = -> gulpif !$$.config('useHarmony'), _uglify()
