@@ -66,7 +66,7 @@
   _regen = $p.regenerator;
 
   regen = function() {
-    return gulpif($$.config('useGenerator'), _regen());
+    return gulpif(!$$.config('useHarmony') && $$.config('useGenerator'), _regen());
   };
 
   _uglify = $p.uglify;
@@ -158,11 +158,21 @@
   (function() {
     var fn;
     fn = $$.compile = co(function*(source, target) {
-      var method, suffix;
-      if (!~source.search(/\./)) {
-        throw 'got no suffix';
+      var _source, method, suffix, typeSource;
+      _source = (function() {
+        switch (typeSource = $.type(source)) {
+          case 'array':
+            return source[0];
+          case 'string':
+            return source;
+          default:
+            throw new Error('invalid arguments type');
+        }
+      })();
+      if (!~_source.search(/\./)) {
+        throw new Error('invalid suffix');
       }
-      suffix = source.replace(/.*\./, '');
+      suffix = _source.replace(/.*\./, '');
       method = (function() {
         switch (suffix) {
           case 'yml':
@@ -173,9 +183,9 @@
             return suffix;
         }
       })();
-      target || (target = $$.getBase(source));
+      target || (target = $$.getBase(_source));
       yield fn[method](source, target);
-      return $.info('compile', "compiled '" + source + "' to '" + target + "/'");
+      return $.info('compile', "compiled '" + (typeSource === 'array' ? source.join("', '") : source) + "' to '" + (_.trim(target, '/')) + "/'");
     });
     fn.yaml = function(source, target) {
       return new Promise(function(resolve) {

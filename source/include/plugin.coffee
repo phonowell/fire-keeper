@@ -23,7 +23,7 @@ stylus = -> _stylus compress: true
 yaml = -> _yaml safe: true
 
 _regen = $p.regenerator
-regen = -> gulpif $$.config('useGenerator'), _regen()
+regen = -> gulpif !$$.config('useHarmony') and $$.config('useGenerator'), _regen()
 
 _uglify = $p.uglify
 uglify = -> gulpif !$$.config('useHarmony'), _uglify()

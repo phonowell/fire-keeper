@@ -1,19 +1,25 @@
 do ->
   fn = $$.compile = co (source, target) ->
 
-    if !~source.search /\./ then throw 'got no suffix'
+    _source = switch typeSource = $.type source
+      when 'array' then source[0]
+      when 'string' then source
+      else throw new Error 'invalid arguments type'
 
-    suffix = source.replace /.*\./, ''
+    if !~_source.search /\./ then throw new Error 'invalid suffix'
+
+    suffix = _source.replace /.*\./, ''
     method = switch suffix
       when 'yml' then 'yaml'
       when 'styl' then 'stylus'
       else suffix
 
-    target or= $$.getBase source
+    target or= $$.getBase _source
 
     yield fn[method] source, target
 
-    $.info 'compile', "compiled '#{source}' to '#{target}/'"
+    $.info 'compile'
+    , "compiled '#{if typeSource == 'array' then source.join "', '" else source}' to '#{_.trim target, '/'}/'"
 
   fn.yaml = (source, target) ->
     new Promise (resolve) ->

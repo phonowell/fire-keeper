@@ -10,7 +10,7 @@
 #
 #return
 
-$$ = require './source/index'
+$$ = require './index'
 
 {_, Promise} = $$.library
 
@@ -47,7 +47,3 @@ $$.task 'set', co ->
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
-
-$$.task 'test', co ->
-  yield $$.delete './test.js'
-  yield $$.compile './test.coffee'
