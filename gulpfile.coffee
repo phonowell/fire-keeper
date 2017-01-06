@@ -3,14 +3,18 @@
 #coffee = require 'gulp-coffee'
 #
 #gulp.task 'default', ->
+#
 #  gulp.src './source/index.coffee'
 #  .pipe include()
 #  .pipe coffee()
 #  .pipe gulp.dest './source/'
 #
+#  gulp.src './source/index.js'
+#  .pipe gulp.dest ''
+#
 #return
 
-$$ = require './index'
+$$ = require './source/index'
 
 {_, Promise} = $$.library
 
@@ -33,7 +37,7 @@ $$.task 'watch', ->
 
 $$.task 'build', co ->
   yield $$.compile './source/index.coffee'
-  yield $$.copy './source/index.js'
+  yield $$.copy './source/index.js', './'
 
 $$.task 'lint', co -> yield $$.lint 'coffee'
 
@@ -47,3 +51,5 @@ $$.task 'set', co ->
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
+
+$$.task 'test', co -> yield $$.shell 'node test'

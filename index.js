@@ -113,7 +113,7 @@
       case 2:
         return gulp.task.apply(gulp, args);
       default:
-        throw 'invalid arguments length';
+        throw new Error('invalid arguments length');
     }
   };
 
@@ -135,23 +135,42 @@
     var fn, namespace;
     namespace = '__data__';
     fn = $$.config = function() {
-      var args;
+      var arg, args;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       switch (args.length) {
+        case 0:
+          return fn[namespace];
         case 1:
-          return fn.get.apply(fn, args);
+          switch ($.type(arg = args[0])) {
+            case 'string':
+              return fn.get(arg);
+            case 'object':
+              return fn.setMap(arg);
+            default:
+              throw new Error('invalid arguments type');
+          }
+          break;
         case 2:
           return fn.set.apply(fn, args);
         default:
-          throw 'invalid arguments length';
+          throw new Error('invalid arguments length');
       }
     };
     fn[namespace] = {};
     fn.get = function(key) {
       return fn[namespace][key];
     };
-    return fn.set = function(key, value) {
+    fn.set = function(key, value) {
       return fn[namespace][key] = value;
+    };
+    return fn.setMap = function(map) {
+      var key, results, value;
+      results = [];
+      for (key in map) {
+        value = map[key];
+        results.push(fn[namespace][key] = value);
+      }
+      return results;
     };
   })();
 
@@ -285,7 +304,7 @@
         case 4:
           return args;
         default:
-          throw 'invalid arguments length';
+          throw new Error('invalid arguments length');
       }
     })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
     yield new Promise(function(resolve) {

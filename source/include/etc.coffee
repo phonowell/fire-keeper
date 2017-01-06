@@ -40,7 +40,7 @@ $$.replace = co (args...) ->
   [pathSource, pathTarget, target, replacement] = switch args.length
     when 3 then [args[0], $$.getBase(args[0]), args[1], args[2]]
     when 4 then args
-    else throw 'invalid arguments length'
+    else throw new Error 'invalid arguments length'
 
   yield new Promise (resolve) ->
     gulp.src pathSource
