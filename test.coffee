@@ -25,20 +25,20 @@ $parseOK = (msg, ok) ->
     return msg.replace /\[is]/, 'is not'
   msg.replace /\[is]/, 'is'
 
-$subject = [
-  1024 # number
-  'hello world' # string
-  true # boolean
-  [1, 2, 3] # array
-  {a: 1, b: 2} # object
-  -> return null # function
-  new Date() # date
-  new Error('All Right') # error
-  new Buffer('String') # buffer
-  null # null
-  undefined # undefined
-  NaN # NaN
-]
+#$subject = [
+#  1024 # number
+#  'hello world' # string
+#  true # boolean
+#  [1, 2, 3] # array
+#  {a: 1, b: 2} # object
+#  -> return null # function
+#  new Date() # date
+#  new Error('All Right') # error
+#  new Buffer('String') # buffer
+#  null # null
+#  undefined # undefined
+#  NaN # NaN
+#]
 
 # test
 

@@ -3,7 +3,9 @@
   "version": "0.0.9",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "gulp test"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/phonowell/fire-keeper.git"
