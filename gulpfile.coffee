@@ -20,10 +20,6 @@ $$ = require './source/index'
 
 co = Promise.coroutine
 
-# config
-
-$$.config 'useHarmony', true
-
 # task
 
 $$.task 'work', co -> yield $$.shell 'gulp watch'
@@ -36,7 +32,7 @@ $$.task 'watch', ->
   ], deb
 
 $$.task 'build', co ->
-  yield $$.compile './source/index.coffee'
+  yield $$.compile './source/index.coffee', minify: false
   yield $$.copy './source/index.js', './'
 
 $$.task 'lint', co -> yield $$.lint 'coffee'

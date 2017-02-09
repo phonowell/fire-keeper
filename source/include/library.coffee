@@ -1,5 +1,1 @@
-$$.library =
-  $: $
-  _: _
-  Promise: Promise
-  gulp: gulp
+$$.library = {$, _, Promise, gulp}

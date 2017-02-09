@@ -1,22 +1,37 @@
 do ->
-  fn = $$.compile = co (source, target) ->
+  fn = $$.compile = co (args...) ->
 
-    _source = switch typeSource = $.type source
+    [source, target, option] = switch args.length
+      when 1 then [args[0], null, {}]
+      when 2
+        switch $.type args[1]
+          when 'string' then [args[0], args[1], {}]
+          when 'object' then [args[0], null, args[1]]
+          else throw new Error 'invalid arguments type'
+      when 3 then args
+      else throw new Error 'invalid arguments length'
+
+    source = switch typeSource = $.type source
       when 'array' then source[0]
       when 'string' then source
       else throw new Error 'invalid arguments type'
 
-    if !~_source.search /\./ then throw new Error 'invalid suffix'
+    if !~source.search /\./ then throw new Error 'invalid suffix'
 
-    suffix = _source.replace /.*\./, ''
+    suffix = source.replace /.*\./, ''
     method = switch suffix
       when 'yml' then 'yaml'
       when 'styl' then 'stylus'
       else suffix
 
-    target or= $$.getBase _source
+    target or= $$.getBase source
 
-    yield fn[method] source, target
+    option = _.extend
+      regenerator: false
+      minify: true
+    , option
+
+    yield fn[method] source, target, option
 
     $.info 'compile'
     , "compiled '#{if typeSource == 'array' then source.join "', '" else source}' to '#{_.trim target, '/'}/'"
@@ -30,28 +45,28 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.stylus = (source, target) ->
+  fn.stylus = (source, target, option) ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe using()
-      .pipe stylus()
+      .pipe stylus compress: option.minify
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.css = (source, target) ->
+  fn.css = (source, target, option) ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe ignore '**/*.min.css'
       .pipe using()
-      .pipe cleanCss()
+      .pipe gulpif option.minify, cleanCss()
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.coffee = (source, target) ->
+  fn.coffee = (source, target, option) ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
@@ -59,29 +74,29 @@ do ->
       .pipe using()
       .pipe include()
       .pipe coffee()
-      .pipe regen()
-      .pipe uglify()
+      .pipe gulpif option.regenerator, regenerator()
+      .pipe gulpif option.minify, uglify()
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.js = (source, target) ->
+  fn.js = (source, target, option) ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe ignore '**/*.min.js'
       .pipe using()
-      .pipe regen()
-      .pipe uglify()
+      .pipe gulpif option.regenerator, regenerator()
+      .pipe gulpif option.minify, uglify()
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.jade = (source, target) ->
+  fn.jade = (source, target, option) ->
     new Promise (resolve) ->
       gulp.src source
       .pipe plumber()
       .pipe ignore '**/include/**'
       .pipe using()
-      .pipe jade()
+      .pipe jade pretty: !option.minify
       .pipe gulp.dest target
       .on 'end', -> resolve()

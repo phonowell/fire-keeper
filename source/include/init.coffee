@@ -1,6 +1,6 @@
 # require
 $ = require 'node-jquery-extend'
-_ = $._
+{_} = $
 
 Promise = require 'bluebird'
 co = Promise.coroutine

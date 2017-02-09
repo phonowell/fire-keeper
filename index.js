@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _coffee, _jade, _regen, _stylus, _uglify, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, regen, replace, stylus, uglify, using, yaml,
+  var $, $$, $p, Promise, _, _coffee, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, regenerator, replace, stylus, uglify, using, yaml,
     slice = [].slice;
 
   $ = require('node-jquery-extend');
@@ -27,23 +27,13 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, cleanCss = $p.cleanCss, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, jade = $p.jade, stylus = $p.stylus, regenerator = $p.regenerator, cleanCss = $p.cleanCss, uglify = $p.uglify, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
-  _jade = $p.jade;
-
   _coffee = $p.coffee;
 
-  _stylus = $p.stylus;
-
   _yaml = $p.yaml;
-
-  jade = function() {
-    return _jade({
-      pretty: false
-    });
-  };
 
   coffee = function() {
     return _coffee({
@@ -51,28 +41,10 @@
     });
   };
 
-  stylus = function() {
-    return _stylus({
-      compress: true
-    });
-  };
-
   yaml = function() {
     return _yaml({
       safe: true
     });
-  };
-
-  _regen = $p.regenerator;
-
-  regen = function() {
-    return gulpif(!$$.config('useHarmony') && $$.config('useGenerator'), _regen());
-  };
-
-  _uglify = $p.uglify;
-
-  uglify = function() {
-    return gulpif(!$$.config('useHarmony'), _uglify());
   };
 
   $$.argv = $p.yargs.argv;
@@ -132,53 +104,31 @@
   });
 
   (function() {
-    var fn, namespace;
-    namespace = '__data__';
-    fn = $$.config = function() {
-      var arg, args;
-      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      switch (args.length) {
-        case 0:
-          return fn[namespace];
-        case 1:
-          switch ($.type(arg = args[0])) {
-            case 'string':
-              return fn.get(arg);
-            case 'object':
-              return fn.setMap(arg);
-            default:
-              throw new Error('invalid arguments type');
-          }
-          break;
-        case 2:
-          return fn.set.apply(fn, args);
-        default:
-          throw new Error('invalid arguments length');
-      }
-    };
-    fn[namespace] = {};
-    fn.get = function(key) {
-      return fn[namespace][key];
-    };
-    fn.set = function(key, value) {
-      return fn[namespace][key] = value;
-    };
-    return fn.setMap = function(map) {
-      var key, results, value;
-      results = [];
-      for (key in map) {
-        value = map[key];
-        results.push(fn[namespace][key] = value);
-      }
-      return results;
-    };
-  })();
-
-  (function() {
     var fn;
-    fn = $$.compile = co(function*(source, target) {
-      var _source, method, suffix, typeSource;
-      _source = (function() {
+    fn = $$.compile = co(function*() {
+      var args, method, option, ref, source, suffix, target, typeSource;
+      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      ref = (function() {
+        switch (args.length) {
+          case 1:
+            return [args[0], null, {}];
+          case 2:
+            switch ($.type(args[1])) {
+              case 'string':
+                return [args[0], args[1], {}];
+              case 'object':
+                return [args[0], null, args[1]];
+              default:
+                throw new Error('invalid arguments type');
+            }
+            break;
+          case 3:
+            return args;
+          default:
+            throw new Error('invalid arguments length');
+        }
+      })(), source = ref[0], target = ref[1], option = ref[2];
+      source = (function() {
         switch (typeSource = $.type(source)) {
           case 'array':
             return source[0];
@@ -188,10 +138,10 @@
             throw new Error('invalid arguments type');
         }
       })();
-      if (!~_source.search(/\./)) {
+      if (!~source.search(/\./)) {
         throw new Error('invalid suffix');
       }
-      suffix = _source.replace(/.*\./, '');
+      suffix = source.replace(/.*\./, '');
       method = (function() {
         switch (suffix) {
           case 'yml':
@@ -202,8 +152,12 @@
             return suffix;
         }
       })();
-      target || (target = $$.getBase(_source));
-      yield fn[method](source, target);
+      target || (target = $$.getBase(source));
+      option = _.extend({
+        regenerator: false,
+        minify: true
+      }, option);
+      yield fn[method](source, target, option);
       return $.info('compile', "compiled '" + (typeSource === 'array' ? source.join("', '") : source) + "' to '" + (_.trim(target, '/')) + "/'");
     });
     fn.yaml = function(source, target) {
@@ -213,37 +167,41 @@
         });
       });
     };
-    fn.stylus = function(source, target) {
+    fn.stylus = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(stylus()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(stylus({
+          compress: option.minify
+        })).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.css = function(source, target) {
+    fn.css = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(cleanCss()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(gulpif(option.minify, cleanCss())).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.coffee = function(source, target) {
+    fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(include()).pipe(coffee()).pipe(regen()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(include()).pipe(coffee()).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.js = function(source, target) {
+    fn.js = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(regen()).pipe(uglify()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    return fn.jade = function(source, target) {
+    return fn.jade = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade()).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade({
+          pretty: !option.minify
+        })).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });

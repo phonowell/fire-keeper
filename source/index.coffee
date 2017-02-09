@@ -3,6 +3,5 @@
 #= include include/plugin.coffee
 #= include include/variable.coffee
 #= include include/task.coffee
-#= include include/config.coffee
 #= include include/compile.coffee
 #= include include/etc.coffee
