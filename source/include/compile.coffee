@@ -11,20 +11,19 @@ do ->
       when 3 then args
       else throw new Error 'invalid arguments length'
 
-    source = switch typeSource = $.type source
-      when 'array' then source[0]
-      when 'string' then source
+    source = switch $.type source
+      when 'array' then source
+      when 'string' then [source]
       else throw new Error 'invalid arguments type'
 
-    if !~source.search /\./ then throw new Error 'invalid suffix'
-
-    suffix = source.replace /.*\./, ''
+    if !~source[0].search /\./ then throw new Error 'invalid suffix'
+    suffix = source[0].replace /.*\./, ''
     method = switch suffix
       when 'yml' then 'yaml'
       when 'styl' then 'stylus'
       else suffix
 
-    target or= $$.getBase source
+    target or= $$.getBase source[0]
 
     option = _.extend
       regenerator: false
@@ -34,7 +33,7 @@ do ->
     yield fn[method] source, target, option
 
     $.info 'compile'
-    , "compiled '#{if typeSource == 'array' then source.join "', '" else source}' to '#{_.trim target, '/'}/'"
+    , "compiled '#{source.join "', '"}' to '#{_.trim target, '/'}/'"
 
   fn.yaml = (source, target) ->
     new Promise (resolve) ->

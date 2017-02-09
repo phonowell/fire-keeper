@@ -106,7 +106,7 @@
   (function() {
     var fn;
     fn = $$.compile = co(function*() {
-      var args, method, option, ref, source, suffix, target, typeSource;
+      var args, method, option, ref, source, suffix, target;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
         switch (args.length) {
@@ -129,19 +129,19 @@
         }
       })(), source = ref[0], target = ref[1], option = ref[2];
       source = (function() {
-        switch (typeSource = $.type(source)) {
+        switch ($.type(source)) {
           case 'array':
-            return source[0];
-          case 'string':
             return source;
+          case 'string':
+            return [source];
           default:
             throw new Error('invalid arguments type');
         }
       })();
-      if (!~source.search(/\./)) {
+      if (!~source[0].search(/\./)) {
         throw new Error('invalid suffix');
       }
-      suffix = source.replace(/.*\./, '');
+      suffix = source[0].replace(/.*\./, '');
       method = (function() {
         switch (suffix) {
           case 'yml':
@@ -152,13 +152,13 @@
             return suffix;
         }
       })();
-      target || (target = $$.getBase(source));
+      target || (target = $$.getBase(source[0]));
       option = _.extend({
         regenerator: false,
         minify: true
       }, option);
       yield fn[method](source, target, option);
-      return $.info('compile', "compiled '" + (typeSource === 'array' ? source.join("', '") : source) + "' to '" + (_.trim(target, '/')) + "/'");
+      return $.info('compile', "compiled '" + (source.join("', '")) + "' to '" + (_.trim(target, '/')) + "/'");
     });
     fn.yaml = function(source, target) {
       return new Promise(function(resolve) {
