@@ -12,14 +12,13 @@ $$.reload = ->
 do ->
   fn = $$.lint = (key) -> fn[key]()
 
-  fn.coffee = ->
-    new Promise (resolve) ->
-      gulp.src $$.path.coffee
-      .pipe plumber()
-      .pipe using()
-      .pipe coffeelint()
-      .pipe coffeelint.reporter()
-      .on 'end', -> resolve()
+  fn.coffee = -> new Promise (resolve) ->
+    gulp.src $$.path.coffee
+    .pipe plumber()
+    .pipe using()
+    .pipe coffeelint()
+    .pipe coffeelint.reporter()
+    .on 'end', -> resolve()
 
 $$.copy = co (source, target) ->
   target or= './'
