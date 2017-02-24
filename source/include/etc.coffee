@@ -34,6 +34,7 @@ $$.delete = co (source) ->
   yield del source, force: true
   $.info 'delete'
   , "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
+$$.remove = $$.delete
 
 $$.replace = co (args...) ->
 

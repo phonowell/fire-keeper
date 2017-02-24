@@ -15,9 +15,7 @@
 #return
 
 $$ = require './source/index'
-
 {_, Promise} = $$.library
-
 co = Promise.coroutine
 
 # task

@@ -254,6 +254,8 @@
     return $.info('delete', "deleted '" + ($.type(source) === 'array' ? source.join("', '") : source) + "'");
   });
 
+  $$.remove = $$["delete"];
+
   $$.replace = co(function*() {
     var args, pathSource, pathTarget, ref, replacement, target;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
