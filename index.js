@@ -61,6 +61,8 @@
     }
   })();
 
+  $$.base = process.cwd();
+
   $$.path = {
     gulp: './gulpfile.js',
     source: './source',
@@ -294,13 +296,41 @@
     });
   };
 
-  $$.createFolder = function(path) {
+  $$.makeDirectory = function(path) {
     return new Promise(function(resolve) {
       var fs;
       fs = require('fs');
       fs.mkdirSync(path);
       $.info('create', "create '" + path + "'");
       return resolve();
+    });
+  };
+
+  $$.createFolder = $$.makeDirectory;
+
+  $$.link = function(origin, target) {
+    return new Promise(function(resolve) {
+      var fs, isDir, type;
+      fs = require('fs');
+      if (!fs.existsSync(origin)) {
+        throw new Error("'" + origin + "' is invalid");
+        return;
+      }
+      isDir = fs.statSync(origin).isDirectory();
+      type = isDir ? 'dir' : 'file';
+      if ($$.os === 'windows') {
+        origin = $$.base + "\\" + (origin.replace(/^\.\//, ''));
+      }
+      return fs.symlink(origin, target, type, function(err) {
+        if (err) {
+          throw new Error(err);
+        }
+        if (type === 'dir') {
+          type = 'directory';
+        }
+        $.info('link', "linked " + type + " '" + origin + "' to '" + target + "'");
+        return resolve();
+      });
     });
   };
 

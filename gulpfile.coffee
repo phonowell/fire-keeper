@@ -50,3 +50,17 @@ $$.task 'test', co ->
   yield $$.compile './test.coffee'
   yield $$.shell 'node test'
   yield $$.delete './test.js'
+
+$$.task 'init', co ->
+
+  yield $$.delete './.gitignore'
+  yield $$.copy './../kokoro/.gitignore'
+
+  yield $$.delete './.npmignore'
+  yield $$.copy './../kokoro/.npmignore'
+
+  yield $$.delete './coffeelint.yml'
+  yield $$.copy './../kokoro/coffeelint.yml'
+
+  yield $$.delete './source/gurumin'
+  yield $$.link './../gurumin/source', './source/gurumin'

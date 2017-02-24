@@ -7,6 +7,9 @@ $$.os = do ->
   else if ~string.search 'win' then 'windows'
   else 'linux'
 
+# base
+$$.base = process.cwd()
+
 # path
 $$.path =
   gulp: './gulpfile.js'

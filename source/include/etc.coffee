@@ -63,15 +63,33 @@ $$.getBase = (path) ->
     arr.pop()
     return arr.join '/'
 
-  ''
+  '' # return
 
-$$.shell = (cmd) ->
-  new Promise (resolve) ->
-    $.shell cmd, -> resolve()
+$$.shell = (cmd) -> new Promise (resolve) ->
+  $.shell cmd, -> resolve()
 
-$$.createFolder = (path) ->
-  new Promise (resolve) ->
-    fs = require 'fs'
-    fs.mkdirSync path
-    $.info 'create', "create '#{path}'"
+$$.makeDirectory = (path) -> new Promise (resolve) ->
+  fs = require 'fs'
+  fs.mkdirSync path
+  $.info 'create', "create '#{path}'"
+  resolve()
+$$.createFolder = $$.makeDirectory
+
+$$.link = (origin, target) -> new Promise (resolve) ->
+  fs = require 'fs'
+
+  if !fs.existsSync origin
+    throw new Error "'#{origin}' is invalid"
+    return
+
+  isDir = fs.statSync(origin).isDirectory()
+  type = if isDir then 'dir' else 'file'
+
+  if $$.os == 'windows'
+    origin = "#{$$.base}\\#{origin.replace /^\.\//, ''}"
+
+  fs.symlink origin, target, type, (err) ->
+    if err then throw new Error err
+    if type == 'dir' then type = 'directory'
+    $.info 'link', "linked #{type} '#{origin}' to '#{target}'"
     resolve()
