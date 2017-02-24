@@ -37,9 +37,7 @@ $$.task 'build', co ->
 
 $$.task 'lint', co -> yield $$.lint 'coffee'
 
-$$.task 'prepare', co ->
-  yield $$.compile './gulpfile.coffee'
-  yield $$.compile './coffeelint.yml'
+$$.task 'prepare', co -> yield $$.compile './coffeelint.yml'
 
 $$.task 'set', co ->
 
@@ -48,4 +46,7 @@ $$.task 'set', co ->
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
 
-$$.task 'test', co -> yield $$.shell 'node test'
+$$.task 'test', co ->
+  yield $$.compile './test.coffee'
+  yield $$.shell 'node test'
+  yield $$.delete './test.js'

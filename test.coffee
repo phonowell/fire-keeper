@@ -42,41 +42,6 @@ $parseOK = (msg, ok) ->
 
 # test
 
-# $$.config()
-# $$.config.get()
-# $$.config.set()
-# $$.config.setMap()
-do ->
-  $divide '$$.config()'
-
-  # $$.config()
-  do ->
-    $$.config 'test', 'cheese'
-    $test _.isEqual($$.config(), (test: 'cheese')), true, '$$.config() [is] ok'
-
-  # $$.config.get()
-  do ->
-    name = 'John'
-    age = 22
-    $$.config 'name', name
-    $$.config 'age', age
-    $test ($$.config('name') == name and $$.config('age') == age), true, '$$.config.get() [is] ok'
-
-  # $$.config.set()
-  do ->
-    name = 'Niki'
-    age = 46
-    $$.config 'name', name
-    $$.config 'age', age
-    $test ($$.config('name') == name and $$.config('age') == age), true, '$$.config.set() [is] ok'
-
-  # $$.config.setMap()
-  do ->
-    name = 'Brown'
-    age = 30
-    $$.config {name, age}
-    $test ($$.config('name') == name and $$.config('age') == age), true, '$$.config.setMap() [is] ok'
-
 # result
 $.next 500, ->
   $divide 'Result'

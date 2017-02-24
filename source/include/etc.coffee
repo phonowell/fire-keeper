@@ -33,7 +33,8 @@ $$.copy = co (source, target) ->
 
 $$.delete = co (source) ->
   yield del source, force: true
-  $.info 'delete', "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
+  $.info 'delete'
+  , "deleted '#{if $.type(source) == 'array' then source.join "', '" else source}'"
 
 $$.replace = co (args...) ->
 
@@ -50,7 +51,8 @@ $$.replace = co (args...) ->
     .pipe gulp.dest pathTarget
     .on 'end', -> resolve()
 
-  $.info 'replace', "replaced '#{target}' to '#{replacement}', from '#{pathSource}' to '#{pathTarget}/'"
+  $.info 'replace'
+  , "replaced '#{target}' to '#{replacement}', from '#{pathSource}' to '#{pathTarget}/'"
 
 $$.getBase = (path) ->
   if ~path.search /\*/
