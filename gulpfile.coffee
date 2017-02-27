@@ -59,6 +59,3 @@ $$.task 'init', co ->
 
   yield $$.delete './coffeelint.yml'
   yield $$.copy './../kokoro/coffeelint.yml'
-
-  yield $$.delete './source/gurumin'
-  yield $$.link './../gurumin/source', './source/gurumin'

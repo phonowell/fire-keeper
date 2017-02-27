@@ -5,6 +5,7 @@ A little helper to make things simple.
 ```
 $ npm install --save-dev phonowell/fire-keeper
 ```
+
 ### Usage
 ```coffeescript
 $$ = require './source/index'

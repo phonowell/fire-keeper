@@ -1,7 +1,5 @@
 $$ = require './index'
-
 {$, _, Promise} = $$.library
-
 co = Promise.coroutine
 
 # function
