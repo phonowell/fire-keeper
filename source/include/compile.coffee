@@ -16,6 +16,8 @@ do ->
       when 'string' then [source]
       else throw new Error ERROR.type
 
+    source = (a.replace /\\/g, '/' for a in source)
+
     if !~source[0].search /\./ then throw new Error 'invalid suffix'
     suffix = source[0].replace /.*\./, ''
     method = switch suffix

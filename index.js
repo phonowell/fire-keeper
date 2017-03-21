@@ -113,7 +113,7 @@
   (function() {
     var fn;
     fn = $$.compile = co(function*() {
-      var args, method, option, ref, source, suffix, target;
+      var a, args, method, option, ref, source, suffix, target;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
         switch (args.length) {
@@ -144,6 +144,15 @@
           default:
             throw new Error(ERROR.type);
         }
+      })();
+      source = (function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = source.length; i < len; i++) {
+          a = source[i];
+          results.push(a.replace(/\\/g, '/'));
+        }
+        return results;
       })();
       if (!~source[0].search(/\./)) {
         throw new Error('invalid suffix');
