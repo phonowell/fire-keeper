@@ -8,26 +8,17 @@ $$.reload = ->
   $$.watch "#{$$.path.source}/**/*.css"
   .pipe livereload()
 
-# lint
-do ->
-  fn = $$.lint = (key) -> fn[key]()
+$$.copy = co (source, target = './') ->
 
-  fn.coffee = -> new Promise (resolve) ->
-    gulp.src $$.path.coffee
-    .pipe plumber()
-    .pipe using()
-    .pipe coffeelint()
-    .pipe coffeelint.reporter()
-    .on 'end', -> resolve()
+  if !source then throw new Error ERROR.length
 
-$$.copy = co (source, target) ->
-  target or= './'
   yield new Promise (resolve) ->
     gulp.src source
     .pipe plumber()
     .pipe using()
     .pipe gulp.dest target
     .on 'end', -> resolve()
+
   $.info 'copy', "copied '#{source}' to '#{target}'"
 
 $$.delete = co (source) ->
@@ -41,7 +32,7 @@ $$.replace = co (args...) ->
   [pathSource, pathTarget, target, replacement] = switch args.length
     when 3 then [args[0], $$.getBase(args[0]), args[1], args[2]]
     when 4 then args
-    else throw new Error 'invalid arguments length'
+    else throw new Error ERROR.length
 
   yield new Promise (resolve) ->
     gulp.src pathSource
@@ -68,19 +59,30 @@ $$.getBase = (path) ->
 $$.shell = (cmd) -> new Promise (resolve) ->
   $.shell cmd, -> resolve()
 
-$$.makeDirectory = (path) -> new Promise (resolve) ->
-  fs = require 'fs'
-  fs.mkdirSync path
+$$.makeDirectory = co (path) ->
+
+  if !path then throw new Error ERROR.length
+
+  mkdirp = require 'mkdirp'
+
+  yield new Promise (resolve) ->
+    mkdirp path, (err) ->
+      if err then throw new Error err
+      resolve()
+
   $.info 'create', "create '#{path}'"
-  resolve()
+
 $$.createFolder = $$.makeDirectory
 
-$$.link = (origin, target) -> new Promise (resolve) ->
+$$.link = co (origin, target) ->
+
+  if !(origin and target)
+    throw new Error ERROR.length
+
   fs = require 'fs'
 
   if !fs.existsSync origin
     throw new Error "'#{origin}' is invalid"
-    return
 
   isDir = fs.statSync(origin).isDirectory()
   type = if isDir then 'dir' else 'file'
@@ -88,8 +90,27 @@ $$.link = (origin, target) -> new Promise (resolve) ->
   if $$.os == 'windows'
     origin = "#{$$.base}\\#{origin.replace /^\.\//, ''}"
 
-  fs.symlink origin, target, type, (err) ->
-    if err then throw new Error err
-    if type == 'dir' then type = 'directory'
-    $.info 'link', "linked #{type} '#{origin}' to '#{target}'"
-    resolve()
+  yield new Promise (resolve) ->
+    fs.symlink origin, target, type, (err) ->
+      if err then throw new Error err
+      if type == 'dir' then type = 'directory'
+      resolve()
+
+  $.info 'link', "linked #{type} '#{origin}' to '#{target}'"
+
+$$.zip = co (args...) ->
+
+  [origin, target, filename] = switch args.length
+    when 2 then [args[0], './', args[1]]
+    when 3 then args
+    else throw new Error ERROR.length
+
+  yield new Promise (resolve) ->
+    gulp.src origin
+    .pipe plumber()
+    .pipe using()
+    .pipe zip filename
+    .pipe gulp.dest target
+    .on 'end', -> resolve()
+
+  $.info 'zip', "zipped '#{origin}' to '#{target}' as '#{filename}'"

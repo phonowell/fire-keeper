@@ -4,4 +4,5 @@
 #= include include/variable.coffee
 #= include include/task.coffee
 #= include include/compile.coffee
+#= include include/lint.coffee
 #= include include/etc.coffee

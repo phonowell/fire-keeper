@@ -4,7 +4,7 @@ $$.task = (args...) ->
   switch args.length
     when 1 then gulp.tasks[args[0]].fn
     when 2 then gulp.task args...
-    else throw new Error 'invalid arguments length'
+    else throw new Error ERROR.length
 
 # added fire keeper task
 

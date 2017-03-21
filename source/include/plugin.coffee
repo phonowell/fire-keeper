@@ -5,10 +5,12 @@ $p.yargs = require 'yargs'
 
 {
   using
-  plumber, ignore, include, replace
+  plumber, ignore, changed
+  include, replace
   jade, stylus
   regenerator
   cleanCss, uglify
+  zip
   coffeelint, livereload
 } = $p
 

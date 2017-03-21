@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _coffee, _yaml, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, regenerator, replace, stylus, uglify, using, yaml,
+  var $, $$, $p, ERROR, Promise, _, _coffee, _yaml, changed, cleanCss, co, coffee, coffeelint, del, gulp, gulpif, ignore, include, jade, livereload, plumber, regenerator, replace, stylus, uglify, using, yaml, zip,
     slice = [].slice;
 
   $ = require('node-jquery-extend');
@@ -14,6 +14,11 @@
 
   module.exports = $$ = {};
 
+  ERROR = {
+    length: 'invalid arguments length',
+    type: 'invalid arguments type'
+  };
+
   $$.library = {
     $: $,
     _: _,
@@ -27,7 +32,7 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, include = $p.include, replace = $p.replace, jade = $p.jade, stylus = $p.stylus, regenerator = $p.regenerator, cleanCss = $p.cleanCss, uglify = $p.uglify, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, jade = $p.jade, stylus = $p.stylus, regenerator = $p.regenerator, cleanCss = $p.cleanCss, uglify = $p.uglify, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
@@ -87,7 +92,7 @@
       case 2:
         return gulp.task.apply(gulp, args);
       default:
-        throw new Error('invalid arguments length');
+        throw new Error(ERROR.length);
     }
   };
 
@@ -121,13 +126,13 @@
               case 'object':
                 return [args[0], null, args[1]];
               default:
-                throw new Error('invalid arguments type');
+                throw new Error(ERROR.type);
             }
             break;
           case 3:
             return args;
           default:
-            throw new Error('invalid arguments length');
+            throw new Error(ERROR.length);
         }
       })(), source = ref[0], target = ref[1], option = ref[2];
       source = (function() {
@@ -137,7 +142,7 @@
           case 'string':
             return [source];
           default:
-            throw new Error('invalid arguments type');
+            throw new Error(ERROR.type);
         }
       })();
       if (!~source[0].search(/\./)) {
@@ -210,19 +215,6 @@
     };
   })();
 
-  $$.divide = function() {
-    return $.log($$.divide['__string__']);
-  };
-
-  $$.divide['__string__'] = _.trim(_.repeat('- ', 16));
-
-  $$.watch = $p.watch;
-
-  $$.reload = function() {
-    livereload.listen();
-    return $$.watch($$.path.source + "/**/*.css").pipe(livereload());
-  };
-
   (function() {
     var fn;
     fn = $$.lint = function(key) {
@@ -237,8 +229,26 @@
     };
   })();
 
+  $$.divide = function() {
+    return $.log($$.divide['__string__']);
+  };
+
+  $$.divide['__string__'] = _.trim(_.repeat('- ', 16));
+
+  $$.watch = $p.watch;
+
+  $$.reload = function() {
+    livereload.listen();
+    return $$.watch($$.path.source + "/**/*.css").pipe(livereload());
+  };
+
   $$.copy = co(function*(source, target) {
-    target || (target = './');
+    if (target == null) {
+      target = './';
+    }
+    if (!source) {
+      throw new Error(ERROR.length);
+    }
     yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulp.dest(target)).on('end', function() {
         return resolve();
@@ -266,7 +276,7 @@
         case 4:
           return args;
         default:
-          throw new Error('invalid arguments length');
+          throw new Error(ERROR.length);
       }
     })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
     yield new Promise(function(resolve) {
@@ -298,31 +308,40 @@
     });
   };
 
-  $$.makeDirectory = function(path) {
-    return new Promise(function(resolve) {
-      var fs;
-      fs = require('fs');
-      fs.mkdirSync(path);
-      $.info('create', "create '" + path + "'");
-      return resolve();
+  $$.makeDirectory = co(function*(path) {
+    var mkdirp;
+    if (!path) {
+      throw new Error(ERROR.length);
+    }
+    mkdirp = require('mkdirp');
+    yield new Promise(function(resolve) {
+      return mkdirp(path, function(err) {
+        if (err) {
+          throw new Error(err);
+        }
+        return resolve();
+      });
     });
-  };
+    return $.info('create', "create '" + path + "'");
+  });
 
   $$.createFolder = $$.makeDirectory;
 
-  $$.link = function(origin, target) {
-    return new Promise(function(resolve) {
-      var fs, isDir, type;
-      fs = require('fs');
-      if (!fs.existsSync(origin)) {
-        throw new Error("'" + origin + "' is invalid");
-        return;
-      }
-      isDir = fs.statSync(origin).isDirectory();
-      type = isDir ? 'dir' : 'file';
-      if ($$.os === 'windows') {
-        origin = $$.base + "\\" + (origin.replace(/^\.\//, ''));
-      }
+  $$.link = co(function*(origin, target) {
+    var fs, isDir, type;
+    if (!(origin && target)) {
+      throw new Error(ERROR.length);
+    }
+    fs = require('fs');
+    if (!fs.existsSync(origin)) {
+      throw new Error("'" + origin + "' is invalid");
+    }
+    isDir = fs.statSync(origin).isDirectory();
+    type = isDir ? 'dir' : 'file';
+    if ($$.os === 'windows') {
+      origin = $$.base + "\\" + (origin.replace(/^\.\//, ''));
+    }
+    yield new Promise(function(resolve) {
       return fs.symlink(origin, target, type, function(err) {
         if (err) {
           throw new Error(err);
@@ -330,10 +349,31 @@
         if (type === 'dir') {
           type = 'directory';
         }
-        $.info('link', "linked " + type + " '" + origin + "' to '" + target + "'");
         return resolve();
       });
     });
-  };
+    return $.info('link', "linked " + type + " '" + origin + "' to '" + target + "'");
+  });
+
+  $$.zip = co(function*() {
+    var args, filename, origin, ref, target;
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (args.length) {
+        case 2:
+          return [args[0], './', args[1]];
+        case 3:
+          return args;
+        default:
+          throw new Error(ERROR.length);
+      }
+    })(), origin = ref[0], target = ref[1], filename = ref[2];
+    yield new Promise(function(resolve) {
+      return gulp.src(origin).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(target)).on('end', function() {
+        return resolve();
+      });
+    });
+    return $.info('zip', "zipped '" + origin + "' to '" + target + "' as '" + filename + "'");
+  });
 
 }).call(this);

@@ -10,3 +10,9 @@ gulp = require 'gulp'
 # return
 
 module.exports = $$ = {}
+
+# error
+
+ERROR =
+  length: 'invalid arguments length'
+  type: 'invalid arguments type'

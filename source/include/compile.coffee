@@ -7,14 +7,14 @@ do ->
         switch $.type args[1]
           when 'string' then [args[0], args[1], {}]
           when 'object' then [args[0], null, args[1]]
-          else throw new Error 'invalid arguments type'
+          else throw new Error ERROR.type
       when 3 then args
-      else throw new Error 'invalid arguments length'
+      else throw new Error ERROR.length
 
     source = switch $.type source
       when 'array' then source
       when 'string' then [source]
-      else throw new Error 'invalid arguments type'
+      else throw new Error ERROR.type
 
     if !~source[0].search /\./ then throw new Error 'invalid suffix'
     suffix = source[0].replace /.*\./, ''
