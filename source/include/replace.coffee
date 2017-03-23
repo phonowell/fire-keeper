@@ -18,4 +18,5 @@ $$.replace = co (args...) ->
     .on 'end', -> resolve()
 
   $.info 'replace'
-  , "replaced '#{target}' to '#{replacement}', from '#{pathSource}' to '#{pathTarget}'"
+  , "replaced '#{target}' to '#{replacement}',
+    from '#{pathSource}' to '#{pathTarget}'"

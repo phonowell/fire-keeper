@@ -31,7 +31,8 @@ do ->
 
     yield fn[method] source, target, option
 
-    $.info 'compile', "compiled '#{source.join "', '"}' to '#{target}'"
+    $.info 'compile'
+    , "compiled #{("'#{a}'" for a in source).join ', '} to '#{target}'"
 
   fn.yaml = (source, target) ->
     new Promise (resolve) ->

@@ -21,6 +21,6 @@ $$.link = co (origin, target) ->
       if type == 'dir' then type = 'directory'
       resolve()
 
-  $.info 'link', "linked #{type} '#{origin}' to '#{target}'"
+  $.info 'link', "linked '#{type}' '#{origin}' to '#{target}'"
 
 $$.ln = $$.link

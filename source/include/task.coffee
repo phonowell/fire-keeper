@@ -13,6 +13,6 @@ $$.task 'default', ->
   for key of gulp.tasks
     list.push key
   list.sort()
-  $.info 'task', list.join ', '
+  $.info 'task', ("'#{a}'" for a in list).join ', '
 
 $$.task 'noop', -> null

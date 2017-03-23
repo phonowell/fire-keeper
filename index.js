@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, ERROR, Promise, _, _coffee, _normalizePath, _yaml, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, ignore, include, jade, livereload, path, plumber, regenerator, replace, stylus, uglify, using, yaml, zip,
+  var $, $$, $p, ERROR, Promise, _, _coffee, _normalizePath, _yaml, changed, cleanCss, co, coffee, coffeelint, colors, del, fs, gulp, gulpif, ignore, include, jade, livereload, path, plumber, regenerator, replace, stylus, uglify, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -16,6 +16,8 @@
 
   gulp = require('gulp');
 
+  colors = require('colors/safe');
+
   module.exports = $$ = {};
 
   ERROR = {
@@ -27,7 +29,8 @@
     $: $,
     _: _,
     Promise: Promise,
-    gulp: gulp
+    gulp: gulp,
+    colors: colors
   };
 
   $p = $$.plugin = require('gulp-load-plugins')();
@@ -107,6 +110,60 @@
     return results;
   };
 
+  $.info = function() {
+    var a, args, arr, cache, date, html, method, msg, ref, short, type;
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (args.length) {
+        case 1:
+          return ['log', 'default', args[0]];
+        case 2:
+          return ['log', args[0], args[1]];
+        default:
+          return args;
+      }
+    })(), method = ref[0], type = ref[1], msg = ref[2];
+    cache = $.info['__cache__'];
+    short = _.floor(_.now(), -3);
+    if (cache[0] !== short) {
+      cache[0] = short;
+      date = new Date();
+      cache[1] = ((function() {
+        var i, len, ref1, results;
+        ref1 = [date.getHours(), date.getMinutes(), date.getSeconds()];
+        results = [];
+        for (i = 0, len = ref1.length; i < len; i++) {
+          a = ref1[i];
+          results.push(_.padStart(a, 2, 0));
+        }
+        return results;
+      })()).join(':');
+    }
+    arr = ["[" + cache[1] + "]"];
+    if (type !== 'default') {
+      arr.push("<" + (type.toUpperCase()) + ">");
+    }
+    arr.push(msg);
+    html = arr.join(' ');
+    html = html.replace(/\[.*?]/g, function(text) {
+      var cont;
+      cont = text.replace(/\[|]/g, '');
+      return "[" + (colors.gray(cont)) + "]";
+    }).replace(/<.*?>/g, function(text) {
+      var cont;
+      cont = text.replace(/<|>/g, '');
+      return "" + (colors.gray('<')) + (colors.cyan(cont)) + (colors.gray('>'));
+    }).replace(/'.*?'/g, function(text) {
+      var cont;
+      cont = text.replace(/'/g, '');
+      return colors.magenta(cont);
+    });
+    console[method](html);
+    return msg;
+  };
+
+  $.info['__cache__'] = [];
+
   $$.task = function() {
     var args;
     args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -121,13 +178,21 @@
   };
 
   $$.task('default', function() {
-    var key, list;
+    var a, key, list;
     list = [];
     for (key in gulp.tasks) {
       list.push(key);
     }
     list.sort();
-    return $.info('task', list.join(', '));
+    return $.info('task', ((function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = list.length; i < len; i++) {
+        a = list[i];
+        results.push("'" + a + "'");
+      }
+      return results;
+    })()).join(', '));
   });
 
   $$.task('noop', function() {
@@ -176,7 +241,7 @@
         return resolve();
       });
     });
-    return $.info('link', "linked " + type + " '" + origin + "' to '" + target + "'");
+    return $.info('link', "linked '" + type + "' '" + origin + "' to '" + target + "'");
   });
 
   $$.ln = $$.link;
@@ -202,11 +267,20 @@
   $$.mkdir = $$.makeDirectory;
 
   $$["delete"] = co(function*(source) {
+    var a;
     source = _normalizePath(source);
     yield del(source, {
       force: true
     });
-    return $.info('delete', "deleted '" + (source.join("', '")) + "'");
+    return $.info('delete', "deleted " + (((function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = source.length; i < len; i++) {
+        a = source[i];
+        results.push("'" + a + "'");
+      }
+      return results;
+    })()).join(', ')));
   });
 
   $$.remove = $$["delete"];
@@ -240,7 +314,7 @@
   (function() {
     var fn;
     fn = $$.compile = co(function*() {
-      var args, method, option, ref, source, suffix, target;
+      var a, args, method, option, ref, source, suffix, target;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
         switch (args.length) {
@@ -284,7 +358,15 @@
         minify: true
       }, option);
       yield fn[method](source, target, option);
-      return $.info('compile', "compiled '" + (source.join("', '")) + "' to '" + target + "'");
+      return $.info('compile', "compiled " + (((function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = source.length; i < len; i++) {
+          a = source[i];
+          results.push("'" + a + "'");
+        }
+        return results;
+      })()).join(', ')) + " to '" + target + "'");
     });
     fn.yaml = function(source, target) {
       return new Promise(function(resolve) {
@@ -377,7 +459,7 @@
         return resolve();
       });
     });
-    return $.info('delay', "delayed " + time + "ms");
+    return $.info('delay', "delayed '" + time + " ms'");
   });
 
   $$.watch = $p.watch;
