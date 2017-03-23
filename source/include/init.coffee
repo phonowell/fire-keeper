@@ -1,4 +1,7 @@
 # require
+path = require 'path'
+fs = require 'fs'
+
 $ = require 'node-jquery-extend'
 {_} = $
 

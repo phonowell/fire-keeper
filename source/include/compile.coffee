@@ -11,21 +11,18 @@ do ->
       when 3 then args
       else throw new Error ERROR.length
 
-    source = switch $.type source
-      when 'array' then source
-      when 'string' then [source]
-      else throw new Error ERROR.type
+    source = _normalizePath source
 
-    source = (a.replace /\\/g, '/' for a in source)
+    suffix = path.extname(source[0]).replace /\./, ''
+    if !suffix.length then throw new Error 'invalid suffix'
 
-    if !~source[0].search /\./ then throw new Error 'invalid suffix'
-    suffix = source[0].replace /.*\./, ''
     method = switch suffix
       when 'yml' then 'yaml'
       when 'styl' then 'stylus'
       else suffix
 
-    target or= $$.getBase source[0]
+    target or= path.dirname(source[0]).replace /\*/g, ''
+    target = path.normalize target
 
     option = _.extend
       regenerator: false
@@ -34,8 +31,7 @@ do ->
 
     yield fn[method] source, target, option
 
-    $.info 'compile'
-    , "compiled '#{source.join "', '"}' to '#{_.trim target, '/'}/'"
+    $.info 'compile', "compiled '#{source.join "', '"}' to '#{target}'"
 
   fn.yaml = (source, target) ->
     new Promise (resolve) ->
