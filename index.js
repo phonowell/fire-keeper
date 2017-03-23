@@ -163,7 +163,7 @@
     isDir = fs.statSync(origin).isDirectory();
     type = isDir ? 'dir' : 'file';
     if ((ref = $$.os) === 'windows' || ref === 'linux') {
-      origin = path.normalize($$.base + "\\" + origin);
+      origin = path.normalize("" + $$.base + path.sep + origin);
     }
     yield new Promise(function(resolve) {
       return fs.symlink(origin, target, type, function(err) {

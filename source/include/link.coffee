@@ -13,7 +13,7 @@ $$.link = co (origin, target) ->
   type = if isDir then 'dir' else 'file'
 
   if $$.os in ['windows', 'linux']
-    origin = path.normalize "#{$$.base}\\#{origin}"
+    origin = path.normalize "#{$$.base}#{path.sep}#{origin}"
 
   yield new Promise (resolve) ->
     fs.symlink origin, target, type, (err) ->
