@@ -21,16 +21,21 @@ $$.task 'build', co ->
 ```
 $$.compile()
 $$.copy()
+$$.cp()
 $$.delete()
 $$.link()
+$$.ln()
 $$.lint()
 $$.makeDirectory()
+$$.mkdir()
 $$.reload()
 $$.remove()
+$$.rm()
 $$.replace()
 $$.shell()
 $$.task()
 $$.watch()
+$$.zip()
 ```
 
 ### Library
@@ -39,6 +44,7 @@ $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
 $$.library.Promise # bluebird
 $$.library.gulp # gulp
+$$.library.colors # colors
 ```
 
 ### Plugin
