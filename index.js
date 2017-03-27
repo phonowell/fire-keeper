@@ -233,7 +233,7 @@
     yield new Promise(function(resolve) {
       return fs.symlink(origin, target, type, function(err) {
         if (err) {
-          throw new Error(err);
+          throw err;
         }
         if (type === 'dir') {
           type = 'directory';
@@ -256,7 +256,7 @@
     yield new Promise(function(resolve) {
       return mkdirp(src, function(err) {
         if (err) {
-          throw new Error(err);
+          throw err;
         }
         return resolve();
       });

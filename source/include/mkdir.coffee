@@ -7,7 +7,7 @@ $$.makeDirectory = co (src) ->
 
   yield new Promise (resolve) ->
     mkdirp src, (err) ->
-      if err then throw new Error err
+      if err then throw err
       resolve()
 
   $.info 'create', "created '#{src}'"

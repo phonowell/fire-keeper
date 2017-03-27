@@ -17,7 +17,7 @@ $$.link = co (origin, target) ->
 
   yield new Promise (resolve) ->
     fs.symlink origin, target, type, (err) ->
-      if err then throw new Error err
+      if err then throw err
       if type == 'dir' then type = 'directory'
       resolve()
 
