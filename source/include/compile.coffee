@@ -19,6 +19,7 @@ do ->
 
     method = switch suffix
       when 'yml' then 'yaml'
+      when 'md' then 'markdown'
       when 'styl' then 'stylus'
       else suffix
 
@@ -26,7 +27,7 @@ do ->
     target = path.normalize target
 
     option = _.extend
-      regenerator: false
+      map: false
       minify: true
     , option
 
@@ -35,61 +36,110 @@ do ->
     $.info 'compile'
     , "compiled #{("'#{a}'" for a in source).join ', '} to '#{target}'"
 
-  fn.yaml = (source, target) -> new Promise (resolve) ->
+  fn.yaml = (source, target, option) -> new Promise (resolve) ->
+
+    option.safe ?= true
+
     gulp.src source
     .pipe plumber()
     .pipe using()
-    .pipe yaml()
+    .pipe yaml option
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
   fn.stylus = (source, target, option) -> new Promise (resolve) ->
+
+    option.compress ?= option.minify
+
     gulp.src source
     .pipe plumber()
     .pipe ignore '**/include/**'
     .pipe using()
-    .pipe stylus compress: option.minify
+    .pipe gulpif option.map, sourcemaps.init()
+    .pipe stylus option
+    .pipe gulpif option.map, sourcemaps.write target
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
   fn.css = (source, target, option) -> new Promise (resolve) ->
+
     gulp.src source
     .pipe plumber()
     .pipe ignore '**/include/**'
     .pipe ignore '**/*.min.css'
     .pipe using()
+      .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.minify, cleanCss()
+    .pipe gulpif option.map, sourcemaps.write target
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
   fn.coffee = (source, target, option) -> new Promise (resolve) ->
+
+    option.regenerator ?= false
+
     gulp.src source
     .pipe plumber()
     .pipe ignore '**/include/**'
     .pipe using()
+    .pipe gulpif option.map, sourcemaps.init()
     .pipe include()
-    .pipe coffee()
+    .pipe coffee option
     .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
+    .pipe gulpif option.map, sourcemaps.write target
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
   fn.js = (source, target, option) -> new Promise (resolve) ->
+
+    option.regenerator ?= false
+
     gulp.src source
     .pipe plumber()
     .pipe ignore '**/include/**'
     .pipe ignore '**/*.min.js'
     .pipe using()
+    .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
+    .pipe gulpif option.map, sourcemaps.write target
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
-  fn.jade = (source, target, option) -> new Promise (resolve) ->
+  fn.pug = (source, target, option) -> new Promise (resolve) ->
+
+    option.pretty ?= !option.minify
+
     gulp.src source
     .pipe plumber()
     .pipe ignore '**/include/**'
     .pipe using()
-    .pipe jade pretty: !option.minify
+    .pipe pug option
+    .pipe gulp.dest target
+    .on 'end', -> resolve()
+
+  fn.jade = (source, target, option) -> new Promise (resolve) ->
+
+    option.pretty ?= !option.minify
+
+    gulp.src source
+    .pipe plumber()
+    .pipe ignore '**/include/**'
+    .pipe using()
+    .pipe jade option
+    .pipe gulp.dest target
+    .on 'end', -> resolve()
+
+  fn.markdown = (source, target, option) -> new Promise (resolve) ->
+
+    option.sanitize ?= true
+
+    gulp.src source
+    .pipe plumber()
+    .pipe ignore '**/include/**'
+    .pipe using()
+    .pipe markdown option
+    .pipe gulpif option.minify, htmlmin collapseWhitespace: true
     .pipe gulp.dest target
     .on 'end', -> resolve()

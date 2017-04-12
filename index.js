@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, ERROR, Promise, _, _coffee, _normalizePath, _yaml, changed, cleanCss, co, coffee, coffeelint, colors, del, fs, gulp, gulpif, ignore, include, jade, livereload, path, plumber, regenerator, replace, stylus, uglify, using, yaml, zip,
+  var $, $$, $p, ERROR, Promise, _, _normalizePath, changed, cleanCss, co, coffee, coffeelint, colors, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -39,24 +39,16 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, jade = $p.jade, stylus = $p.stylus, regenerator = $p.regenerator, cleanCss = $p.cleanCss, uglify = $p.uglify, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, yaml = $p.yaml, pug = $p.pug, jade = $p.jade, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, regenerator = $p.regenerator, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
-  _coffee = $p.coffee;
+  uglifyjs = require('uglify-js-harmony');
 
-  _yaml = $p.yaml;
+  uglifyMinifier = require('gulp-uglify/minifier');
 
-  coffee = function() {
-    return _coffee({
-      map: false
-    });
-  };
-
-  yaml = function() {
-    return _yaml({
-      safe: true
-    });
+  uglify = $p.uglify = function() {
+    return uglifyMinifier({}, uglifyjs);
   };
 
   $$.argv = $p.yargs.argv;
@@ -345,6 +337,8 @@
         switch (suffix) {
           case 'yml':
             return 'yaml';
+          case 'md':
+            return 'markdown';
           case 'styl':
             return 'stylus';
           default:
@@ -354,7 +348,7 @@
       target || (target = path.dirname(source[0]).replace(/\*/g, ''));
       target = path.normalize(target);
       option = _.extend({
-        regenerator: false,
+        map: false,
         minify: true
       }, option);
       yield fn[method](source, target, option);
@@ -368,48 +362,81 @@
         return results;
       })()).join(', ')) + " to '" + target + "'");
     });
-    fn.yaml = function(source, target) {
+    fn.yaml = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml()).pipe(gulp.dest(target)).on('end', function() {
+        if (option.safe == null) {
+          option.safe = true;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.stylus = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(stylus({
-          compress: option.minify
-        })).pipe(gulp.dest(target)).on('end', function() {
+        if (option.compress == null) {
+          option.compress = option.minify;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(target))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.css = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(gulpif(option.minify, cleanCss())).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, cleanCss())).pipe(gulpif(option.map, sourcemaps.write(target))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(include()).pipe(coffee()).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulp.dest(target)).on('end', function() {
+        if (option.regenerator == null) {
+          option.regenerator = false;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(target))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.js = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulp.dest(target)).on('end', function() {
+        if (option.regenerator == null) {
+          option.regenerator = false;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(target))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    return fn.jade = function(source, target, option) {
+    fn.pug = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade({
-          pretty: !option.minify
-        })).pipe(gulp.dest(target)).on('end', function() {
+        if (option.pretty == null) {
+          option.pretty = !option.minify;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.jade = function(source, target, option) {
+      return new Promise(function(resolve) {
+        if (option.pretty == null) {
+          option.pretty = !option.minify;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade(option)).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    return fn.markdown = function(source, target, option) {
+      return new Promise(function(resolve) {
+        if (option.sanitize == null) {
+          option.sanitize = true;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
+          collapseWhitespace: true
+        }))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });

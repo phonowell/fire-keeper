@@ -7,17 +7,15 @@ $p.yargs = require 'yargs'
   using
   plumber, ignore, changed
   include, replace
-  jade, stylus
-  regenerator
-  cleanCss, uglify
+  yaml, pug, jade, markdown, coffee, stylus
+  sourcemaps, regenerator
+  htmlmin, cleanCss
   zip
   coffeelint, livereload
 } = $p
 
 gulpif = $p.if
 
-_coffee = $p.coffee
-_yaml = $p.yaml
-
-coffee = -> _coffee map: false
-yaml = -> _yaml safe: true
+uglifyjs = require 'uglify-js-harmony'
+uglifyMinifier = require 'gulp-uglify/minifier'
+uglify = $p.uglify = -> uglifyMinifier {}, uglifyjs

@@ -20,7 +20,7 @@ co = Promise.coroutine
 
 # task
 
-$$.task 'work', co -> yield $$.shell 'gulp watch'
+$$.task 'work', -> $$.shell 'start gulp watch'
 
 $$.task 'watch', ->
   deb = _.debounce $$.task('build'), 1e3
@@ -30,7 +30,7 @@ $$.task 'watch', ->
   ], deb
 
 $$.task 'build', co ->
-  yield $$.compile './source/index.coffee', minify: false
+  yield $$.compile './source/index.coffee' , minify: false
   yield $$.copy './source/index.js', './'
 
 $$.task 'lint', co -> yield $$.lint 'coffee'
@@ -47,15 +47,18 @@ $$.task 'set', co ->
 $$.task 'test', co ->
   yield $$.compile './test.coffee'
   yield $$.shell 'node test'
-  yield $$.delete './test.js'
+  yield $$.remove './test.js'
 
 $$.task 'init', co ->
 
-  yield $$.delete './.gitignore'
+  yield $$.remove './.gitignore'
   yield $$.copy './../kokoro/.gitignore'
 
-  yield $$.delete './.npmignore'
+  yield $$.remove './.npmignore'
   yield $$.copy './../kokoro/.npmignore'
 
-  yield $$.delete './coffeelint.yml'
+  yield $$.remove './coffeelint.yml'
   yield $$.copy './../kokoro/coffeelint.yml'
+
+$$.task 'dev', co ->
+  yield $$.compile './test.coffee'
