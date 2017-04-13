@@ -3,7 +3,7 @@ $$.replace = co (args...) ->
   [pathSource, pathTarget, target, replacement] = switch args.length
     when 3 then [args[0], null, args[1], args[2]]
     when 4 then args
-    else throw new Error ERROR.length
+    else throw _error 'length'
 
   pathSource = path.normalize pathSource
   pathTarget or= path.dirname(pathSource).replace /\*/g, ''

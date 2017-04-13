@@ -1,13 +1,13 @@
 $$.link = co (origin, target) ->
 
   if !(origin and target)
-    throw new Error ERROR.length
+    throw _error 'length'
 
   origin = path.normalize origin
   target = path.normalize target
 
   if !fs.existsSync origin
-    throw new Error "'#{origin}' is invalid"
+    throw _error "'#{origin}' was invalid"
 
   isDir = fs.statSync(origin).isDirectory()
   type = if isDir then 'dir' else 'file'

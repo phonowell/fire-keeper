@@ -1,6 +1,6 @@
 $$.makeDirectory = co (src) ->
 
-  if !src then throw new Error ERROR.length
+  if !src then throw _error 'length'
 
   mkdirp = require 'mkdirp'
   src = path.normalize src

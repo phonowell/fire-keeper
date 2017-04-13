@@ -8,20 +8,21 @@ do ->
         switch $.type args[1]
           when 'string' then [args[0], args[1], {}]
           when 'object' then [args[0], null, args[1]]
-          else throw new Error ERROR.type
+          else throw _error 'type'
       when 3 then args
-      else throw new Error ERROR.length
+      else throw _error 'length'
 
     source = _normalizePath source
 
-    suffix = path.extname(source[0]).replace /\./, ''
-    if !suffix.length then throw new Error 'invalid suffix'
+    extname = path.extname(source[0]).replace /\./, ''
+    if !extname.length then throw _error 'extname was null'
 
-    method = switch suffix
+    method = switch extname
       when 'yml' then 'yaml'
       when 'md' then 'markdown'
       when 'styl' then 'stylus'
-      else suffix
+      #when 'litcoffee' then 'coffee'
+      else extname
 
     target or= path.dirname(source[0]).replace /\*/g, ''
     target = path.normalize target
@@ -31,7 +32,9 @@ do ->
       minify: true
     , option
 
-    yield fn[method] source, target, option
+    compiler = fn[method]
+    if !compiler then throw _error "invalid extname: '.#{extname}'"
+    yield compiler source, target, option
 
     $.info 'compile'
     , "compiled #{("'#{a}'" for a in source).join ', '} to '#{target}'"

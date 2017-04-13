@@ -16,6 +16,8 @@ module.exports = $$ = {}
 
 # error
 
-ERROR =
-  length: 'invalid arguments length'
-  type: 'invalid arguments type'
+_error = (msg) ->
+  new Error switch msg
+    when 'length' then 'invalid arguments length'
+    when 'type' then 'invalid arguments type'
+    else msg

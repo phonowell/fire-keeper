@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, ERROR, Promise, _, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -18,9 +18,17 @@
 
   module.exports = $$ = {};
 
-  ERROR = {
-    length: 'invalid arguments length',
-    type: 'invalid arguments type'
+  _error = function(msg) {
+    return new Error((function() {
+      switch (msg) {
+        case 'length':
+          return 'invalid arguments length';
+        case 'type':
+          return 'invalid arguments type';
+        default:
+          return msg;
+      }
+    })());
   };
 
   $$.library = {
@@ -88,7 +96,7 @@
         case 'array':
           return src;
         default:
-          throw new Error(ERROR.type);
+          throw _error('type');
       }
     })();
     results = [];
@@ -108,7 +116,7 @@
       case 2:
         return gulp.task.apply(gulp, args);
       default:
-        throw new Error(ERROR.length);
+        throw _error('length');
     }
   };
 
@@ -153,12 +161,12 @@
   $$.link = co(function*(origin, target) {
     var isDir, ref, type;
     if (!(origin && target)) {
-      throw new Error(ERROR.length);
+      throw _error('length');
     }
     origin = path.normalize(origin);
     target = path.normalize(target);
     if (!fs.existsSync(origin)) {
-      throw new Error("'" + origin + "' is invalid");
+      throw _error("'" + origin + "' was invalid");
     }
     isDir = fs.statSync(origin).isDirectory();
     type = isDir ? 'dir' : 'file';
@@ -184,7 +192,7 @@
   $$.makeDirectory = co(function*(src) {
     var mkdirp;
     if (!src) {
-      throw new Error(ERROR.length);
+      throw _error('length');
     }
     mkdirp = require('mkdirp');
     src = path.normalize(src);
@@ -232,7 +240,7 @@
         case 4:
           return args;
         default:
-          throw new Error(ERROR.length);
+          throw _error('length');
       }
     })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
     pathSource = path.normalize(pathSource);
@@ -249,7 +257,7 @@
   (function() {
     var fn;
     fn = $$.compile = co(function*() {
-      var a, args, method, option, ref, source, suffix, target;
+      var a, args, compiler, extname, method, option, ref, source, target;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
         switch (args.length) {
@@ -262,22 +270,22 @@
               case 'object':
                 return [args[0], null, args[1]];
               default:
-                throw new Error(ERROR.type);
+                throw _error('type');
             }
             break;
           case 3:
             return args;
           default:
-            throw new Error(ERROR.length);
+            throw _error('length');
         }
       })(), source = ref[0], target = ref[1], option = ref[2];
       source = _normalizePath(source);
-      suffix = path.extname(source[0]).replace(/\./, '');
-      if (!suffix.length) {
-        throw new Error('invalid suffix');
+      extname = path.extname(source[0]).replace(/\./, '');
+      if (!extname.length) {
+        throw _error('extname was null');
       }
       method = (function() {
-        switch (suffix) {
+        switch (extname) {
           case 'yml':
             return 'yaml';
           case 'md':
@@ -285,7 +293,7 @@
           case 'styl':
             return 'stylus';
           default:
-            return suffix;
+            return extname;
         }
       })();
       target || (target = path.dirname(source[0]).replace(/\*/g, ''));
@@ -294,7 +302,11 @@
         map: false,
         minify: true
       }, option);
-      yield fn[method](source, target, option);
+      compiler = fn[method];
+      if (!compiler) {
+        throw _error("invalid extname: '." + extname + "'");
+      }
+      yield compiler(source, target, option);
       return $.info('compile', "compiled " + (((function() {
         var i, len, results;
         results = [];
