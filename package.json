@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {
@@ -23,7 +23,6 @@
   "devDependencies": {},
   "dependencies": {
     "bluebird": "^3.4.7",
-    "colors": "^1.1.2",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-changed": "^2.0.0",
@@ -52,7 +51,7 @@
     "gulp-yaml": "^1.0.1",
     "gulp-zip": "^4.0.0",
     "mkdirp": "^0.5.1",
-    "node-jquery-extend": "^0.0.3",
+    "node-jquery-extend": "^0.0.4",
     "pump": "^1.0.2",
     "read-pkg": "^2.0.0",
     "uglify-js-harmony": "^2.7.5",

@@ -1,1 +1,1 @@
-$$.library = {$, _, Promise, gulp, colors}
+$$.library = {$, _, Promise, gulp}

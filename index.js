@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, ERROR, Promise, _, _normalizePath, changed, cleanCss, co, coffee, coffeelint, colors, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
+  var $, $$, $p, ERROR, Promise, _, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -16,8 +16,6 @@
 
   gulp = require('gulp');
 
-  colors = require('colors/safe');
-
   module.exports = $$ = {};
 
   ERROR = {
@@ -29,8 +27,7 @@
     $: $,
     _: _,
     Promise: Promise,
-    gulp: gulp,
-    colors: colors
+    gulp: gulp
   };
 
   $p = $$.plugin = require('gulp-load-plugins')();
@@ -101,60 +98,6 @@
     }
     return results;
   };
-
-  $.info = function() {
-    var a, args, arr, cache, date, html, method, msg, ref, short, type;
-    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
-      switch (args.length) {
-        case 1:
-          return ['log', 'default', args[0]];
-        case 2:
-          return ['log', args[0], args[1]];
-        default:
-          return args;
-      }
-    })(), method = ref[0], type = ref[1], msg = ref[2];
-    cache = $.info['__cache__'];
-    short = _.floor(_.now(), -3);
-    if (cache[0] !== short) {
-      cache[0] = short;
-      date = new Date();
-      cache[1] = ((function() {
-        var i, len, ref1, results;
-        ref1 = [date.getHours(), date.getMinutes(), date.getSeconds()];
-        results = [];
-        for (i = 0, len = ref1.length; i < len; i++) {
-          a = ref1[i];
-          results.push(_.padStart(a, 2, 0));
-        }
-        return results;
-      })()).join(':');
-    }
-    arr = ["[" + cache[1] + "]"];
-    if (type !== 'default') {
-      arr.push("<" + (type.toUpperCase()) + ">");
-    }
-    arr.push(msg);
-    html = arr.join(' ');
-    html = html.replace(/\[.*?]/g, function(text) {
-      var cont;
-      cont = text.replace(/\[|]/g, '');
-      return "[" + (colors.gray(cont)) + "]";
-    }).replace(/<.*?>/g, function(text) {
-      var cont;
-      cont = text.replace(/<|>/g, '');
-      return "" + (colors.gray('<')) + (colors.cyan(cont)) + (colors.gray('>'));
-    }).replace(/'.*?'/g, function(text) {
-      var cont;
-      cont = text.replace(/'/g, '');
-      return colors.magenta(cont);
-    });
-    console[method](html);
-    return msg;
-  };
-
-  $.info['__cache__'] = [];
 
   $$.task = function() {
     var args;

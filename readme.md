@@ -44,7 +44,6 @@ $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
 $$.library.Promise # bluebird
 $$.library.gulp # gulp
-$$.library.colors # colors
 ```
 
 ### Plugin

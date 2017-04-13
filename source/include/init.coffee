@@ -10,8 +10,6 @@ co = Promise.coroutine
 
 gulp = require 'gulp'
 
-colors = require 'colors/safe'
-
 # return
 
 module.exports = $$ = {}
