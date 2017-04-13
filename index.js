@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, replace, sourcemaps, string, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -59,14 +59,13 @@
   $$.argv = $p.yargs.argv;
 
   $$.os = (function() {
-    var string;
-    string = process.platform;
-    if (~string.search('darwin')) {
-      return 'macos';
-    } else if (~string.search('win')) {
-      return 'windows';
-    } else {
-      return 'linux';
+    switch (false) {
+      case !~(string = process.platform).search('darwin'):
+        return 'macos';
+      case !~string.search('win'):
+        return 'windows';
+      default:
+        return 'linux';
     }
   })();
 

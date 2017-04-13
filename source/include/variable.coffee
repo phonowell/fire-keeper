@@ -1,10 +1,9 @@
 $$.argv = $p.yargs.argv
 
 # os
-$$.os = do ->
-  string = process.platform
-  if ~string.search 'darwin' then 'macos'
-  else if ~string.search 'win' then 'windows'
+$$.os = switch
+  when ~(string = process.platform).search 'darwin' then 'macos'
+  when ~string.search 'win' then 'windows'
   else 'linux'
 
 # base
