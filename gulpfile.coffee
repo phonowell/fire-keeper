@@ -59,6 +59,3 @@ $$.task 'init', co ->
 
   yield $$.remove './coffeelint.yml'
   yield $$.copy './../kokoro/coffeelint.yml'
-
-$$.task 'dev', co ->
-  yield $$.compile './dev.litcoffee'

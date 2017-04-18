@@ -60,7 +60,7 @@ do ->
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
     .pipe stylus option
-    .pipe gulpif option.map, sourcemaps.write target
+    .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
@@ -73,7 +73,7 @@ do ->
     .pipe using()
       .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.minify, cleanCss()
-    .pipe gulpif option.map, sourcemaps.write target
+    .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
@@ -90,7 +90,7 @@ do ->
     .pipe coffee option
     .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
-    .pipe gulpif option.map, sourcemaps.write target
+    .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
@@ -106,7 +106,7 @@ do ->
     .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
-    .pipe gulpif option.map, sourcemaps.write target
+    .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
