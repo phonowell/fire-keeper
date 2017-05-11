@@ -104,6 +104,7 @@ do ->
     .pipe ignore '**/*.min.js'
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
+    .pipe include()
     .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
     .pipe gulpif option.map, sourcemaps.write ''
