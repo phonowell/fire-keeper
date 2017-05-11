@@ -6,7 +6,7 @@ $p.yargs = require 'yargs'
 {
   using
   plumber, ignore, changed
-  include, replace
+  include, replace, rename
   yaml, pug, jade, markdown, coffee, stylus
   sourcemaps, regenerator
   htmlmin, cleanCss

@@ -1,4 +1,4 @@
-$$.copy = co (source, target = './') ->
+$$.copy = co (source, target = './', name) ->
 
   source = _normalizePath source
   target = path.normalize target
@@ -7,9 +7,12 @@ $$.copy = co (source, target = './') ->
     gulp.src source
     .pipe plumber()
     .pipe using()
+    .pipe gulpif name, rename name
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
-  $.info 'copy', "copied '#{source}' to '#{target}'"
+  msg = "copied '#{source}' to '#{target}'"
+  if name then msg += ", as '#{$.parseString name}'"
+  $.info 'copy', msg
 
 $$.cp = $$.copy

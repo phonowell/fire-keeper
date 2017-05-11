@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {
