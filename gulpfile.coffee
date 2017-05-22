@@ -15,7 +15,7 @@
 #return
 
 $$ = require './source/index'
-{_, Promise} = $$.library
+{$, _, Promise} = $$.library
 co = Promise.coroutine
 
 # task
@@ -59,3 +59,21 @@ $$.task 'init', co ->
 
   yield $$.remove './coffeelint.yml'
   yield $$.copy './../kokoro/coffeelint.yml'
+
+$$.task 'update', co ->
+
+  # backup
+  $$.copy './package.json', './',
+    suffix: '.bak'
+
+  p = require './package.json'
+  list = (key for key, value of p.dependencies)
+
+  listRemove = ("cnpm r --save #{key}" for key in list)
+  listAdd = ("cnpm i --save #{key}" for key in list)
+
+  yield $$.shell listRemove
+  yield $$.shell listAdd
+
+  # remove backup
+  $$.remove './package.bak.json'

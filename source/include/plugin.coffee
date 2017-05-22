@@ -16,6 +16,6 @@ $p.yargs = require 'yargs'
 
 gulpif = $p.if
 
-uglifyjs = require 'uglify-js-harmony'
-uglifyMinifier = require 'gulp-uglify/minifier'
-uglify = $p.uglify = -> uglifyMinifier {}, uglifyjs
+uglifyjs = require 'uglify-es'
+composer = require 'gulp-uglify/composer'
+uglify = $p.uglify = composer uglifyjs, console

@@ -21,7 +21,6 @@ do ->
       when 'yml' then 'yaml'
       when 'md' then 'markdown'
       when 'styl' then 'stylus'
-      #when 'litcoffee' then 'coffee'
       else extname
 
     target or= path.dirname(source[0]).replace /\*/g, ''
@@ -56,7 +55,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
     .pipe stylus option
@@ -68,8 +66,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
-    .pipe ignore '**/*.min.css'
     .pipe using()
       .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.minify, cleanCss()
@@ -83,7 +79,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
     .pipe include()
@@ -100,8 +95,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
-    .pipe ignore '**/*.min.js'
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
     .pipe gulpif option.regenerator, regenerator()
@@ -116,7 +109,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
     .pipe using()
     .pipe pug option
     .pipe gulp.dest target
@@ -128,7 +120,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
     .pipe using()
     .pipe jade option
     .pipe gulp.dest target
@@ -140,7 +131,6 @@ do ->
 
     gulp.src source
     .pipe plumber()
-    .pipe ignore '**/include/**'
     .pipe using()
     .pipe markdown option
     .pipe gulpif option.minify, htmlmin collapseWhitespace: true

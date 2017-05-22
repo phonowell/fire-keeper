@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {
@@ -22,12 +22,12 @@
   "homepage": "https://github.com/phonowell/fire-keeper",
   "devDependencies": {},
   "dependencies": {
-    "bluebird": "^3.4.7",
+    "bluebird": "^3.5.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
-    "gulp-changed": "^2.0.0",
-    "gulp-clean-css": "^3.0.3",
-    "gulp-coffee": "^2.3.3",
+    "gulp-changed": "^3.1.0",
+    "gulp-clean-css": "^3.3.1",
+    "gulp-coffee": "^2.3.4",
     "gulp-coffeelint": "^0.6.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
@@ -35,7 +35,7 @@
     "gulp-include": "^2.3.1",
     "gulp-jade": "^1.1.0",
     "gulp-livereload": "^3.8.1",
-    "gulp-load-plugins": "^1.4.0",
+    "gulp-load-plugins": "^1.5.0",
     "gulp-markdown": "^1.2.0",
     "gulp-plumber": "^1.1.0",
     "gulp-pug": "^3.3.0",
@@ -44,7 +44,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-stylus": "^2.6.0",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify": "^3.0.0",
     "gulp-using": "^0.1.1",
     "gulp-util": "^3.0.8",
     "gulp-watch": "^4.3.11",
@@ -52,9 +52,8 @@
     "gulp-zip": "^4.0.0",
     "mkdirp": "^0.5.1",
     "node-jquery-extend": "^0.0.4",
-    "pump": "^1.0.2",
     "read-pkg": "^2.0.0",
-    "uglify-js-harmony": "^2.7.5",
-    "yargs": "^6.5.0"
+    "uglify-es": "^3.0.10",
+    "yargs": "^8.0.1"
   }
 }

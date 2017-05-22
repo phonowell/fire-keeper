@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, rename, replace, sourcemaps, string, stylus, uglify, uglifyMinifier, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, rename, replace, sourcemaps, string, stylus, uglify, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -48,13 +48,11 @@
 
   gulpif = $p["if"];
 
-  uglifyjs = require('uglify-js-harmony');
+  uglifyjs = require('uglify-es');
 
-  uglifyMinifier = require('gulp-uglify/minifier');
+  composer = require('gulp-uglify/composer');
 
-  uglify = $p.uglify = function() {
-    return uglifyMinifier({}, uglifyjs);
-  };
+  uglify = $p.uglify = composer(uglifyjs, console);
 
   $$.argv = $p.yargs.argv;
 
@@ -336,14 +334,14 @@
         if (option.compress == null) {
           option.compress = option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.css = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.css')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, cleanCss())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, cleanCss())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -353,7 +351,7 @@
         if (option.regenerator == null) {
           option.regenerator = false;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -363,7 +361,7 @@
         if (option.regenerator == null) {
           option.regenerator = false;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(ignore('**/*.min.js')).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -373,7 +371,7 @@
         if (option.pretty == null) {
           option.pretty = !option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -383,7 +381,7 @@
         if (option.pretty == null) {
           option.pretty = !option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(jade(option)).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(jade(option)).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -393,7 +391,7 @@
         if (option.sanitize == null) {
           option.sanitize = true;
         }
-        return gulp.src(source).pipe(plumber()).pipe(ignore('**/include/**')).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
           collapseWhitespace: true
         }))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
