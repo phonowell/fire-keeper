@@ -69,8 +69,8 @@ $$.task 'update', co ->
   p = require './package.json'
   list = (key for key, value of p.dependencies)
 
-  listRemove = ("cnpm r --save #{key}" for key in list)
-  listAdd = ("cnpm i --save #{key}" for key in list)
+  listRemove = ("npm r #{key}" for key in list)
+  listAdd = ("npm i #{key}" for key in list)
 
   yield $$.shell listRemove
   yield $$.shell listAdd

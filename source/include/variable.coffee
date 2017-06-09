@@ -16,7 +16,7 @@ $$.path =
   build: './build'
   secret: './secret'
 
-$$.path.jade = "#{$$.path.source}/**/*.jade"
+$$.path.pug = "#{$$.path.source}/**/*.pug"
 $$.path.stylus = "#{$$.path.source}/**/*.styl"
 $$.path.coffee = "#{$$.path.source}/**/*.coffee"
 $$.path.yaml = "#{$$.path.secret}/**/*.yml"

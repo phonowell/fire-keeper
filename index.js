@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, jade, livereload, markdown, path, plumber, pug, regenerator, rename, replace, sourcemaps, string, stylus, uglify, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _error, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylus, uglify, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -44,7 +44,7 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, rename = $p.rename, yaml = $p.yaml, pug = $p.pug, jade = $p.jade, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, regenerator = $p.regenerator, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, rename = $p.rename, yaml = $p.yaml, pug = $p.pug, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
@@ -76,7 +76,7 @@
     secret: './secret'
   };
 
-  $$.path.jade = $$.path.source + "/**/*.jade";
+  $$.path.pug = $$.path.source + "/**/*.pug";
 
   $$.path.stylus = $$.path.source + "/**/*.styl";
 
@@ -348,20 +348,14 @@
     };
     fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
-        if (option.regenerator == null) {
-          option.regenerator = false;
-        }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.js = function(source, target, option) {
       return new Promise(function(resolve) {
-        if (option.regenerator == null) {
-          option.regenerator = false;
-        }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.regenerator, regenerator())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -372,16 +366,6 @@
           option.pretty = !option.minify;
         }
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
-          return resolve();
-        });
-      });
-    };
-    fn.jade = function(source, target, option) {
-      return new Promise(function(resolve) {
-        if (option.pretty == null) {
-          option.pretty = !option.minify;
-        }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(jade(option)).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });

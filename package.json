@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {
@@ -26,20 +26,18 @@
     "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-changed": "^3.1.0",
-    "gulp-clean-css": "^3.3.1",
+    "gulp-clean-css": "^3.4.1",
     "gulp-coffee": "^2.3.4",
     "gulp-coffeelint": "^0.6.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-include": "^2.3.1",
-    "gulp-jade": "^1.1.0",
     "gulp-livereload": "^3.8.1",
     "gulp-load-plugins": "^1.5.0",
     "gulp-markdown": "^1.2.0",
     "gulp-plumber": "^1.1.0",
     "gulp-pug": "^3.3.0",
-    "gulp-regenerator": "^4.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^2.6.0",
@@ -51,9 +49,9 @@
     "gulp-yaml": "^1.0.1",
     "gulp-zip": "^4.0.0",
     "mkdirp": "^0.5.1",
-    "node-jquery-extend": "^0.0.4",
+    "node-jquery-extend": "0.0.4",
     "read-pkg": "^2.0.0",
-    "uglify-es": "^3.0.10",
+    "uglify-es": "^3.0.15",
     "yargs": "^8.0.1"
   }
 }

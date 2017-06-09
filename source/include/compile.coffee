@@ -75,15 +75,12 @@ do ->
 
   fn.coffee = (source, target, option) -> new Promise (resolve) ->
 
-    option.regenerator ?= false
-
     gulp.src source
     .pipe plumber()
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
     .pipe include()
     .pipe coffee option
-    .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
     .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
@@ -91,13 +88,10 @@ do ->
 
   fn.js = (source, target, option) -> new Promise (resolve) ->
 
-    option.regenerator ?= false
-
     gulp.src source
     .pipe plumber()
     .pipe using()
     .pipe gulpif option.map, sourcemaps.init()
-    .pipe gulpif option.regenerator, regenerator()
     .pipe gulpif option.minify, uglify()
     .pipe gulpif option.map, sourcemaps.write ''
     .pipe gulp.dest target
@@ -111,17 +105,6 @@ do ->
     .pipe plumber()
     .pipe using()
     .pipe pug option
-    .pipe gulp.dest target
-    .on 'end', -> resolve()
-
-  fn.jade = (source, target, option) -> new Promise (resolve) ->
-
-    option.pretty ?= !option.minify
-
-    gulp.src source
-    .pipe plumber()
-    .pipe using()
-    .pipe jade option
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
