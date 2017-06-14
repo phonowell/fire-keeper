@@ -1,15 +1,24 @@
-$$.copy = co (source, target = './', name) ->
+$$.copy = co (arg...) ->
 
-  source = _normalizePath source
-  target = path.normalize target
+  [source, target, name] = switch arg.length
+    when 2 then [arg[0], arg[1], null]
+    when 3 then arg
+    else throw _error 'length'
 
-  yield new Promise (resolve) ->
-    gulp.src source
-    .pipe plumber()
-    .pipe using()
-    .pipe gulpif name, rename name
-    .pipe gulp.dest target
-    .on 'end', -> resolve()
+  source = _formatSource source
+
+  for src in source
+
+    tar = target or path.dirname src
+
+    yield new Promise (resolve) ->
+
+      gulp.src src
+      .pipe plumber()
+      .pipe using()
+      .pipe gulpif !!name, rename name
+      .pipe gulp.dest tar
+      .on 'end', -> resolve()
 
   msg = "copied '#{source}' to '#{target}'"
   if name then msg += ", as '#{$.parseString name}'"

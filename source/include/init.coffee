@@ -18,6 +18,6 @@ module.exports = $$ = {}
 
 _error = (msg) ->
   new Error switch msg
-    when 'length' then 'invalid arguments length'
-    when 'type' then 'invalid arguments type'
+    when 'length' then 'invalid argument length'
+    when 'type' then 'invalid argument type'
     else msg

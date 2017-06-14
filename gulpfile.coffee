@@ -1,18 +1,16 @@
-#gulp = require 'gulp'
-#include = require 'gulp-include'
-#coffee = require 'gulp-coffee'
-#
-#gulp.task 'default', ->
-#
-#  gulp.src './source/index.coffee'
-#  .pipe include()
-#  .pipe coffee()
-#  .pipe gulp.dest './source/'
-#
-#  gulp.src './source/index.js'
-#  .pipe gulp.dest ''
-#
-#return
+compile = ->
+
+  gulp = require 'gulp'
+  include = require 'gulp-include'
+  coffee = require 'gulp-coffee'
+
+  gulp.src './source/index.coffee'
+  .pipe include()
+  .pipe coffee()
+  .pipe gulp.dest './source/'
+
+  gulp.src './source/index.js'
+  .pipe gulp.dest ''
 
 $$ = require './source/index'
 {$, _, Promise} = $$.library
@@ -52,13 +50,13 @@ $$.task 'test', co ->
 $$.task 'init', co ->
 
   yield $$.remove './.gitignore'
-  yield $$.copy './../kokoro/.gitignore'
+  yield $$.copy './../kokoro/.gitignore', './'
 
   yield $$.remove './.npmignore'
-  yield $$.copy './../kokoro/.npmignore'
+  yield $$.copy './../kokoro/.npmignore', './'
 
   yield $$.remove './coffeelint.yml'
-  yield $$.copy './../kokoro/coffeelint.yml'
+  yield $$.copy './../kokoro/coffeelint.yml', './'
 
 $$.task 'update', co ->
 
@@ -77,3 +75,5 @@ $$.task 'update', co ->
 
   # remove backup
   $$.remove './package.bak.json'
+
+$$.task 'compile', -> compile()

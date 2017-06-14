@@ -1,8 +1,12 @@
-_normalizePath = (src) ->
+###
 
-  src = switch $.type src
-    when 'string' then [src]
-    when 'array' then src
+  _formatSource(source)
+
+###
+
+_formatSource = (source) ->
+  source = switch $.type source
+    when 'array' then source
+    when 'string' then [source]
     else throw _error 'type'
-
-  (path.normalize _src for _src in src)
+  (path.normalize src for src in source)

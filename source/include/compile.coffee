@@ -12,7 +12,7 @@ do ->
       when 3 then args
       else throw _error 'length'
 
-    source = _normalizePath source
+    source = _formatSource source
 
     extname = path.extname(source[0]).replace /\./, ''
     if !extname.length then throw _error 'extname was null'
