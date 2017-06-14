@@ -146,7 +146,7 @@
   });
 
   $$.copy = co(function*() {
-    var arg, i, len, msg, name, ref, source, src, tar, target;
+    var arg, msg, name, ref, source, target;
     arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
     ref = (function() {
       switch (arg.length) {
@@ -159,15 +159,13 @@
       }
     })(), source = ref[0], target = ref[1], name = ref[2];
     source = _formatSource(source);
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
-      tar = target || path.dirname(src);
-      yield new Promise(function(resolve) {
-        return gulp.src(src).pipe(plumber()).pipe(using()).pipe(gulpif(!!name, rename(name))).pipe(gulp.dest(tar)).on('end', function() {
-          return resolve();
-        });
+    yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!name, rename(name))).pipe(gulp.dest(function(e) {
+        return target || e.base;
+      })).on('end', function() {
+        return resolve();
       });
-    }
+    });
     msg = "copied '" + source + "' to '" + target + "'";
     if (name) {
       msg += ", as '" + ($.parseString(name)) + "'";

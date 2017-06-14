@@ -7,18 +7,14 @@ $$.copy = co (arg...) ->
 
   source = _formatSource source
 
-  for src in source
+  yield new Promise (resolve) ->
 
-    tar = target or path.dirname src
-
-    yield new Promise (resolve) ->
-
-      gulp.src src
-      .pipe plumber()
-      .pipe using()
-      .pipe gulpif !!name, rename name
-      .pipe gulp.dest tar
-      .on 'end', -> resolve()
+    gulp.src source
+    .pipe plumber()
+    .pipe using()
+    .pipe gulpif !!name, rename name
+    .pipe gulp.dest (e) -> target or e.base
+    .on 'end', -> resolve()
 
   msg = "copied '#{source}' to '#{target}'"
   if name then msg += ", as '#{$.parseString name}'"
