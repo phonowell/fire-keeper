@@ -19,6 +19,7 @@ $$.task 'build', co ->
 
 ### Method
 ```
+$$.backup()
 $$.compile()
 $$.copy()
 $$.cp()
@@ -28,6 +29,7 @@ $$.ln()
 $$.lint()
 $$.makeDirectory()
 $$.mkdir()
+$$.recover()
 $$.reload()
 $$.remove()
 $$.rm()
