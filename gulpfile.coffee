@@ -60,11 +60,11 @@ $$.task 'init', co ->
 
 $$.task 'update', co ->
 
-  # backup
-  $$.copy './package.json', './',
-    suffix: '.bak'
+  pkg = './package.json'
+  $$.backup pkg
 
-  p = require './package.json'
+  p = require pkg
+  
   list = (key for key, value of p.dependencies)
 
   listRemove = ("npm r #{key}" for key in list)
@@ -73,7 +73,6 @@ $$.task 'update', co ->
   yield $$.shell listRemove
   yield $$.shell listAdd
 
-  # remove backup
-  $$.remove './package.bak.json'
+  $$.remove "#{pkg}.bak"
 
 $$.task 'compile', -> compile()
