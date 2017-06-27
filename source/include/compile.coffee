@@ -1,21 +1,23 @@
 do ->
 
-  fn = $$.compile = co (args...) ->
+  fn = co (args...) ->
 
     [source, target, option] = switch args.length
       when 1 then [args[0], null, {}]
       when 2
+
         switch $.type args[1]
           when 'string' then [args[0], args[1], {}]
           when 'object' then [args[0], null, args[1]]
           else throw _error 'type'
+
       when 3 then args
       else throw _error 'length'
 
     source = _formatSource source
 
     extname = path.extname(source[0]).replace /\./, ''
-    if !extname.length then throw _error 'extname was null'
+    if !extname.length then throw _error 'extname'
 
     method = switch extname
       when 'yml' then 'yaml'
@@ -119,3 +121,6 @@ do ->
     .pipe gulpif option.minify, htmlmin collapseWhitespace: true
     .pipe gulp.dest target
     .on 'end', -> resolve()
+
+  # return
+  $$.compile = fn

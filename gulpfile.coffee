@@ -18,20 +18,44 @@ co = Promise.coroutine
 
 # task
 
-$$.task 'work', -> $$.shell 'start gulp watch'
+###
 
-$$.task 'watch', ->
-  deb = _.debounce $$.task('build'), 1e3
-  $$.watch [
-    './source/index.coffee'
-    './source/include/*.coffee'
-  ], deb
+  build
+  compile
+  init
+  lint
+  prepare
+  set
+  test
+  update
+  watch
+  work
+
+###
 
 $$.task 'build', co ->
   yield $$.compile './source/index.coffee' , minify: false
   yield $$.copy './source/index.js', './'
 
-$$.task 'lint', co -> yield $$.lint 'coffee'
+$$.task 'compile', -> compile()
+
+$$.task 'init', co ->
+
+  yield $$.remove './.gitignore'
+  yield $$.copy './../kokoro/.gitignore', './'
+
+  yield $$.remove './.npmignore'
+  yield $$.copy './../kokoro/.npmignore', './'
+
+  yield $$.remove './coffeelint.yml'
+  yield $$.copy './../kokoro/coffeelint.yml', './'
+
+$$.task 'lint', co ->
+
+  yield $$.lint [
+    './gulpfile.coffee'
+    './source/**/*.coffee'
+  ]
 
 $$.task 'prepare', co -> yield $$.compile './coffeelint.yml'
 
@@ -47,24 +71,13 @@ $$.task 'test', co ->
   yield $$.shell 'node test'
   yield $$.remove './test.js'
 
-$$.task 'init', co ->
-
-  yield $$.remove './.gitignore'
-  yield $$.copy './../kokoro/.gitignore', './'
-
-  yield $$.remove './.npmignore'
-  yield $$.copy './../kokoro/.npmignore', './'
-
-  yield $$.remove './coffeelint.yml'
-  yield $$.copy './../kokoro/coffeelint.yml', './'
-
 $$.task 'update', co ->
 
   pkg = './package.json'
   $$.backup pkg
 
   p = require pkg
-  
+
   list = (key for key, value of p.dependencies)
 
   listRemove = ("npm r #{key}" for key in list)
@@ -75,4 +88,13 @@ $$.task 'update', co ->
 
   $$.remove "#{pkg}.bak"
 
-$$.task 'compile', -> compile()
+$$.task 'watch', ->
+
+  deb = _.debounce $$.task('build'), 1e3
+
+  $$.watch [
+    './source/index.coffee'
+    './source/include/*.coffee'
+  ], deb
+
+$$.task 'work', -> $$.shell 'start gulp watch'

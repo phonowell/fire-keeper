@@ -1,10 +1,25 @@
 do ->
-  fn = $$.lint = (key) -> fn[key]()
 
-  fn.coffee = -> new Promise (resolve) ->
-    gulp.src $$.path.coffee
-    .pipe plumber()
-    .pipe using()
-    .pipe coffeelint()
-    .pipe coffeelint.reporter()
-    .on 'end', -> resolve()
+  fn = (source) ->
+
+    source = _formatSource source
+
+    extname = path.extname(source[0]).replace /\./, ''
+    if !extname.length then throw _error 'extname'
+
+    method = extname
+
+    fn[method] source
+
+  fn.coffee = (source) ->
+
+    new Promise (resolve) ->
+      gulp.src source
+      .pipe plumber()
+      .pipe using()
+      .pipe coffeelint()
+      .pipe coffeelint.reporter()
+      .on 'end', -> resolve()
+
+  # return
+  $$.lint = fn

@@ -21,6 +21,8 @@
   _error = function(msg) {
     return new Error((function() {
       switch (msg) {
+        case 'extname':
+          return 'invalid extname';
         case 'length':
           return 'invalid argument length';
         case 'type':
@@ -273,7 +275,7 @@
 
   (function() {
     var fn;
-    fn = $$.compile = co(function*() {
+    fn = co(function*() {
       var a, args, compiler, extname, method, option, ref, source, target;
       args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
@@ -299,7 +301,7 @@
       source = _formatSource(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
-        throw _error('extname was null');
+        throw _error('extname');
       }
       method = (function() {
         switch (extname) {
@@ -385,7 +387,7 @@
         });
       });
     };
-    return fn.markdown = function(source, target, option) {
+    fn.markdown = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.sanitize == null) {
           option.sanitize = true;
@@ -397,20 +399,29 @@
         });
       });
     };
+    return $$.compile = fn;
   })();
 
   (function() {
     var fn;
-    fn = $$.lint = function(key) {
-      return fn[key]();
+    fn = function(source) {
+      var extname, method;
+      source = _formatSource(source);
+      extname = path.extname(source[0]).replace(/\./, '');
+      if (!extname.length) {
+        throw _error('extname');
+      }
+      method = extname;
+      return fn[method](source);
     };
-    return fn.coffee = function() {
+    fn.coffee = function(source) {
       return new Promise(function(resolve) {
-        return gulp.src($$.path.coffee).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
           return resolve();
         });
       });
     };
+    return $$.lint = fn;
   })();
 
   $$.zip = co(function*(source, target) {
