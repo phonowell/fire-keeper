@@ -74,19 +74,22 @@ $$.task 'test', co ->
 $$.task 'update', co ->
 
   pkg = './package.json'
-  $$.backup pkg
+  yield $$.backup pkg
 
   p = require pkg
+  list = []
 
-  list = (key for key, value of p.dependencies)
+  for key of p.devDependencies
+    list.push "cnpm r --save-dev #{key}"
+    list.push "cnpm i --save-dev #{key}"
 
-  listRemove = ("npm r #{key}" for key in list)
-  listAdd = ("npm i #{key}" for key in list)
+  for key of p.dependencies
+    list.push "cnpm r --save #{key}"
+    list.push "cnpm i --save #{key}"
 
-  yield $$.shell listRemove
-  yield $$.shell listAdd
+  yield $$.shell list
 
-  $$.remove "#{pkg}.bak"
+  yield $$.remove "#{pkg}.bak"
 
 $$.task 'watch', ->
 
