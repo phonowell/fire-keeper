@@ -1,47 +1,28 @@
 # http://www.coffeelint.org/
 
-# ->前不得有空格
 arrow_spacing:
-    level: 'warn'
-
-# {}内的空格长度
+  level: warn
 braces_spacing:
-    level: 'warn'
-    value: 0
-
-# 复杂度检测
+  level: warn
+  value: 0
 cyclomatic_complexity:
-    level: 'warn'
-
-# 单行最大字符数
+  level: warn
 max_line_length:
-    level: 'warn'
-    value: 255
-
-# 空函数
+  level: warn
+  value: 255
+missing_fat_arrows:
+  level: error
 no_empty_functions:
-    level: 'error'
-
-# 空参数
+  level: error
 no_empty_param_list:
-    level: 'error'
-
-# '#{...}'
+  level: error
 no_interpolation_in_single_quotes:
-    level: 'error'
-
-# no this
+  level: error
 no_this:
-    level: 'warn'
-
-# "string"
+  level: warn
 no_unnecessary_double_quotes:
-    level: 'warn'
-
-# 运算符前后接空格
+  level: warn
 space_operators:
-    level: 'warn'
-
-# 逗号后接空格
+  level: warn
 spacing_after_comma:
-    level: 'warn'
+  level: warn

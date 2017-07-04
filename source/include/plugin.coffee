@@ -11,7 +11,7 @@ $p.yargs = require 'yargs'
   sourcemaps
   htmlmin, cleanCss
   zip
-  coffeelint, livereload
+  coffeelint, stylint, livereload
 } = $p
 
 gulpif = $p.if

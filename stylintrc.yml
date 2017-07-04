@@ -1,0 +1,48 @@
+# https://github.com/SimenB/stylint
+# https://github.com/SimenB/stylint/blob/master/src/data/ordering.json#L2
+
+blocks: false
+brackets: false
+colons: never
+colors: false
+commaSpace: always
+commentSpace: always
+cssLiteral: never
+depthLimit: 4
+duplicates: true
+efficient: always
+exclude: []
+extendPref: false
+globalDupe: false
+groupOutputByFile: true
+indentPref: 2
+leadingZero: always
+maxErrors: false
+maxWarnings: false
+mixed: true
+namingConvention: lowercase-dash
+namingConventionStrict: true
+none: always
+noImportant: true
+parenSpace: always
+placeholders: always
+prefixVarsWithDollar: always
+quotePref: single
+reporterOptions:
+  columns:
+    - lineData
+    - severity
+    - description
+    - rule
+  columnSplitter: '  '
+  showHeaders: false
+  truncate: true
+semicolons: never
+#sortOrder: grouped
+sortOrder: false
+stackedProperties: never
+trailingWhitespace: never
+universal: never
+valid: true
+zeroUnits: never
+zIndexNormalize: false

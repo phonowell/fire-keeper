@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylus, uglify, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -46,7 +46,7 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, rename = $p.rename, yaml = $p.yaml, pug = $p.pug, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, livereload = $p.livereload;
+  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, rename = $p.rename, yaml = $p.yaml, pug = $p.pug, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, stylint = $p.stylint, livereload = $p.livereload;
 
   gulpif = $p["if"];
 
@@ -113,13 +113,13 @@
   };
 
   $$.task = function() {
-    var args;
-    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    switch (args.length) {
+    var arg;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    switch (arg.length) {
       case 1:
-        return gulp.tasks[args[0]].fn;
+        return gulp.tasks[arg[0]].fn;
       case 2:
-        return gulp.task.apply(gulp, args);
+        return gulp.task.apply(gulp, arg);
       default:
         throw _error('length');
     }
@@ -411,12 +411,28 @@
       if (!extname.length) {
         throw _error('extname');
       }
-      method = extname;
+      method = (function() {
+        switch (extname) {
+          case 'coffee':
+            return extname;
+          case 'styl':
+            return 'stylus';
+          default:
+            throw _error('extname');
+        }
+      })();
       return fn[method](source);
     };
     fn.coffee = function(source) {
       return new Promise(function(resolve) {
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.stylus = function(source) {
+      return new Promise(function(resolve) {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter()).on('end', function() {
           return resolve();
         });
       });

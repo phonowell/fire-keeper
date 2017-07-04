@@ -1,9 +1,9 @@
 # task
 
-$$.task = (args...) ->
-  switch args.length
-    when 1 then gulp.tasks[args[0]].fn
-    when 2 then gulp.task args...
+$$.task = (arg...) ->
+  switch arg.length
+    when 1 then gulp.tasks[arg[0]].fn
+    when 2 then gulp.task arg...
     else throw _error 'length'
 
 # added fire keeper task

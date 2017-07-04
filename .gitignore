@@ -74,4 +74,5 @@ dist
 .gitattributes
 .gitignore
 .npmignore
+.stylintrc
 gurumin

@@ -22,7 +22,6 @@ co = Promise.coroutine
 
   build
   compile
-  init
   lint
   prepare
   set
@@ -34,30 +33,46 @@ co = Promise.coroutine
 ###
 
 $$.task 'build', co ->
-  yield $$.compile './source/index.coffee' , minify: false
+  yield $$.compile './source/index.coffee', minify: false
   yield $$.copy './source/index.js', './'
 
 $$.task 'compile', -> compile()
 
-$$.task 'init', co ->
-
-  yield $$.remove './.gitignore'
-  yield $$.copy './../kokoro/.gitignore', './'
-
-  yield $$.remove './.npmignore'
-  yield $$.copy './../kokoro/.npmignore', './'
-
-  yield $$.remove './coffeelint.yml'
-  yield $$.copy './../kokoro/coffeelint.yml', './'
-
 $$.task 'lint', co ->
+
+  yield $$.task('prepare')()
 
   yield $$.lint [
     './gulpfile.coffee'
     './source/**/*.coffee'
   ]
 
-$$.task 'prepare', co -> yield $$.compile './coffeelint.yml'
+$$.task 'prepare', co ->
+
+  # copy
+
+  LIST = [
+    '.gitignore'
+    '.npmignore'
+    'coffeelint.yml'
+    'stylintrc.yml'
+  ]
+
+  for source in LIST
+
+    yield $$.remove "./#{source}"
+    yield $$.copy "./../kokoro/#{source}", './'
+    yield $$.shell "git add -f ./#{source}"
+
+  # compile
+
+  yield $$.compile './coffeelint.yml'
+
+  yield $$.compile './stylintrc.yml'
+  yield $$.copy './stylintrc.json', './',
+    prefix: '.'
+    extname: ''
+  yield $$.remove './stylintrc.json'
 
 $$.task 'set', co ->
 
