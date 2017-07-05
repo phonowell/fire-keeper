@@ -154,26 +154,29 @@
   });
 
   $$.task('gurumin', co(function*() {
-    yield $$.remove('./source/gurumin');
-    return (yield $$.link('./../gurumin/source', './source/gurumin'));
+    var base;
+    base = process.cwd();
+    yield $$.remove(base + "/source/gurumin");
+    return (yield $$.link(base + "/../gurumin/source", base + "/source/gurumin"));
   }));
 
   $$.task('kokoro', co(function*() {
-    var LIST, i, len, source;
+    var LIST, base, i, len, source;
+    base = process.cwd();
     LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
-      yield $$.remove("./" + source);
-      yield $$.copy("./../kokoro/" + source, './');
-      yield $$.shell("git add -f ./" + source);
+      yield $$.remove(base + "/" + source);
+      yield $$.copy(base + "/../kokoro/" + source, './');
+      yield $$.shell("git add -f " + base + "/" + source);
     }
-    yield $$.compile('./coffeelint.yml');
-    yield $$.compile('./stylintrc.yml');
-    yield $$.copy('./stylintrc.json', './', {
+    yield $$.compile(base + "/coffeelint.yml");
+    yield $$.compile(base + "/stylintrc.yml");
+    yield $$.copy(base + "/stylintrc.json", base + "/", {
       prefix: '.',
       extname: ''
     });
-    return (yield $$.remove('./stylintrc.json'));
+    return (yield $$.remove(base + "/stylintrc.json"));
   }));
 
   $$.task('noop', function() {
@@ -181,8 +184,9 @@
   });
 
   $$.task('update', co(function*() {
-    var key, list, p, pkg;
-    pkg = './package.json';
+    var base, key, list, p, pkg;
+    base = process.cwd();
+    pkg = base + "/package.json";
     yield $$.backup(pkg);
     p = require(pkg);
     list = [];

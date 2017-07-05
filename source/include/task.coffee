@@ -6,7 +6,7 @@ $$.task = (arg...) ->
     when 2 then gulp.task arg...
     else throw _error 'length'
 
-# added fire keeper task
+# added default tasks
 
 ###
 
@@ -27,12 +27,16 @@ $$.task 'default', ->
 
 $$.task 'gurumin', co ->
 
-  yield $$.remove './source/gurumin'
-  yield $$.link './../gurumin/source', './source/gurumin'
+  base = process.cwd()
+
+  yield $$.remove "#{base}/source/gurumin"
+  yield $$.link "#{base}/../gurumin/source", "#{base}/source/gurumin"
 
 $$.task 'kokoro', co ->
 
-# copy
+  base = process.cwd()
+
+  # copy
 
   LIST = [
     '.gitignore'
@@ -43,25 +47,27 @@ $$.task 'kokoro', co ->
 
   for source in LIST
 
-    yield $$.remove "./#{source}"
-    yield $$.copy "./../kokoro/#{source}", './'
-    yield $$.shell "git add -f ./#{source}"
+    yield $$.remove "#{base}/#{source}"
+    yield $$.copy "#{base}/../kokoro/#{source}", './'
+    yield $$.shell "git add -f #{base}/#{source}"
 
   # compile
 
-  yield $$.compile './coffeelint.yml'
+  yield $$.compile "#{base}/coffeelint.yml"
 
-  yield $$.compile './stylintrc.yml'
-  yield $$.copy './stylintrc.json', './',
+  yield $$.compile "#{base}/stylintrc.yml"
+  yield $$.copy "#{base}/stylintrc.json", "#{base}/",
     prefix: '.'
     extname: ''
-  yield $$.remove './stylintrc.json'
+  yield $$.remove "#{base}/stylintrc.json"
 
 $$.task 'noop', -> null
 
 $$.task 'update', co ->
 
-  pkg = './package.json'
+  base = process.cwd()
+
+  pkg = "#{base}/package.json"
   yield $$.backup pkg
 
   p = require pkg

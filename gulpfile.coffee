@@ -24,7 +24,6 @@ co = Promise.coroutine
   compile
   lint
   set
-  update
   watch
   work
 
@@ -51,26 +50,6 @@ $$.task 'set', co ->
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
-
-$$.task 'update', co ->
-
-  pkg = './package.json'
-  yield $$.backup pkg
-
-  p = require pkg
-  list = []
-
-  for key of p.devDependencies
-    list.push "cnpm r --save-dev #{key}"
-    list.push "cnpm i --save-dev #{key}"
-
-  for key of p.dependencies
-    list.push "cnpm r --save #{key}"
-    list.push "cnpm i --save #{key}"
-
-  yield $$.shell list
-
-  yield $$.remove "#{pkg}.bak"
 
 $$.task 'watch', ->
 
