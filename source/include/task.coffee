@@ -29,12 +29,22 @@ $$.task 'gurumin', co ->
 
   base = process.cwd()
 
+  if !fs.existsSync "#{base}/../gurumin"
+    yield $$.shell "git clone
+    https://github.com/phonowell/gurumin.git
+    #{base}/../gurumin"
+
   yield $$.remove "#{base}/source/gurumin"
   yield $$.link "#{base}/../gurumin/source", "#{base}/source/gurumin"
 
 $$.task 'kokoro', co ->
 
   base = process.cwd()
+
+  if !fs.existsSync "#{base}/../kokoro"
+    yield $$.shell "git clone
+    https://github.com/phonowell/kokoro.git
+    #{base}/../kokoro"
 
   # copy
 
@@ -43,6 +53,7 @@ $$.task 'kokoro', co ->
     '.npmignore'
     'coffeelint.yml'
     'stylintrc.yml'
+    'lisence.md'
   ]
 
   for source in LIST

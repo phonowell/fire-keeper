@@ -156,6 +156,9 @@
   $$.task('gurumin', co(function*() {
     var base;
     base = process.cwd();
+    if (!fs.existsSync(base + "/../gurumin")) {
+      yield $$.shell("git clone https://github.com/phonowell/gurumin.git " + base + "/../gurumin");
+    }
     yield $$.remove(base + "/source/gurumin");
     return (yield $$.link(base + "/../gurumin/source", base + "/source/gurumin"));
   }));
@@ -163,7 +166,10 @@
   $$.task('kokoro', co(function*() {
     var LIST, base, i, len, source;
     base = process.cwd();
-    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml'];
+    if (!fs.existsSync(base + "/../kokoro")) {
+      yield $$.shell("git clone https://github.com/phonowell/kokoro.git " + base + "/../kokoro");
+    }
+    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'lisence.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
       yield $$.remove(base + "/" + source);
