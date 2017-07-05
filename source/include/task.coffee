@@ -27,24 +27,20 @@ $$.task 'default', ->
 
 $$.task 'gurumin', co ->
 
-  base = process.cwd()
-
-  if !fs.existsSync "#{base}/../gurumin"
+  if !fs.existsSync "#{$$.base}/../gurumin"
     yield $$.shell "git clone
     https://github.com/phonowell/gurumin.git
-    #{base}/../gurumin"
+    #{$$.base}/../gurumin"
 
-  yield $$.remove "#{base}/source/gurumin"
-  yield $$.link "#{base}/../gurumin/source", "#{base}/source/gurumin"
+  yield $$.remove "#{$$.base}/source/gurumin"
+  yield $$.link "./../gurumin/source", "#{$$.base}/source/gurumin"
 
 $$.task 'kokoro', co ->
 
-  base = process.cwd()
-
-  if !fs.existsSync "#{base}/../kokoro"
+  if !fs.existsSync "#{$$.base}/../kokoro"
     yield $$.shell "git clone
     https://github.com/phonowell/kokoro.git
-    #{base}/../kokoro"
+    #{$$.base}/../kokoro"
 
   # copy
 
@@ -58,27 +54,25 @@ $$.task 'kokoro', co ->
 
   for source in LIST
 
-    yield $$.remove "#{base}/#{source}"
-    yield $$.copy "#{base}/../kokoro/#{source}", './'
-    yield $$.shell "git add -f #{base}/#{source}"
+    yield $$.remove "#{$$.base}/#{source}"
+    yield $$.copy "#{$$.base}/../kokoro/#{source}", './'
+    yield $$.shell "git add -f #{$$.base}/#{source}"
 
   # compile
 
-  yield $$.compile "#{base}/coffeelint.yml"
+  yield $$.compile "#{$$.base}/coffeelint.yml"
 
-  yield $$.compile "#{base}/stylintrc.yml"
-  yield $$.copy "#{base}/stylintrc.json", "#{base}/",
+  yield $$.compile "#{$$.base}/stylintrc.yml"
+  yield $$.copy "#{$$.base}/stylintrc.json", "#{$$.base}/",
     prefix: '.'
     extname: ''
-  yield $$.remove "#{base}/stylintrc.json"
+  yield $$.remove "#{$$.base}/stylintrc.json"
 
 $$.task 'noop', -> null
 
 $$.task 'update', co ->
 
-  base = process.cwd()
-
-  pkg = "#{base}/package.json"
+  pkg = "#{$$.base}/package.json"
   yield $$.backup pkg
 
   p = require pkg

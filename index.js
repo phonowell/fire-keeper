@@ -154,35 +154,32 @@
   });
 
   $$.task('gurumin', co(function*() {
-    var base;
-    base = process.cwd();
-    if (!fs.existsSync(base + "/../gurumin")) {
-      yield $$.shell("git clone https://github.com/phonowell/gurumin.git " + base + "/../gurumin");
+    if (!fs.existsSync($$.base + "/../gurumin")) {
+      yield $$.shell("git clone https://github.com/phonowell/gurumin.git " + $$.base + "/../gurumin");
     }
-    yield $$.remove(base + "/source/gurumin");
-    return (yield $$.link(base + "/../gurumin/source", base + "/source/gurumin"));
+    yield $$.remove($$.base + "/source/gurumin");
+    return (yield $$.link("./../gurumin/source", $$.base + "/source/gurumin"));
   }));
 
   $$.task('kokoro', co(function*() {
-    var LIST, base, i, len, source;
-    base = process.cwd();
-    if (!fs.existsSync(base + "/../kokoro")) {
-      yield $$.shell("git clone https://github.com/phonowell/kokoro.git " + base + "/../kokoro");
+    var LIST, i, len, source;
+    if (!fs.existsSync($$.base + "/../kokoro")) {
+      yield $$.shell("git clone https://github.com/phonowell/kokoro.git " + $$.base + "/../kokoro");
     }
     LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
-      yield $$.remove(base + "/" + source);
-      yield $$.copy(base + "/../kokoro/" + source, './');
-      yield $$.shell("git add -f " + base + "/" + source);
+      yield $$.remove($$.base + "/" + source);
+      yield $$.copy($$.base + "/../kokoro/" + source, './');
+      yield $$.shell("git add -f " + $$.base + "/" + source);
     }
-    yield $$.compile(base + "/coffeelint.yml");
-    yield $$.compile(base + "/stylintrc.yml");
-    yield $$.copy(base + "/stylintrc.json", base + "/", {
+    yield $$.compile($$.base + "/coffeelint.yml");
+    yield $$.compile($$.base + "/stylintrc.yml");
+    yield $$.copy($$.base + "/stylintrc.json", $$.base + "/", {
       prefix: '.',
       extname: ''
     });
-    return (yield $$.remove(base + "/stylintrc.json"));
+    return (yield $$.remove($$.base + "/stylintrc.json"));
   }));
 
   $$.task('noop', function() {
@@ -190,9 +187,8 @@
   });
 
   $$.task('update', co(function*() {
-    var base, key, list, p, pkg;
-    base = process.cwd();
-    pkg = base + "/package.json";
+    var key, list, p, pkg;
+    pkg = $$.base + "/package.json";
     yield $$.backup(pkg);
     p = require(pkg);
     list = [];
