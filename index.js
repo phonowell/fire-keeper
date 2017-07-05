@@ -169,7 +169,7 @@
     if (!fs.existsSync(base + "/../kokoro")) {
       yield $$.shell("git clone https://github.com/phonowell/kokoro.git " + base + "/../kokoro");
     }
-    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'lisence.md'];
+    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
       yield $$.remove(base + "/" + source);

@@ -53,7 +53,7 @@ $$.task 'kokoro', co ->
     '.npmignore'
     'coffeelint.yml'
     'stylintrc.yml'
-    'lisence.md'
+    'license.md'
   ]
 
   for source in LIST
