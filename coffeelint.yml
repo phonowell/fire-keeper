@@ -10,8 +10,6 @@ cyclomatic_complexity:
 max_line_length:
   level: warn
   value: 255
-missing_fat_arrows:
-  level: error
 no_empty_functions:
   level: error
 no_empty_param_list:

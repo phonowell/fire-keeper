@@ -23,9 +23,7 @@ co = Promise.coroutine
   build
   compile
   lint
-  prepare
   set
-  test
   update
   watch
   work
@@ -40,39 +38,12 @@ $$.task 'compile', -> compile()
 
 $$.task 'lint', co ->
 
-  yield $$.task('prepare')()
+  yield $$.task('kokoro')()
 
   yield $$.lint [
     './gulpfile.coffee'
     './source/**/*.coffee'
   ]
-
-$$.task 'prepare', co ->
-
-  # copy
-
-  LIST = [
-    '.gitignore'
-    '.npmignore'
-    'coffeelint.yml'
-    'stylintrc.yml'
-  ]
-
-  for source in LIST
-
-    yield $$.remove "./#{source}"
-    yield $$.copy "./../kokoro/#{source}", './'
-    yield $$.shell "git add -f ./#{source}"
-
-  # compile
-
-  yield $$.compile './coffeelint.yml'
-
-  yield $$.compile './stylintrc.yml'
-  yield $$.copy './stylintrc.json', './',
-    prefix: '.'
-    extname: ''
-  yield $$.remove './stylintrc.json'
 
 $$.task 'set', co ->
 
@@ -80,11 +51,6 @@ $$.task 'set', co ->
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
-
-$$.task 'test', co ->
-  yield $$.compile './test.coffee'
-  yield $$.shell 'node test'
-  yield $$.remove './test.js'
 
 $$.task 'update', co ->
 

@@ -125,6 +125,16 @@
     }
   };
 
+
+  /*
+  
+    default
+    gurumin
+    kokoro
+    noop
+    update
+   */
+
   $$.task('default', function() {
     var a, key, list;
     list = [];
@@ -143,9 +153,50 @@
     })()).join(', '));
   });
 
+  $$.task('gurumin', co(function*() {
+    yield $$.remove('./source/gurumin');
+    return (yield $$.link('./../gurumin/source', './source/gurumin'));
+  }));
+
+  $$.task('kokoro', co(function*() {
+    var LIST, i, len, source;
+    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml'];
+    for (i = 0, len = LIST.length; i < len; i++) {
+      source = LIST[i];
+      yield $$.remove("./" + source);
+      yield $$.copy("./../kokoro/" + source, './');
+      yield $$.shell("git add -f ./" + source);
+    }
+    yield $$.compile('./coffeelint.yml');
+    yield $$.compile('./stylintrc.yml');
+    yield $$.copy('./stylintrc.json', './', {
+      prefix: '.',
+      extname: ''
+    });
+    return (yield $$.remove('./stylintrc.json'));
+  }));
+
   $$.task('noop', function() {
     return null;
   });
+
+  $$.task('update', co(function*() {
+    var key, list, p, pkg;
+    pkg = './package.json';
+    yield $$.backup(pkg);
+    p = require(pkg);
+    list = [];
+    for (key in p.devDependencies) {
+      list.push("cnpm r --save-dev " + key);
+      list.push("cnpm i --save-dev " + key);
+    }
+    for (key in p.dependencies) {
+      list.push("cnpm r --save " + key);
+      list.push("cnpm i --save " + key);
+    }
+    yield $$.shell(list);
+    return (yield $$.remove(pkg + ".bak"));
+  }));
 
   $$.copy = co(function*() {
     var arg, msg, name, ref, source, target;
