@@ -61,7 +61,6 @@ $$.reload = (source) ->
   $$.watch source
   .pipe livereload()
 
-$$.shell = (cmd) -> new Promise (resolve) ->
-  $.shell cmd, -> resolve()
+$$.shell = $.shell
 
 $$.watch = $p.watch

@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -89,8 +89,16 @@
 
   /*
   
+    _cloneGitHub(name)
     _formatSource(source)
    */
+
+  _cloneGitHub = co(function*(name) {
+    if (fs.existsSync($$.base + "/../" + name)) {
+      return;
+    }
+    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.base + "/../" + name));
+  });
 
   _formatSource = function(source) {
     var i, len, results, src;
@@ -154,18 +162,14 @@
   });
 
   $$.task('gurumin', co(function*() {
-    if (!fs.existsSync($$.base + "/../gurumin")) {
-      yield $$.shell("git clone https://github.com/phonowell/gurumin.git " + $$.base + "/../gurumin");
-    }
+    yield _cloneGitHub('gurumin');
     yield $$.remove($$.base + "/source/gurumin");
     return (yield $$.link("./../gurumin/source", $$.base + "/source/gurumin"));
   }));
 
   $$.task('kokoro', co(function*() {
     var LIST, i, len, source;
-    if (!fs.existsSync($$.base + "/../kokoro")) {
-      yield $$.shell("git clone https://github.com/phonowell/kokoro.git " + $$.base + "/../kokoro");
-    }
+    yield _cloneGitHub('kokoro');
     LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
@@ -285,7 +289,7 @@
 
   $$.mkdir = $$.makeDirectory;
 
-  $$["delete"] = co(function*(source) {
+  $$.remove = co(function*(source) {
     var a;
     source = _formatSource(source);
     yield del(source, {
@@ -301,8 +305,6 @@
       return results;
     })()).join(', ')));
   });
-
-  $$.remove = $$["delete"];
 
   $$.rm = $$["delete"];
 
@@ -586,13 +588,7 @@
     return $$.watch(source).pipe(livereload());
   };
 
-  $$.shell = function(cmd) {
-    return new Promise(function(resolve) {
-      return $.shell(cmd, function() {
-        return resolve();
-      });
-    });
-  };
+  $$.shell = $.shell;
 
   $$.watch = $p.watch;
 

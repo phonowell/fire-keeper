@@ -27,20 +27,14 @@ $$.task 'default', ->
 
 $$.task 'gurumin', co ->
 
-  if !fs.existsSync "#{$$.base}/../gurumin"
-    yield $$.shell "git clone
-    https://github.com/phonowell/gurumin.git
-    #{$$.base}/../gurumin"
+  yield _cloneGitHub 'gurumin'
 
   yield $$.remove "#{$$.base}/source/gurumin"
   yield $$.link "./../gurumin/source", "#{$$.base}/source/gurumin"
 
 $$.task 'kokoro', co ->
 
-  if !fs.existsSync "#{$$.base}/../kokoro"
-    yield $$.shell "git clone
-    https://github.com/phonowell/kokoro.git
-    #{$$.base}/../kokoro"
+  yield _cloneGitHub 'kokoro'
 
   # copy
 

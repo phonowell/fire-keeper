@@ -1,4 +1,4 @@
-$$.delete = co (source) ->
+$$.remove = co (source) ->
 
   source = _formatSource source
 
@@ -6,5 +6,4 @@ $$.delete = co (source) ->
 
   $.info 'delete', "deleted #{("'#{a}'" for a in source).join ', '}"
 
-$$.remove = $$.delete
 $$.rm = $$.delete
