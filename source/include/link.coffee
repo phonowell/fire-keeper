@@ -12,8 +12,7 @@ $$.link = co (origin, target) ->
   isDir = fs.statSync(origin).isDirectory()
   type = if isDir then 'dir' else 'file'
 
-  if $$.os in ['windows', 'linux']
-    origin = path.normalize "#{$$.base}#{path.sep}#{origin}"
+  origin = path.normalize "#{$$.base}#{path.sep}#{origin}"
 
   yield new Promise (resolve) ->
     fs.symlink origin, target, type, (err) ->
