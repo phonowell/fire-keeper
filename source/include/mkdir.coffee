@@ -1,4 +1,4 @@
-$$.makeDirectory = co (src) ->
+$$.mkdir = co (src) ->
 
   if !src then throw _error 'length'
 
@@ -11,5 +11,3 @@ $$.makeDirectory = co (src) ->
       resolve()
 
   $.info 'create', "created '#{src}'"
-
-$$.mkdir = $$.makeDirectory

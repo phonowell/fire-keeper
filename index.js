@@ -269,7 +269,7 @@
 
   $$.ln = $$.link;
 
-  $$.makeDirectory = co(function*(src) {
+  $$.mkdir = co(function*(src) {
     var mkdirp;
     if (!src) {
       throw _error('length');
@@ -286,8 +286,6 @@
     });
     return $.info('create', "created '" + src + "'");
   });
-
-  $$.mkdir = $$.makeDirectory;
 
   $$.remove = co(function*(source) {
     var a;
