@@ -6,4 +6,4 @@ $$.remove = co (source) ->
 
   $.info 'delete', "deleted #{("'#{a}'" for a in source).join ', '}"
 
-$$.rm = $$.delete
+$$.rm = $$.remove

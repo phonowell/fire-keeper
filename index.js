@@ -302,7 +302,7 @@
     })()).join(', ')));
   });
 
-  $$.rm = $$["delete"];
+  $$.rm = $$.remove;
 
   $$.replace = co(function*() {
     var args, pathSource, pathTarget, ref, replacement, target;
@@ -360,6 +360,7 @@
       }
       method = (function() {
         switch (extname) {
+          case 'yaml':
           case 'yml':
             return 'yaml';
           case 'md':

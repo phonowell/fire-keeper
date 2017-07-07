@@ -20,7 +20,7 @@ do ->
     if !extname.length then throw _error 'extname'
 
     method = switch extname
-      when 'yml' then 'yaml'
+      when 'yaml', 'yml' then 'yaml'
       when 'md' then 'markdown'
       when 'styl' then 'stylus'
       else extname
