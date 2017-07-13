@@ -1,17 +1,17 @@
 do ->
 
-  fn = co (args...) ->
+  fn = co (arg...) ->
 
-    [source, target, option] = switch args.length
-      when 1 then [args[0], null, {}]
+    [source, target, option] = switch arg.length
+      when 1 then [arg[0], null, {}]
       when 2
 
-        switch $.type args[1]
-          when 'string' then [args[0], args[1], {}]
-          when 'object' then [args[0], null, args[1]]
+        switch $.type arg[1]
+          when 'string' then [arg[0], arg[1], {}]
+          when 'object' then [arg[0], null, arg[1]]
           else throw _error 'type'
 
-      when 3 then args
+      when 3 then arg
       else throw _error 'length'
 
     source = _formatSource source

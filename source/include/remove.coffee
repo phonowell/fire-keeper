@@ -4,6 +4,6 @@ $$.remove = co (source) ->
 
   yield del source, force: true
 
-  $.info 'delete', "deleted #{("'#{a}'" for a in source).join ', '}"
+  $.info 'remove', "removed #{("'#{a}'" for a in source).join ', '}"
 
 $$.rm = $$.remove

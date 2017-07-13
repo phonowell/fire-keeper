@@ -1,8 +1,8 @@
-$$.replace = co (args...) ->
+$$.replace = co (arg...) ->
 
-  [pathSource, pathTarget, target, replacement] = switch args.length
-    when 3 then [args[0], null, args[1], args[2]]
-    when 4 then args
+  [pathSource, pathTarget, target, replacement] = switch arg.length
+    when 3 then [arg[0], null, arg[1], arg[2]]
+    when 4 then arg
     else throw _error 'length'
 
   pathSource = path.normalize pathSource

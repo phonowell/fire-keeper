@@ -291,7 +291,7 @@
     yield del(source, {
       force: true
     });
-    return $.info('delete', "deleted " + (((function() {
+    return $.info('remove', "removed " + (((function() {
       var i, len, results;
       results = [];
       for (i = 0, len = source.length; i < len; i++) {
@@ -305,14 +305,14 @@
   $$.rm = $$.remove;
 
   $$.replace = co(function*() {
-    var args, pathSource, pathTarget, ref, replacement, target;
-    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    var arg, pathSource, pathTarget, ref, replacement, target;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
     ref = (function() {
-      switch (args.length) {
+      switch (arg.length) {
         case 3:
-          return [args[0], null, args[1], args[2]];
+          return [arg[0], null, arg[1], arg[2]];
         case 4:
-          return args;
+          return arg;
         default:
           throw _error('length');
       }
@@ -331,24 +331,24 @@
   (function() {
     var fn;
     fn = co(function*() {
-      var a, args, compiler, extname, method, option, ref, source, target;
-      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      var a, arg, compiler, extname, method, option, ref, source, target;
+      arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
-        switch (args.length) {
+        switch (arg.length) {
           case 1:
-            return [args[0], null, {}];
+            return [arg[0], null, {}];
           case 2:
-            switch ($.type(args[1])) {
+            switch ($.type(arg[1])) {
               case 'string':
-                return [args[0], args[1], {}];
+                return [arg[0], arg[1], {}];
               case 'object':
-                return [args[0], null, args[1]];
+                return [arg[0], null, arg[1]];
               default:
                 throw _error('type');
             }
             break;
           case 3:
-            return args;
+            return arg;
           default:
             throw _error('length');
         }
