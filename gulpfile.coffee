@@ -63,10 +63,3 @@ $$.task 'watch', ->
 $$.task 'work', -> $$.shell 'start gulp watch'
 
 $$.task 'z', co ->
-
-  yield $$.lint [
-    './gulpfile.coffee'
-    './z.coffee'
-  ]
-
-  $.i 123

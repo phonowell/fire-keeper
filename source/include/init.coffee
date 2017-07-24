@@ -13,12 +13,3 @@ gulp = require 'gulp'
 # return
 
 module.exports = $$ = {}
-
-# error
-
-_error = (msg) ->
-  new Error switch msg
-    when 'extname' then 'invalid extname'
-    when 'length' then 'invalid argument length'
-    when 'type' then 'invalid argument type'
-    else msg

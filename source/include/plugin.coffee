@@ -4,14 +4,26 @@ del = $p.del = require 'del'
 $p.yargs = require 'yargs'
 
 {
-  using
-  plumber, ignore, changed
-  include, replace, rename
-  yaml, pug, markdown, coffee, stylus
+  changed
+  cleanCss
+  coffee
+  coffeelint
+  download
+  htmlmin
+  ignore
+  include
+  livereload
+  markdown
+  plumber
+  pug
+  rename
+  replace
+  stylint
+  stylus
   sourcemaps
-  htmlmin, cleanCss
+  using
+  yaml
   zip
-  coffeelint, stylint, livereload
 } = $p
 
 gulpif = $p.if

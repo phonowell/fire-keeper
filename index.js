@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -18,21 +18,6 @@
 
   module.exports = $$ = {};
 
-  _error = function(msg) {
-    return new Error((function() {
-      switch (msg) {
-        case 'extname':
-          return 'invalid extname';
-        case 'length':
-          return 'invalid argument length';
-        case 'type':
-          return 'invalid argument type';
-        default:
-          return msg;
-      }
-    })());
-  };
-
   $$.library = {
     $: $,
     _: _,
@@ -46,7 +31,7 @@
 
   $p.yargs = require('yargs');
 
-  using = $p.using, plumber = $p.plumber, ignore = $p.ignore, changed = $p.changed, include = $p.include, replace = $p.replace, rename = $p.rename, yaml = $p.yaml, pug = $p.pug, markdown = $p.markdown, coffee = $p.coffee, stylus = $p.stylus, sourcemaps = $p.sourcemaps, htmlmin = $p.htmlmin, cleanCss = $p.cleanCss, zip = $p.zip, coffeelint = $p.coffeelint, stylint = $p.stylint, livereload = $p.livereload;
+  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, download = $p.download, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, using = $p.using, yaml = $p.yaml, zip = $p.zip;
 
   gulpif = $p["if"];
 
@@ -90,6 +75,7 @@
   /*
   
     _cloneGitHub(name)
+    _error(msg)
     _formatSource(source)
    */
 
@@ -99,6 +85,25 @@
     }
     return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.base + "/../" + name));
   });
+
+  _error = function(msg) {
+    return new Error((function() {
+      switch (msg) {
+        case 'extname':
+          return 'invalid extname';
+        case 'length':
+          return 'invalid argument length';
+        case 'source':
+          return 'invalid source';
+        case 'target':
+          return 'invalid target';
+        case 'type':
+          return 'invalid argument type';
+        default:
+          return msg;
+      }
+    })());
+  };
 
   _formatSource = function(source) {
     var i, len, results, src;
@@ -136,10 +141,16 @@
 
   /*
   
+  
+  
     default
+  
     gurumin
+  
     kokoro
+  
     noop
+  
     update
    */
 
@@ -164,7 +175,7 @@
   $$.task('gurumin', co(function*() {
     yield _cloneGitHub('gurumin');
     yield $$.remove($$.base + "/source/gurumin");
-    return (yield $$.link("./../gurumin/source", $$.base + "/source/gurumin"));
+    return (yield $$.link('./../gurumin/source', $$.base + "/source/gurumin"));
   }));
 
   $$.task('kokoro', co(function*() {
@@ -207,126 +218,6 @@
     yield $$.shell(list);
     return (yield $$.remove(pkg + ".bak"));
   }));
-
-  $$.copy = co(function*() {
-    var arg, msg, name, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
-      switch (arg.length) {
-        case 2:
-          return [arg[0], arg[1], null];
-        case 3:
-          return arg;
-        default:
-          throw _error('length');
-      }
-    })(), source = ref[0], target = ref[1], name = ref[2];
-    source = _formatSource(source);
-    yield new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!name, rename(name))).pipe(gulp.dest(function(e) {
-        return target || e.base;
-      })).on('end', function() {
-        return resolve();
-      });
-    });
-    msg = "copied '" + source + "' to '" + target + "'";
-    if (name) {
-      msg += ", as '" + ($.parseString(name)) + "'";
-    }
-    return $.info('copy', msg);
-  });
-
-  $$.cp = $$.copy;
-
-  $$.link = co(function*(origin, target) {
-    var isDir, type;
-    if (!(origin && target)) {
-      throw _error('length');
-    }
-    origin = path.normalize(origin);
-    target = path.normalize(target);
-    if (!fs.existsSync(origin)) {
-      throw _error("'" + origin + "' was invalid");
-    }
-    isDir = fs.statSync(origin).isDirectory();
-    type = isDir ? 'dir' : 'file';
-    origin = path.normalize("" + $$.base + path.sep + origin);
-    yield new Promise(function(resolve) {
-      return fs.symlink(origin, target, type, function(err) {
-        if (err) {
-          throw err;
-        }
-        if (type === 'dir') {
-          type = 'directory';
-        }
-        return resolve();
-      });
-    });
-    return $.info('link', "linked '" + type + "' '" + origin + "' to '" + target + "'");
-  });
-
-  $$.ln = $$.link;
-
-  $$.mkdir = co(function*(src) {
-    var mkdirp;
-    if (!src) {
-      throw _error('length');
-    }
-    mkdirp = require('mkdirp');
-    src = path.normalize(src);
-    yield new Promise(function(resolve) {
-      return mkdirp(src, function(err) {
-        if (err) {
-          throw err;
-        }
-        return resolve();
-      });
-    });
-    return $.info('create', "created '" + src + "'");
-  });
-
-  $$.remove = co(function*(source) {
-    var a;
-    source = _formatSource(source);
-    yield del(source, {
-      force: true
-    });
-    return $.info('remove', "removed " + (((function() {
-      var i, len, results;
-      results = [];
-      for (i = 0, len = source.length; i < len; i++) {
-        a = source[i];
-        results.push("'" + a + "'");
-      }
-      return results;
-    })()).join(', ')));
-  });
-
-  $$.rm = $$.remove;
-
-  $$.replace = co(function*() {
-    var arg, pathSource, pathTarget, ref, replacement, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
-      switch (arg.length) {
-        case 3:
-          return [arg[0], null, arg[1], arg[2]];
-        case 4:
-          return arg;
-        default:
-          throw _error('length');
-      }
-    })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
-    pathSource = path.normalize(pathSource);
-    pathTarget || (pathTarget = path.dirname(pathSource).replace(/\*/g, ''));
-    pathTarget = path.normalize(pathTarget);
-    yield new Promise(function(resolve) {
-      return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
-        return resolve();
-      });
-    });
-    return $.info('replace', "replaced '" + target + "' to '" + replacement + "', from '" + pathSource + "' to '" + pathTarget + "'");
-  });
 
   (function() {
     var fn;
@@ -458,6 +349,91 @@
     return $$.compile = fn;
   })();
 
+  $$.copy = co(function*() {
+    var arg, msg, option, ref, source, target;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (arg.length) {
+        case 2:
+          return [arg[0], arg[1], null];
+        case 3:
+          return arg;
+        default:
+          throw _error('length');
+      }
+    })(), source = ref[0], target = ref[1], option = ref[2];
+    source = _formatSource(source);
+    yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
+        return target || e.base;
+      })).on('end', function() {
+        return resolve();
+      });
+    });
+    msg = "copied '" + source + "' to '" + target + "'";
+    if (option) {
+      msg += ", as '" + ($.parseString(option)) + "'";
+    }
+    return $.info('copy', msg);
+  });
+
+  $$.cp = $$.copy;
+
+  $$.download = co(function*() {
+    var arg, msg, option, ref, source, target;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (arg.length) {
+        case 2:
+          return [arg[0], arg[1], null];
+        case 3:
+          return arg;
+        default:
+          throw _error('length');
+      }
+    })(), source = ref[0], target = ref[1], option = ref[2];
+    target = path.normalize(target);
+    yield new Promise(function(resolve) {
+      return download(source).pipe(plumber()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(target)).on('end', function() {
+        return resolve();
+      });
+    });
+    msg = "downloaded '" + source + "' to '" + target + "'";
+    if (option) {
+      msg += ", as '" + ($.parseString(option)) + "'";
+    }
+    return $.info('copy', msg);
+  });
+
+  $$.link = co(function*(origin, target) {
+    var isDir, type;
+    if (!(origin && target)) {
+      throw _error('length');
+    }
+    origin = path.normalize(origin);
+    target = path.normalize(target);
+    if (!fs.existsSync(origin)) {
+      throw _error("'" + origin + "' was invalid");
+    }
+    isDir = fs.statSync(origin).isDirectory();
+    type = isDir ? 'dir' : 'file';
+    origin = path.normalize("" + $$.base + path.sep + origin);
+    yield new Promise(function(resolve) {
+      return fs.symlink(origin, target, type, function(err) {
+        if (err) {
+          throw err;
+        }
+        if (type === 'dir') {
+          type = 'directory';
+        }
+        return resolve();
+      });
+    });
+    return $.info('link', "linked '" + type + "' '" + origin + "' to '" + target + "'");
+  });
+
+  $$.ln = $$.link;
+
   (function() {
     var fn;
     fn = function(source) {
@@ -496,6 +472,67 @@
     return $$.lint = fn;
   })();
 
+  $$.mkdir = co(function*(src) {
+    var mkdirp;
+    if (!src) {
+      throw _error('length');
+    }
+    mkdirp = require('mkdirp');
+    src = path.normalize(src);
+    yield new Promise(function(resolve) {
+      return mkdirp(src, function(err) {
+        if (err) {
+          throw err;
+        }
+        return resolve();
+      });
+    });
+    return $.info('create', "created '" + src + "'");
+  });
+
+  $$.remove = co(function*(source) {
+    var a;
+    source = _formatSource(source);
+    yield del(source, {
+      force: true
+    });
+    return $.info('remove', "removed " + (((function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = source.length; i < len; i++) {
+        a = source[i];
+        results.push("'" + a + "'");
+      }
+      return results;
+    })()).join(', ')));
+  });
+
+  $$.rm = $$.remove;
+
+  $$.replace = co(function*() {
+    var arg, pathSource, pathTarget, ref, replacement, target;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (arg.length) {
+        case 3:
+          return [arg[0], null, arg[1], arg[2]];
+        case 4:
+          return arg;
+        default:
+          throw _error('length');
+      }
+    })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
+    pathSource = path.normalize(pathSource);
+    pathTarget || (pathTarget = path.dirname(pathSource).replace(/\*/g, ''));
+    pathTarget = path.normalize(pathTarget);
+    yield new Promise(function(resolve) {
+      return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
+        return resolve();
+      });
+    });
+    return $.info('replace', "replaced '" + target + "' to '" + replacement + "', from '" + pathSource + "' to '" + pathTarget + "'");
+  });
+
   $$.zip = co(function*(source, target) {
     var dirname, filename;
     if (target == null) {
@@ -516,12 +553,20 @@
 
   /*
   
+  
+  
     $$.backup(source)
+  
     $$.delay(time)
+  
     $$.divide()
+  
     $$.recover(source)
+  
     $$.reload(source)
+  
     $$.shell(cmd)
+  
     $$.watch()
    */
 

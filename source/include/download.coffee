@@ -1,23 +1,21 @@
-$$.copy = co (arg...) ->
+$$.download = co (arg...) ->
 
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
     when 3 then arg
     else throw _error 'length'
 
-  source = _formatSource source
+  target = path.normalize target
 
   yield new Promise (resolve) ->
 
-    gulp.src source
+    download source
     .pipe plumber()
-    .pipe using()
+    #.pipe using()
     .pipe gulpif !!option, rename option
-    .pipe gulp.dest (e) -> target or e.base
+    .pipe gulp.dest target
     .on 'end', -> resolve()
 
-  msg = "copied '#{source}' to '#{target}'"
+  msg = "downloaded '#{source}' to '#{target}'"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
-
-$$.cp = $$.copy

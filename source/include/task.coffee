@@ -30,7 +30,7 @@ $$.task 'gurumin', co ->
   yield _cloneGitHub 'gurumin'
 
   yield $$.remove "#{$$.base}/source/gurumin"
-  yield $$.link "./../gurumin/source", "#{$$.base}/source/gurumin"
+  yield $$.link './../gurumin/source', "#{$$.base}/source/gurumin"
 
 $$.task 'kokoro', co ->
 
