@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, using, yaml, zip,
+  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatSource, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -31,7 +31,7 @@
 
   $p.yargs = require('yargs');
 
-  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, download = $p.download, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, using = $p.using, yaml = $p.yaml, zip = $p.zip;
+  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, download = $p.download, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, unzip = $p.unzip, using = $p.using, yaml = $p.yaml, zip = $p.zip;
 
   gulpif = $p["if"];
 
@@ -185,7 +185,7 @@
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
       yield $$.remove($$.base + "/" + source);
-      yield $$.copy($$.base + "/../kokoro/" + source, './');
+      yield $$.copy($$.base + "/../kokoro/" + source, $$.base + "/");
       yield $$.shell("git add -f " + $$.base + "/" + source);
     }
     yield $$.compile($$.base + "/coffeelint.yml");
@@ -533,6 +533,24 @@
     return $.info('replace', "replaced '" + target + "' to '" + replacement + "', from '" + pathSource + "' to '" + pathTarget + "'");
   });
 
+
+  /*
+  
+    $$.unzip()
+    $$.zip(source, target)
+   */
+
+  $$.unzip = co(function*(source, target) {
+    source = path.normalize(source);
+    target = path.normalize(target);
+    return (yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(target)).on('end', function() {
+        $.info('unzip', "unzipped '" + source + "' to '" + target + "'");
+        return resolve();
+      });
+    }));
+  });
+
   $$.zip = co(function*(source, target) {
     var dirname, filename;
     if (target == null) {
@@ -542,12 +560,12 @@
     target = path.normalize(target);
     dirname = path.dirname(target);
     filename = path.basename(target);
-    yield new Promise(function(resolve) {
+    return (yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(dirname)).on('end', function() {
+        $.info('zip', "zipped '" + source + "' to '" + target + "'");
         return resolve();
       });
-    });
-    return $.info('zip', "zipped '" + source + "' to '" + target + "'");
+    }));
   });
 
 

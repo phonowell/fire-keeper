@@ -35,6 +35,7 @@ $$.rm()
 $$.replace()
 $$.shell()
 $$.task()
+$$.unzip()
 $$.watch()
 $$.zip()
 ```

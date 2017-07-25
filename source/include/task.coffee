@@ -49,7 +49,7 @@ $$.task 'kokoro', co ->
   for source in LIST
 
     yield $$.remove "#{$$.base}/#{source}"
-    yield $$.copy "#{$$.base}/../kokoro/#{source}", './'
+    yield $$.copy "#{$$.base}/../kokoro/#{source}", "#{$$.base}/"
     yield $$.shell "git add -f #{$$.base}/#{source}"
 
   # compile

@@ -21,6 +21,7 @@ $p.yargs = require 'yargs'
   stylint
   stylus
   sourcemaps
+  unzip
   using
   yaml
   zip
