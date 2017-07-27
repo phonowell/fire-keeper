@@ -1,6 +1,7 @@
 $p = $$.plugin = require('gulp-load-plugins')()
 
 del = $p.del = require 'del'
+download = $p.download = require 'download'
 $p.yargs = require 'yargs'
 
 {
@@ -8,7 +9,6 @@ $p.yargs = require 'yargs'
   cleanCss
   coffee
   coffeelint
-  download
   htmlmin
   ignore
   include

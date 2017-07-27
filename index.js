@@ -29,9 +29,11 @@
 
   del = $p.del = require('del');
 
+  download = $p.download = require('download');
+
   $p.yargs = require('yargs');
 
-  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, download = $p.download, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, unzip = $p.unzip, using = $p.using, yaml = $p.yaml, zip = $p.zip;
+  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, unzip = $p.unzip, using = $p.using, yaml = $p.yaml, zip = $p.zip;
 
   gulpif = $p["if"];
 
@@ -393,16 +395,12 @@
       }
     })(), source = ref[0], target = ref[1], option = ref[2];
     target = path.normalize(target);
-    yield new Promise(function(resolve) {
-      return download(source).pipe(plumber()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(target)).on('end', function() {
-        return resolve();
-      });
-    });
+    yield download(source, target, option);
     msg = "downloaded '" + source + "' to '" + target + "'";
     if (option) {
       msg += ", as '" + ($.parseString(option)) + "'";
     }
-    return $.info('copy', msg);
+    return $.info('download', msg);
   });
 
   $$.link = co(function*(origin, target) {

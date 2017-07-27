@@ -7,15 +7,8 @@ $$.download = co (arg...) ->
 
   target = path.normalize target
 
-  yield new Promise (resolve) ->
-
-    download source
-    .pipe plumber()
-    #.pipe using()
-    .pipe gulpif !!option, rename option
-    .pipe gulp.dest target
-    .on 'end', -> resolve()
+  yield download source, target, option
 
   msg = "downloaded '#{source}' to '#{target}'"
   if option then msg += ", as '#{$.parseString option}'"
-  $.info 'copy', msg
+  $.info 'download', msg
