@@ -3,8 +3,8 @@ $$.link = co (origin, target) ->
   if !(origin and target)
     throw _error 'length'
 
-  origin = path.normalize origin
-  target = path.normalize target
+  origin = _normalizePath origin
+  target = _normalizePath target
 
   if !fs.existsSync origin
     throw _error "'#{origin}' was invalid"
@@ -12,7 +12,7 @@ $$.link = co (origin, target) ->
   isDir = fs.statSync(origin).isDirectory()
   type = if isDir then 'dir' else 'file'
 
-  origin = path.normalize "#{$$.base}#{path.sep}#{origin}"
+  origin = _normalizePath "#{$$.base}#{path.sep}#{origin}"
 
   yield new Promise (resolve) ->
     fs.symlink origin, target, type, (err) ->

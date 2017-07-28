@@ -1,9 +1,9 @@
 $$.remove = co (source) ->
 
-  source = _formatSource source
+  source = _formatPath source
 
   yield del source, force: true
 
-  $.info 'remove', "removed #{("'#{a}'" for a in source).join ', '}"
+  $.info 'remove', "removed '#{source}'"
 
 $$.rm = $$.remove

@@ -23,7 +23,7 @@ $$.task 'default', ->
   for key of gulp.tasks
     list.push key
   list.sort()
-  $.info 'task', ("'#{a}'" for a in list).join ', '
+  $.info 'task', ("'#{task}'" for task in list).join ', '
 
 $$.task 'gurumin', co ->
 

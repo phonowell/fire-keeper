@@ -1,12 +1,15 @@
 # Fire Keeper
+
 A little helper to make things simple.
 
 ## Install
+
 ```
 $ npm install --save-dev phonowell/fire-keeper
 ```
 
 ### Usage
+
 ```coffeescript
 $$ = require './source/index'
 {_, Promise} = $$.library
@@ -18,6 +21,7 @@ $$.task 'build', co ->
 ```
 
 ### Method
+
 ```
 $$.backup()
 $$.compile()
@@ -41,6 +45,7 @@ $$.zip()
 ```
 
 ### Library
+
 ```coffeescript
 $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
@@ -48,15 +53,6 @@ $$.library.Promise # bluebird
 $$.library.gulp # gulp
 ```
 
-### Plugin
-```coffeescript
-$$.plugin # most of them are gulp plugins
-```
-
 ### Caution
-This project is **NOT STABLE**. I made this project for writing gulpfile(s) , which of my own projects, a little easier. And that might be not very suitable for yours.
 
-### Test
-```
-$ gulp test
-```
+This project is **NOT STABLE**. I made this project for writing gulpfile(s) , which of my own projects, a little easier. And that might be not very suitable for yours.

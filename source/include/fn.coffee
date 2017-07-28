@@ -2,7 +2,8 @@
 
   _cloneGitHub(name)
   _error(msg)
-  _formatSource(source)
+  _formatPath(source)
+  _normalizePath(source)
 
 ###
 
@@ -23,9 +24,11 @@ _error = (msg) ->
     when 'type' then 'invalid argument type'
     else msg
 
-_formatSource = (source) ->
+_formatPath = (source) ->
   source = switch $.type source
     when 'array' then source
     when 'string' then [source]
     else throw _error 'type'
-  (path.normalize src for src in source)
+  (_normalizePath src for src in source)
+
+_normalizePath = (source) -> path.normalize source.replace /\\/g, '/'

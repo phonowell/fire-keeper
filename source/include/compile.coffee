@@ -14,7 +14,7 @@ do ->
       when 3 then arg
       else throw _error 'length'
 
-    source = _formatSource source
+    source = _formatPath source
 
     extname = path.extname(source[0]).replace /\./, ''
     if !extname.length then throw _error 'extname'
@@ -26,7 +26,7 @@ do ->
       else extname
 
     target or= path.dirname(source[0]).replace /\*/g, ''
-    target = path.normalize target
+    target = _normalizePath target
 
     option = _.extend
       map: false

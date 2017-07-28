@@ -1,13 +1,17 @@
-$$.mkdir = co (src) ->
+$$.mkdir = co (source) ->
 
-  if !src then throw _error 'length'
+  if !source then throw _error 'length'
 
   mkdirp = require 'mkdirp'
-  src = path.normalize src
+  source = _formatPath source
 
-  yield new Promise (resolve) ->
-    mkdirp src, (err) ->
-      if err then throw err
-      resolve()
+  listPromise = []
+  for src in source
+    listPromise.push yield new Promise (resolve) ->
+      mkdirp src, (err) ->
+        if err then throw err
+        resolve()
 
-  $.info 'create', "created '#{src}'"
+  yield Promise.all listPromise
+
+  $.info 'create', "created '#{source}'"

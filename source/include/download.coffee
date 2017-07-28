@@ -5,7 +5,7 @@ $$.download = co (arg...) ->
     when 3 then arg
     else throw _error 'length'
 
-  target = path.normalize target
+  target = _normalizePath target
 
   yield download source, target, option
 

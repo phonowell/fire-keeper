@@ -2,7 +2,7 @@ do ->
 
   fn = (source) ->
 
-    source = _formatSource source
+    source = _formatPath source
 
     extname = path.extname(source[0]).replace /\./, ''
     if !extname.length then throw _error 'extname'

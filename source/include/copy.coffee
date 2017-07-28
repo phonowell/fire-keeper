@@ -5,7 +5,7 @@ $$.copy = co (arg...) ->
     when 3 then arg
     else throw _error 'length'
 
-  source = _formatSource source
+  source = _formatPath source
 
   yield new Promise (resolve) ->
 

@@ -1,3 +1,5 @@
+# https://github.com/lazd/gulp-replace
+
 $$.replace = co (arg...) ->
 
   [pathSource, pathTarget, target, replacement] = switch arg.length
@@ -5,9 +7,9 @@ $$.replace = co (arg...) ->
     when 4 then arg
     else throw _error 'length'
 
-  pathSource = path.normalize pathSource
-  pathTarget or= path.dirname(pathSource).replace /\*/g, ''
-  pathTarget = path.normalize pathTarget
+  pathSource = _formatPath pathSource
+  pathTarget or= path.dirname pathSource[0]
+  pathTarget = _normalizePath pathTarget
 
   yield new Promise (resolve) ->
     gulp.src pathSource
@@ -19,4 +21,5 @@ $$.replace = co (arg...) ->
 
   $.info 'replace'
   , "replaced '#{target}' to '#{replacement}',
-    from '#{pathSource}' to '#{pathTarget}'"
+    in '#{pathSource}',
+    output to '#{pathTarget}'"
