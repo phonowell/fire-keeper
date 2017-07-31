@@ -1,6 +1,7 @@
 (function() {
   var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatPath, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
-    slice = [].slice;
+    slice = [].slice,
+    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   path = require('path');
 
@@ -454,6 +455,82 @@
     return $.info('download', msg);
   });
 
+
+  /*
+  
+    $$.isExisted(source)
+    $$.read(source)
+    $$.rename(source, option)
+    $$.write(source, data)
+   */
+
+  $$.isExisted = co(function*(source) {
+    source = _normalizePath(source);
+    return (yield new Promise(function(resolve) {
+      return fs.exists(source, function(res) {
+        return resolve(res);
+      });
+    }));
+  });
+
+  $$.read = co(function*(source) {
+    var res;
+    source = _normalizePath(source);
+    res = (yield new Promise(function(resolve) {
+      return fs.readFile(source, function(err, data) {
+        if (err) {
+          throw err;
+        }
+        return resolve(data);
+      });
+    }));
+    $.info('file', "read '" + source + "'");
+    return res = (function() {
+      switch (path.extname(source).slice(1)) {
+        case 'json':
+          return $.parseJson(res);
+        case 'txt':
+          return $.parseString(res);
+        default:
+          return res;
+      }
+    })();
+  });
+
+  $$.rename = co(function*(source, option) {
+    source = _formatPath(source);
+    yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(rename(option)).pipe(gulp.dest(function(e) {
+        return e.base;
+      })).on('end', function() {
+        return resolve();
+      });
+    });
+    $.info.isSilent = true;
+    yield $$.remove(source);
+    $.info.isSilent = false;
+    return $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
+  });
+
+  $$.write = co(function*(source, data) {
+    source = _normalizePath(source);
+    $.info.isSilent = true;
+    yield $$.mkdir(path.dirname(source));
+    $.info.isSilent = false;
+    if ($.type(indexOf.call('array object'.split(' '), data) >= 0)) {
+      data = $.parseString(data);
+    }
+    yield new Promise(function(resolve) {
+      return fs.writeFile(source, data, function(err) {
+        if (err) {
+          throw err;
+        }
+        return resolve();
+      });
+    });
+    return $.info('file', "wrote '" + source + "'");
+  });
+
   $$.link = co(function*(origin, target) {
     var isDir, type;
     if (!(origin && target)) {
@@ -603,7 +680,7 @@
     target = _normalizePath(target);
     return (yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(target)).on('end', function() {
-        $.info('unzip', "unzipped '" + source + "' to '" + target + "'");
+        $.info('zip', "unzipped '" + source + "' to '" + target + "'");
         return resolve();
       });
     }));

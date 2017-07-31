@@ -26,7 +26,7 @@ $$.unzip = co (arg...) ->
     .pipe unzip()
     .pipe gulp.dest target
     .on 'end', ->
-      $.info 'unzip', "unzipped '#{source}' to '#{target}'"
+      $.info 'zip', "unzipped '#{source}' to '#{target}'"
       resolve()
 
 $$.zip = co (arg...) ->

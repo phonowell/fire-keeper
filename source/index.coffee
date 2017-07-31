@@ -10,6 +10,7 @@
 #= include include/compile.coffee
 #= include include/copy.coffee
 #= include include/download.coffee
+#= include include/file.coffee
 #= include include/link.coffee
 #= include include/lint.coffee
 #= include include/mkdir.coffee
