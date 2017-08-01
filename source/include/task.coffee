@@ -10,11 +10,11 @@ $$.task = (arg...) ->
 
 ###
 
-  default
-  gurumin
-  kokoro
-  noop
-  update
+  default()
+  gurumin()
+  kokoro()
+  noop()
+  update([target])
 
 ###
 
@@ -66,17 +66,21 @@ $$.task 'noop', -> null
 
 $$.task 'update', co ->
 
+  {target} = $$.argv
+
   pkg = "#{$$.base}/package.json"
   yield $$.backup pkg
 
-  p = require pkg
+  p = yield $$.read pkg
   list = []
 
   for key of p.devDependencies
+    if target then if key != target then continue
     list.push "cnpm r --save-dev #{key}"
     list.push "cnpm i --save-dev #{key}"
 
   for key of p.dependencies
+    if target then if key != target then continue
     list.push "cnpm r --save #{key}"
     list.push "cnpm i --save #{key}"
 

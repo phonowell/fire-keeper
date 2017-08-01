@@ -1,5 +1,7 @@
 do ->
 
+  # function
+
   fn = (source) ->
 
     source = _formatPath source
@@ -13,6 +15,13 @@ do ->
       else throw _error 'extname'
 
     fn[method] source
+
+  ###
+
+    coffee(source)
+    stylus(source)
+
+  ###
 
   fn.coffee = (source) ->
 

@@ -1,25 +1,25 @@
-$$.link = co (origin, target) ->
+$$.link = co (source, target) ->
 
-  if !(origin and target)
+  if !(source and target)
     throw _error 'length'
 
-  origin = _normalizePath origin
+  source = _normalizePath source
   target = _normalizePath target
 
-  if !fs.existsSync origin
-    throw _error "'#{origin}' was invalid"
+  if !fs.existsSync source
+    throw _error "'#{source}' was invalid"
 
-  isDir = fs.statSync(origin).isDirectory()
+  isDir = fs.statSync(source).isDirectory()
   type = if isDir then 'dir' else 'file'
 
-  origin = _normalizePath "#{$$.base}#{path.sep}#{origin}"
+  source = _normalizePath "#{$$.base}#{path.sep}#{source}"
 
   yield new Promise (resolve) ->
-    fs.symlink origin, target, type, (err) ->
+    fs.symlink source, target, type, (err) ->
       if err then throw err
       if type == 'dir' then type = 'directory'
       resolve()
 
-  $.info 'link', "linked '#{type}' '#{origin}' to '#{target}'"
+  $.info 'link', "linked '#{type}' '#{source}' to '#{target}'"
 
 $$.ln = $$.link

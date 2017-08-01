@@ -3,8 +3,8 @@
 
 ###
 
-  $$.unzip(arg...)
-  $$.zip(arg...)
+  $$.unzip(source, [target])
+  $$.zip(source, [target], [option])
 
 ###
 

@@ -151,15 +151,15 @@
   
   
   
-    default
+    default()
   
-    gurumin
+    gurumin()
   
-    kokoro
+    kokoro()
   
-    noop
+    noop()
   
-    update
+    update([target])
    */
 
   $$.task('default', function() {
@@ -210,16 +210,27 @@
   });
 
   $$.task('update', co(function*() {
-    var key, list, p, pkg;
+    var key, list, p, pkg, target;
+    target = $$.argv.target;
     pkg = $$.base + "/package.json";
     yield $$.backup(pkg);
-    p = require(pkg);
+    p = (yield $$.read(pkg));
     list = [];
     for (key in p.devDependencies) {
+      if (target) {
+        if (key !== target) {
+          continue;
+        }
+      }
       list.push("cnpm r --save-dev " + key);
       list.push("cnpm i --save-dev " + key);
     }
     for (key in p.dependencies) {
+      if (target) {
+        if (key !== target) {
+          continue;
+        }
+      }
       list.push("cnpm r --save " + key);
       list.push("cnpm i --save " + key);
     }
@@ -276,7 +287,7 @@
   (function() {
     var fn;
     fn = co(function*() {
-      var a, arg, compiler, extname, method, option, ref, source, target;
+      var arg, compiler, extname, method, option, ref, source, target;
       arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       ref = (function() {
         switch (arg.length) {
@@ -284,10 +295,10 @@
             return [arg[0], null, {}];
           case 2:
             switch ($.type(arg[1])) {
-              case 'string':
-                return [arg[0], arg[1], {}];
               case 'object':
                 return [arg[0], null, arg[1]];
+              case 'string':
+                return [arg[0], arg[1], {}];
               default:
                 throw _error('type');
             }
@@ -327,32 +338,22 @@
         throw _error("invalid extname: '." + extname + "'");
       }
       yield compiler(source, target, option);
-      return $.info('compile', "compiled " + (((function() {
-        var i, len, results;
-        results = [];
-        for (i = 0, len = source.length; i < len; i++) {
-          a = source[i];
-          results.push("'" + a + "'");
-        }
-        return results;
-      })()).join(', ')) + " to '" + target + "'");
+      return $.info('compile', "compiled '" + source + "' to '" + target + "'");
     });
-    fn.yaml = function(source, target, option) {
+
+    /*
+    
+      coffee(source, target, option)
+      css(source, target, option)
+      js(source, target, option)
+      markdown(source, target, option)
+      pug(source, target, option)
+      stylus(source, target, option)
+      yaml(source, target, option)
+     */
+    fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
-        if (option.safe == null) {
-          option.safe = true;
-        }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
-          return resolve();
-        });
-      });
-    };
-    fn.stylus = function(source, target, option) {
-      return new Promise(function(resolve) {
-        if (option.compress == null) {
-          option.compress = option.minify;
-        }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -364,16 +365,21 @@
         });
       });
     };
-    fn.coffee = function(source, target, option) {
+    fn.js = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.js = function(source, target, option) {
+    fn.markdown = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        if (option.sanitize == null) {
+          option.sanitize = true;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
+          collapseWhitespace: true
+        }))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -388,14 +394,22 @@
         });
       });
     };
-    fn.markdown = function(source, target, option) {
+    fn.stylus = function(source, target, option) {
       return new Promise(function(resolve) {
-        if (option.sanitize == null) {
-          option.sanitize = true;
+        if (option.compress == null) {
+          option.compress = option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
-          collapseWhitespace: true
-        }))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+          return resolve();
+        });
+      });
+    };
+    fn.yaml = function(source, target, option) {
+      return new Promise(function(resolve) {
+        if (option.safe == null) {
+          option.safe = true;
+        }
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -531,21 +545,21 @@
     return $.info('file', "wrote '" + source + "'");
   });
 
-  $$.link = co(function*(origin, target) {
+  $$.link = co(function*(source, target) {
     var isDir, type;
-    if (!(origin && target)) {
+    if (!(source && target)) {
       throw _error('length');
     }
-    origin = _normalizePath(origin);
+    source = _normalizePath(source);
     target = _normalizePath(target);
-    if (!fs.existsSync(origin)) {
-      throw _error("'" + origin + "' was invalid");
+    if (!fs.existsSync(source)) {
+      throw _error("'" + source + "' was invalid");
     }
-    isDir = fs.statSync(origin).isDirectory();
+    isDir = fs.statSync(source).isDirectory();
     type = isDir ? 'dir' : 'file';
-    origin = _normalizePath("" + $$.base + path.sep + origin);
+    source = _normalizePath("" + $$.base + path.sep + source);
     yield new Promise(function(resolve) {
-      return fs.symlink(origin, target, type, function(err) {
+      return fs.symlink(source, target, type, function(err) {
         if (err) {
           throw err;
         }
@@ -555,7 +569,7 @@
         return resolve();
       });
     });
-    return $.info('link', "linked '" + type + "' '" + origin + "' to '" + target + "'");
+    return $.info('link', "linked '" + type + "' '" + source + "' to '" + target + "'");
   });
 
   $$.ln = $$.link;
@@ -581,6 +595,12 @@
       })();
       return fn[method](source);
     };
+
+    /*
+    
+      coffee(source)
+      stylus(source)
+     */
     fn.coffee = function(source) {
       return new Promise(function(resolve) {
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
@@ -658,8 +678,8 @@
 
   /*
   
-    $$.unzip(arg...)
-    $$.zip(arg...)
+    $$.unzip(source, [target])
+    $$.zip(source, [target], [option])
    */
 
   $$.unzip = co(function*() {

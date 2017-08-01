@@ -1,5 +1,6 @@
 $$.copy = co (arg...) ->
 
+  # source, target, [option]
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
     when 3 then arg

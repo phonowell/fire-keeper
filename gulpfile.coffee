@@ -62,4 +62,4 @@ $$.task 'watch', ->
 
 $$.task 'work', -> $$.shell 'start gulp watch'
 
-$$.task 'z', co ->
+#$$.task 'z', co ->

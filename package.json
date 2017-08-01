@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {},
@@ -11,7 +11,7 @@
   "keywords": [
     "fire-keeper"
   ],
-  "author": "Mimiko Phonowell <phnonwell@gmail.com>",
+  "author": "Mimiko Phonowell <phonowell@gmail.com>",
   "license": "GPL-3.0+",
   "url": "https://github.com/phonowell/fire-keeper",
   "bugs": {
