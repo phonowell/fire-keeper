@@ -1,3 +1,9 @@
+###
+
+  lint(source)
+
+###
+
 do ->
 
   # function

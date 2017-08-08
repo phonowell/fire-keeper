@@ -1,3 +1,9 @@
+###
+
+  mkdir(source)
+
+###
+
 $$.mkdir = co (source) ->
 
   if !source then throw _error 'length'

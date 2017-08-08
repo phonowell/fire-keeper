@@ -1,5 +1,11 @@
 # https://github.com/lazd/gulp-replace
 
+###
+
+  replace(pathSource, [pathTarget], target, replacement)
+
+###
+
 $$.replace = co (arg...) ->
 
   [pathSource, pathTarget, target, replacement] = switch arg.length

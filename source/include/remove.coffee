@@ -1,3 +1,10 @@
+###
+
+  remove(source)
+  rm(source)
+
+###
+
 $$.remove = co (source) ->
 
   source = _formatPath source

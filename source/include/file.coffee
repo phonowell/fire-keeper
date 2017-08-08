@@ -1,9 +1,9 @@
 ###
 
-  $$.isExisted(source)
-  $$.read(source)
-  $$.rename(source, option)
-  $$.write(source, data)
+  isExisted(source)
+  read(source)
+  rename(source, option)
+  write(source, data)
 
 ###
 

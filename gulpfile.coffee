@@ -1,3 +1,5 @@
+# compile
+
 compile = ->
 
   gulp = require 'gulp'
@@ -12,7 +14,14 @@ compile = ->
   gulp.src './source/index.js'
   .pipe gulp.dest ''
 
-$$ = require './source/index'
+# require
+
+fs = require 'fs'
+source = if fs.existsSync './source/index.js'
+  './source/index'
+else './index'
+
+$$ = require source
 {$, _, Promise} = $$.library
 co = Promise.coroutine
 

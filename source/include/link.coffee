@@ -1,3 +1,10 @@
+###
+
+  link(source, target)
+  ln(source, target)
+
+###
+
 $$.link = co (source, target) ->
 
   if !(source and target)

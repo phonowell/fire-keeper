@@ -1,3 +1,10 @@
+###
+
+  copy(source, target, [option])
+  cp(source, target, [option])
+
+###
+
 $$.copy = co (arg...) ->
 
   # source, target, [option]

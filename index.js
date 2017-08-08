@@ -44,6 +44,14 @@
 
   uglify = $p.uglify = composer(uglifyjs, console);
 
+
+  /*
+  
+    argv
+    os
+    base
+   */
+
   $$.argv = $p.yargs.argv;
 
   $$.os = (function() {
@@ -58,21 +66,6 @@
   })();
 
   $$.base = process.cwd();
-
-  $$.path = {
-    gulp: './gulpfile.js',
-    source: './source',
-    build: './build',
-    secret: './secret'
-  };
-
-  $$.path.pug = $$.path.source + "/**/*.pug";
-
-  $$.path.stylus = $$.path.source + "/**/*.styl";
-
-  $$.path.coffee = $$.path.source + "/**/*.coffee";
-
-  $$.path.yaml = $$.path.secret + "/**/*.yml";
 
 
   /*
@@ -133,6 +126,12 @@
     return path.normalize(source.replace(/\\/g, '/'));
   };
 
+
+  /*
+  
+    task(name, [fn])
+   */
+
   $$.task = function() {
     var arg;
     arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -149,16 +148,10 @@
 
   /*
   
-  
-  
     default()
-  
     gurumin()
-  
     kokoro()
-  
     noop()
-  
     update([target])
    */
 
@@ -189,15 +182,17 @@
   $$.task('kokoro', co(function*() {
     var LIST, i, len, source;
     yield _cloneGitHub('kokoro');
-    LIST = ['.gitignore', '.npmignore', 'coffeelint.yml', 'stylintrc.yml', 'license.md'];
+    LIST = ['coffeelint.yml', 'stylintrc.yml'];
+    yield $$.remove(LIST);
+    LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'stylintrc.yaml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
       yield $$.remove($$.base + "/" + source);
       yield $$.copy($$.base + "/../kokoro/" + source, $$.base + "/");
       yield $$.shell("git add -f " + $$.base + "/" + source);
     }
-    yield $$.compile($$.base + "/coffeelint.yml");
-    yield $$.compile($$.base + "/stylintrc.yml");
+    yield $$.compile($$.base + "/coffeelint.yaml");
+    yield $$.compile($$.base + "/stylintrc.yaml");
     yield $$.copy($$.base + "/stylintrc.json", $$.base + "/", {
       prefix: '.',
       extname: ''
@@ -210,7 +205,18 @@
   });
 
   $$.task('update', co(function*() {
-    var key, list, p, pkg, target;
+    var key, list, npm, p, pkg, target;
+    npm = (function() {
+      switch ($$.os) {
+        case 'linux':
+        case 'macos':
+          return 'npm';
+        case 'windows':
+          return 'cnpm';
+        default:
+          throw new Error('invalid os');
+      }
+    })();
     target = $$.argv.target;
     pkg = $$.base + "/package.json";
     yield $$.backup(pkg);
@@ -222,8 +228,8 @@
           continue;
         }
       }
-      list.push("cnpm r --save-dev " + key);
-      list.push("cnpm i --save-dev " + key);
+      list.push(npm + " r --save-dev " + key);
+      list.push(npm + " i --save-dev " + key);
     }
     for (key in p.dependencies) {
       if (target) {
@@ -231,8 +237,8 @@
           continue;
         }
       }
-      list.push("cnpm r --save " + key);
-      list.push("cnpm i --save " + key);
+      list.push(npm + " r --save " + key);
+      list.push(npm + " i --save " + key);
     }
     yield $$.shell(list);
     return (yield $$.remove(pkg + ".bak"));
@@ -241,10 +247,7 @@
 
   /*
   
-  
-  
     backup(source)
-  
     recover(source)
    */
 
@@ -283,6 +286,12 @@
     }
     return $.info('recover', "recovered '" + source + "'");
   });
+
+
+  /*
+  
+    compile(source, [target], [option])
+   */
 
   (function() {
     var fn;
@@ -417,6 +426,13 @@
     return $$.compile = fn;
   })();
 
+
+  /*
+  
+    copy(source, target, [option])
+    cp(source, target, [option])
+   */
+
   $$.copy = co(function*() {
     var arg, msg, option, ref, source, target;
     arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -447,6 +463,12 @@
 
   $$.cp = $$.copy;
 
+
+  /*
+  
+    download(source, target, [option])
+   */
+
   $$.download = co(function*() {
     var arg, msg, option, ref, source, target;
     arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
@@ -472,10 +494,10 @@
 
   /*
   
-    $$.isExisted(source)
-    $$.read(source)
-    $$.rename(source, option)
-    $$.write(source, data)
+    isExisted(source)
+    read(source)
+    rename(source, option)
+    write(source, data)
    */
 
   $$.isExisted = co(function*(source) {
@@ -545,6 +567,13 @@
     return $.info('file', "wrote '" + source + "'");
   });
 
+
+  /*
+  
+    link(source, target)
+    ln(source, target)
+   */
+
   $$.link = co(function*(source, target) {
     var isDir, type;
     if (!(source && target)) {
@@ -573,6 +602,12 @@
   });
 
   $$.ln = $$.link;
+
+
+  /*
+  
+    lint(source)
+   */
 
   (function() {
     var fn;
@@ -618,6 +653,12 @@
     return $$.lint = fn;
   })();
 
+
+  /*
+  
+    mkdir(source)
+   */
+
   $$.mkdir = co(function*(source) {
     var i, len, listPromise, mkdirp, src;
     if (!source) {
@@ -641,6 +682,13 @@
     return $.info('create', "created '" + source + "'");
   });
 
+
+  /*
+  
+    remove(source)
+    rm(source)
+   */
+
   $$.remove = co(function*(source) {
     source = _formatPath(source);
     yield del(source, {
@@ -650,6 +698,12 @@
   });
 
   $$.rm = $$.remove;
+
+
+  /*
+  
+    replace(pathSource, [pathTarget], target, replacement)
+   */
 
   $$.replace = co(function*() {
     var arg, pathSource, pathTarget, ref, replacement, target;
@@ -678,8 +732,8 @@
 
   /*
   
-    $$.unzip(source, [target])
-    $$.zip(source, [target], [option])
+    unzip(source, [target])
+    zip(source, [target], [option])
    */
 
   $$.unzip = co(function*() {
@@ -746,15 +800,10 @@
 
   /*
   
-  
-  
-    $$.delay(time)
-  
-    $$.reload(source)
-  
-    $$.shell(cmd)
-  
-    $$.watch()
+    delay(time)
+    reload(source)
+    shell(cmd)
+    watch()
    */
 
   $$.delay = co(function*(time) {

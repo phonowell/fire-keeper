@@ -1,9 +1,9 @@
 ###
 
-  $$.delay(time)
-  $$.reload(source)
-  $$.shell(cmd)
-  $$.watch()
+  delay(time)
+  reload(source)
+  shell(cmd)
+  watch()
 
 ###
 

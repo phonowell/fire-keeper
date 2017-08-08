@@ -1,3 +1,9 @@
+###
+
+  download(source, target, [option])
+
+###
+
 $$.download = co (arg...) ->
 
   [source, target, option] = switch arg.length
