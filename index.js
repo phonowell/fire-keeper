@@ -483,6 +483,11 @@
       }
     })(), source = ref[0], target = ref[1], option = ref[2];
     target = _normalizePath(target);
+    if ($.type(option === 'string')) {
+      option = {
+        filename: option
+      };
+    }
     yield download(source, target, option);
     msg = "downloaded '" + source + "' to '" + target + "'";
     if (option) {

@@ -1,3 +1,5 @@
+# https://github.com/kevva/download
+
 ###
 
   download(source, target, [option])
@@ -12,6 +14,9 @@ $$.download = co (arg...) ->
     else throw _error 'length'
 
   target = _normalizePath target
+
+  if $.type option == 'string'
+    option = filename: option
 
   yield download source, target, option
 
