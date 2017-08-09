@@ -15,6 +15,8 @@ co = Promise.coroutine
   $$.mkdir(source)
   $$.read(source)
   $$.remove(source)
+  $$.rm(source)
+  $$.write(source, data)
 
 ###
 
@@ -22,17 +24,20 @@ describe '$$.backup(source)', ->
 
   it "$$.backup('./temp/readme.md')", co ->
 
+    source = './temp/readme.md'
+    target = './temp/readme.md.bak'
+
     yield $$.copy './readme.md', './temp'
 
-    yield $$.backup './temp/readme.md'
+    yield $$.backup source
 
-    unless yield $$.isExisted './temp/readme.md.bak'
+    unless yield $$.isExisted target
       throw new Error()
 
-    sourceData = yield $$.read './temp/readme.md'
-    targetData = yield $$.read './temp/readme.md.bak'
+    sourceData = yield $$.read source
+    targetData = yield $$.read target
 
-    unless sourceData.toString() == targetData.toString()
+    if sourceData.toString() != targetData.toString()
       throw new Error()
 
     # clean
@@ -56,9 +61,11 @@ describe '$$.isExisted(source)', ->
 
   it "$$.isExisted('./temp/existed')", co ->
 
-    yield $$.mkdir './temp/existed'
+    source = './temp/existed'
 
-    unless yield $$.isExisted './temp/existed'
+    yield $$.mkdir source
+
+    unless yield $$.isExisted source
       throw new Error()
 
     # clean
@@ -74,9 +81,11 @@ describe '$$.isExisted(source)', ->
 
   it "$$.isExisted('./temp/existed/existed.txt')", co ->
 
-    yield $$.write './temp/existed/existed.txt', 'existed'
+    source = './temp/existed/existed.txt'
 
-    unless yield $$.isExisted './temp/existed/existed.txt'
+    yield $$.write source, 'existed'
+
+    unless yield $$.isExisted source
       throw new Error()
 
     # clean
@@ -125,13 +134,14 @@ describe '$$.read(source)', ->
 
   it "$$.read('./temp/test.txt')", co ->
 
+    source = './temp/test.txt'
     string = 'a test message'
 
-    yield $$.write './temp/test.txt', string
+    yield $$.write source, string
 
-    cont = yield $$.read './temp/test.txt'
+    cont = yield $$.read source
 
-    unless cont == string
+    if cont != string
       throw new Error()
 
     # clean
@@ -139,14 +149,15 @@ describe '$$.read(source)', ->
 
   it "$$.read('./temp/test.json')", co ->
 
+    source = './temp/test.json'
     string = 'a test message'
     object = message: string
 
-    yield $$.write './temp/test.json', object
+    yield $$.write source, object
 
-    cont = yield $$.read './temp/test.json'
+    cont = yield $$.read source
 
-    unless cont.message == string
+    if cont.message != string
       throw new Error()
 
     # clean
@@ -161,6 +172,52 @@ describe '$$.remove(source)', ->
     yield $$.remove './temp/re'
 
     if yield $$.isExisted './temp/re'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.rm(source)', ->
+
+  it '$$.rm()', ->
+
+    if $$.rm != $$.remove
+      throw new Error()
+
+describe '$$.write(source, data)', ->
+
+  it "$$.write('./temp/wr/ite.txt', 'a test message')", co ->
+
+    source = './temp/wr/ite.txt'
+    string = 'a test message'
+
+    yield $$.write source, string
+
+    unless yield $$.isExisted source
+      throw new Error()
+
+    cont = yield $$.read source
+
+    if cont != string
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+  it "$$.write('./temp/wr/ite.json', {message: 'a test message'})", co ->
+
+    source = './temp/wr/ite.json'
+    string = 'a test message'
+    object = message: string
+
+    yield $$.write source, object
+
+    unless yield $$.isExisted source
+      throw new Error()
+
+    cont = yield $$.read source
+
+    if cont.message != string
       throw new Error()
 
     # clean
