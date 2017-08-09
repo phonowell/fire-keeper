@@ -2,7 +2,7 @@
 
   argv
   os
-  base
+  path
 
 ###
 
@@ -13,4 +13,6 @@ $$.os = switch
   when ~string.search 'win' then 'windows'
   else 'linux'
 
-$$.base = process.cwd()
+$$.path =
+  base: process.cwd()
+  home: require('os').homedir()

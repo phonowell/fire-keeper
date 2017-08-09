@@ -33,6 +33,7 @@ co = Promise.coroutine
   compile
   lint
   set
+  test
   watch
   work
 
@@ -60,6 +61,11 @@ $$.task 'set', co ->
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
 
+$$.task 'test', co ->
+
+  yield $$.compile './test/**/*.coffee'
+  yield $$.shell 'npm test'
+
 $$.task 'watch', ->
 
   deb = _.debounce $$.task('build'), 1e3
@@ -72,3 +78,15 @@ $$.task 'watch', ->
 $$.task 'work', -> $$.shell 'start gulp watch'
 
 #$$.task 'z', co ->
+#
+#  {Client} = require 'ssh2'
+#
+#  conn = new Client()
+#
+#  conn.on 'ready', ->
+#    $.info 'ssh', 'ready'
+#  .connect
+#    host: '47.91.19.50'
+#    port: 22
+#    username: 'root'
+#    privateKey: yield $$.read '~/.ssh/cspg.ppk'

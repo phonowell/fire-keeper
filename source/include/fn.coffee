@@ -9,11 +9,12 @@
 
 _cloneGitHub = co (name) ->
 
-  if fs.existsSync "#{$$.base}/../#{name}" then return
+  source = _normalizePath "./../#{name}"
+  if yield $$.isExisted source then return
 
   yield $$.shell "git clone
   https://github.com/phonowell/#{name}.git
-  #{$$.base}/../#{name}"
+  #{$$.path.base}/../#{name}"
 
 _error = (msg) ->
   new Error switch msg
@@ -31,4 +32,16 @@ _formatPath = (source) ->
     else throw _error 'type'
   (_normalizePath src for src in source)
 
-_normalizePath = (source) -> path.normalize source.replace /\\/g, '/'
+_normalizePath = (source) ->
+
+  src = source.replace /\\/g, '/'
+
+  src = switch src[0]
+    when '.' then src.replace /\./, $$.path.base
+    when '~' then src.replace /~/, $$.path.home
+    else src
+
+  src = path.normalize src
+
+  if path.isAbsolute src then return src
+  else return "#{$$.path.base}#{path.sep}#{src}"

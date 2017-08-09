@@ -49,7 +49,7 @@
   
     argv
     os
-    base
+    path
    */
 
   $$.argv = $p.yargs.argv;
@@ -65,7 +65,10 @@
     }
   })();
 
-  $$.base = process.cwd();
+  $$.path = {
+    base: process.cwd(),
+    home: require('os').homedir()
+  };
 
 
   /*
@@ -77,10 +80,12 @@
    */
 
   _cloneGitHub = co(function*(name) {
-    if (fs.existsSync($$.base + "/../" + name)) {
+    var source;
+    source = _normalizePath("./../" + name);
+    if ((yield $$.isExisted(source))) {
       return;
     }
-    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.base + "/../" + name));
+    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.path.base + "/../" + name));
   });
 
   _error = function(msg) {
@@ -123,7 +128,24 @@
   };
 
   _normalizePath = function(source) {
-    return path.normalize(source.replace(/\\/g, '/'));
+    var src;
+    src = source.replace(/\\/g, '/');
+    src = (function() {
+      switch (src[0]) {
+        case '.':
+          return src.replace(/\./, $$.path.base);
+        case '~':
+          return src.replace(/~/, $$.path.home);
+        default:
+          return src;
+      }
+    })();
+    src = path.normalize(src);
+    if (path.isAbsolute(src)) {
+      return src;
+    } else {
+      return "" + $$.path.base + path.sep + src;
+    }
   };
 
 
@@ -175,8 +197,8 @@
 
   $$.task('gurumin', co(function*() {
     yield _cloneGitHub('gurumin');
-    yield $$.remove($$.base + "/source/gurumin");
-    return (yield $$.link('./../gurumin/source', $$.base + "/source/gurumin"));
+    yield $$.remove('./source/gurumin');
+    return (yield $$.link('./../gurumin/source', './source/gurumin'));
   }));
 
   $$.task('kokoro', co(function*() {
@@ -187,17 +209,17 @@
     LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'stylintrc.yaml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
       source = LIST[i];
-      yield $$.remove($$.base + "/" + source);
-      yield $$.copy($$.base + "/../kokoro/" + source, $$.base + "/");
-      yield $$.shell("git add -f " + $$.base + "/" + source);
+      yield $$.remove("./" + source);
+      yield $$.copy("./../kokoro/" + source, './');
+      yield $$.shell("git add -f " + $$.path.base + "/" + source);
     }
-    yield $$.compile($$.base + "/coffeelint.yaml");
-    yield $$.compile($$.base + "/stylintrc.yaml");
-    yield $$.copy($$.base + "/stylintrc.json", $$.base + "/", {
+    yield $$.compile('./coffeelint.yaml');
+    yield $$.compile('./stylintrc.yaml');
+    yield $$.copy('./stylintrc.json', './', {
       prefix: '.',
       extname: ''
     });
-    return (yield $$.remove($$.base + "/stylintrc.json"));
+    return (yield $$.remove('./stylintrc.json'));
   }));
 
   $$.task('noop', function() {
@@ -206,6 +228,7 @@
 
   $$.task('update', co(function*() {
     var key, list, npm, p, pkg, target;
+    yield $$.remove('./package-lock.json');
     npm = (function() {
       switch ($$.os) {
         case 'linux':
@@ -218,7 +241,7 @@
       }
     })();
     target = $$.argv.target;
-    pkg = $$.base + "/package.json";
+    pkg = './package.json';
     yield $$.backup(pkg);
     p = (yield $$.read(pkg));
     list = [];
@@ -580,18 +603,21 @@
    */
 
   $$.link = co(function*(source, target) {
-    var isDir, type;
+    var dirname, isDir, type;
     if (!(source && target)) {
       throw _error('length');
     }
     source = _normalizePath(source);
     target = _normalizePath(target);
-    if (!fs.existsSync(source)) {
+    if (!(yield $$.isExisted(source))) {
       throw _error("'" + source + "' was invalid");
     }
     isDir = fs.statSync(source).isDirectory();
     type = isDir ? 'dir' : 'file';
-    source = _normalizePath("" + $$.base + path.sep + source);
+    $.info.isSilent = true;
+    dirname = path.dirname(target);
+    yield $$.mkdir(dirname);
+    $.info.isSilent = false;
     yield new Promise(function(resolve) {
       return fs.symlink(source, target, type, function(err) {
         if (err) {

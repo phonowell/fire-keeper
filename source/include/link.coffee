@@ -13,13 +13,16 @@ $$.link = co (source, target) ->
   source = _normalizePath source
   target = _normalizePath target
 
-  if !fs.existsSync source
+  unless yield $$.isExisted source
     throw _error "'#{source}' was invalid"
 
   isDir = fs.statSync(source).isDirectory()
   type = if isDir then 'dir' else 'file'
 
-  source = _normalizePath "#{$$.base}#{path.sep}#{source}"
+  $.info.isSilent = true
+  dirname = path.dirname target
+  yield $$.mkdir dirname
+  $.info.isSilent = false
 
   yield new Promise (resolve) ->
     fs.symlink source, target, type, (err) ->

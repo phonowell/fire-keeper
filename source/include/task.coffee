@@ -35,8 +35,8 @@ $$.task 'gurumin', co ->
 
   yield _cloneGitHub 'gurumin'
 
-  yield $$.remove "#{$$.base}/source/gurumin"
-  yield $$.link './../gurumin/source', "#{$$.base}/source/gurumin"
+  yield $$.remove './source/gurumin'
+  yield $$.link './../gurumin/source', './source/gurumin'
 
 $$.task 'kokoro', co ->
 
@@ -63,23 +63,25 @@ $$.task 'kokoro', co ->
 
   for source in LIST
 
-    yield $$.remove "#{$$.base}/#{source}"
-    yield $$.copy "#{$$.base}/../kokoro/#{source}", "#{$$.base}/"
-    yield $$.shell "git add -f #{$$.base}/#{source}"
+    yield $$.remove "./#{source}"
+    yield $$.copy "./../kokoro/#{source}", './'
+    yield $$.shell "git add -f #{$$.path.base}/#{source}"
 
   # compile
 
-  yield $$.compile "#{$$.base}/coffeelint.yaml"
+  yield $$.compile './coffeelint.yaml'
 
-  yield $$.compile "#{$$.base}/stylintrc.yaml"
-  yield $$.copy "#{$$.base}/stylintrc.json", "#{$$.base}/",
+  yield $$.compile './stylintrc.yaml'
+  yield $$.copy './stylintrc.json', './',
     prefix: '.'
     extname: ''
-  yield $$.remove "#{$$.base}/stylintrc.json"
+  yield $$.remove './stylintrc.json'
 
 $$.task 'noop', -> null
 
 $$.task 'update', co ->
+
+  yield $$.remove './package-lock.json'
 
   npm = switch $$.os
     when 'linux', 'macos' then 'npm'
@@ -88,7 +90,7 @@ $$.task 'update', co ->
 
   {target} = $$.argv
 
-  pkg = "#{$$.base}/package.json"
+  pkg = './package.json'
   yield $$.backup pkg
 
   p = yield $$.read pkg
