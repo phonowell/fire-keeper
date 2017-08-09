@@ -10,10 +10,16 @@ co = Promise.coroutine
 
   $$.backup(source)
   $$.compile(source, [target], [option])
+  $$.copy(source, target, [option])
+  $$.cp(source, target, [option])
+  $$.delay([time])
+  $$.download(source, target, [option])
   $$.isExisted(source)
   $$.link(source, target)
+  $$.ln(source, target)
   $$.mkdir(source)
   $$.read(source)
+  $$.recover(source)
   $$.remove(source)
   $$.rm(source)
   $$.write(source, data)
@@ -52,6 +58,85 @@ describe '$$.compile(source, [target], [option])', ->
     yield $$.compile './temp/readme.md'
 
     unless yield $$.isExisted './temp/readme.html'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+  it "$$.compile('./temp/coffeelint.yaml')", co ->
+
+    yield $$.copy './coffeelint.yaml', './temp'
+
+    yield $$.compile './temp/coffeelint.yaml'
+
+    unless yield $$.isExisted './temp/coffeelint.json'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+  it "$$.compile('./temp/gulpfile.coffee')", co ->
+
+    yield $$.copy './gulpfile.coffee', './temp'
+
+    yield $$.compile './temp/gulpfile.coffee'
+
+    unless yield $$.isExisted './temp/gulpfile.js'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.copy(source, target, [option])', ->
+
+  it "$$.copy('./license.md', './temp', 'test.md')", co ->
+
+    source = './license.md'
+    target = './temp/test.md'
+
+    yield $$.copy source, './temp', 'test.md'
+
+    unless yield $$.isExisted target
+      throw new Error()
+
+    sourceData = yield $$.read source
+    targetData = yield $$.read target
+
+    if sourceData.toString() != targetData.toString()
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.cp(source, target, [option])', ->
+
+  it '$$.cp()', ->
+
+    if $$.cp != $$.copy
+      throw new Error()
+
+describe '$$.delay([time])', ->
+
+  it '$$.delay(1e3)', co ->
+
+    st = _.now()
+
+    yield $$.delay 1e3
+
+    ct = _.now()
+
+    unless 900 < ct - st < 1100
+      throw new Error()
+
+describe '$$.download(source, target, [option])', ->
+
+  it "$$.download('http://anitama.cn', './temp', 'anitama.html')", co ->
+
+    yield $$.download 'http://anitama.cn'
+    , './temp'
+    , 'anitama.html'
+
+    unless yield $$.isExisted './temp/anitama.html'
       throw new Error()
 
     # clean
@@ -101,7 +186,6 @@ describe '$$.isExisted(source)', ->
     # clean
     yield $$.remove './temp'
 
-
 describe '$$.link(source, target)', ->
 
   it "$$.link('./../gurumin/source', './temp/gurumin')", co ->
@@ -117,6 +201,13 @@ describe '$$.link(source, target)', ->
 
     # clean
     yield $$.remove './temp'
+
+describe '$$.ln(source, target)', ->
+
+  it '$$.ln()', ->
+
+    if $$.ln != $$.link
+      throw new Error()
 
 describe '$$.mkdir(source)', ->
 
@@ -158,6 +249,34 @@ describe '$$.read(source)', ->
     cont = yield $$.read source
 
     if cont.message != string
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.recover(source)', ->
+
+  it "$$.recover('./temp/readme.md')", co ->
+
+    source = './temp/readme.md'
+    target = './temp/readme.md.bak'
+
+    yield $$.copy './readme.md', './temp'
+
+    yield $$.backup source
+
+    targetData = yield $$.read target
+
+    yield $$.remove source
+
+    yield $$.recover source
+
+    unless yield $$.isExisted source
+      throw new Error()
+
+    sourceData = yield $$.read source
+
+    if sourceData.toString() != targetData.toString()
       throw new Error()
 
     # clean

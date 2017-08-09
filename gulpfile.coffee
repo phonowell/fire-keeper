@@ -52,6 +52,7 @@ $$.task 'lint', co ->
   yield $$.lint [
     './gulpfile.coffee'
     './source/**/*.coffee'
+    './test/**/*.coffee'
   ]
 
 $$.task 'set', co ->
@@ -65,6 +66,7 @@ $$.task 'test', co ->
 
   yield $$.compile './test/**/*.coffee'
   yield $$.shell 'npm test'
+  yield $$.remove './test/**/*.js'
 
 $$.task 'watch', ->
 
