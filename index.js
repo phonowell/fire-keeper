@@ -473,6 +473,9 @@
       }
     })(), source = ref[0], target = ref[1], option = ref[2];
     source = _formatPath(source);
+    if (target) {
+      target = _normalizePath(target);
+    }
     yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
         return target || e.base;

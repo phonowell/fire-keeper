@@ -14,6 +14,7 @@ $$.copy = co (arg...) ->
     else throw _error 'length'
 
   source = _formatPath source
+  if target then target = _normalizePath target
 
   yield new Promise (resolve) ->
 
