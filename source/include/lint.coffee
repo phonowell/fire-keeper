@@ -8,7 +8,7 @@ do ->
 
   # function
 
-  fn = (source) ->
+  fn = co (source) ->
 
     source = _formatPath source
 
@@ -20,7 +20,7 @@ do ->
       when 'styl' then 'stylus'
       else throw _error 'extname'
 
-    fn[method] source
+    yield fn[method] source
 
     # return
     $$

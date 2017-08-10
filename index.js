@@ -654,7 +654,7 @@
 
   (function() {
     var fn;
-    fn = function(source) {
+    fn = co(function*(source) {
       var extname, method;
       source = _formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
@@ -671,9 +671,9 @@
             throw _error('extname');
         }
       })();
-      fn[method](source);
+      yield fn[method](source);
       return $$;
-    };
+    });
 
     /*
     

@@ -79,6 +79,4 @@ $$.task 'watch', ->
 
 $$.task 'work', -> $$.shell 'start gulp watch'
 
-$$.task 'z', co ->
-
-  $.i yield $$.recover 'readme.md'
+#$$.task 'z', co ->
