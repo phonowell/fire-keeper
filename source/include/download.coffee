@@ -23,3 +23,6 @@ $$.download = co (arg...) ->
   msg = "downloaded '#{source}' to '#{target}'"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'download', msg
+
+  # return
+  $$

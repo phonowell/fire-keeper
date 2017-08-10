@@ -22,6 +22,9 @@ do ->
 
     fn[method] source
 
+    # return
+    $$
+
   ###
 
     coffee(source)

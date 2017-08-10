@@ -47,6 +47,9 @@ do ->
 
     $.info 'compile', "compiled '#{source}' to '#{target}'"
 
+    # return
+    $$
+
   ###
 
     coffee(source, target, option)

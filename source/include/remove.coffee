@@ -13,4 +13,7 @@ $$.remove = co (source) ->
 
   $.info 'remove', "removed '#{source}'"
 
+  # return
+  $$
+
 $$.rm = $$.remove

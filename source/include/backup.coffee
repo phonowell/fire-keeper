@@ -20,6 +20,9 @@ $$.backup = co (source) ->
 
   $.info 'backup', "backed up '#{source}'"
 
+  # return
+  $$
+
 $$.recover = co (source) ->
 
   source = _formatPath source
@@ -38,3 +41,6 @@ $$.recover = co (source) ->
     $.info.isSilent = false
 
   $.info 'recover', "recovered '#{source}'"
+
+  # return
+  $$

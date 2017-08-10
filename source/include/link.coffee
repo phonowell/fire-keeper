@@ -32,4 +32,7 @@ $$.link = co (source, target) ->
 
   $.info 'link', "linked '#{type}' '#{source}' to '#{target}'"
 
+  # return
+  $$
+
 $$.ln = $$.link

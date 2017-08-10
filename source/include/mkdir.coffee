@@ -21,3 +21,6 @@ $$.mkdir = co (source) ->
   yield Promise.all listPromise
 
   $.info 'create', "created '#{source}'"
+
+  # return
+  $$

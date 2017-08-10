@@ -21,8 +21,12 @@ co = Promise.coroutine
   $$.read(source)
   $$.recover(source)
   $$.remove(source)
+  $$.rename(source, option)
+  $$.replace(pathSource, [pathTarget], target, replacement)
   $$.rm(source)
+  $$.unzip(source, [target])
   $$.write(source, data)
+  $$.zip(source, [target], [option])
 
 ###
 
@@ -35,7 +39,10 @@ describe '$$.backup(source)', ->
 
     yield $$.copy './readme.md', './temp'
 
-    yield $$.backup source
+    res = yield $$.backup source
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted target
       throw new Error()
@@ -55,7 +62,10 @@ describe '$$.compile(source, [target], [option])', ->
 
     yield $$.copy './readme.md', './temp'
 
-    yield $$.compile './temp/readme.md'
+    res = yield $$.compile './temp/readme.md'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/readme.html'
       throw new Error()
@@ -67,7 +77,10 @@ describe '$$.compile(source, [target], [option])', ->
 
     yield $$.copy './coffeelint.yaml', './temp'
 
-    yield $$.compile './temp/coffeelint.yaml'
+    res = yield $$.compile './temp/coffeelint.yaml'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/coffeelint.json'
       throw new Error()
@@ -79,7 +92,10 @@ describe '$$.compile(source, [target], [option])', ->
 
     yield $$.copy './gulpfile.coffee', './temp'
 
-    yield $$.compile './temp/gulpfile.coffee'
+    res = yield $$.compile './temp/gulpfile.coffee'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/gulpfile.js'
       throw new Error()
@@ -94,7 +110,10 @@ describe '$$.copy(source, target, [option])', ->
     source = './license.md'
     target = './temp/test.md'
 
-    yield $$.copy source, './temp', 'test.md'
+    res = yield $$.copy source, './temp', 'test.md'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted target
       throw new Error()
@@ -121,7 +140,10 @@ describe '$$.delay([time])', ->
 
     st = _.now()
 
-    yield $$.delay 1e3
+    res = yield $$.delay 1e3
+
+    if res != $$
+      throw new Error()
 
     ct = _.now()
 
@@ -132,9 +154,12 @@ describe '$$.download(source, target, [option])', ->
 
   it "$$.download('http://anitama.cn', './temp', 'anitama.html')", co ->
 
-    yield $$.download 'http://anitama.cn'
+    res = yield $$.download 'http://anitama.cn'
     , './temp'
     , 'anitama.html'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/anitama.html'
       throw new Error()
@@ -190,8 +215,11 @@ describe '$$.link(source, target)', ->
 
   it "$$.link('./../gurumin/source', './temp/gurumin')", co ->
 
-    yield $$.link './../gurumin/source'
+    res = yield $$.link './../gurumin/source'
     , './temp/gurumin'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/gurumin'
       throw new Error()
@@ -213,7 +241,10 @@ describe '$$.mkdir(source)', ->
 
   it "$$.mkdir('./temp/m/k/d/i/r')", co ->
 
-    yield $$.mkdir './temp/m/k/d/i/r'
+    res = yield $$.mkdir './temp/m/k/d/i/r'
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted './temp/m/k/d/i/r'
       throw new Error()
@@ -269,7 +300,10 @@ describe '$$.recover(source)', ->
 
     yield $$.remove source
 
-    yield $$.recover source
+    res = yield $$.recover source
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted source
       throw new Error()
@@ -288,9 +322,64 @@ describe '$$.remove(source)', ->
 
     yield $$.write './temp/re/move.txt', 'to be removed'
 
-    yield $$.remove './temp/re'
+    res = yield $$.remove './temp/re'
+
+    if res != $$
+      throw new Error()
 
     if yield $$.isExisted './temp/re'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.rename(source, option)', ->
+
+  it "$$.rename('./temp/rename.txt')", co ->
+
+    source = './temp/rename.txt'
+    target = './temp/renamed.txt'
+    string = 'to be renamed'
+
+    yield $$.write source, string
+
+    res = yield $$.rename source, 'renamed.txt'
+
+    if res != $$
+      throw new Error()
+
+    if yield $$.isExisted source
+      throw new Error()
+
+    unless yield $$.isExisted target
+      throw new Error()
+
+    cont = yield $$.read target
+
+    if cont != string
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
+
+  it "$$.replace('./temp/replace.txt', 'to be replaced', 'replaced')", co ->
+
+    source = './temp/replace.txt'
+    sourceData = 'to be replaced'
+    targetData = 'replaced'
+
+    yield $$.write source, sourceData
+
+    res = yield $$.replace source, sourceData, targetData
+
+    if res != $$
+      throw new Error()
+
+    cont = yield $$.read source
+
+    if cont != targetData
       throw new Error()
 
     # clean
@@ -303,6 +392,31 @@ describe '$$.rm(source)', ->
     if $$.rm != $$.remove
       throw new Error()
 
+describe '$$.unzip(source, [target])', ->
+
+  it "$$.unzip('./temp/temp.zip')", co ->
+
+    yield $$.copy './*.md', './temp'
+
+    yield $$.zip './temp/*.md'
+
+    res = yield $$.unzip './temp/temp.zip'
+
+    if res != $$
+      throw new Error()
+
+    unless yield $$.isExisted './temp/temp'
+      throw new Error()
+
+    unless yield $$.isExisted './temp/temp/license.md'
+      throw new Error()
+
+    unless yield $$.isExisted './temp/temp/readme.md'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
 describe '$$.write(source, data)', ->
 
   it "$$.write('./temp/wr/ite.txt', 'a test message')", co ->
@@ -310,7 +424,10 @@ describe '$$.write(source, data)', ->
     source = './temp/wr/ite.txt'
     string = 'a test message'
 
-    yield $$.write source, string
+    res = yield $$.write source, string
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted source
       throw new Error()
@@ -329,7 +446,10 @@ describe '$$.write(source, data)', ->
     string = 'a test message'
     object = message: string
 
-    yield $$.write source, object
+    res = yield $$.write source, object
+
+    if res != $$
+      throw new Error()
 
     unless yield $$.isExisted source
       throw new Error()
@@ -337,6 +457,23 @@ describe '$$.write(source, data)', ->
     cont = yield $$.read source
 
     if cont.message != string
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+describe '$$.zip(source, [target], [option])', ->
+
+  it "$$.zip('./temp/*.md')", co ->
+
+    yield $$.copy './*.md', './temp'
+
+    res = yield $$.zip './temp/*.md'
+
+    if res != $$
+      throw new Error()
+
+    unless yield $$.isExisted './temp/temp.zip'
       throw new Error()
 
     # clean

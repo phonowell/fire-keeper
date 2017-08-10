@@ -28,4 +28,7 @@ $$.copy = co (arg...) ->
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
+  # return
+  $$
+
 $$.cp = $$.copy

@@ -288,7 +288,8 @@
       });
       $.info.isSilent = false;
     }
-    return $.info('backup', "backed up '" + source + "'");
+    $.info('backup', "backed up '" + source + "'");
+    return $$;
   });
 
   $$.recover = co(function*(source) {
@@ -307,7 +308,8 @@
       yield $$.remove(bak);
       $.info.isSilent = false;
     }
-    return $.info('recover', "recovered '" + source + "'");
+    $.info('recover', "recovered '" + source + "'");
+    return $$;
   });
 
 
@@ -370,7 +372,8 @@
         throw _error("invalid extname: '." + extname + "'");
       }
       yield compiler(source, target, option);
-      return $.info('compile', "compiled '" + source + "' to '" + target + "'");
+      $.info('compile', "compiled '" + source + "' to '" + target + "'");
+      return $$;
     });
 
     /*
@@ -481,7 +484,8 @@
     if (option) {
       msg += ", as '" + ($.parseString(option)) + "'";
     }
-    return $.info('copy', msg);
+    $.info('copy', msg);
+    return $$;
   });
 
   $$.cp = $$.copy;
@@ -516,7 +520,8 @@
     if (option) {
       msg += ", as '" + ($.parseString(option)) + "'";
     }
-    return $.info('download', msg);
+    $.info('download', msg);
+    return $$;
   });
 
 
@@ -529,12 +534,16 @@
    */
 
   $$.isExisted = co(function*(source) {
+    var msg, res;
     source = _normalizePath(source);
-    return (yield new Promise(function(resolve) {
-      return fs.exists(source, function(res) {
-        return resolve(res);
+    res = (yield new Promise(function(resolve) {
+      return fs.exists(source, function(result) {
+        return resolve(result);
       });
     }));
+    msg = res ? 'existed' : 'not existed';
+    $.info('file', "'" + source + "' " + msg);
+    return res;
   });
 
   $$.read = co(function*(source) {
@@ -573,7 +582,8 @@
     $.info.isSilent = true;
     yield $$.remove(source);
     $.info.isSilent = false;
-    return $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
+    $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
+    return $$;
   });
 
   $$.write = co(function*(source, data) {
@@ -592,7 +602,8 @@
         return resolve();
       });
     });
-    return $.info('file', "wrote '" + source + "'");
+    $.info('file', "wrote '" + source + "'");
+    return $$;
   });
 
 
@@ -629,7 +640,8 @@
         return resolve();
       });
     });
-    return $.info('link', "linked '" + type + "' '" + source + "' to '" + target + "'");
+    $.info('link', "linked '" + type + "' '" + source + "' to '" + target + "'");
+    return $$;
   });
 
   $$.ln = $$.link;
@@ -659,7 +671,8 @@
             throw _error('extname');
         }
       })();
-      return fn[method](source);
+      fn[method](source);
+      return $$;
     };
 
     /*
@@ -710,7 +723,8 @@
       })));
     }
     yield Promise.all(listPromise);
-    return $.info('create', "created '" + source + "'");
+    $.info('create', "created '" + source + "'");
+    return $$;
   });
 
 
@@ -725,7 +739,8 @@
     yield del(source, {
       force: true
     });
-    return $.info('remove', "removed '" + source + "'");
+    $.info('remove', "removed '" + source + "'");
+    return $$;
   });
 
   $$.rm = $$.remove;
@@ -757,7 +772,8 @@
         return resolve();
       });
     });
-    return $.info('replace', "replaced '" + target + "' to '" + replacement + "', in '" + pathSource + "', output to '" + pathTarget + "'");
+    $.info('replace', "replaced '" + target + "' to '" + replacement + "', in '" + pathSource + "', output to '" + pathTarget + "'");
+    return $$;
   });
 
 
@@ -783,12 +799,13 @@
     source = _formatPath(source);
     target || (target = (path.dirname(source[0])) + "/" + (path.basename(source[0], '.zip')));
     target = _normalizePath(target);
-    return (yield new Promise(function(resolve) {
+    yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(target)).on('end', function() {
-        $.info('zip', "unzipped '" + source + "' to '" + target + "'");
         return resolve();
       });
-    }));
+    });
+    $.info('zip', "unzipped '" + source + "' to '" + target + "'");
+    return $$;
   });
 
   $$.zip = co(function*() {
@@ -820,12 +837,13 @@
       }
     })();
     filename || (filename = (path.basename(path.resolve(target)) || 'zip') + ".zip");
-    return (yield new Promise(function(resolve) {
+    yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(target)).on('end', function() {
-        $.info('zip', "zipped '" + source + "' to '" + target + "', named as '" + filename + "'");
         return resolve();
       });
-    }));
+    });
+    $.info('zip', "zipped '" + source + "' to '" + target + "', named as '" + filename + "'");
+    return $$;
   });
 
 
@@ -846,13 +864,15 @@
         return resolve();
       });
     });
-    return $.info('delay', "delayed '" + time + " ms'");
+    $.info('delay', "delayed '" + time + " ms'");
+    return $$;
   });
 
   $$.reload = function(source) {
     source = _formatPath(source);
     livereload.listen();
-    return $$.watch(source).pipe(livereload());
+    $$.watch(source).pipe(livereload());
+    return $$;
   };
 
   $$.shell = $.shell;

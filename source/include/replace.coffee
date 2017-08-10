@@ -29,3 +29,6 @@ $$.replace = co (arg...) ->
   , "replaced '#{target}' to '#{replacement}',
     in '#{pathSource}',
     output to '#{pathTarget}'"
+
+  # return
+  $$

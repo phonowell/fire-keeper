@@ -11,9 +11,15 @@ $$.isExisted = co (source) ->
 
   source = _normalizePath source
 
-  yield new Promise (resolve) ->
+  res = yield new Promise (resolve) ->
 
-    fs.exists source, (res) -> resolve res
+    fs.exists source, (result) -> resolve result
+
+  msg = if res then 'existed' else 'not existed'
+  $.info 'file', "'#{source}' #{msg}"
+
+  # return
+  res
 
 $$.read = co (source) ->
 
@@ -27,6 +33,7 @@ $$.read = co (source) ->
 
   $.info 'file', "read '#{source}'"
 
+  # return
   res = switch path.extname(source)[1...]
     when 'json' then $.parseJson res
     when 'txt' then $.parseString res
@@ -49,7 +56,11 @@ $$.rename = co (source, option) ->
   yield $$.remove source
   $.info.isSilent = false
 
-  $.info 'file', "renamed '#{source}' as '#{$.parseString option}'"
+  $.info 'file'
+  , "renamed '#{source}' as '#{$.parseString option}'"
+
+  # return
+  $$
 
 $$.write = co (source, data) ->
 
@@ -69,3 +80,6 @@ $$.write = co (source, data) ->
       resolve()
 
   $.info 'file', "wrote '#{source}'"
+
+  # return
+  $$
