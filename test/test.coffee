@@ -331,6 +331,13 @@ describe '$$.read(source)', ->
     # clean
     yield $$.remove './temp'
 
+  it "$$.read('./temp/null.txt')", co ->
+
+    cont = yield $$.read './temp/null.txt'
+
+    if cont?
+      throw new Error()
+
 describe '$$.recover(source)', ->
 
   it "$$.recover('./temp/readme.md')", co ->

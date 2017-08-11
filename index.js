@@ -550,8 +550,15 @@
   });
 
   $$.read = co(function*(source) {
-    var res;
+    var isExisted, res;
     source = _normalizePath(source);
+    $.info.isSilent = true;
+    isExisted = (yield $$.isExisted(source));
+    $.info.isSilent = false;
+    if (!isExisted) {
+      $.info('file', "'" + source + "' not existed");
+      return null;
+    }
     res = (yield new Promise(function(resolve) {
       return fs.readFile(source, function(err, data) {
         if (err) {
