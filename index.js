@@ -533,29 +533,23 @@
     isExisted(source)
     read(source)
     rename(source, option)
+    stat(source)
     write(source, data)
    */
 
-  $$.isExisted = co(function*(source) {
-    var msg, res;
+  $$.isExisted = function(source) {
     source = _normalizePath(source);
-    res = (yield new Promise(function(resolve) {
+    return new Promise(function(resolve) {
       return fs.exists(source, function(result) {
         return resolve(result);
       });
-    }));
-    msg = res ? 'existed' : 'not existed';
-    $.info('file', "'" + source + "' " + msg);
-    return res;
-  });
+    });
+  };
 
   $$.read = co(function*(source) {
-    var isExisted, res;
+    var res;
     source = _normalizePath(source);
-    $.info.isSilent = true;
-    isExisted = (yield $$.isExisted(source));
-    $.info.isSilent = false;
-    if (!isExisted) {
+    if (!(yield $$.isExisted(source))) {
       $.info('file', "'" + source + "' not existed");
       return null;
     }
@@ -594,6 +588,22 @@
     $.info.isSilent = false;
     $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
     return $$;
+  });
+
+  $$.stat = co(function*(source) {
+    source = _normalizePath(source);
+    if (!(yield $$.isExisted(source))) {
+      $.info('file', "'" + source + "' not existed");
+      return null;
+    }
+    return new Promise(function(resolve) {
+      return fs.stat(source, function(err, stat) {
+        if (err) {
+          throw err;
+        }
+        return resolve(stat);
+      });
+    });
   });
 
   $$.write = co(function*(source, data) {

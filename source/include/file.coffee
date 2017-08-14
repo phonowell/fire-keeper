@@ -3,32 +3,24 @@
   isExisted(source)
   read(source)
   rename(source, option)
+  stat(source)
   write(source, data)
 
 ###
 
-$$.isExisted = co (source) ->
+$$.isExisted = (source) ->
 
   source = _normalizePath source
 
-  res = yield new Promise (resolve) ->
+  new Promise (resolve) ->
 
     fs.exists source, (result) -> resolve result
-
-  msg = if res then 'existed' else 'not existed'
-  $.info 'file', "'#{source}' #{msg}"
-
-  # return
-  res
 
 $$.read = co (source) ->
 
   source = _normalizePath source
 
-  $.info.isSilent = true
-  isExisted = yield $$.isExisted source
-  $.info.isSilent = false
-  if !isExisted
+  unless yield $$.isExisted source
     $.info 'file', "'#{source}' not existed"
     return null
 
@@ -68,6 +60,21 @@ $$.rename = co (source, option) ->
 
   # return
   $$
+
+$$.stat = co (source) ->
+
+  source = _normalizePath source
+
+  unless yield $$.isExisted source
+    $.info 'file', "'#{source}' not existed"
+    return null
+
+  # return
+  new Promise (resolve) ->
+
+    fs.stat source, (err, stat) ->
+      if err then throw err
+      resolve stat
 
 $$.write = co (source, data) ->
 

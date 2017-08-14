@@ -8,25 +8,26 @@ co = Promise.coroutine
 
 ###
 
-  $$.backup(source)
-  $$.compile(source, [target], [option])
-  $$.copy(source, target, [option])
-  $$.cp(source, target, [option])
-  $$.delay([time])
-  $$.download(source, target, [option])
-  $$.isExisted(source)
-  $$.link(source, target)
-  $$.ln(source, target)
-  $$.mkdir(source)
-  $$.read(source)
-  $$.recover(source)
-  $$.remove(source)
-  $$.rename(source, option)
-  $$.replace(pathSource, [pathTarget], target, replacement)
-  $$.rm(source)
-  $$.unzip(source, [target])
-  $$.write(source, data)
-  $$.zip(source, [target], [option])
+  backup(source)
+  compile(source, [target], [option])
+  copy(source, target, [option])
+  cp(source, target, [option])
+  delay([time])
+  download(source, target, [option])
+  isExisted(source)
+  link(source, target)
+  ln(source, target)
+  mkdir(source)
+  read(source)
+  recover(source)
+  remove(source)
+  rename(source, option)
+  replace(pathSource, [pathTarget], target, replacement)
+  rm(source)
+  stat(source)
+  unzip(source, [target])
+  write(source, data)
+  zip(source, [target], [option])
 
 ###
 
@@ -443,6 +444,33 @@ describe '$$.rm(source)', ->
   it '$$.rm()', ->
 
     if $$.rm != $$.remove
+      throw new Error()
+
+describe '$$.stat(source)', ->
+
+  it '$$.stat("./temp/package.json")', co ->
+
+    yield $$.copy './package.json', './temp'
+
+    stat = yield $$.stat './package.json'
+
+    if $.type(stat) != 'object'
+      throw new Error()
+
+    if $.type(stat.atime) != 'date'
+      throw new Error()
+
+    if $.type(stat.size) != 'number'
+      throw new Error()
+
+    # clean
+    yield $$.remove './temp'
+
+  it '$$.stat("./temp/null.txt")', co ->
+
+    stat = yield $$.stat './temp/null.txt'
+
+    if stat?
       throw new Error()
 
 describe '$$.unzip(source, [target])', ->
