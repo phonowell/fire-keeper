@@ -1,21 +1,13 @@
 ###
 
-  delay(time)
+  delay()
   reload(source)
   shell(cmd)
   watch()
 
 ###
 
-$$.delay = co (time = 0) ->
-
-  yield new Promise (resolve) ->
-    $.next time, -> resolve()
-
-  $.info 'delay', "delayed '#{time} ms'"
-
-  # return
-  $$
+$$.delay = $.delay
 
 $$.reload = (source) ->
 

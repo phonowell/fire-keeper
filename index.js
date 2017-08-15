@@ -227,7 +227,7 @@
   });
 
   $$.task('update', co(function*() {
-    var key, list, npm, p, pkg, target;
+    var key, list, npm, p, pkg, res, target;
     yield $$.remove('./package-lock.json');
     npm = (function() {
       switch ($$.os) {
@@ -263,8 +263,14 @@
       list.push(npm + " r --save " + key);
       list.push(npm + " i --save " + key);
     }
-    yield $$.shell(list);
-    return (yield $$.remove(pkg + ".bak"));
+    res = (yield $$.shell(list));
+    if (res) {
+      return (yield $$.remove(pkg + ".bak"));
+    } else {
+      $.info('update', 'failed');
+      yield $$.recover(pkg);
+      return (yield $$.shell('npm i'));
+    }
   }));
 
 
@@ -869,24 +875,13 @@
 
   /*
   
-    delay(time)
+    delay()
     reload(source)
     shell(cmd)
     watch()
    */
 
-  $$.delay = co(function*(time) {
-    if (time == null) {
-      time = 0;
-    }
-    yield new Promise(function(resolve) {
-      return $.next(time, function() {
-        return resolve();
-      });
-    });
-    $.info('delay', "delayed '" + time + " ms'");
-    return $$;
-  });
+  $$.delay = $.delay;
 
   $$.reload = function(source) {
     source = _formatPath(source);

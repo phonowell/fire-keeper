@@ -183,18 +183,9 @@ describe '$$.cp(source, target, [option])', ->
 
 describe '$$.delay([time])', ->
 
-  it '$$.delay(1e3)', co ->
+  it '$$.delay()', ->
 
-    st = _.now()
-
-    res = yield $$.delay 1e3
-
-    if res != $$
-      throw new Error()
-
-    ct = _.now()
-
-    unless 900 < ct - st < 1100
+    if $$.delay != $.delay
       throw new Error()
 
 describe '$$.download(source, target, [option])', ->

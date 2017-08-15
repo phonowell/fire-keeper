@@ -106,6 +106,11 @@ $$.task 'update', co ->
     list.push "#{npm} r --save #{key}"
     list.push "#{npm} i --save #{key}"
 
-  yield $$.shell list
+  res = yield $$.shell list
 
-  yield $$.remove "#{pkg}.bak"
+  if res
+    yield $$.remove "#{pkg}.bak"
+  else
+    $.info 'update', 'failed'
+    yield $$.recover pkg
+    yield $$.shell 'npm i'
