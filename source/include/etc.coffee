@@ -1,15 +1,18 @@
 ###
 
-  delay()
+  delay([time])
   reload(source)
   shell(cmd)
-  watch()
+  watch(source)
+  yargs()
 
 ###
 
 $$.delay = $.delay
 
 $$.reload = (source) ->
+
+  if !source then throw new Error 'invalid source'
 
   source = _formatPath source
 
@@ -24,3 +27,5 @@ $$.reload = (source) ->
 $$.shell = $.shell
 
 $$.watch = $p.watch
+
+$$.yargs = $p.yargs

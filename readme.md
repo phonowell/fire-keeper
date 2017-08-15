@@ -4,7 +4,7 @@ A little helper to make things simple.
 
 ## Install
 
-```
+```shell
 $ npm install --save-dev phonowell/fire-keeper
 ```
 
@@ -47,7 +47,16 @@ $$.task(name, [fn])
 $$.unzip(source, [target])
 $$.watch(source)
 $$.write(source, data)
+$$.yargs()
 $$.zip(source, [target], [option])
+```
+
+### Variable
+
+```coffeescript
+$$.argv
+$$.os
+$$.path
 ```
 
 ### Library

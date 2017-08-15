@@ -20,13 +20,17 @@ co = Promise.coroutine
   mkdir(source)
   read(source)
   recover(source)
+  reload(source)
   remove(source)
   rename(source, option)
   replace(pathSource, [pathTarget], target, replacement)
   rm(source)
+  shell(cmd)
   stat(source)
   unzip(source, [target])
+  watch(source)
   write(source, data)
+  yargs()
   zip(source, [target], [option])
 
 ###
@@ -361,6 +365,13 @@ describe '$$.recover(source)', ->
     # clean
     yield $$.remove './temp'
 
+describe '$$.reload(source)', ->
+
+  it '$$.reload()', ->
+
+    if !$$.reload
+      throw new Error()
+
 describe '$$.remove(source)', ->
 
   it "$$.remove('./temp/re')", co ->
@@ -437,6 +448,13 @@ describe '$$.rm(source)', ->
     if $$.rm != $$.remove
       throw new Error()
 
+describe '$$.shell()', ->
+
+  it '$$.shell()', ->
+
+    if $$.shell != $.shell
+      throw new Error()
+
 describe '$$.stat(source)', ->
 
   it '$$.stat("./temp/package.json")', co ->
@@ -489,6 +507,13 @@ describe '$$.unzip(source, [target])', ->
     # clean
     yield $$.remove './temp'
 
+describe '$$.watch()', ->
+
+  it '$$.watch()', ->
+
+    if $$.watch != $$.plugin.watch
+      throw new Error()
+
 describe '$$.write(source, data)', ->
 
   it "$$.write('./temp/wr/ite.txt', 'a test message')", co ->
@@ -533,6 +558,13 @@ describe '$$.write(source, data)', ->
 
     # clean
     yield $$.remove './temp'
+
+describe '$$.yargs()', ->
+
+  it '$$.yargs()', ->
+
+    if $$.yargs != $$.plugin.yargs
+      throw new Error()
 
 describe '$$.zip(source, [target], [option])', ->
 
