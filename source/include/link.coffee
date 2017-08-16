@@ -19,10 +19,10 @@ $$.link = co (source, target) ->
   isDir = fs.statSync(source).isDirectory()
   type = if isDir then 'dir' else 'file'
 
-  $.info.isSilent = true
+  $.info.pause '$$.link'
   dirname = path.dirname target
   yield $$.mkdir dirname
-  $.info.isSilent = false
+  $.info.resume '$$.link'
 
   yield new Promise (resolve) ->
     fs.symlink source, target, type, (err) ->

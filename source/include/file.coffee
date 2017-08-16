@@ -51,9 +51,9 @@ $$.rename = co (source, option) ->
     .pipe gulp.dest (e) -> e.base
     .on 'end', -> resolve()
 
-  $.info.isSilent = true
+  $.info.pause '$$.rename'
   yield $$.remove source
-  $.info.isSilent = false
+  $.info.resume '$$.rename'
 
   $.info 'file'
   , "renamed '#{source}' as '#{$.parseString option}'"
@@ -80,9 +80,9 @@ $$.write = co (source, data) ->
 
   source = _normalizePath source
 
-  $.info.isSilent = true
+  $.info.pause '$$.write'
   yield $$.mkdir path.dirname source
-  $.info.isSilent = false
+  $.info.resume '$$.write'
 
   if $.type data in 'array object'.split ' '
     data = $.parseString data

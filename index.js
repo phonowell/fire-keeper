@@ -287,12 +287,12 @@
       src = source[i];
       suffix = path.extname(src);
       extname = '.bak';
-      $.info.isSilent = true;
+      $.info.pause('$$.backup');
       yield $$.copy(src, null, {
         suffix: suffix,
         extname: extname
       });
-      $.info.isSilent = false;
+      $.info.resume('$$.backup');
     }
     $.info('backup', "backed up '" + source + "'");
     return $$;
@@ -308,11 +308,11 @@
         continue;
       }
       basename = path.basename(src);
-      $.info.isSilent = true;
+      $.info.pause('$$.recover');
       yield $$.remove(src);
       yield $$.copy(bak, null, basename);
       yield $$.remove(bak);
-      $.info.isSilent = false;
+      $.info.resume('$$.recover');
     }
     $.info('recover', "recovered '" + source + "'");
     return $$;
@@ -589,9 +589,9 @@
         return resolve();
       });
     });
-    $.info.isSilent = true;
+    $.info.pause('$$.rename');
     yield $$.remove(source);
-    $.info.isSilent = false;
+    $.info.resume('$$.rename');
     $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
     return $$;
   });
@@ -614,9 +614,9 @@
 
   $$.write = co(function*(source, data) {
     source = _normalizePath(source);
-    $.info.isSilent = true;
+    $.info.pause('$$.write');
     yield $$.mkdir(path.dirname(source));
-    $.info.isSilent = false;
+    $.info.resume('$$.write');
     if ($.type(indexOf.call('array object'.split(' '), data) >= 0)) {
       data = $.parseString(data);
     }
@@ -651,10 +651,10 @@
     }
     isDir = fs.statSync(source).isDirectory();
     type = isDir ? 'dir' : 'file';
-    $.info.isSilent = true;
+    $.info.pause('$$.link');
     dirname = path.dirname(target);
     yield $$.mkdir(dirname);
-    $.info.isSilent = false;
+    $.info.resume('$$.link');
     yield new Promise(function(resolve) {
       return fs.symlink(source, target, type, function(err) {
         if (err) {

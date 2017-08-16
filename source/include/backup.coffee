@@ -14,9 +14,9 @@ $$.backup = co (source) ->
     suffix = path.extname src
     extname = '.bak'
 
-    $.info.isSilent = true
+    $.info.pause '$$.backup'
     yield $$.copy src, null, {suffix, extname}
-    $.info.isSilent = false
+    $.info.resume '$$.backup'
 
   $.info 'backup', "backed up '#{source}'"
 
@@ -34,11 +34,11 @@ $$.recover = co (source) ->
 
     basename = path.basename src
 
-    $.info.isSilent = true
+    $.info.pause '$$.recover'
     yield $$.remove src
     yield $$.copy bak, null, basename
     yield $$.remove bak
-    $.info.isSilent = false
+    $.info.resume '$$.recover'
 
   $.info 'recover', "recovered '#{source}'"
 
