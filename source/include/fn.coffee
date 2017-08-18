@@ -34,6 +34,9 @@ _formatPath = (source) ->
 
 _normalizePath = (source) ->
 
+  if $.type(source) != 'string'
+    return null
+
   src = source.replace /\\/g, '/'
 
   src = switch src[0]

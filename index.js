@@ -129,6 +129,9 @@
 
   _normalizePath = function(source) {
     var src;
+    if ($.type(source) !== 'string') {
+      return null;
+    }
     src = source.replace(/\\/g, '/');
     src = (function() {
       switch (src[0]) {
@@ -202,16 +205,22 @@
   }));
 
   $$.task('kokoro', co(function*() {
-    var LIST, i, len, source;
+    var LIST, filename, i, isSame, len, source, target;
     yield _cloneGitHub('kokoro');
     LIST = ['coffeelint.yml', 'stylintrc.yml'];
     yield $$.remove(LIST);
     LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'stylintrc.yaml', 'license.md'];
     for (i = 0, len = LIST.length; i < len; i++) {
-      source = LIST[i];
-      yield $$.remove("./" + source);
-      yield $$.copy("./../kokoro/" + source, './');
-      yield $$.shell("git add -f " + $$.path.base + "/" + source);
+      filename = LIST[i];
+      source = "./../kokoro/" + filename;
+      target = "./" + filename;
+      isSame = (yield $$.isSame(source, target));
+      if (isSame === true) {
+        continue;
+      }
+      yield $$.remove(target);
+      yield $$.copy(source, './');
+      yield $$.shell("git add -f " + $$.path.base + "/" + filename);
     }
     yield $$.compile('./coffeelint.yaml');
     yield $$.compile('./stylintrc.yaml');
@@ -536,21 +545,69 @@
 
   /*
   
+    isChanged(source)
     isExisted(source)
+    isSame(source, target)
     read(source)
     rename(source, option)
     stat(source)
     write(source, data)
    */
 
+  $$.isChanged = co(function*(source) {
+    var contSource, map, md5, md5Source, pathMap, res;
+    md5 = require('blueimp-md5');
+    source = _normalizePath(source);
+    pathMap = './temp/fire-keeper/map-file-md5.json';
+    if (!source) {
+      return false;
+    }
+    contSource = (yield $$.read(source));
+    if (!contSource) {
+      return false;
+    }
+    md5Source = md5(contSource.toString());
+    map = (yield $$.read(pathMap));
+    map || (map = {});
+    res = md5Source !== map[source];
+    map[source] = md5Source;
+    $.info.pause('$$.isChanged');
+    yield $$.write(pathMap, map);
+    $.info.resume('$$.isChanged');
+    return res;
+  });
+
   $$.isExisted = function(source) {
     source = _normalizePath(source);
+    if (!source) {
+      return false;
+    }
     return new Promise(function(resolve) {
       return fs.exists(source, function(result) {
         return resolve(result);
       });
     });
   };
+
+  $$.isSame = co(function*(source, target) {
+    var contSource, contTarget, md5, md5Source, md5Target;
+    md5 = require('blueimp-md5');
+    source = _normalizePath(source);
+    target = _normalizePath(target);
+    if (!(source && target)) {
+      return false;
+    }
+    $.info.pause('$$.isSame');
+    contSource = (yield $$.read(source));
+    contTarget = (yield $$.read(target));
+    $.info.resume('$$.isSame');
+    if (!(contSource && contTarget)) {
+      return false;
+    }
+    md5Source = md5(contSource.toString());
+    md5Target = md5(contTarget.toString());
+    return md5Source === md5Target;
+  });
 
   $$.read = co(function*(source) {
     var res;

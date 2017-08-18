@@ -1,4 +1,8 @@
+# folder
+.temp
+secret
 source
+# file
 .stylintrc
 *.md
 *.yml

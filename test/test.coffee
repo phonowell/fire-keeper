@@ -4,6 +4,10 @@ $$ = require './../index'
 {$, _, Promise} = $$.library
 co = Promise.coroutine
 
+# function
+
+clean = co -> yield $$.remove './temp'
+
 # test
 
 ###
@@ -15,6 +19,7 @@ co = Promise.coroutine
   delay([time])
   download(source, target, [option])
   isExisted(source)
+  isSame(source, target)
   link(source, target)
   ln(source, target)
   mkdir(source)
@@ -58,8 +63,7 @@ describe '$$.backup(source)', ->
     if sourceData.toString() != targetData.toString()
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.compile(source, [target], [option])', ->
 
@@ -75,8 +79,7 @@ describe '$$.compile(source, [target], [option])', ->
     unless yield $$.isExisted './temp/readme.html'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.compile('./temp/coffeelint.yaml')", co ->
 
@@ -90,8 +93,7 @@ describe '$$.compile(source, [target], [option])', ->
     unless yield $$.isExisted './temp/coffeelint.json'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.compile('./temp/gulpfile.coffee')", co ->
 
@@ -105,8 +107,7 @@ describe '$$.compile(source, [target], [option])', ->
     unless yield $$.isExisted './temp/gulpfile.js'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.copy(source, target, [option])', ->
 
@@ -129,8 +130,7 @@ describe '$$.copy(source, target, [option])', ->
     if sourceData.toString() != targetData.toString()
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.copy('./license.md', './temp/new')", co ->
 
@@ -151,8 +151,7 @@ describe '$$.copy(source, target, [option])', ->
     if sourceData.toString() != targetData.toString()
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.copy('./license.md', '~/Downloads/temp')", co ->
 
@@ -175,7 +174,6 @@ describe '$$.copy(source, target, [option])', ->
     if sourceData.toString() != targetData.toString()
       throw new Error()
 
-    # clean
     yield $$.remove '~/Downloads/temp'
 
 describe '$$.cp(source, target, [option])', ->
@@ -206,9 +204,49 @@ describe '$$.download(source, target, [option])', ->
     unless yield $$.isExisted './temp/anitama.html'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
+describe '$$.isChanged(source)', ->
+
+  it "$$.isChanged('./temp/isChanged.txt')", co ->
+
+    yield clean()
+
+    source = './temp/isChanged.txt'
+    string = 'message to be changed'
+
+    yield $$.write source, string
+
+    res = yield $$.isChanged source
+
+    if res != true
+      throw new Error 1
+
+    res = yield $$.isChanged source
+
+    if res != false
+      throw new Error 2
+
+    string = 'message changed'
+
+    yield $$.write source, string
+
+    res = yield $$.isChanged source
+
+    if res != true
+      throw new Error 3
+
+    yield clean()
+
+  it "$$.isChanged('./temp/null.txt')", co ->
+
+    yield clean()
+
+    res = yield $$.isChanged './temp/null.txt'
+
+    if res != false
+      throw new Error()
+    
 describe '$$.isExisted(source)', ->
 
   it "$$.isExisted('./temp/existed')", co ->
@@ -220,16 +258,14 @@ describe '$$.isExisted(source)', ->
     unless yield $$.isExisted source
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.isExisted('./temp/null')", co ->
 
     if yield $$.isExisted './temp/null'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.isExisted('./temp/existed/existed.txt')", co ->
 
@@ -240,8 +276,7 @@ describe '$$.isExisted(source)', ->
     unless yield $$.isExisted source
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.isExisted('./temp/existed/null.txt')", co ->
 
@@ -250,8 +285,30 @@ describe '$$.isExisted(source)', ->
     if yield $$.isExisted './temp/existed/null.txt'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
+
+describe '$$.isSame(source, target)', ->
+
+  it "$$.isSame('./temp/readme.md', './readme.md')", co ->
+
+    source = './readme.md'
+    target = './temp/readme.md'
+
+    yield $$.copy source, './temp'
+
+    res = yield $$.isSame target, source
+
+    if !res
+      throw new Error()
+
+    yield clean()
+
+  it "$$.isSame('./temp/null.txt', './readme.md')", co ->
+
+    res = yield $$.isSame './temp/null/txt', './readme.md'
+
+    if res
+      throw new Error()
 
 describe '$$.link(source, target)', ->
 
@@ -269,8 +326,7 @@ describe '$$.link(source, target)', ->
     unless yield $$.isExisted './temp/gurumin/script/include/core/$.ago.coffee'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.ln(source, target)', ->
 
@@ -291,8 +347,7 @@ describe '$$.mkdir(source)', ->
     unless yield $$.isExisted './temp/m/k/d/i/r'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.read(source)', ->
 
@@ -308,8 +363,7 @@ describe '$$.read(source)', ->
     if cont != string
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.read('./temp/test.json')", co ->
 
@@ -324,8 +378,7 @@ describe '$$.read(source)', ->
     if cont.message != string
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.read('./temp/null.txt')", co ->
 
@@ -362,8 +415,7 @@ describe '$$.recover(source)', ->
     if sourceData.toString() != targetData.toString()
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.reload(source)', ->
 
@@ -386,8 +438,7 @@ describe '$$.remove(source)', ->
     if yield $$.isExisted './temp/re'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.rename(source, option)', ->
 
@@ -415,8 +466,7 @@ describe '$$.rename(source, option)', ->
     if cont != string
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
 
@@ -438,8 +488,7 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
     if cont != targetData
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.rm(source)', ->
 
@@ -472,8 +521,7 @@ describe '$$.stat(source)', ->
     if $.type(stat.size) != 'number'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it '$$.stat("./temp/null.txt")', co ->
 
@@ -504,8 +552,7 @@ describe '$$.unzip(source, [target])', ->
     unless yield $$.isExisted './temp/temp/readme.md'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.watch()', ->
 
@@ -534,8 +581,7 @@ describe '$$.write(source, data)', ->
     if cont != string
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
   it "$$.write('./temp/wr/ite.json', {message: 'a test message'})", co ->
 
@@ -556,8 +602,7 @@ describe '$$.write(source, data)', ->
     if cont.message != string
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()
 
 describe '$$.yargs()', ->
 
@@ -580,5 +625,4 @@ describe '$$.zip(source, [target], [option])', ->
     unless yield $$.isExisted './temp/temp.zip'
       throw new Error()
 
-    # clean
-    yield $$.remove './temp'
+    yield clean()

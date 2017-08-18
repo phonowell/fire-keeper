@@ -49,15 +49,6 @@ jspm_packages
 #
 #
 
-# ide
-.idea
-
-# cordova
-hooks
-platforms
-plugins
-www
-
 # build
 build
 dist
@@ -69,10 +60,30 @@ dist
 *.map
 *.json
 
-# linked
-.kokoro
+# cordova
+hooks
+platforms
+plugins
+www
+
+# git
 .gitattributes
 .gitignore
-.npmignore
-.stylintrc
+
+# gurumin
 gurumin
+
+# idea
+.idea
+
+# npm
+.npmignore
+
+# secret
+secret
+
+# stylus lint
+.stylintrc
+
+# temp
+temp

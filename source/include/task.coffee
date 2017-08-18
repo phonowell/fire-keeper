@@ -61,11 +61,18 @@ $$.task 'kokoro', co ->
     'license.md'
   ]
 
-  for source in LIST
+  for filename in LIST
 
-    yield $$.remove "./#{source}"
-    yield $$.copy "./../kokoro/#{source}", './'
-    yield $$.shell "git add -f #{$$.path.base}/#{source}"
+    source = "./../kokoro/#{filename}"
+    target = "./#{filename}"
+
+    isSame = yield $$.isSame source, target
+    if isSame == true
+      continue
+
+    yield $$.remove target
+    yield $$.copy source, './'
+    yield $$.shell "git add -f #{$$.path.base}/#{filename}"
 
   # compile
 
