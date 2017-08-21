@@ -1,1 +1,7 @@
-$$.library = {$, _, Promise, gulp}
+$$.library = {
+  $
+  _
+  fse
+  gulp
+  Promise
+}

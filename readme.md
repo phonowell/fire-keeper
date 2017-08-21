@@ -26,15 +26,13 @@ $$.task 'build', co ->
 $$.backup(source)
 $$.compile(source, [target], [option])
 $$.copy(source, target, [option])
-$$.cp(source, target, [option])
 $$.delay([time])
 $$.download(source, target, [option])
 $$.isChanged(source)
 $$.isExisted(source)
-$$.isSame(source, target)
+$$.isSame(list)
 $$.link(source, target)
 $$.lint(source)
-$$.ln(source, target)
 $$.mkdir(source)
 $$.read(source)
 $$.recover(source)
@@ -42,13 +40,12 @@ $$.reload(source)
 $$.remove(source)
 $$.rename(source, option)
 $$.replace(pathSource, [pathTarget], target, replacement)
-$$.rm(source)
 $$.shell(cmd)
 $$.stat(source)
 $$.task(name, [fn])
 $$.unzip(source, [target])
 $$.watch(source)
-$$.write(source, data)
+$$.write(source, data, [option])
 $$.yargs()
 $$.zip(source, [target], [option])
 ```
@@ -66,8 +63,9 @@ $$.path
 ```coffeescript
 $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
-$$.library.Promise # bluebird
 $$.library.gulp # gulp
+$$.library.fse # fs-extra
+$$.library.Promise # bluebird
 ```
 
 ### Caution

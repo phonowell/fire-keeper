@@ -1,11 +1,13 @@
 (function() {
-  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatPath, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
+  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatPath, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
     slice = [].slice,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   path = require('path');
 
   fs = require('fs');
+
+  fse = require('fs-extra');
 
   $ = require('node-jquery-extend');
 
@@ -22,8 +24,9 @@
   $$.library = {
     $: $,
     _: _,
-    Promise: Promise,
-    gulp: gulp
+    fse: fse,
+    gulp: gulp,
+    Promise: Promise
   };
 
   $p = $$.plugin = require('gulp-load-plugins')();
@@ -214,7 +217,7 @@
       filename = LIST[i];
       source = "./../kokoro/" + filename;
       target = "./" + filename;
-      isSame = (yield $$.isSame(source, target));
+      isSame = (yield $$.isSame([source, target]));
       if (isSame === true) {
         continue;
       }
@@ -470,47 +473,6 @@
 
   /*
   
-    copy(source, target, [option])
-    cp(source, target, [option])
-   */
-
-  $$.copy = co(function*() {
-    var arg, msg, option, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
-      switch (arg.length) {
-        case 2:
-          return [arg[0], arg[1], null];
-        case 3:
-          return arg;
-        default:
-          throw _error('length');
-      }
-    })(), source = ref[0], target = ref[1], option = ref[2];
-    source = _formatPath(source);
-    if (target) {
-      target = _normalizePath(target);
-    }
-    yield new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
-        return target || e.base;
-      })).on('end', function() {
-        return resolve();
-      });
-    });
-    msg = "copied '" + source + "' to '" + target + "'";
-    if (option) {
-      msg += ", as '" + ($.parseString(option)) + "'";
-    }
-    $.info('copy', msg);
-    return $$;
-  });
-
-  $$.cp = $$.copy;
-
-
-  /*
-  
     download(source, target, [option])
    */
 
@@ -545,14 +507,50 @@
 
   /*
   
+    copy(source, target, [option])
     isChanged(source)
     isExisted(source)
     isSame(source, target)
+    link(source, target)
+    mkdir(source)
     read(source)
+    remove(source)
     rename(source, option)
     stat(source)
     write(source, data)
    */
+
+  $$.copy = co(function*() {
+    var arg, msg, option, ref, source, target;
+    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+    ref = (function() {
+      switch (arg.length) {
+        case 2:
+          return [arg[0], arg[1], null];
+        case 3:
+          return arg;
+        default:
+          throw _error('length');
+      }
+    })(), source = ref[0], target = ref[1], option = ref[2];
+    source = _formatPath(source);
+    if (target) {
+      target = _normalizePath(target);
+    }
+    yield new Promise(function(resolve) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
+        return target || e.base;
+      })).on('end', function() {
+        return resolve();
+      });
+    });
+    msg = "copied '" + source + "' to '" + target + "'";
+    if (option) {
+      msg += ", as '" + ($.parseString(option)) + "'";
+    }
+    $.info('copy', msg);
+    return $$;
+  });
 
   $$.isChanged = co(function*(source) {
     var contSource, map, md5, md5Source, pathMap, res;
@@ -577,36 +575,76 @@
     return res;
   });
 
-  $$.isExisted = function(source) {
-    source = _normalizePath(source);
-    if (!source) {
+  $$.isExisted = co(function*(source) {
+    var i, len, src;
+    source = _formatPath(source);
+    if (!source.length) {
       return false;
     }
-    return new Promise(function(resolve) {
-      return fs.exists(source, function(result) {
-        return resolve(result);
-      });
-    });
-  };
+    for (i = 0, len = source.length; i < len; i++) {
+      src = source[i];
+      if (!(yield fse.pathExists(src))) {
+        return false;
+      }
+    }
+    return true;
+  });
 
-  $$.isSame = co(function*(source, target) {
-    var contSource, contTarget, md5, md5Source, md5Target;
+  $$.isSame = co(function*(list) {
+    var TOKEN, cont, i, len, md5, source, token;
     md5 = require('blueimp-md5');
+    list = _formatPath(list);
+    if (!list.length) {
+      return false;
+    }
+    TOKEN = null;
+    for (i = 0, len = list.length; i < len; i++) {
+      source = list[i];
+      cont = (yield $$.read(source));
+      if (!cont) {
+        return false;
+      }
+      token = md5(cont.toString());
+      if (!TOKEN) {
+        TOKEN = token;
+        continue;
+      }
+      if (token !== TOKEN) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  $$.link = co(function*(source, target) {
+    if (!(source && target)) {
+      throw _error('length');
+    }
     source = _normalizePath(source);
     target = _normalizePath(target);
-    if (!(source && target)) {
-      return false;
+    yield fse.ensureSymlink(source, target);
+    $.info('link', "linked '" + source + "' to '" + target + "'");
+    return $$;
+  });
+
+  $$.mkdir = co(function*(source) {
+    var listPromise, src;
+    if (!source) {
+      throw _error('length');
     }
-    $.info.pause('$$.isSame');
-    contSource = (yield $$.read(source));
-    contTarget = (yield $$.read(target));
-    $.info.resume('$$.isSame');
-    if (!(contSource && contTarget)) {
-      return false;
-    }
-    md5Source = md5(contSource.toString());
-    md5Target = md5(contTarget.toString());
-    return md5Source === md5Target;
+    source = _formatPath(source);
+    listPromise = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = source.length; i < len; i++) {
+        src = source[i];
+        results.push(fse.ensureDir(src));
+      }
+      return results;
+    })();
+    yield Promise.all(listPromise);
+    $.info('create', "created '" + source + "'");
+    return $$;
   });
 
   $$.read = co(function*(source) {
@@ -635,6 +673,15 @@
           return res;
       }
     })();
+  });
+
+  $$.remove = co(function*(source) {
+    source = _formatPath(source);
+    yield del(source, {
+      force: true
+    });
+    $.info('remove', "removed '" + source + "'");
+    return $$;
   });
 
   $$.rename = co(function*(source, option) {
@@ -669,65 +716,15 @@
     });
   });
 
-  $$.write = co(function*(source, data) {
+  $$.write = co(function*(source, data, option) {
     source = _normalizePath(source);
-    $.info.pause('$$.write');
-    yield $$.mkdir(path.dirname(source));
-    $.info.resume('$$.write');
     if ($.type(indexOf.call('array object'.split(' '), data) >= 0)) {
       data = $.parseString(data);
     }
-    yield new Promise(function(resolve) {
-      return fs.writeFile(source, data, function(err) {
-        if (err) {
-          throw err;
-        }
-        return resolve();
-      });
-    });
+    yield fse.outputFile(source, data, option);
     $.info('file', "wrote '" + source + "'");
     return $$;
   });
-
-
-  /*
-  
-    link(source, target)
-    ln(source, target)
-   */
-
-  $$.link = co(function*(source, target) {
-    var dirname, isDir, type;
-    if (!(source && target)) {
-      throw _error('length');
-    }
-    source = _normalizePath(source);
-    target = _normalizePath(target);
-    if (!(yield $$.isExisted(source))) {
-      throw _error("'" + source + "' was invalid");
-    }
-    isDir = fs.statSync(source).isDirectory();
-    type = isDir ? 'dir' : 'file';
-    $.info.pause('$$.link');
-    dirname = path.dirname(target);
-    yield $$.mkdir(dirname);
-    $.info.resume('$$.link');
-    yield new Promise(function(resolve) {
-      return fs.symlink(source, target, type, function(err) {
-        if (err) {
-          throw err;
-        }
-        if (type === 'dir') {
-          type = 'directory';
-        }
-        return resolve();
-      });
-    });
-    $.info('link', "linked '" + type + "' '" + source + "' to '" + target + "'");
-    return $$;
-  });
-
-  $$.ln = $$.link;
 
 
   /*
@@ -779,54 +776,6 @@
     };
     return $$.lint = fn;
   })();
-
-
-  /*
-  
-    mkdir(source)
-   */
-
-  $$.mkdir = co(function*(source) {
-    var i, len, listPromise, mkdirp, src;
-    if (!source) {
-      throw _error('length');
-    }
-    mkdirp = require('mkdirp');
-    source = _formatPath(source);
-    listPromise = [];
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
-      listPromise.push((yield new Promise(function(resolve) {
-        return mkdirp(src, function(err) {
-          if (err) {
-            throw err;
-          }
-          return resolve();
-        });
-      })));
-    }
-    yield Promise.all(listPromise);
-    $.info('create', "created '" + source + "'");
-    return $$;
-  });
-
-
-  /*
-  
-    remove(source)
-    rm(source)
-   */
-
-  $$.remove = co(function*(source) {
-    source = _formatPath(source);
-    yield del(source, {
-      force: true
-    });
-    $.info('remove', "removed '" + source + "'");
-    return $$;
-  });
-
-  $$.rm = $$.remove;
 
 
   /*

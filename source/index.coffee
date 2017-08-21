@@ -8,13 +8,9 @@
 
 #= include include/backup.coffee
 #= include include/compile.coffee
-#= include include/copy.coffee
 #= include include/download.coffee
 #= include include/file.coffee
-#= include include/link.coffee
 #= include include/lint.coffee
-#= include include/mkdir.coffee
-#= include include/remove.coffee
 #= include include/replace.coffee
 #= include include/zip.coffee
 

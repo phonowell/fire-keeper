@@ -66,7 +66,7 @@ $$.task 'kokoro', co ->
     source = "./../kokoro/#{filename}"
     target = "./#{filename}"
 
-    isSame = yield $$.isSame source, target
+    isSame = yield $$.isSame [source, target]
     if isSame == true
       continue
 

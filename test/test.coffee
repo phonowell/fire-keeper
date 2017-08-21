@@ -15,13 +15,11 @@ clean = co -> yield $$.remove './temp'
   backup(source)
   compile(source, [target], [option])
   copy(source, target, [option])
-  cp(source, target, [option])
   delay([time])
   download(source, target, [option])
   isExisted(source)
-  isSame(source, target)
+  isSame(list)
   link(source, target)
-  ln(source, target)
   mkdir(source)
   read(source)
   recover(source)
@@ -29,12 +27,11 @@ clean = co -> yield $$.remove './temp'
   remove(source)
   rename(source, option)
   replace(pathSource, [pathTarget], target, replacement)
-  rm(source)
   shell(cmd)
   stat(source)
   unzip(source, [target])
   watch(source)
-  write(source, data)
+  write(source, data, [option])
   yargs()
   zip(source, [target], [option])
 
@@ -176,13 +173,6 @@ describe '$$.copy(source, target, [option])', ->
 
     yield $$.remove '~/Downloads/temp'
 
-describe '$$.cp(source, target, [option])', ->
-
-  it '$$.cp()', ->
-
-    if $$.cp != $$.copy
-      throw new Error()
-
 describe '$$.delay([time])', ->
 
   it '$$.delay()', ->
@@ -287,25 +277,69 @@ describe '$$.isExisted(source)', ->
 
     yield clean()
 
-describe '$$.isSame(source, target)', ->
+  it '$$.isExisted([])', co ->
 
-  it "$$.isSame('./temp/readme.md', './readme.md')", co ->
+    isExisted = yield $$.isExisted []
 
-    source = './readme.md'
-    target = './temp/readme.md'
+    if isExisted
+      throw new Error()
 
-    yield $$.copy source, './temp'
+  it "$$.isExisted(['./temp/a', './temp/b', './temp/c'])", co ->
 
-    res = yield $$.isSame target, source
+    sourceList = [
+      './temp/a'
+      './temp/b'
+      './temp/c'
+    ]
+
+    yield $$.mkdir sourceList
+
+    isExisted = yield $$.isExisted sourceList
+
+    if !isExisted
+      throw new Error()
+
+    yield clean()
+
+  it "$$.isExisted(['./temp/existed.txt', './temp/null.txt'])", co ->
+
+    sourceList = [
+      './temp/existed.txt'
+      './temp/null.txt'
+    ]
+
+    yield $$.write sourceList[0], 'existed'
+
+    isExisted = yield $$.isExisted sourceList
+
+    if isExisted
+      throw new Error()
+
+    yield clean()
+
+describe '$$.isSame(list)', ->
+
+  it "$$.isSame(['./readme.md', './temp/a.md', './temp/b.md'])", co ->
+
+    sourceList = [
+      './readme.md'
+      './temp/a.md'
+      './temp/b.md'
+    ]
+
+    yield $$.copy sourceList[0], './temp', 'a.md'
+    yield $$.copy sourceList[0], './temp', 'b.md'
+
+    res = yield $$.isSame sourceList
 
     if !res
       throw new Error()
 
     yield clean()
 
-  it "$$.isSame('./temp/null.txt', './readme.md')", co ->
+  it "$$.isSame(['./temp/null.txt', './readme.md'])", co ->
 
-    res = yield $$.isSame './temp/null/txt', './readme.md'
+    res = yield $$.isSame ['./temp/null/txt', './readme.md']
 
     if res
       throw new Error()
@@ -328,13 +362,6 @@ describe '$$.link(source, target)', ->
 
     yield clean()
 
-describe '$$.ln(source, target)', ->
-
-  it '$$.ln()', ->
-
-    if $$.ln != $$.link
-      throw new Error()
-
 describe '$$.mkdir(source)', ->
 
   it "$$.mkdir('./temp/m/k/d/i/r')", co ->
@@ -345,6 +372,30 @@ describe '$$.mkdir(source)', ->
       throw new Error()
 
     unless yield $$.isExisted './temp/m/k/d/i/r'
+      throw new Error()
+
+    yield clean()
+
+  it "$$.mkdir(['./temp/a', './temp/b', './temp/c'])", co ->
+
+    sourceList = [
+      './temp/a'
+      './temp/b'
+      './temp/c'
+    ]
+
+    res = yield $$.mkdir sourceList
+
+    if res != $$
+      throw new Error()
+
+    isExisted = yield $$.isExisted [
+      './temp/a'
+      './temp/b'
+      './temp/c'
+    ]
+
+    if !isExisted
       throw new Error()
 
     yield clean()
@@ -490,13 +541,6 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
 
     yield clean()
 
-describe '$$.rm(source)', ->
-
-  it '$$.rm()', ->
-
-    if $$.rm != $$.remove
-      throw new Error()
-
 describe '$$.shell()', ->
 
   it '$$.shell()', ->
@@ -561,7 +605,7 @@ describe '$$.watch()', ->
     if $$.watch != $$.plugin.watch
       throw new Error()
 
-describe '$$.write(source, data)', ->
+describe '$$.write(source, data, [option])', ->
 
   it "$$.write('./temp/wr/ite.txt', 'a test message')", co ->
 

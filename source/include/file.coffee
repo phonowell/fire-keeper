@@ -1,14 +1,45 @@
 ###
 
+  copy(source, target, [option])
   isChanged(source)
   isExisted(source)
   isSame(source, target)
+  link(source, target)
+  mkdir(source)
   read(source)
+  remove(source)
   rename(source, option)
   stat(source)
   write(source, data)
 
 ###
+
+$$.copy = co (arg...) ->
+
+  # source, target, [option]
+  [source, target, option] = switch arg.length
+    when 2 then [arg[0], arg[1], null]
+    when 3 then arg
+    else throw _error 'length'
+
+  source = _formatPath source
+  if target then target = _normalizePath target
+
+  yield new Promise (resolve) ->
+
+    gulp.src source
+    .pipe plumber()
+    .pipe using()
+    .pipe gulpif !!option, rename option
+    .pipe gulp.dest (e) -> target or e.base
+    .on 'end', -> resolve()
+
+  msg = "copied '#{source}' to '#{target}'"
+  if option then msg += ", as '#{$.parseString option}'"
+  $.info 'copy', msg
+
+  # return
+  $$
 
 $$.isChanged = co (source) ->
 
@@ -41,38 +72,77 @@ $$.isChanged = co (source) ->
   # return
   res
 
-$$.isExisted = (source) ->
+$$.isExisted = co (source) ->
 
-  source = _normalizePath source
-  if !source then return false
+  source = _formatPath source
+  if !source.length then return false
 
-  new Promise (resolve) ->
+  for src in source
+    unless yield fse.pathExists src
+      return false
 
-    fs.exists source, (result) -> resolve result
+  # return
+  true
 
-$$.isSame = co (source, target) ->
+$$.isSame = co (list) ->
 
   md5 = require 'blueimp-md5'
+
+  list = _formatPath list
+
+  if !list.length
+    return false
+
+  TOKEN = null
+
+  for source in list
+
+    cont = yield $$.read source
+
+    if !cont
+      return false
+
+    token = md5 cont.toString()
+
+    if !TOKEN
+      TOKEN = token
+      continue
+
+    if token != TOKEN
+      return false
+
+  # return
+  true
+
+$$.link = co (source, target) ->
+
+  unless source and target
+    throw _error 'length'
 
   source = _normalizePath source
   target = _normalizePath target
 
-  unless source and target
-    return false
+  yield fse.ensureSymlink source, target
 
-  $.info.pause '$$.isSame'
-  contSource = yield $$.read source
-  contTarget = yield $$.read target
-  $.info.resume '$$.isSame'
-
-  unless contSource and contTarget
-    return false
-
-  md5Source = md5 contSource.toString()
-  md5Target = md5 contTarget.toString()
+  $.info 'link', "linked '#{source}' to '#{target}'"
 
   # return
-  md5Source == md5Target
+  $$
+
+$$.mkdir = co (source) ->
+
+  if !source then throw _error 'length'
+
+  source = _formatPath source
+
+  listPromise = (fse.ensureDir src for src in source)
+
+  yield Promise.all listPromise
+
+  $.info 'create', "created '#{source}'"
+
+  # return
+  $$
 
 $$.read = co (source) ->
 
@@ -95,6 +165,17 @@ $$.read = co (source) ->
     when 'json' then $.parseJson res
     when 'txt' then $.parseString res
     else res
+
+$$.remove = co (source) ->
+
+  source = _formatPath source
+
+  yield del source, force: true
+
+  $.info 'remove', "removed '#{source}'"
+
+  # return
+  $$
 
 $$.rename = co (source, option) ->
 
@@ -134,22 +215,14 @@ $$.stat = co (source) ->
       if err then throw err
       resolve stat
 
-$$.write = co (source, data) ->
+$$.write = co (source, data, option) ->
 
   source = _normalizePath source
-
-  $.info.pause '$$.write'
-  yield $$.mkdir path.dirname source
-  $.info.resume '$$.write'
 
   if $.type data in 'array object'.split ' '
     data = $.parseString data
 
-  yield new Promise (resolve) ->
-
-    fs.writeFile source, data, (err) ->
-      if err then throw err
-      resolve()
+  yield fse.outputFile source, data, option
 
   $.info 'file', "wrote '#{source}'"
 
