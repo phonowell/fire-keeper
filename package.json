@@ -44,7 +44,7 @@
     "gulp-pug": "^3.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.6.1",
-    "gulp-sourcemaps": "^2.6.0",
+    "gulp-sourcemaps": "^2.6.1",
     "gulp-stylint": "^4.0.0",
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^3.0.0",
@@ -56,7 +56,7 @@
     "gulp-zip": "^4.0.0",
     "mkdirp": "^0.5.1",
     "node-jquery-extend": "0.0.14",
-    "uglify-es": "^3.0.27",
+    "uglify-es": "^3.0.28",
     "yargs": "^8.0.2"
   }
 }
