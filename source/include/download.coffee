@@ -15,7 +15,7 @@ $$.download = co (arg...) ->
 
   target = _normalizePath target
 
-  if $.type option == 'string'
+  if $.type(option) == 'string'
     option = filename: option
 
   yield download source, target, option

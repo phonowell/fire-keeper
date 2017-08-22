@@ -490,7 +490,7 @@
       }
     })(), source = ref[0], target = ref[1], option = ref[2];
     target = _normalizePath(target);
-    if ($.type(option === 'string')) {
+    if ($.type(option) === 'string') {
       option = {
         filename: option
       };
@@ -717,8 +717,9 @@
   });
 
   $$.write = co(function*(source, data, option) {
+    var ref;
     source = _normalizePath(source);
-    if ($.type(indexOf.call('array object'.split(' '), data) >= 0)) {
+    if (ref = $.type(data), indexOf.call('array object'.split(' '), ref) >= 0) {
       data = $.parseString(data);
     }
     yield fse.outputFile(source, data, option);

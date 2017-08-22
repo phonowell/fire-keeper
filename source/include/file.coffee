@@ -219,7 +219,7 @@ $$.write = co (source, data, option) ->
 
   source = _normalizePath source
 
-  if $.type data in 'array object'.split ' '
+  if $.type(data) in 'array object'.split ' '
     data = $.parseString data
 
   yield fse.outputFile source, data, option

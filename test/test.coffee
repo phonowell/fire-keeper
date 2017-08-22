@@ -196,6 +196,23 @@ describe '$$.download(source, target, [option])', ->
 
     yield clean()
 
+  it "$$.download('http://anitama.cn', './temp', {filename: 'anitama.html', timeout: 1e4})", co ->
+
+    filename = 'anitama.html'
+    timeout = 1e4
+
+    res = yield $$.download 'http://anitama.cn'
+    , './temp'
+    , {filename, timeout}
+
+    if res != $$
+      throw new Error()
+
+    unless yield $$.isExisted "./temp/#{filename}"
+      throw new Error()
+
+    yield clean()
+
 describe '$$.isChanged(source)', ->
 
   it "$$.isChanged('./temp/isChanged.txt')", co ->
