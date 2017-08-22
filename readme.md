@@ -30,7 +30,7 @@ $$.delay([time])
 $$.download(source, target, [option])
 $$.isChanged(source)
 $$.isExisted(source)
-$$.isSame(list)
+$$.isSame(source)
 $$.link(source, target)
 $$.lint(source)
 $$.mkdir(source)
@@ -63,8 +63,8 @@ $$.path
 ```coffeescript
 $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
-$$.library.gulp # gulp
 $$.library.fse # fs-extra
+$$.library.gulp # gulp
 $$.library.Promise # bluebird
 ```
 

@@ -84,20 +84,20 @@ $$.isExisted = co (source) ->
   # return
   true
 
-$$.isSame = co (list) ->
+$$.isSame = co (source) ->
 
   md5 = require 'blueimp-md5'
 
-  list = _formatPath list
+  source = _formatPath source
 
-  if !list.length
+  if !source.length
     return false
 
   TOKEN = null
 
-  for source in list
+  for src in source
 
-    cont = yield $$.read source
+    cont = yield $$.read src
 
     if !cont
       return false

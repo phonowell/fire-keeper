@@ -18,7 +18,7 @@ clean = co -> yield $$.remove './temp'
   delay([time])
   download(source, target, [option])
   isExisted(source)
-  isSame(list)
+  isSame(source)
   link(source, target)
   mkdir(source)
   read(source)
@@ -334,7 +334,7 @@ describe '$$.isExisted(source)', ->
 
     yield clean()
 
-describe '$$.isSame(list)', ->
+describe '$$.isSame(source)', ->
 
   it "$$.isSame(['./readme.md', './temp/a.md', './temp/b.md'])", co ->
 
