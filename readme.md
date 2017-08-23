@@ -68,6 +68,12 @@ $$.library.gulp # gulp
 $$.library.Promise # bluebird
 ```
 
+### Test
+
+```shell
+$ gulp test
+```
+
 ### Caution
 
 This project is **NOT STABLE**. I made this project for writing gulpfile(s) , which of my own projects, a little easier. And that might be not very suitable for yours.
