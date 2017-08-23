@@ -5,7 +5,7 @@ A little helper to make things simple.
 ## Install
 
 ```shell
-$ npm install --save-dev phonowell/fire-keeper
+$ npm i --save-dev fire-keeper
 ```
 
 ### Usage
@@ -16,7 +16,7 @@ $$ = require './source/index'
 co = Promise.coroutine
 
 $$.task 'build', co ->
-  yield $$.compile './source/index.coffee', minify: false
+  yield $$.compile './source/index.coffee'
   yield $$.copy './source/index.js', './'
 ```
 
