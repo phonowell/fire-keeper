@@ -590,17 +590,17 @@
     return true;
   });
 
-  $$.isSame = co(function*(list) {
-    var TOKEN, cont, i, len, md5, source, token;
+  $$.isSame = co(function*(source) {
+    var TOKEN, cont, i, len, md5, src, token;
     md5 = require('blueimp-md5');
-    list = _formatPath(list);
-    if (!list.length) {
+    source = _formatPath(source);
+    if (!source.length) {
       return false;
     }
     TOKEN = null;
-    for (i = 0, len = list.length; i < len; i++) {
-      source = list[i];
-      cont = (yield $$.read(source));
+    for (i = 0, len = source.length; i < len; i++) {
+      src = source[i];
+      cont = (yield $$.read(src));
       if (!cont) {
         return false;
       }
@@ -798,7 +798,7 @@
       }
     })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
     pathSource = _formatPath(pathSource);
-    pathTarget || (pathTarget = path.dirname(pathSource[0]));
+    pathTarget || (pathTarget = path.dirname(pathSource[0]).replace(/\*/g, ''));
     pathTarget = _normalizePath(pathTarget);
     yield new Promise(function(resolve) {
       return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {

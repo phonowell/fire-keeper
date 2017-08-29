@@ -14,7 +14,7 @@ $$.replace = co (arg...) ->
     else throw _error 'length'
 
   pathSource = _formatPath pathSource
-  pathTarget or= path.dirname pathSource[0]
+  pathTarget or= path.dirname(pathSource[0]).replace /\*/g, ''
   pathTarget = _normalizePath pathTarget
 
   yield new Promise (resolve) ->

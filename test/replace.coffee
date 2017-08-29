@@ -37,3 +37,30 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
       throw new Error()
 
     yield clean()
+
+  it "$$.replace('./temp/**/*.txt', 'to be replaced', 'replaced')", co ->
+
+    yield clean()
+
+    sourceData = 'to be replaced'
+    targetData = 'replaced'
+
+    yield $$.write './temp/a.txt', sourceData
+    yield $$.write './temp/b.txt', sourceData
+    yield $$.write './temp/c.txt', sourceData
+    yield $$.write './temp/d.txt', sourceData
+
+    yield $$.replace './temp/**/*.txt', sourceData, targetData
+
+    isExisted = yield $$.isExisted './temp/**'
+    if isExisted
+      throw new Error 1
+
+    for filename in 'a b c d'.split ' '
+
+      cont = yield $$.read "./temp/#{filename}.txt"
+
+      if cont != targetData
+        throw new Error 2
+
+    yield clean()
