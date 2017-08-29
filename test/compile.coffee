@@ -53,3 +53,30 @@ describe '$$.compile(source, [target], [option])', ->
       throw new Error()
 
     yield clean()
+
+  it "$$.compile(['./temp/*.md', '!./temp/a.md'])", co ->
+
+    yield clean()
+
+    data = 'empty'
+
+    yield $$.write './temp/a.md', data
+    yield $$.write './temp/b.md', data
+
+    res = yield $$.compile [
+      './temp/*.md'
+      '!./temp/a.md'
+    ]
+
+    if res != $$
+      throw new Error 1
+
+    isExisted = yield $$.isExisted './temp/a.html'
+    if isExisted
+      throw new Error 2
+
+    isExisted = yield $$.isExisted './temp/b.html'
+    if !isExisted
+      throw new Error 3
+
+    yield clean()

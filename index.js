@@ -131,27 +131,33 @@
   };
 
   _normalizePath = function(source) {
-    var src;
+    var isIgnore;
     if ($.type(source) !== 'string') {
       return null;
     }
-    src = source.replace(/\\/g, '/');
-    src = (function() {
-      switch (src[0]) {
+    if (source[0] === '!') {
+      isIgnore = true;
+      source = source.slice(1);
+    }
+    source = source.replace(/\\/g, '/');
+    source = (function() {
+      switch (source[0]) {
         case '.':
-          return src.replace(/\./, $$.path.base);
+          return source.replace(/\./, $$.path.base);
         case '~':
-          return src.replace(/~/, $$.path.home);
+          return source.replace(/~/, $$.path.home);
         default:
-          return src;
+          return source;
       }
     })();
-    src = path.normalize(src);
-    if (path.isAbsolute(src)) {
-      return src;
-    } else {
-      return "" + $$.path.base + path.sep + src;
+    source = path.normalize(source);
+    if (!path.isAbsolute(source)) {
+      source = "" + $$.path.base + path.sep + source;
     }
+    if (isIgnore) {
+      source = "!" + source;
+    }
+    return source;
   };
 
 

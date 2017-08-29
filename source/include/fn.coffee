@@ -37,14 +37,35 @@ _normalizePath = (source) ->
   if $.type(source) != 'string'
     return null
 
-  src = source.replace /\\/g, '/'
+  # check isIgnore
 
-  src = switch src[0]
-    when '.' then src.replace /\./, $$.path.base
-    when '~' then src.replace /~/, $$.path.home
-    else src
+  if source[0] == '!'
+    isIgnore = true
+    source = source[1...]
 
-  src = path.normalize src
+  # replace \ to /
 
-  if path.isAbsolute src then return src
-  else return "#{$$.path.base}#{path.sep}#{src}"
+  source = source.replace /\\/g, '/'
+
+  # replace . & ~
+
+  source = switch source[0]
+    when '.' then source.replace /\./, $$.path.base
+    when '~' then source.replace /~/, $$.path.home
+    else source
+
+  # normalize
+
+  source = path.normalize source
+
+  # absolute
+
+  unless path.isAbsolute source
+    source = "#{$$.path.base}#{path.sep}#{source}"
+
+  # ignore
+  if isIgnore
+    source = "!#{source}"
+
+  # return
+  source
