@@ -10,15 +10,15 @@ do ->
 
   fn = co (source) ->
 
-    source = _formatPath source
+    source = formatPath source
 
     extname = path.extname(source[0]).replace /\./, ''
-    if !extname.length then throw _error 'extname'
+    if !extname.length then throw makeError 'extname'
 
     method = switch extname
       when 'coffee' then extname
       when 'styl' then 'stylus'
-      else throw _error 'extname'
+      else throw makeError 'extname'
 
     yield fn[method] source
 

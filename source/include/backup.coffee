@@ -7,7 +7,7 @@
 
 $$.backup = co (source) ->
 
-  source = _formatPath source
+  source = formatPath source
 
   for src in source
 
@@ -18,14 +18,14 @@ $$.backup = co (source) ->
     yield $$.copy src, null, {suffix, extname}
     $.info.resume '$$.backup'
 
-  $.info 'backup', "backed up #{_wrapList source}"
+  $.info 'backup', "backed up #{wrapList source}"
 
   # return
   $$
 
 $$.recover = co (source) ->
 
-  source = _formatPath source
+  source = formatPath source
 
   for src in source
 
@@ -40,7 +40,7 @@ $$.recover = co (source) ->
     yield $$.remove bak
     $.info.resume '$$.recover'
 
-  $.info 'recover', "recovered #{_wrapList source}"
+  $.info 'recover', "recovered #{wrapList source}"
 
   # return
   $$

@@ -13,11 +13,11 @@ $$.unzip = co (arg...) ->
   [source, target] = switch arg.length
     when 1 then [arg[0], null]
     when 2 then arg
-    else throw _error 'length'
+    else throw makeError 'length'
 
-  source = _formatPath source
+  source = formatPath source
   target or= "#{path.dirname source[0]}/#{path.basename source[0], '.zip'}"
-  target = _normalizePath target
+  target = normalizePath target
 
   yield new Promise (resolve) ->
     gulp.src source
@@ -27,7 +27,7 @@ $$.unzip = co (arg...) ->
     .pipe gulp.dest target
     .on 'end', -> resolve()
 
-  $.info 'zip', "unzipped #{_wrapList source} to #{_wrapList target}"
+  $.info 'zip', "unzipped #{wrapList source} to #{wrapList target}"
 
   # return
   $$
@@ -38,11 +38,11 @@ $$.zip = co (arg...) ->
     when 1 then [arg[0], null, {}]
     when 2 then [arg[0], arg[1], {}]
     when 3 then arg
-    else throw _error 'length'
+    else throw makeError 'length'
 
-  source = _formatPath source
+  source = formatPath source
   target or= path.dirname source[0]
-  target = _normalizePath target
+  target = normalizePath target
 
   filename = switch $.type option
     when 'object' then option.filename
@@ -59,7 +59,7 @@ $$.zip = co (arg...) ->
     .on 'end', -> resolve()
 
   $.info 'zip'
-  , "zipped #{_wrapList source} to #{_wrapList target}, named as '#{filename}'"
+  , "zipped #{wrapList source} to #{wrapList target}, named as '#{filename}'"
 
   # return
   $$

@@ -14,7 +14,7 @@ $$.reload = (source) ->
 
   if !source then throw new Error 'invalid source'
 
-  source = _formatPath source
+  source = formatPath source
 
   livereload.listen()
 

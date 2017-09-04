@@ -11,11 +11,11 @@ $$.replace = co (arg...) ->
   [pathSource, pathTarget, target, replacement] = switch arg.length
     when 3 then [arg[0], null, arg[1], arg[2]]
     when 4 then arg
-    else throw _error 'length'
+    else throw makeError 'length'
 
-  pathSource = _formatPath pathSource
+  pathSource = formatPath pathSource
   pathTarget or= path.dirname(pathSource[0]).replace /\*/g, ''
-  pathTarget = _normalizePath pathTarget
+  pathTarget = normalizePath pathTarget
 
   yield new Promise (resolve) ->
     gulp.src pathSource
@@ -27,8 +27,8 @@ $$.replace = co (arg...) ->
 
   $.info 'replace'
   , "replaced '#{target}' to '#{replacement}',
-    in #{_wrapList pathSource},
-    output to #{_wrapList pathTarget}"
+    in #{wrapList pathSource},
+    output to #{wrapList pathTarget}"
 
   # return
   $$

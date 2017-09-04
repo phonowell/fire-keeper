@@ -11,7 +11,7 @@ $$.task = (arg...) ->
   switch arg.length
     when 1 then gulp.tasks[arg[0]].fn
     when 2 then gulp.task arg...
-    else throw _error 'length'
+    else throw makeError 'length'
 
 # added default tasks
 
@@ -27,18 +27,18 @@ $$.task = (arg...) ->
 $$.task 'default', ->
   list = (key for key of gulp.tasks)
   list.sort()
-  $.info 'task', _wrapList list
+  $.info 'task', wrapList list
 
 $$.task 'gurumin', co ->
 
-  yield _cloneGitHub 'gurumin'
+  yield cloneGitHub 'gurumin'
 
   yield $$.remove './source/gurumin'
   yield $$.link './../gurumin/source', './source/gurumin'
 
 $$.task 'kokoro', co ->
 
-  yield _cloneGitHub 'kokoro'
+  yield cloneGitHub 'kokoro'
 
   # clean
 

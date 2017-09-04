@@ -1,23 +1,23 @@
 ###
 
-  _cloneGitHub(name)
-  _error(msg)
-  _formatPath(source)
-  _normalizePath(source)
-  _wrapList(list)
+  cloneGitHub(name)
+  error(msg)
+  formatPath(source)
+  normalizePath(source)
+  wrapList(list)
 
 ###
 
-_cloneGitHub = co (name) ->
+cloneGitHub = co (name) ->
 
-  source = _normalizePath "./../#{name}"
+  source = normalizePath "./../#{name}"
   if yield $$.isExisted source then return
 
   yield $$.shell "git clone
   https://github.com/phonowell/#{name}.git
   #{$$.path.base}/../#{name}"
 
-_error = (msg) ->
+makeError = (msg) ->
   new Error switch msg
     when 'extname' then 'invalid extname'
     when 'length' then 'invalid argument length'
@@ -26,14 +26,14 @@ _error = (msg) ->
     when 'type' then 'invalid argument type'
     else msg
 
-_formatPath = (source) ->
+formatPath = (source) ->
   source = switch $.type source
     when 'array' then source
     when 'string' then [source]
-    else throw _error 'type'
-  (_normalizePath src for src in source)
+    else throw makeError 'type'
+  (normalizePath src for src in source)
 
-_normalizePath = (source) ->
+normalizePath = (source) ->
 
   if $.type(source) != 'string'
     return null
@@ -71,13 +71,22 @@ _normalizePath = (source) ->
   # return
   source
 
-_wrapList = (list) ->
+wrapList = (list) ->
 
   if !list then return ''
 
   list = switch $.type list
     when 'array' then _.clone list
     when 'string' then [list]
-    else throw _error 'type'
+    else throw makeError 'type'
 
   ("'#{key}'" for key in list).join ', '
+
+# return
+$$.fn = {
+  cloneGitHub
+  makeError
+  formatPath
+  normalizePath
+  wrapList
+}

@@ -11,11 +11,11 @@ max_line_length:
   level: warn
   value: 255
 no_empty_functions:
-  level: error
+  level: makeError
 no_empty_param_list:
-  level: error
+  level: makeError
 no_interpolation_in_single_quotes:
-  level: error
+  level: makeError
 no_this:
   level: warn
 no_unnecessary_double_quotes:

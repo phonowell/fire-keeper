@@ -17,15 +17,15 @@ do ->
         switch $.type arg[1]
           when 'object' then [arg[0], null, arg[1]]
           when 'string' then [arg[0], arg[1], {}]
-          else throw _error 'type'
+          else throw makeError 'type'
 
       when 3 then arg
-      else throw _error 'length'
+      else throw makeError 'length'
 
-    source = _formatPath source
+    source = formatPath source
 
     extname = path.extname(source[0]).replace /\./, ''
-    if !extname.length then throw _error 'extname'
+    if !extname.length then throw makeError 'extname'
 
     method = switch extname
       when 'yaml', 'yml' then 'yaml'
@@ -34,7 +34,7 @@ do ->
       else extname
 
     target or= path.dirname(source[0]).replace /\*/g, ''
-    target = _normalizePath target
+    target = normalizePath target
 
     option = _.extend
       map: false
@@ -42,10 +42,10 @@ do ->
     , option
 
     compiler = fn[method]
-    if !compiler then throw _error "invalid extname: '.#{extname}'"
+    if !compiler then throw makeError "invalid extname: '.#{extname}'"
     yield compiler source, target, option
 
-    $.info 'compile', "compiled #{_wrapList source} to #{_wrapList target}"
+    $.info 'compile', "compiled #{wrapList source} to #{wrapList target}"
 
     # return
     $$

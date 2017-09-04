@@ -20,10 +20,10 @@ $$.copy = co (arg...) ->
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
     when 3 then arg
-    else throw _error 'length'
+    else throw makeError 'length'
 
-  source = _formatPath source
-  if target then target = _normalizePath target
+  source = formatPath source
+  if target then target = normalizePath target
 
   yield new Promise (resolve) ->
 
@@ -34,7 +34,7 @@ $$.copy = co (arg...) ->
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 
-  msg = "copied #{_wrapList source} to #{_wrapList  target}"
+  msg = "copied #{wrapList source} to #{wrapList  target}"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
@@ -45,7 +45,7 @@ $$.isChanged = co (source) ->
 
   md5 = require 'blueimp-md5'
 
-  source = _normalizePath source
+  source = normalizePath source
   pathMap = './temp/fire-keeper/map-file-md5.json'
 
   if !source
@@ -74,7 +74,7 @@ $$.isChanged = co (source) ->
 
 $$.isExisted = co (source) ->
 
-  source = _formatPath source
+  source = formatPath source
   if !source.length then return false
 
   for src in source
@@ -88,7 +88,7 @@ $$.isSame = co (source) ->
 
   md5 = require 'blueimp-md5'
 
-  source = _formatPath source
+  source = formatPath source
 
   if !source.length
     return false
@@ -117,39 +117,39 @@ $$.isSame = co (source) ->
 $$.link = co (source, target) ->
 
   unless source and target
-    throw _error 'length'
+    throw makeError 'length'
 
-  source = _normalizePath source
-  target = _normalizePath target
+  source = normalizePath source
+  target = normalizePath target
 
   yield fse.ensureSymlink source, target
 
-  $.info 'link', "linked #{_wrapList source} to #{_wrapList target}"
+  $.info 'link', "linked #{wrapList source} to #{wrapList target}"
 
   # return
   $$
 
 $$.mkdir = co (source) ->
 
-  if !source then throw _error 'length'
+  if !source then throw makeError 'length'
 
-  source = _formatPath source
+  source = formatPath source
 
   listPromise = (fse.ensureDir src for src in source)
 
   yield Promise.all listPromise
 
-  $.info 'create', "created #{_wrapList source}"
+  $.info 'create', "created #{wrapList source}"
 
   # return
   $$
 
 $$.read = co (source) ->
 
-  source = _normalizePath source
+  source = normalizePath source
 
   unless yield $$.isExisted source
-    $.info 'file', "#{_wrapList source} not existed"
+    $.info 'file', "#{wrapList source} not existed"
     return null
 
   res = yield new Promise (resolve) ->
@@ -158,7 +158,7 @@ $$.read = co (source) ->
       if err then throw err
       resolve data
 
-  $.info 'file', "read #{_wrapList source}"
+  $.info 'file', "read #{wrapList source}"
 
   # return
   res = switch path.extname(source)[1...]
@@ -168,18 +168,18 @@ $$.read = co (source) ->
 
 $$.remove = co (source) ->
 
-  source = _formatPath source
+  source = formatPath source
 
   yield del source, force: true
 
-  $.info 'remove', "removed #{_wrapList source}"
+  $.info 'remove', "removed #{wrapList source}"
 
   # return
   $$
 
 $$.rename = co (source, option) ->
 
-  source = _formatPath source
+  source = formatPath source
 
   yield new Promise (resolve) ->
 
@@ -195,17 +195,17 @@ $$.rename = co (source, option) ->
   $.info.resume '$$.rename'
 
   $.info 'file'
-  , "renamed #{_wrapList source} as '#{$.parseString option}'"
+  , "renamed #{wrapList source} as '#{$.parseString option}'"
 
   # return
   $$
 
 $$.stat = co (source) ->
 
-  source = _normalizePath source
+  source = normalizePath source
 
   unless yield $$.isExisted source
-    $.info 'file', "#{_wrapList source} not existed"
+    $.info 'file', "#{wrapList source} not existed"
     return null
 
   # return
@@ -217,14 +217,14 @@ $$.stat = co (source) ->
 
 $$.write = co (source, data, option) ->
 
-  source = _normalizePath source
+  source = normalizePath source
 
   if $.type(data) in 'array object'.split ' '
     data = $.parseString data
 
   yield fse.outputFile source, data, option
 
-  $.info 'file', "wrote #{_wrapList source}"
+  $.info 'file', "wrote #{wrapList source}"
 
   # return
   $$
