@@ -22,7 +22,7 @@ source = if fs.existsSync './source/index.js'
 else './index'
 
 $$ = require source
-{Promise} = $$.library
+{$, Promise} = $$.library
 co = Promise.coroutine
 
 # task
@@ -32,6 +32,7 @@ co = Promise.coroutine
   build
   compile
   lint
+  prepare
   set
   test
 
@@ -53,6 +54,10 @@ $$.task 'lint', co ->
     './source/**/*.coffee'
     './test/**/*.coffee'
   ]
+
+$$.task 'prepare', co ->
+
+  yield $$.compile './test/**/*.coffee'
 
 $$.task 'set', co ->
 

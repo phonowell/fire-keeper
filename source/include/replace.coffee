@@ -27,8 +27,8 @@ $$.replace = co (arg...) ->
 
   $.info 'replace'
   , "replaced '#{target}' to '#{replacement}',
-    in '#{pathSource}',
-    output to '#{pathTarget}'"
+    in #{_wrapList pathSource},
+    output to #{_wrapList pathTarget}"
 
   # return
   $$

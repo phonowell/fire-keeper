@@ -7,6 +7,7 @@
 # task
 
 $$.task = (arg...) ->
+
   switch arg.length
     when 1 then gulp.tasks[arg[0]].fn
     when 2 then gulp.task arg...
@@ -24,11 +25,9 @@ $$.task = (arg...) ->
 ###
 
 $$.task 'default', ->
-  list = []
-  for key of gulp.tasks
-    list.push key
+  list = (key for key of gulp.tasks)
   list.sort()
-  $.info 'task', ("'#{task}'" for task in list).join ', '
+  $.info 'task', _wrapList list
 
 $$.task 'gurumin', co ->
 

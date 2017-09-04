@@ -4,6 +4,7 @@
   _error(msg)
   _formatPath(source)
   _normalizePath(source)
+  _wrapList(list)
 
 ###
 
@@ -69,3 +70,14 @@ _normalizePath = (source) ->
 
   # return
   source
+
+_wrapList = (list) ->
+
+  if !list then return ''
+
+  list = switch $.type list
+    when 'array' then _.clone list
+    when 'string' then [list]
+    else throw _error 'type'
+
+  ("'#{key}'" for key in list).join ', '

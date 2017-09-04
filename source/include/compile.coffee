@@ -45,7 +45,7 @@ do ->
     if !compiler then throw _error "invalid extname: '.#{extname}'"
     yield compiler source, target, option
 
-    $.info 'compile', "compiled '#{source}' to '#{target}'"
+    $.info 'compile', "compiled #{_wrapList source} to #{_wrapList target}"
 
     # return
     $$

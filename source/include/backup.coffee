@@ -18,7 +18,7 @@ $$.backup = co (source) ->
     yield $$.copy src, null, {suffix, extname}
     $.info.resume '$$.backup'
 
-  $.info 'backup', "backed up '#{source}'"
+  $.info 'backup', "backed up #{_wrapList source}"
 
   # return
   $$
@@ -40,7 +40,7 @@ $$.recover = co (source) ->
     yield $$.remove bak
     $.info.resume '$$.recover'
 
-  $.info 'recover', "recovered '#{source}'"
+  $.info 'recover', "recovered #{_wrapList source}"
 
   # return
   $$

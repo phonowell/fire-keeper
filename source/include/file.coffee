@@ -34,7 +34,7 @@ $$.copy = co (arg...) ->
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 
-  msg = "copied '#{source}' to '#{target}'"
+  msg = "copied #{_wrapList source} to #{_wrapList  target}"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
@@ -124,7 +124,7 @@ $$.link = co (source, target) ->
 
   yield fse.ensureSymlink source, target
 
-  $.info 'link', "linked '#{source}' to '#{target}'"
+  $.info 'link', "linked #{_wrapList source} to #{_wrapList target}"
 
   # return
   $$
@@ -139,7 +139,7 @@ $$.mkdir = co (source) ->
 
   yield Promise.all listPromise
 
-  $.info 'create', "created '#{source}'"
+  $.info 'create', "created #{_wrapList source}"
 
   # return
   $$
@@ -149,7 +149,7 @@ $$.read = co (source) ->
   source = _normalizePath source
 
   unless yield $$.isExisted source
-    $.info 'file', "'#{source}' not existed"
+    $.info 'file', "#{_wrapList source} not existed"
     return null
 
   res = yield new Promise (resolve) ->
@@ -158,7 +158,7 @@ $$.read = co (source) ->
       if err then throw err
       resolve data
 
-  $.info 'file', "read '#{source}'"
+  $.info 'file', "read #{_wrapList source}"
 
   # return
   res = switch path.extname(source)[1...]
@@ -172,7 +172,7 @@ $$.remove = co (source) ->
 
   yield del source, force: true
 
-  $.info 'remove', "removed '#{source}'"
+  $.info 'remove', "removed #{_wrapList source}"
 
   # return
   $$
@@ -195,7 +195,7 @@ $$.rename = co (source, option) ->
   $.info.resume '$$.rename'
 
   $.info 'file'
-  , "renamed '#{source}' as '#{$.parseString option}'"
+  , "renamed #{_wrapList source} as '#{$.parseString option}'"
 
   # return
   $$
@@ -205,7 +205,7 @@ $$.stat = co (source) ->
   source = _normalizePath source
 
   unless yield $$.isExisted source
-    $.info 'file', "'#{source}' not existed"
+    $.info 'file', "#{_wrapList source} not existed"
     return null
 
   # return
@@ -224,7 +224,7 @@ $$.write = co (source, data, option) ->
 
   yield fse.outputFile source, data, option
 
-  $.info 'file', "wrote '#{source}'"
+  $.info 'file', "wrote #{_wrapList source}"
 
   # return
   $$

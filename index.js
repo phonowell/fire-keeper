@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatPath, _normalizePath, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
+  var $, $$, $p, Promise, _, _cloneGitHub, _error, _formatPath, _normalizePath, _wrapList, changed, cleanCss, co, coffee, coffeelint, composer, del, download, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, markdown, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, yaml, zip,
     slice = [].slice,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -80,6 +80,7 @@
     _error(msg)
     _formatPath(source)
     _normalizePath(source)
+    _wrapList(list)
    */
 
   _cloneGitHub = co(function*(name) {
@@ -160,6 +161,32 @@
     return source;
   };
 
+  _wrapList = function(list) {
+    var key;
+    if (!list) {
+      return '';
+    }
+    list = (function() {
+      switch ($.type(list)) {
+        case 'array':
+          return _.clone(list);
+        case 'string':
+          return [list];
+        default:
+          throw _error('type');
+      }
+    })();
+    return ((function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = list.length; i < len; i++) {
+        key = list[i];
+        results.push("'" + key + "'");
+      }
+      return results;
+    })()).join(', ');
+  };
+
 
   /*
   
@@ -189,21 +216,17 @@
    */
 
   $$.task('default', function() {
-    var key, list, task;
-    list = [];
-    for (key in gulp.tasks) {
-      list.push(key);
-    }
-    list.sort();
-    return $.info('task', ((function() {
-      var i, len, results;
+    var key, list;
+    list = (function() {
+      var results;
       results = [];
-      for (i = 0, len = list.length; i < len; i++) {
-        task = list[i];
-        results.push("'" + task + "'");
+      for (key in gulp.tasks) {
+        results.push(key);
       }
       return results;
-    })()).join(', '));
+    })();
+    list.sort();
+    return $.info('task', _wrapList(list));
   });
 
   $$.task('gurumin', co(function*() {
@@ -264,7 +287,7 @@
       });
       $.info.resume('$$.backup');
     }
-    $.info('backup', "backed up '" + source + "'");
+    $.info('backup', "backed up " + (_wrapList(source)));
     return $$;
   });
 
@@ -284,7 +307,7 @@
       yield $$.remove(bak);
       $.info.resume('$$.recover');
     }
-    $.info('recover', "recovered '" + source + "'");
+    $.info('recover', "recovered " + (_wrapList(source)));
     return $$;
   });
 
@@ -348,7 +371,7 @@
         throw _error("invalid extname: '." + extname + "'");
       }
       yield compiler(source, target, option);
-      $.info('compile', "compiled '" + source + "' to '" + target + "'");
+      $.info('compile', "compiled " + (_wrapList(source)) + " to " + (_wrapList(target)));
       return $$;
     });
 
@@ -454,7 +477,7 @@
       };
     }
     yield download(source, target, option);
-    msg = "downloaded '" + source + "' to '" + target + "'";
+    msg = "downloaded " + (_wrapList(source)) + " to " + (_wrapList(target));
     if (option) {
       msg += ", as '" + ($.parseString(option)) + "'";
     }
@@ -502,7 +525,7 @@
         return resolve();
       });
     });
-    msg = "copied '" + source + "' to '" + target + "'";
+    msg = "copied " + (_wrapList(source)) + " to " + (_wrapList(target));
     if (option) {
       msg += ", as '" + ($.parseString(option)) + "'";
     }
@@ -581,7 +604,7 @@
     source = _normalizePath(source);
     target = _normalizePath(target);
     yield fse.ensureSymlink(source, target);
-    $.info('link', "linked '" + source + "' to '" + target + "'");
+    $.info('link', "linked " + (_wrapList(source)) + " to " + (_wrapList(target)));
     return $$;
   });
 
@@ -601,7 +624,7 @@
       return results;
     })();
     yield Promise.all(listPromise);
-    $.info('create', "created '" + source + "'");
+    $.info('create', "created " + (_wrapList(source)));
     return $$;
   });
 
@@ -609,7 +632,7 @@
     var res;
     source = _normalizePath(source);
     if (!(yield $$.isExisted(source))) {
-      $.info('file', "'" + source + "' not existed");
+      $.info('file', (_wrapList(source)) + " not existed");
       return null;
     }
     res = (yield new Promise(function(resolve) {
@@ -620,7 +643,7 @@
         return resolve(data);
       });
     }));
-    $.info('file', "read '" + source + "'");
+    $.info('file', "read " + (_wrapList(source)));
     return res = (function() {
       switch (path.extname(source).slice(1)) {
         case 'json':
@@ -638,7 +661,7 @@
     yield del(source, {
       force: true
     });
-    $.info('remove', "removed '" + source + "'");
+    $.info('remove', "removed " + (_wrapList(source)));
     return $$;
   });
 
@@ -654,14 +677,14 @@
     $.info.pause('$$.rename');
     yield $$.remove(source);
     $.info.resume('$$.rename');
-    $.info('file', "renamed '" + source + "' as '" + ($.parseString(option)) + "'");
+    $.info('file', "renamed " + (_wrapList(source)) + " as '" + ($.parseString(option)) + "'");
     return $$;
   });
 
   $$.stat = co(function*(source) {
     source = _normalizePath(source);
     if (!(yield $$.isExisted(source))) {
-      $.info('file', "'" + source + "' not existed");
+      $.info('file', (_wrapList(source)) + " not existed");
       return null;
     }
     return new Promise(function(resolve) {
@@ -681,7 +704,7 @@
       data = $.parseString(data);
     }
     yield fse.outputFile(source, data, option);
-    $.info('file', "wrote '" + source + "'");
+    $.info('file', "wrote " + (_wrapList(source)));
     return $$;
   });
 
@@ -763,7 +786,7 @@
         return resolve();
       });
     });
-    $.info('replace', "replaced '" + target + "' to '" + replacement + "', in '" + pathSource + "', output to '" + pathTarget + "'");
+    $.info('replace', "replaced '" + target + "' to '" + replacement + "', in " + (_wrapList(pathSource)) + ", output to " + (_wrapList(pathTarget)));
     return $$;
   });
 
@@ -795,7 +818,7 @@
         return resolve();
       });
     });
-    $.info('zip', "unzipped '" + source + "' to '" + target + "'");
+    $.info('zip', "unzipped " + (_wrapList(source)) + " to " + (_wrapList(target)));
     return $$;
   });
 
@@ -833,7 +856,7 @@
         return resolve();
       });
     });
-    $.info('zip', "zipped '" + source + "' to '" + target + "', named as '" + filename + "'");
+    $.info('zip', "zipped " + (_wrapList(source)) + " to " + (_wrapList(target)) + ", named as '" + filename + "'");
     return $$;
   });
 

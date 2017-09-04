@@ -20,7 +20,7 @@ $$.download = co (arg...) ->
 
   yield download source, target, option
 
-  msg = "downloaded '#{source}' to '#{target}'"
+  msg = "downloaded #{_wrapList source} to #{_wrapList target}"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'download', msg
 
