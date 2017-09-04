@@ -186,7 +186,6 @@
     gurumin()
     kokoro()
     noop()
-    update([target])
    */
 
   $$.task('default', function() {
@@ -243,53 +242,6 @@
   $$.task('noop', function() {
     return null;
   });
-
-  $$.task('update', co(function*() {
-    var key, list, npm, p, pkg, res, target;
-    yield $$.remove('./package-lock.json');
-    npm = (function() {
-      switch ($$.os) {
-        case 'linux':
-        case 'macos':
-          return 'npm';
-        case 'windows':
-          return 'cnpm';
-        default:
-          throw new Error('invalid os');
-      }
-    })();
-    target = $$.argv.target;
-    pkg = './package.json';
-    yield $$.backup(pkg);
-    p = (yield $$.read(pkg));
-    list = [];
-    for (key in p.devDependencies) {
-      if (target) {
-        if (key !== target) {
-          continue;
-        }
-      }
-      list.push(npm + " r --save-dev " + key);
-      list.push(npm + " i --save-dev " + key);
-    }
-    for (key in p.dependencies) {
-      if (target) {
-        if (key !== target) {
-          continue;
-        }
-      }
-      list.push(npm + " r --save " + key);
-      list.push(npm + " i --save " + key);
-    }
-    res = (yield $$.shell(list));
-    if (res) {
-      return (yield $$.remove(pkg + ".bak"));
-    } else {
-      $.info('update', 'failed');
-      yield $$.recover(pkg);
-      return (yield $$.shell('npm i'));
-    }
-  }));
 
 
   /*

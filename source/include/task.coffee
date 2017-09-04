@@ -20,7 +20,6 @@ $$.task = (arg...) ->
   gurumin()
   kokoro()
   noop()
-  update([target])
 
 ###
 
@@ -85,39 +84,3 @@ $$.task 'kokoro', co ->
   yield $$.remove './stylintrc.json'
 
 $$.task 'noop', -> null
-
-$$.task 'update', co ->
-
-  yield $$.remove './package-lock.json'
-
-  npm = switch $$.os
-    when 'linux', 'macos' then 'npm'
-    when 'windows' then 'cnpm'
-    else throw new Error 'invalid os'
-
-  {target} = $$.argv
-
-  pkg = './package.json'
-  yield $$.backup pkg
-
-  p = yield $$.read pkg
-  list = []
-
-  for key of p.devDependencies
-    if target then if key != target then continue
-    list.push "#{npm} r --save-dev #{key}"
-    list.push "#{npm} i --save-dev #{key}"
-
-  for key of p.dependencies
-    if target then if key != target then continue
-    list.push "#{npm} r --save #{key}"
-    list.push "#{npm} i --save #{key}"
-
-  res = yield $$.shell list
-
-  if res
-    yield $$.remove "#{pkg}.bak"
-  else
-    $.info 'update', 'failed'
-    yield $$.recover pkg
-    yield $$.shell 'npm i'
