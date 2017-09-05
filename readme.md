@@ -15,9 +15,7 @@ $$ = require './source/index'
 {_, Promise} = $$.library
 co = Promise.coroutine
 
-$$.task 'build', co ->
-  yield $$.compile './source/index.coffee'
-  yield $$.copy './source/index.js', './'
+$$.task 'build', co -> yield $$.compile './source/index.coffee', './'
 ```
 
 ### Method
