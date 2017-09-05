@@ -12,6 +12,7 @@
 #= include include/file.coffee
 #= include include/lint.coffee
 #= include include/replace.coffee
+#= include include/walk.coffee
 #= include include/zip.coffee
 
 #= include include/etc.coffee

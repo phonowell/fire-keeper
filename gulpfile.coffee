@@ -72,4 +72,12 @@ $$.task 'test', co ->
   yield $$.shell 'npm test'
   yield $$.remove './test/**/*.js'
 
-#$$.task 'z', co ->
+$$.task 'z', co ->
+
+  list = []
+
+  yield $$.walk './source', (item) ->
+    $.i item.stats.isFile()
+    list.push item.path
+
+  $.i list

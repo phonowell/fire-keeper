@@ -2,6 +2,7 @@ $p = $$.plugin = require('gulp-load-plugins')()
 
 del = $p.del = require 'del'
 download = $p.download = require 'download'
+walk = $p.walk = require 'klaw'
 $p.yargs = require 'yargs'
 
 {

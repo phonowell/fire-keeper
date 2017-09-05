@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, composer, del, download, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, wrapList, yaml, zip,
+  var $, $$, $p, Promise, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, composer, del, download, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -34,6 +34,8 @@
   del = $p.del = require('del');
 
   download = $p.download = require('download');
+
+  walk = $p.walk = require('klaw');
 
   $p.yargs = require('yargs');
 
@@ -795,6 +797,27 @@
       });
     });
     $.info('replace', "replaced '" + target + "' to '" + replacement + "', in " + (wrapList(pathSource)) + ", output to " + (wrapList(pathTarget)));
+    return $$;
+  });
+
+
+  /*
+  
+    walk(source, callback)
+   */
+
+  $$.walk = co(function*(source, callback) {
+    if (!(source && callback)) {
+      throw makeError('length');
+    }
+    source = normalizePath(source);
+    yield new Promise(function(resolve) {
+      return walk(source).on('data', function(item) {
+        return callback(item);
+      }).on('end', function() {
+        return resolve();
+      });
+    });
     return $$;
   });
 
