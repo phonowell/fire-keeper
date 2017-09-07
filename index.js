@@ -1,11 +1,13 @@
 (function() {
-  var $, $$, $p, Promise, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, composer, del, download, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, colors, composer, del, download, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   path = require('path');
 
   fs = require('fs');
+
+  colors = require('colors/safe');
 
   fse = require('fs-extra');
 
@@ -80,6 +82,7 @@
   
     cloneGitHub(name)
     error(msg)
+    formatArgument(arg)
     formatPath(source)
     normalizePath(source)
     wrapList(list)
@@ -113,18 +116,20 @@
     })());
   };
 
+  formatArgument = function(arg) {
+    switch ($.type(arg)) {
+      case 'array':
+        return _.clone(arg);
+      case 'string':
+        return [arg];
+      default:
+        throw makeError('type');
+    }
+  };
+
   formatPath = function(source) {
     var i, len, results, src;
-    source = (function() {
-      switch ($.type(source)) {
-        case 'array':
-          return source;
-        case 'string':
-          return [source];
-        default:
-          throw makeError('type');
-      }
-    })();
+    source = formatArgument(source);
     results = [];
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
@@ -799,6 +804,198 @@
     $.info('replace', "replaced '" + target + "' to '" + replacement + "', in " + (wrapList(pathSource)) + ", output to " + (wrapList(pathTarget)));
     return $$;
   });
+
+  SSH = (function() {
+    function SSH() {
+      null;
+    }
+
+
+    /*
+    
+      storage
+    
+      connect(option)
+      disconnect()
+      mkdir(source)
+      remove(source)
+      shell(cmd)
+      upload(source, target, [option])
+      uploadDir(sftp, source, target)
+      uploadFile(sftp, source, target)
+     */
+
+    SSH.prototype.connect = function(option) {
+      return new Promise((function(_this) {
+        return function(resolve) {
+          var Client, conn;
+          Client = require('ssh2').Client;
+          conn = new Client();
+          conn.on('error', function(err) {
+            throw err;
+          }).on('ready', function() {
+            $.info('ssh', "connected to '" + option.username + "@" + option.host + "'");
+            return resolve();
+          }).connect(option);
+          return _this.storage = {
+            conn: conn,
+            option: option
+          };
+        };
+      })(this));
+    };
+
+    SSH.prototype.disconnect = function() {
+      return new Promise((function(_this) {
+        return function(resolve) {
+          var conn, option, ref;
+          ref = _this.storage, conn = ref.conn, option = ref.option;
+          return conn.on('end', function() {
+            $.info('ssh', "disconnected from '" + option.username + "@" + option.host + "'");
+            return resolve();
+          }).end();
+        };
+      })(this));
+    };
+
+    SSH.prototype.mkdir = co(function*(source) {
+      var cmd, src;
+      source = formatArgument(source);
+      cmd = ((function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = source.length; i < len; i++) {
+          src = source[i];
+          results.push("mkdir -p " + src);
+        }
+        return results;
+      })()).join('; ');
+      $.info.pause('ssh.mkdir');
+      yield this.shell(cmd);
+      $.info.resume('ssh.mkdir');
+      return $.info('ssh', "created " + (wrapList(source)));
+    });
+
+    SSH.prototype.remove = co(function*(source) {
+      var cmd, src;
+      source = formatArgument(source);
+      cmd = ((function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = source.length; i < len; i++) {
+          src = source[i];
+          results.push("rm -fr " + src);
+        }
+        return results;
+      })()).join('; ');
+      $.info.pause('ssh.remove');
+      yield this.shell(cmd);
+      $.info.resume('ssh.remove');
+      return $.info('ssh', "removed " + (wrapList(source)));
+    });
+
+    SSH.prototype.shell = function(cmd) {
+      return new Promise((function(_this) {
+        return function(resolve) {
+          var conn;
+          conn = _this.storage.conn;
+          cmd = formatArgument(cmd);
+          cmd = cmd.join('; ');
+          $.info('ssh', colors.blue(cmd));
+          return conn.exec(cmd, function(err) {
+            if (err) {
+              throw err;
+            }
+            return resolve();
+          });
+        };
+      })(this));
+    };
+
+    SSH.prototype.upload = function(source, target, option) {
+      if (option == null) {
+        option = {};
+      }
+      return new Promise((function(_this) {
+        return function(resolve) {
+          var conn;
+          conn = _this.storage.conn;
+          source = formatPath(source);
+          option = (function() {
+            switch ($.type(option)) {
+              case 'object':
+                return _.clone(option);
+              case 'string':
+                return {
+                  filename: option
+                };
+              default:
+                throw makeError('type');
+            }
+          })();
+          return conn.sftp(co(function*(err, sftp) {
+            var filename, i, len, src, stat;
+            if (err) {
+              throw err;
+            }
+            for (i = 0, len = source.length; i < len; i++) {
+              src = source[i];
+              stat = (yield $$.stat(src));
+              if (stat.isDirectory()) {
+                yield _this.uploadDir(sftp, src, target);
+              } else if (stat.isFile()) {
+                filename = option.filename || path.basename(src);
+                yield _this.mkdir(target);
+                yield _this.uploadFile(sftp, src, target + "/" + filename);
+              }
+            }
+            sftp.end();
+            return resolve();
+          }));
+        };
+      })(this));
+    };
+
+    SSH.prototype.uploadDir = function(sftp, source, target) {
+      return new Promise(co((function(_this) {
+        return function*(resolve) {
+          var i, len, listSource, relativeTarget, src, stat;
+          listSource = [];
+          yield $$.walk(source, function(item) {
+            return listSource.push(item.path);
+          });
+          for (i = 0, len = listSource.length; i < len; i++) {
+            src = listSource[i];
+            stat = (yield $$.stat(src));
+            relativeTarget = target + "/" + (path.relative('./', src));
+            if (stat.isDirectory()) {
+              yield _this.mkdir(relativeTarget);
+            } else if (stat.isFile()) {
+              yield _this.uploadFile(sftp, src, relativeTarget);
+            }
+          }
+          return resolve();
+        };
+      })(this)));
+    };
+
+    SSH.prototype.uploadFile = function(sftp, source, target) {
+      return new Promise(function(resolve) {
+        return sftp.fastPut(source, target, function(err) {
+          if (err) {
+            throw err;
+          }
+          $.info('ssh', "uploaded '" + source + "' to '" + target + "'");
+          return resolve();
+        });
+      });
+    };
+
+    return SSH;
+
+  })();
+
+  $$.ssh = new SSH();
 
 
   /*

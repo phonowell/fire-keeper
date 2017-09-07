@@ -36,18 +36,42 @@ describe '$$.remove(source)', ->
 
     yield $$.write './temp/c.txt', 'empty'
 
-    sourceList = [
+    listSource = [
       './temp/a'
       './temp/b'
       './temp/c.txt'
     ]
 
-    res = yield $$.remove sourceList
+    res = yield $$.remove listSource
 
     if res != $$
       throw new Error()
 
-    if yield $$.isExisted sourceList
+    if yield $$.isExisted listSource
+      throw new Error()
+
+    yield clean()
+    
+  it "$$.remove('./temp/**/*.txt')", co ->
+    
+    listSource = [
+      './temp/a.txt'
+      './temp/b/c.txt'
+    ]
+    string = 'empty'
+
+    for source in listSource
+      yield $$.write source, string
+    
+    res = yield $$.remove './temp/**/*.txt'
+    
+    if res != $$
+      throw new Error()
+      
+    if yield $$.isExisted listSource
+      throw new Error()
+
+    unless yield $$.isExisted './temp/b'
       throw new Error()
 
     yield clean()

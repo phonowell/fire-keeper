@@ -2,6 +2,7 @@
 
   cloneGitHub(name)
   error(msg)
+  formatArgument(arg)
   formatPath(source)
   normalizePath(source)
   wrapList(list)
@@ -26,11 +27,14 @@ makeError = (msg) ->
     when 'type' then 'invalid argument type'
     else msg
 
-formatPath = (source) ->
-  source = switch $.type source
-    when 'array' then source
-    when 'string' then [source]
+formatArgument = (arg) ->
+  switch $.type arg
+    when 'array' then _.clone arg
+    when 'string' then [arg]
     else throw makeError 'type'
+
+formatPath = (source) ->
+  source = formatArgument source
   (normalizePath src for src in source)
 
 normalizePath = (source) ->
