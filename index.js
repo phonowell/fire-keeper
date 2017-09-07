@@ -81,9 +81,10 @@
   /*
   
     cloneGitHub(name)
-    error(msg)
     formatArgument(arg)
     formatPath(source)
+    getRelativePath(source, target)
+    makeError(msg)
     normalizePath(source)
     wrapList(list)
    */
@@ -96,25 +97,6 @@
     }
     return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.path.base + "/../" + name));
   });
-
-  makeError = function(msg) {
-    return new Error((function() {
-      switch (msg) {
-        case 'extname':
-          return 'invalid extname';
-        case 'length':
-          return 'invalid argument length';
-        case 'source':
-          return 'invalid source';
-        case 'target':
-          return 'invalid target';
-        case 'type':
-          return 'invalid argument type';
-        default:
-          return msg;
-      }
-    })());
-  };
 
   formatArgument = function(arg) {
     switch ($.type(arg)) {
@@ -138,6 +120,25 @@
     return results;
   };
 
+  makeError = function(msg) {
+    return new Error((function() {
+      switch (msg) {
+        case 'extname':
+          return 'invalid extname';
+        case 'length':
+          return 'invalid argument length';
+        case 'source':
+          return 'invalid source';
+        case 'target':
+          return 'invalid target';
+        case 'type':
+          return 'invalid argument type';
+        default:
+          return msg;
+      }
+    })());
+  };
+
   normalizePath = function(source) {
     var isIgnore;
     if ($.type(source) !== 'string') {
@@ -148,6 +149,7 @@
       source = source.slice(1);
     }
     source = source.replace(/\\/g, '/');
+    source = source.replace(/\.{2}/g, '__parent_directory__');
     source = (function() {
       switch (source[0]) {
         case '.':
@@ -158,6 +160,10 @@
           return source;
       }
     })();
+    source = source.replace(/__parent_directory__/g, '..');
+    if (source[0] === '.' && source[1] === '.') {
+      source = $$.path.base + "/" + source;
+    }
     source = path.normalize(source);
     if (!path.isAbsolute(source)) {
       source = "" + $$.path.base + path.sep + source;
@@ -196,8 +202,9 @@
 
   $$.fn = {
     cloneGitHub: cloneGitHub,
-    makeError: makeError,
+    formatArgument: formatArgument,
     formatPath: formatPath,
+    makeError: makeError,
     normalizePath: normalizePath,
     wrapList: wrapList
   };
@@ -941,10 +948,10 @@
             for (i = 0, len = source.length; i < len; i++) {
               src = source[i];
               stat = (yield $$.stat(src));
+              filename = option.filename || path.basename(src);
               if (stat.isDirectory()) {
-                yield _this.uploadDir(sftp, src, target);
+                yield _this.uploadDir(sftp, src, target + "/" + filename);
               } else if (stat.isFile()) {
-                filename = option.filename || path.basename(src);
                 yield _this.mkdir(target);
                 yield _this.uploadFile(sftp, src, target + "/" + filename);
               }
@@ -967,7 +974,7 @@
           for (i = 0, len = listSource.length; i < len; i++) {
             src = listSource[i];
             stat = (yield $$.stat(src));
-            relativeTarget = target + "/" + (path.relative('./', src));
+            relativeTarget = path.normalize(target + "/" + (path.relative(source, src)));
             if (stat.isDirectory()) {
               yield _this.mkdir(relativeTarget);
             } else if (stat.isFile()) {

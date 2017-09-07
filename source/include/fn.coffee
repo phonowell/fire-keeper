@@ -1,9 +1,10 @@
 ###
 
   cloneGitHub(name)
-  error(msg)
   formatArgument(arg)
   formatPath(source)
+  getRelativePath(source, target)
+  makeError(msg)
   normalizePath(source)
   wrapList(list)
 
@@ -18,15 +19,6 @@ cloneGitHub = co (name) ->
   https://github.com/phonowell/#{name}.git
   #{$$.path.base}/../#{name}"
 
-makeError = (msg) ->
-  new Error switch msg
-    when 'extname' then 'invalid extname'
-    when 'length' then 'invalid argument length'
-    when 'source' then 'invalid source'
-    when 'target' then 'invalid target'
-    when 'type' then 'invalid argument type'
-    else msg
-
 formatArgument = (arg) ->
   switch $.type arg
     when 'array' then _.clone arg
@@ -36,6 +28,15 @@ formatArgument = (arg) ->
 formatPath = (source) ->
   source = formatArgument source
   (normalizePath src for src in source)
+
+makeError = (msg) ->
+  new Error switch msg
+    when 'extname' then 'invalid extname'
+    when 'length' then 'invalid argument length'
+    when 'source' then 'invalid source'
+    when 'target' then 'invalid target'
+    when 'type' then 'invalid argument type'
+    else msg
 
 normalizePath = (source) ->
 
@@ -54,10 +55,19 @@ normalizePath = (source) ->
 
   # replace . & ~
 
+  source = source.replace /\.{2}/g, '__parent_directory__'
+
   source = switch source[0]
     when '.' then source.replace /\./, $$.path.base
     when '~' then source.replace /~/, $$.path.home
     else source
+
+  source = source.replace /__parent_directory__/g, '..'
+
+  # replace ../ to ./../ at start
+
+  if source[0] == '.' and source[1] == '.'
+    source = "#{$$.path.base}/#{source}"
 
   # normalize
 
@@ -89,8 +99,9 @@ wrapList = (list) ->
 # return
 $$.fn = {
   cloneGitHub
-  makeError
+  formatArgument
   formatPath
+  makeError
   normalizePath
   wrapList
 }

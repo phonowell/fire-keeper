@@ -113,12 +113,12 @@ class SSH
         for src in source
 
           stat = yield $$.stat src
+          filename = option.filename or path.basename src
 
           if stat.isDirectory()
-            yield @uploadDir sftp, src, target
+            yield @uploadDir sftp, src, "#{target}/#{filename}"
 
           else if stat.isFile()
-            filename = option.filename or path.basename src
             yield @mkdir target
             yield @uploadFile sftp, src, "#{target}/#{filename}"
 
@@ -135,7 +135,7 @@ class SSH
       for src in listSource
 
         stat = yield $$.stat src
-        relativeTarget = "#{target}/#{path.relative './', src}"
+        relativeTarget = path.normalize "#{target}/#{path.relative source, src}"
 
         if stat.isDirectory()
           yield @mkdir relativeTarget
