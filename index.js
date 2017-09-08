@@ -824,9 +824,10 @@
     
       connect(option)
       disconnect()
+      info(chunk)
       mkdir(source)
       remove(source)
-      shell(cmd)
+      shell(cmd, [option])
       upload(source, target, [option])
       uploadDir(sftp, source, target)
       uploadFile(sftp, source, target)
@@ -865,6 +866,15 @@
       })(this));
     };
 
+    SSH.prototype.info = function(chunk) {
+      string = $.trim($.parseString(chunk));
+      if (!string.length) {
+        return;
+      }
+      string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
+      return $.i(string);
+    };
+
     SSH.prototype.mkdir = co(function*(source) {
       var cmd, src;
       source = formatArgument(source);
@@ -901,19 +911,33 @@
       return $.info('ssh', "removed " + (wrapList(source)));
     });
 
-    SSH.prototype.shell = function(cmd) {
+    SSH.prototype.shell = function(cmd, option) {
+      if (option == null) {
+        option = {};
+      }
       return new Promise((function(_this) {
         return function(resolve) {
           var conn;
           conn = _this.storage.conn;
           cmd = formatArgument(cmd);
-          cmd = cmd.join('; ');
+          cmd = cmd.join(' && ');
           $.info('ssh', colors.blue(cmd));
-          return conn.exec(cmd, function(err) {
+          return conn.exec(cmd, function(err, stream) {
             if (err) {
               throw err;
             }
-            return resolve();
+            stream.on('end', function() {
+              return resolve();
+            });
+            stream.stderr.on('data', function(chunk) {
+              if (option.ignoreError) {
+                return _this.info(chunk);
+              }
+              throw $.parseString(chunk);
+            });
+            return stream.stdout.on('data', function(chunk) {
+              return _this.info(chunk);
+            });
           });
         };
       })(this));

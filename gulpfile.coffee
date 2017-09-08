@@ -74,4 +74,20 @@ $$.task 'test', co ->
 
 #$$.task 'y', ->
 
-#$$.task 'z', co ->
+$$.task 'z', co ->
+
+  base = '~/OneDrive/密钥/Anitama/www.anitama.cn'
+  host = '118.178.128.8'
+
+  yield $$.ssh.connect
+    host: host
+    port: 22
+    username: 'root'
+    privateKey: yield $$.read "#{base}/privateKey.txt"
+
+  yield $$.ssh.shell [
+    'cd /doremi'
+    'll'
+  ]
+
+  yield $$.ssh.disconnect()

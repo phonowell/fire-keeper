@@ -10,9 +10,10 @@ class SSH
 
     connect(option)
     disconnect()
+    info(chunk)
     mkdir(source)
     remove(source)
-    shell(cmd)
+    shell(cmd, [option])
     upload(source, target, [option])
     uploadDir(sftp, source, target)
     uploadFile(sftp, source, target)
@@ -54,6 +55,17 @@ class SSH
 
       .end()
 
+  info: (chunk) ->
+
+    string = $.trim $.parseString chunk
+    if !string.length then return
+
+    string = string
+    .replace /\r/g, '\n'
+    .replace /\n{2,}/g, ''
+
+    $.i string
+
   mkdir: co (source) ->
 
     source = formatArgument source
@@ -78,20 +90,27 @@ class SSH
 
     $.info 'ssh', "removed #{wrapList source}"
 
-  shell: (cmd) ->
+  shell: (cmd, option = {}) ->
 
     new Promise (resolve) =>
 
       {conn} = @storage
 
       cmd = formatArgument cmd
-      cmd = cmd.join '; '
+      cmd = cmd.join ' && '
 
       $.info 'ssh', colors.blue cmd
 
-      conn.exec cmd, (err) ->
+      conn.exec cmd, (err, stream) =>
         if err then throw err
-        resolve()
+
+        stream.on 'end', -> resolve()
+
+        stream.stderr.on 'data', (chunk) =>
+          if option.ignoreError
+            return @info chunk
+          throw $.parseString chunk
+        stream.stdout.on 'data', (chunk) => @info chunk
 
   upload: (source, target, option = {}) ->
 
