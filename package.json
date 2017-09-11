@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/phonowell/fire-keeper",
   "devDependencies": {
-    "mocha": "^3.5.0"
+    "mocha": "^3.5.2"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -58,7 +58,7 @@
     "klaw": "^2.1.0",
     "node-jquery-extend": "0.0.16",
     "ssh2": "^0.5.5",
-    "uglify-es": "^3.0.28",
+    "uglify-es": "^3.1.0",
     "yargs": "^8.0.2"
   }
 }
