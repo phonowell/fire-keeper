@@ -12,25 +12,35 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.backup(source)', ->
 
-  it "$$.backup('./temp/readme.md')", co ->
+  it "$$.backup(['./temp/license.md', './temp/readme.md'])", co ->
 
-    source = './temp/readme.md'
-    target = './temp/readme.md.bak'
+    listSource = [
+      './temp/license.md'
+      './temp/readme.md'
+    ]
 
-    yield $$.copy './readme.md', './temp'
+    listTarget = [
+      './temp/license.md.bak'
+      './temp/readme.md.bak'
+    ]
 
-    res = yield $$.backup source
+    yield $$.copy [
+      './license.md'
+      './readme.md'
+    ], './temp'
+
+    res = yield $$.backup listSource
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted target
+    unless yield $$.isExisted listTarget
       throw new Error()
 
-    sourceData = yield $$.read source
-    targetData = yield $$.read target
+    listSourceData = (yield $$.read source for source in listSource)
+    listTargetData = (yield $$.read target for target in listTarget)
 
-    if sourceData.toString() != targetData.toString()
+    unless _.isEqual listSourceData, listTargetData
       throw new Error()
 
     yield clean()
