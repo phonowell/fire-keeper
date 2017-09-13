@@ -41,37 +41,6 @@ $$.copy = co (arg...) ->
   # return
   $$
 
-$$.isChanged = co (source) ->
-
-  md5 = require 'blueimp-md5'
-
-  source = normalizePath source
-  pathMap = './temp/fire-keeper/map-file-md5.json'
-
-  if !source
-    return false
-
-  contSource = yield $$.read source
-
-  if !contSource
-    return false
-
-  md5Source = md5 contSource.toString()
-
-  map = yield $$.read pathMap
-  map or= {}
-
-  res = md5Source != map[source]
-
-  map[source] = md5Source
-
-  $.info.pause '$$.isChanged'
-  yield $$.write pathMap, map
-  $.info.resume '$$.isChanged'
-
-  # return
-  res
-
 $$.isExisted = co (source) ->
 
   source = formatPath source
@@ -92,6 +61,27 @@ $$.isSame = co (source) ->
 
   if !source.length
     return false
+
+  # check size
+
+  SIZE = null
+
+  for src in source
+
+    stat = yield $$.stat src
+    if !stat
+      return false
+
+    {size} = stat
+
+    if !SIZE
+      SIZE = size
+      continue
+
+    if size != SIZE
+      return false
+
+  # check md5
 
   TOKEN = null
 

@@ -12,26 +12,26 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.download(source, target, [option])', ->
 
-  it "$$.download('http://anitama.cn', './temp', 'anitama.html')", co ->
+  it "$$.download('https://www.baidu.com/', './temp', 'baidu.html')", co ->
 
-    res = yield $$.download 'http://anitama.cn'
+    res = yield $$.download 'https://www.baidu.com/'
     , './temp'
-    , 'anitama.html'
+    , 'baidu.html'
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/anitama.html'
+    unless yield $$.isExisted './temp/baidu.html'
       throw new Error()
 
     yield clean()
 
-  it "$$.download('http://anitama.cn', './temp', {filename: 'anitama.html', timeout: 1e4})", co ->
+  it "$$.download('https://www.baidu.com/', './temp', {filename: 'baidu.html', timeout: 1e4})", co ->
 
-    filename = 'anitama.html'
+    filename = 'baidu.html'
     timeout = 1e4
 
-    res = yield $$.download 'http://anitama.cn'
+    res = yield $$.download 'https://www.baidu.com/'
     , './temp'
     , {filename, timeout}
 

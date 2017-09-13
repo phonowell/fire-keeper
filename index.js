@@ -555,29 +555,6 @@
     return $$;
   });
 
-  $$.isChanged = co(function*(source) {
-    var contSource, map, md5, md5Source, pathMap, res;
-    md5 = require('blueimp-md5');
-    source = normalizePath(source);
-    pathMap = './temp/fire-keeper/map-file-md5.json';
-    if (!source) {
-      return false;
-    }
-    contSource = (yield $$.read(source));
-    if (!contSource) {
-      return false;
-    }
-    md5Source = md5(contSource.toString());
-    map = (yield $$.read(pathMap));
-    map || (map = {});
-    res = md5Source !== map[source];
-    map[source] = md5Source;
-    $.info.pause('$$.isChanged');
-    yield $$.write(pathMap, map);
-    $.info.resume('$$.isChanged');
-    return res;
-  });
-
   $$.isExisted = co(function*(source) {
     var i, len, src;
     source = formatPath(source);
@@ -594,15 +571,31 @@
   });
 
   $$.isSame = co(function*(source) {
-    var TOKEN, cont, i, len, md5, src, token;
+    var SIZE, TOKEN, cont, i, j, len, len1, md5, size, src, stat, token;
     md5 = require('blueimp-md5');
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
-    TOKEN = null;
+    SIZE = null;
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
+      stat = (yield $$.stat(src));
+      if (!stat) {
+        return false;
+      }
+      size = stat.size;
+      if (!SIZE) {
+        SIZE = size;
+        continue;
+      }
+      if (size !== SIZE) {
+        return false;
+      }
+    }
+    TOKEN = null;
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       cont = (yield $$.read(src));
       if (!cont) {
         return false;
