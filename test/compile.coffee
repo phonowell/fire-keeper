@@ -19,10 +19,10 @@ describe '$$.compile(source, [target], [option])', ->
     res = yield $$.compile './temp/readme.md'
 
     if res != $$
-      throw new Error()
+      throw new Error 1
 
     unless yield $$.isExisted './temp/readme.html'
-      throw new Error()
+      throw new Error 2
 
     yield clean()
 

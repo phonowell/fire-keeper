@@ -35,22 +35,28 @@ do ->
   fn.coffee = (source) ->
 
     new Promise (resolve) ->
-      gulp.src source
+
+      (stream = gulp.src source)
+      .on 'end', -> resolve()
+
+      stream
       .pipe plumber()
       .pipe using()
       .pipe coffeelint()
       .pipe coffeelint.reporter()
-      .on 'end', -> resolve()
 
   fn.stylus = (source) ->
 
     new Promise (resolve) ->
-      gulp.src source
+
+      (stream = gulp.src source)
+      .on 'end', -> resolve()
+
+      stream
       .pipe plumber()
       .pipe using()
       .pipe stylint()
       .pipe stylint.reporter()
-      .on 'end', -> resolve()
 
   # return
   $$.lint = fn

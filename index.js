@@ -1,7 +1,6 @@
 (function() {
   var $, $$, $p, Promise, SSH, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, colors, composer, del, download, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
-    slice = [].slice,
-    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    slice = [].slice;
 
   path = require('path');
 
@@ -572,7 +571,6 @@
 
   $$.isSame = co(function*(source) {
     var SIZE, TOKEN, cont, i, j, len, len1, md5, size, src, stat, token;
-    md5 = require('blueimp-md5');
     source = formatPath(source);
     if (!source.length) {
       return false;
@@ -593,6 +591,7 @@
         return false;
       }
     }
+    md5 = require('blueimp-md5');
     TOKEN = null;
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
@@ -715,7 +714,7 @@
   $$.write = co(function*(source, data, option) {
     var ref;
     source = normalizePath(source);
-    if (ref = $.type(data), indexOf.call('array object'.split(' '), ref) >= 0) {
+    if ((ref = $.type(data)) === 'array' || ref === 'object') {
       data = $.parseString(data);
     }
     yield fse.outputFile(source, data, option);
@@ -759,16 +758,20 @@
      */
     fn.coffee = function(source) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter()).on('end', function() {
+        var stream;
+        (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
+        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter());
       });
     };
     fn.stylus = function(source) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter()).on('end', function() {
+        var stream;
+        (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
+        return stream.pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter());
       });
     };
     return $$.lint = fn;

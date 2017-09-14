@@ -55,8 +55,6 @@ $$.isExisted = co (source) ->
 
 $$.isSame = co (source) ->
 
-  md5 = require 'blueimp-md5'
-
   source = formatPath source
 
   if !source.length
@@ -82,6 +80,8 @@ $$.isSame = co (source) ->
       return false
 
   # check md5
+
+  md5 = require 'blueimp-md5'
 
   TOKEN = null
 
@@ -209,7 +209,7 @@ $$.write = co (source, data, option) ->
 
   source = normalizePath source
 
-  if $.type(data) in 'array object'.split ' '
+  if $.type(data) in ['array', 'object']
     data = $.parseString data
 
   yield fse.outputFile source, data, option

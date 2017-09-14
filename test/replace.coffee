@@ -42,13 +42,13 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
 
     yield clean()
 
+    listName = ['a', 'b', 'c', 'd']
+
     sourceData = 'to be replaced'
     targetData = 'replaced'
 
-    yield $$.write './temp/a.txt', sourceData
-    yield $$.write './temp/b.txt', sourceData
-    yield $$.write './temp/c.txt', sourceData
-    yield $$.write './temp/d.txt', sourceData
+    for filename in listName
+      yield $$.write "./temp/#{filename}.txt", sourceData
 
     yield $$.replace './temp/**/*.txt', sourceData, targetData
 
@@ -56,7 +56,7 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
     if isExisted
       throw new Error 1
 
-    for filename in 'a b c d'.split ' '
+    for filename in listName
 
       cont = yield $$.read "./temp/#{filename}.txt"
 

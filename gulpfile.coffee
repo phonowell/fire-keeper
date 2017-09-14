@@ -74,7 +74,4 @@ $$.task 'test', co ->
 
 #$$.task 'y', ->
 
-$$.task 'z', co ->
-
-  {size} = yield $$.stat './readme.md'
-  $.i size
+#$$.task 'z', co ->
