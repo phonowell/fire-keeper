@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, cloneGitHub, co, coffee, coffeelint, colors, composer, del, download, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, fetchGitHub, formatArgument, formatPath, fs, fse, getLintRule, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -79,7 +79,6 @@
 
   /*
   
-    cloneGitHub(name)
     formatArgument(arg)
     formatPath(source)
     getRelativePath(source, target)
@@ -87,15 +86,6 @@
     normalizePath(source)
     wrapList(list)
    */
-
-  cloneGitHub = co(function*(name) {
-    var source;
-    source = normalizePath("./../" + name);
-    if ((yield $$.isExisted(source))) {
-      return;
-    }
-    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.path.base + "/../" + name));
-  });
 
   formatArgument = function(arg) {
     switch ($.type(arg)) {
@@ -200,13 +190,27 @@
   };
 
   $$.fn = {
-    cloneGitHub: cloneGitHub,
     formatArgument: formatArgument,
     formatPath: formatPath,
     makeError: makeError,
     normalizePath: normalizePath,
     wrapList: wrapList
   };
+
+
+  /*
+  
+    cloneGitHub(name)
+   */
+
+  fetchGitHub = co(function*(name) {
+    var source;
+    source = normalizePath("./../" + name);
+    if ((yield $$.isExisted(source))) {
+      return (yield $$.shell(["cd ./../" + name, 'git fetch', 'git pull']));
+    }
+    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.path.base + "/../" + name));
+  });
 
 
   /*
@@ -251,17 +255,20 @@
   });
 
   $$.task('gurumin', co(function*() {
-    yield cloneGitHub('gurumin');
+    yield fetchGitHub('gurumin');
     yield $$.remove('./source/gurumin');
     return (yield $$.link('./../gurumin/source', './source/gurumin'));
   }));
 
   $$.task('kokoro', co(function*() {
-    var LIST, filename, i, isSame, len, source, target;
-    yield cloneGitHub('kokoro');
-    LIST = ['coffeelint.yml', 'stylintrc.yml'];
-    yield $$.remove(LIST);
-    LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'stylintrc.yaml', 'license.md'];
+    var LIST, filename, i, isSame, len, listClean, results, source, target;
+    yield fetchGitHub('kokoro');
+    listClean = ['./.stylintrc', './coffeelint.json', './coffeelint.yml', './stylintrc.yaml', './stylintrc.yml'];
+    $.info.pause('kokoro');
+    yield $$.remove(listClean);
+    $.info.resume('kokoro');
+    LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'license.md', 'stylint.yaml'];
+    results = [];
     for (i = 0, len = LIST.length; i < len; i++) {
       filename = LIST[i];
       source = "./../kokoro/" + filename;
@@ -272,15 +279,9 @@
       }
       yield $$.remove(target);
       yield $$.copy(source, './');
-      yield $$.shell("git add -f " + $$.path.base + "/" + filename);
+      results.push((yield $$.shell("git add -f " + $$.path.base + "/" + filename)));
     }
-    yield $$.compile('./coffeelint.yaml');
-    yield $$.compile('./stylintrc.yaml');
-    yield $$.copy('./stylintrc.json', './', {
-      prefix: '.',
-      extname: ''
-    });
-    return (yield $$.remove('./stylintrc.json'));
+    return results;
   }));
 
   $$.task('noop', function() {
@@ -570,7 +571,7 @@
   });
 
   $$.isSame = co(function*(source) {
-    var SIZE, TOKEN, cont, i, j, len, len1, md5, size, src, stat, token;
+    var CONT, SIZE, cont, i, j, len, len1, size, src, stat;
     source = formatPath(source);
     if (!source.length) {
       return false;
@@ -591,20 +592,21 @@
         return false;
       }
     }
-    md5 = require('blueimp-md5');
-    TOKEN = null;
+    CONT = null;
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
+      $.info.pause('$$.isSame');
       cont = (yield $$.read(src));
+      $.info.resume('$$.isSame');
       if (!cont) {
         return false;
       }
-      token = md5(cont.toString());
-      if (!TOKEN) {
-        TOKEN = token;
+      cont = $.parseString(cont);
+      if (!CONT) {
+        CONT = cont;
         continue;
       }
-      if (token !== TOKEN) {
+      if (cont !== CONT) {
         return false;
       }
     }
@@ -725,6 +727,28 @@
 
   /*
   
+    getLintRule(filename)
+   */
+
+  getLintRule = co(function*(filename) {
+    var fileTemp, isExisted, rule, source;
+    source = "./" + filename + ".yaml";
+    isExisted = (yield $$.isExisted(source));
+    if (!isExisted) {
+      return null;
+    }
+    $.info.pause('getLintRule');
+    yield $$.compile(source);
+    fileTemp = "./" + filename + ".json";
+    rule = (yield $$.read(fileTemp));
+    yield $$.remove(fileTemp);
+    $.info.resume('getLintRule');
+    return rule;
+  });
+
+
+  /*
+  
     lint(source)
    */
 
@@ -756,24 +780,30 @@
       coffee(source)
       stylus(source)
      */
-    fn.coffee = function(source) {
+    fn.coffee = co(function*(source) {
+      var rule;
+      rule = (yield getLintRule('coffeelint'));
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
-        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter());
+        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint(rule)).pipe(coffeelint.reporter());
       });
-    };
-    fn.stylus = function(source) {
+    });
+    fn.stylus = co(function*(source) {
+      var rule;
+      rule = (yield getLintRule('stylint'));
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
-        return stream.pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter());
+        return stream.pipe(plumber()).pipe(using()).pipe(stylint({
+          rules: rule
+        })).pipe(stylint.reporter());
       });
-    };
+    });
     return $$.lint = fn;
   })();
 
@@ -883,9 +913,9 @@
         }
         return results;
       })()).join('; ');
-      $.info.pause('ssh.mkdir');
+      $.info.pause('$$.ssh.mkdir');
       yield this.shell(cmd);
-      $.info.resume('ssh.mkdir');
+      $.info.resume('$$.ssh.mkdir');
       return $.info('ssh', "created " + (wrapList(source)));
     });
 
@@ -901,9 +931,9 @@
         }
         return results;
       })()).join('; ');
-      $.info.pause('ssh.remove');
+      $.info.pause('$$.ssh.remove');
       yield this.shell(cmd);
-      $.info.resume('ssh.remove');
+      $.info.resume('$$.ssh.remove');
       return $.info('ssh', "removed " + (wrapList(source)));
     });
 

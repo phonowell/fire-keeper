@@ -72,9 +72,9 @@ class SSH
 
     cmd = ("mkdir -p #{src}" for src in source).join '; '
 
-    $.info.pause 'ssh.mkdir'
+    $.info.pause '$$.ssh.mkdir'
     yield @shell cmd
-    $.info.resume 'ssh.mkdir'
+    $.info.resume '$$.ssh.mkdir'
 
     $.info 'ssh', "created #{wrapList source}"
 
@@ -84,9 +84,9 @@ class SSH
 
     cmd = ("rm -fr #{src}" for src in source).join '; '
 
-    $.info.pause 'ssh.remove'
+    $.info.pause '$$.ssh.remove'
     yield @shell cmd
-    $.info.resume 'ssh.remove'
+    $.info.resume '$$.ssh.remove'
 
     $.info 'ssh', "removed #{wrapList source}"
 

@@ -79,26 +79,25 @@ $$.isSame = co (source) ->
     if size != SIZE
       return false
 
-  # check md5
+  # check cont
 
-  md5 = require 'blueimp-md5'
-
-  TOKEN = null
+  CONT = null
 
   for src in source
 
+    $.info.pause '$$.isSame'
     cont = yield $$.read src
-
+    $.info.resume '$$.isSame'
     if !cont
       return false
 
-    token = md5 cont.toString()
+    cont = $.parseString cont
 
-    if !TOKEN
-      TOKEN = token
+    if !CONT
+      CONT = cont
       continue
 
-    if token != TOKEN
+    if cont != CONT
       return false
 
   # return

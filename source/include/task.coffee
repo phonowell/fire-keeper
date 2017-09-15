@@ -1,5 +1,26 @@
 ###
 
+  cloneGitHub(name)
+
+###
+
+fetchGitHub = co (name) ->
+
+  source = normalizePath "./../#{name}"
+
+  if yield $$.isExisted source
+    return yield $$.shell [
+      "cd ./../#{name}"
+      'git fetch'
+      'git pull'
+    ]
+
+  yield $$.shell "git clone
+  https://github.com/phonowell/#{name}.git
+  #{$$.path.base}/../#{name}"
+
+###
+
   task(name, [fn])
 
 ###
@@ -31,23 +52,27 @@ $$.task 'default', ->
 
 $$.task 'gurumin', co ->
 
-  yield cloneGitHub 'gurumin'
+  yield fetchGitHub 'gurumin'
 
   yield $$.remove './source/gurumin'
   yield $$.link './../gurumin/source', './source/gurumin'
 
 $$.task 'kokoro', co ->
 
-  yield cloneGitHub 'kokoro'
+  yield fetchGitHub 'kokoro'
 
   # clean
 
-  LIST = [
-    'coffeelint.yml'
-    'stylintrc.yml'
+  listClean = [
+    './.stylintrc'
+    './coffeelint.json'
+    './coffeelint.yml'
+    './stylintrc.yaml'
+    './stylintrc.yml'
   ]
-
-  yield $$.remove LIST
+  $.info.pause 'kokoro'
+  yield $$.remove listClean
+  $.info.resume 'kokoro'
 
   # copy
 
@@ -55,8 +80,8 @@ $$.task 'kokoro', co ->
     '.gitignore'
     '.npmignore'
     'coffeelint.yaml'
-    'stylintrc.yaml'
     'license.md'
+    'stylint.yaml'
   ]
 
   for filename in LIST
@@ -71,15 +96,5 @@ $$.task 'kokoro', co ->
     yield $$.remove target
     yield $$.copy source, './'
     yield $$.shell "git add -f #{$$.path.base}/#{filename}"
-
-  # compile
-
-  yield $$.compile './coffeelint.yaml'
-
-  yield $$.compile './stylintrc.yaml'
-  yield $$.copy './stylintrc.json', './',
-    prefix: '.'
-    extname: ''
-  yield $$.remove './stylintrc.json'
 
 $$.task 'noop', -> null

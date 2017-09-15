@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "A little helper to make gulpfiles simple.",
   "main": "./index.js",
   "scripts": {
@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
-    "blueimp-md5": "^2.10.0",
     "del": "^3.0.0",
     "download": "^6.2.5",
     "fs-extra": "^4.0.2",

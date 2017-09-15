@@ -1,6 +1,5 @@
 ###
 
-  cloneGitHub(name)
   formatArgument(arg)
   formatPath(source)
   getRelativePath(source, target)
@@ -9,15 +8,6 @@
   wrapList(list)
 
 ###
-
-cloneGitHub = co (name) ->
-
-  source = normalizePath "./../#{name}"
-  if yield $$.isExisted source then return
-
-  yield $$.shell "git clone
-  https://github.com/phonowell/#{name}.git
-  #{$$.path.base}/../#{name}"
 
 formatArgument = (arg) ->
   switch $.type arg
@@ -98,7 +88,6 @@ wrapList = (list) ->
 
 # return
 $$.fn = {
-  cloneGitHub
   formatArgument
   formatPath
   makeError

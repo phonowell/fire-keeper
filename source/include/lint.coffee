@@ -1,5 +1,31 @@
 ###
 
+  getLintRule(filename)
+
+###
+
+getLintRule = co (filename) ->
+
+  source = "./#{filename}.yaml"
+  isExisted = yield $$.isExisted source
+
+  if !isExisted
+    return null
+
+  $.info.pause 'getLintRule'
+
+  yield $$.compile source
+  fileTemp = "./#{filename}.json"
+  rule = yield $$.read fileTemp
+  yield $$.remove fileTemp
+
+  $.info.resume 'getLintRule'
+
+  # return
+  rule
+
+###
+
   lint(source)
 
 ###
@@ -32,7 +58,9 @@ do ->
 
   ###
 
-  fn.coffee = (source) ->
+  fn.coffee = co (source) ->
+
+    rule = yield getLintRule 'coffeelint'
 
     new Promise (resolve) ->
 
@@ -42,10 +70,12 @@ do ->
       stream
       .pipe plumber()
       .pipe using()
-      .pipe coffeelint()
+      .pipe coffeelint rule
       .pipe coffeelint.reporter()
 
-  fn.stylus = (source) ->
+  fn.stylus = co (source) ->
+
+    rule = yield getLintRule 'stylint'
 
     new Promise (resolve) ->
 
@@ -55,7 +85,7 @@ do ->
       stream
       .pipe plumber()
       .pipe using()
-      .pipe stylint()
+      .pipe stylint rules: rule
       .pipe stylint.reporter()
 
   # return
