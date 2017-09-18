@@ -16,7 +16,7 @@ describe '$$.fn.formatPath(source)', ->
 
     source = './source'
     target = [
-      "#{$$.path.base}/source"
+      $$.fn.normalizePath "#{$$.path.base}/source"
     ]
 
     res = $$.fn.formatPath source
@@ -32,9 +32,9 @@ describe '$$.fn.formatPath(source)', ->
       '!**/include/**'
     ]
     target = [
-      "#{$$.path.base}/source"
-      "#{$$.path.home}/opt"
-      "!#{$$.path.base}/**/include/**"
+      $$.fn.normalizePath "#{$$.path.base}/source"
+      $$.fn.normalizePath "#{$$.path.home}/opt"
+      $$.fn.normalizePath "!#{$$.path.base}/**/include/**"
     ]
 
     res = $$.fn.formatPath source
@@ -46,7 +46,7 @@ describe '$$.fn.formatPath(source)', ->
 
     source = '/opt/a/b/../c'
     target = [
-      '/opt/a/c'
+      $$.fn.normalizePath '/opt/a/c'
     ]
 
     res = $$.fn.formatPath source
@@ -59,7 +59,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('./source')", ->
 
     source = './source'
-    target = "#{$$.path.base}/source"
+    target = $$.fn.normalizePath "#{$$.path.base}/source"
 
     res = $$.fn.normalizePath source
 
@@ -69,7 +69,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('~/opt')", ->
 
     source = '~/opt'
-    target = "#{$$.path.home}/opt"
+    target = $$.fn.normalizePath "#{$$.path.home}/opt"
 
     res = $$.fn.normalizePath source
 
@@ -79,7 +79,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('./a/b/../c')", ->
 
     source = './a/b/../c'
-    target = "#{$$.path.base}/a/c"
+    target = $$.fn.normalizePath "#{$$.path.base}/a/c"
 
     res = $$.fn.normalizePath source
 
