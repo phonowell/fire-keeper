@@ -10,13 +10,16 @@ clean = co -> yield $$.remove './temp'
 
 # test
 
+if $$.os == 'windows'
+  return
+
 describe '$$.fn.formatPath(source)', ->
 
   it "$$.fn.formatPath('./source')", ->
 
     source = './source'
     target = [
-      $$.fn.normalizePath "#{$$.path.base}/source"
+      "#{$$.path.base}/source"
     ]
 
     res = $$.fn.formatPath source
@@ -32,9 +35,9 @@ describe '$$.fn.formatPath(source)', ->
       '!**/include/**'
     ]
     target = [
-      $$.fn.normalizePath "#{$$.path.base}/source"
-      $$.fn.normalizePath "#{$$.path.home}/opt"
-      $$.fn.normalizePath "!#{$$.path.base}/**/include/**"
+      "#{$$.path.base}/source"
+      "#{$$.path.home}/opt"
+      "!#{$$.path.base}/**/include/**"
     ]
 
     res = $$.fn.formatPath source
@@ -46,7 +49,7 @@ describe '$$.fn.formatPath(source)', ->
 
     source = '/opt/a/b/../c'
     target = [
-      $$.fn.normalizePath '/opt/a/c'
+      '/opt/a/c'
     ]
 
     res = $$.fn.formatPath source
@@ -59,7 +62,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('./source')", ->
 
     source = './source'
-    target = $$.fn.normalizePath "#{$$.path.base}/source"
+    target = "#{$$.path.base}/source"
 
     res = $$.fn.normalizePath source
 
@@ -69,7 +72,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('~/opt')", ->
 
     source = '~/opt'
-    target = $$.fn.normalizePath "#{$$.path.home}/opt"
+    target = "#{$$.path.home}/opt"
 
     res = $$.fn.normalizePath source
 
@@ -79,7 +82,7 @@ describe '$$.fn.normalizePath(source)', ->
   it "$$.fn.normalizePath('./a/b/../c')", ->
 
     source = './a/b/../c'
-    target = $$.fn.normalizePath "#{$$.path.base}/a/c"
+    target = "#{$$.path.base}/a/c"
 
     res = $$.fn.normalizePath source
 
