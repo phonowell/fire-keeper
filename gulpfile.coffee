@@ -22,19 +22,18 @@ source = if fs.existsSync './source/index.js'
 else './index'
 
 $$ = require source
-{$, Promise} = $$.library
+{Promise} = $$.library
 co = Promise.coroutine
 
 # task
 
 ###
 
-  build
-  compile
-  lint
-  prepare
-  set
-  test
+  build()
+  compile()
+  lint()
+  set(ver)
+  test()
 
 ###
 
@@ -55,13 +54,12 @@ $$.task 'lint', co ->
     './test/**/*.coffee'
   ]
 
-$$.task 'prepare', co ->
-
-  yield $$.compile './test/**/*.coffee'
-
 $$.task 'set', co ->
 
-  if !(ver = $$.argv.version) then return
+  {ver} = $$.argv
+
+  if !ver
+    throw new Error 'empty ver'
 
   yield $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
