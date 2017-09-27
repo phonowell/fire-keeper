@@ -1,5 +1,6 @@
 ###
 
+  excludeInclude(source)
   formatArgument(arg)
   formatPath(source)
   getRelativePath(source, target)
@@ -8,6 +9,15 @@
   wrapList(list)
 
 ###
+
+excludeInclude = (source) ->
+
+  source = formatArgument source
+  source.push '!**/include/**'
+  source = _.uniq source
+
+  # return
+  source
 
 formatArgument = (arg) ->
   switch $.type arg
@@ -88,6 +98,7 @@ wrapList = (list) ->
 
 # return
 $$.fn = {
+  excludeInclude
   formatArgument
   formatPath
   makeError

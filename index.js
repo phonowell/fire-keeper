@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, fetchGitHub, formatArgument, formatPath, fs, fse, getLintRule, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, getLintRule, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -79,6 +79,7 @@
 
   /*
   
+    excludeInclude(source)
     formatArgument(arg)
     formatPath(source)
     getRelativePath(source, target)
@@ -86,6 +87,13 @@
     normalizePath(source)
     wrapList(list)
    */
+
+  excludeInclude = function(source) {
+    source = formatArgument(source);
+    source.push('!**/include/**');
+    source = _.uniq(source);
+    return source;
+  };
 
   formatArgument = function(arg) {
     switch ($.type(arg)) {
@@ -190,6 +198,7 @@
   };
 
   $$.fn = {
+    excludeInclude: excludeInclude,
     formatArgument: formatArgument,
     formatPath: formatPath,
     makeError: makeError,
