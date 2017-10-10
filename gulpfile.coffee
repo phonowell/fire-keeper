@@ -14,6 +14,8 @@ compile = ->
   gulp.src './source/index.js'
   .pipe gulp.dest ''
 
+#return (require 'gulp').task 'default', -> compile()
+
 # require
 
 fs = require 'fs'
