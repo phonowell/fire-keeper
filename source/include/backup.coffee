@@ -7,7 +7,7 @@
 
 $$.backup = co (source) ->
 
-  source = formatPath source
+  source = yield $$.source source
 
   for src in source
 
@@ -30,7 +30,7 @@ $$.recover = co (source) ->
   for src in source
 
     bak = "#{src}.bak"
-    if !fs.existsSync bak then continue
+    unless yield $$.isExisted bak then continue
 
     basename = path.basename src
 

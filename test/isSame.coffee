@@ -14,16 +14,16 @@ describe '$$.isSame(source)', ->
 
   it "$$.isSame(['./readme.md', './temp/a.md', './temp/b.md'])", co ->
 
-    sourceList = [
+    listSource = [
       './readme.md'
       './temp/a.md'
       './temp/b.md'
     ]
 
-    yield $$.copy sourceList[0], './temp', 'a.md'
-    yield $$.copy sourceList[0], './temp', 'b.md'
+    yield $$.copy listSource[0], './temp', 'a.md'
+    yield $$.copy listSource[0], './temp', 'b.md'
 
-    res = yield $$.isSame sourceList
+    res = yield $$.isSame listSource
 
     if !res
       throw new Error()

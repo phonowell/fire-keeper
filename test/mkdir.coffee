@@ -26,13 +26,13 @@ describe '$$.mkdir(source)', ->
 
   it "$$.mkdir(['./temp/a', './temp/b', './temp/c'])", co ->
 
-    sourceList = [
+    listSource = [
       './temp/a'
       './temp/b'
       './temp/c'
     ]
 
-    res = yield $$.mkdir sourceList
+    res = yield $$.mkdir listSource
 
     if res != $$
       throw new Error()

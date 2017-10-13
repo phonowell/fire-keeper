@@ -6,9 +6,11 @@
   isSame(source, target)
   link(source, target)
   mkdir(source)
+  move(source, target)
   read(source)
   remove(source)
   rename(source, option)
+  source(source)
   stat(source)
   write(source, data)
 
@@ -34,7 +36,7 @@ $$.copy = co (arg...) ->
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 
-  msg = "copied #{wrapList source} to #{wrapList  target}"
+  msg = "copied #{wrapList source} to #{wrapList target}"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
@@ -133,6 +135,23 @@ $$.mkdir = co (source) ->
   # return
   $$
 
+$$.move = co (source, target) ->
+
+  unless source and target
+    throw makeError 'length'
+
+  source = formatPath source
+  target = normalizePath target
+
+  yield $$.copy source, target
+  yield $$.remove source
+
+  $.info 'move'
+  , "moved #{wrapList source} to #{target}"
+
+  # return
+  $$
+
 $$.read = co (source) ->
 
   source = normalizePath source
@@ -188,6 +207,16 @@ $$.rename = co (source, option) ->
 
   # return
   $$
+
+$$.source = (source) ->
+
+  new Promise (resolve) ->
+
+    listSource = []
+
+    gulp.src source
+    .on 'data', (item) -> listSource.push item.path
+    .on 'end', -> resolve listSource
 
 $$.stat = co (source) ->
 

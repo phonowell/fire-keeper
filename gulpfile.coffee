@@ -18,13 +18,8 @@ compile = ->
 
 # require
 
-fs = require 'fs'
-source = if fs.existsSync './source/index.js'
-  './source/index'
-else './index'
-
-$$ = require source
-{Promise} = $$.library
+$$ = require './index'
+{$, _, Promise} = $$.library
 co = Promise.coroutine
 
 # task

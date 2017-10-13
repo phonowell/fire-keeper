@@ -306,7 +306,7 @@
 
   $$.backup = co(function*(source) {
     var extname, i, len, src, suffix;
-    source = formatPath(source);
+    source = (yield $$.source(source));
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
       suffix = path.extname(src);
@@ -328,7 +328,7 @@
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
       bak = src + ".bak";
-      if (!fs.existsSync(bak)) {
+      if (!(yield $$.isExisted(bak))) {
         continue;
       }
       basename = path.basename(src);
@@ -525,9 +525,11 @@
     isSame(source, target)
     link(source, target)
     mkdir(source)
+    move(source, target)
     read(source)
     remove(source)
     rename(source, option)
+    source(source)
     stat(source)
     write(source, data)
    */
@@ -653,6 +655,18 @@
     return $$;
   });
 
+  $$.move = co(function*(source, target) {
+    if (!(source && target)) {
+      throw makeError('length');
+    }
+    source = formatPath(source);
+    target = normalizePath(target);
+    yield $$.copy(source, target);
+    yield $$.remove(source);
+    $.info('move', "moved " + (wrapList(source)) + " to " + target);
+    return $$;
+  });
+
   $$.read = co(function*(source) {
     var res;
     source = normalizePath(source);
@@ -705,6 +719,18 @@
     $.info('file', "renamed " + (wrapList(source)) + " as '" + ($.parseString(option)) + "'");
     return $$;
   });
+
+  $$.source = function(source) {
+    return new Promise(function(resolve) {
+      var listSource;
+      listSource = [];
+      return gulp.src(source).on('data', function(item) {
+        return listSource.push(item.path);
+      }).on('end', function() {
+        return resolve(listSource);
+      });
+    });
+  };
 
   $$.stat = co(function*(source) {
     source = normalizePath(source);

@@ -59,15 +59,15 @@ describe '$$.isExisted(source)', ->
 
   it "$$.isExisted(['./temp/a', './temp/b', './temp/c'])", co ->
 
-    sourceList = [
+    listSource = [
       './temp/a'
       './temp/b'
       './temp/c'
     ]
 
-    yield $$.mkdir sourceList
+    yield $$.mkdir listSource
 
-    isExisted = yield $$.isExisted sourceList
+    isExisted = yield $$.isExisted listSource
 
     if !isExisted
       throw new Error()
@@ -76,14 +76,14 @@ describe '$$.isExisted(source)', ->
 
   it "$$.isExisted(['./temp/existed.txt', './temp/null.txt'])", co ->
 
-    sourceList = [
+    listSource = [
       './temp/existed.txt'
       './temp/null.txt'
     ]
 
-    yield $$.write sourceList[0], 'existed'
+    yield $$.write listSource[0], 'existed'
 
-    isExisted = yield $$.isExisted sourceList
+    isExisted = yield $$.isExisted listSource
 
     if isExisted
       throw new Error()

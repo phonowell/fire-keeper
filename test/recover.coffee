@@ -14,6 +14,8 @@ describe '$$.recover(source)', ->
 
   it "$$.recover('./temp/readme.md')", co ->
 
+    yield clean()
+
     source = './temp/readme.md'
     target = './temp/readme.md.bak'
 
@@ -31,11 +33,11 @@ describe '$$.recover(source)', ->
       throw new Error()
 
     unless yield $$.isExisted source
-      throw new Error()
+      throw new Error 1
 
     sourceData = yield $$.read source
 
     if sourceData.toString() != targetData.toString()
-      throw new Error()
+      throw new Error 2
 
     yield clean()
