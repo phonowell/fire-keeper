@@ -1,5 +1,7 @@
 # folder
 .idea
+.history
+.temp
 .vscode
 secret
 source

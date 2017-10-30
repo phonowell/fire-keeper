@@ -69,4 +69,4 @@ $$.task 'test', co ->
 
 #$$.task 'y', ->
 
-#$$.task 'z', co ->
+# $$.task 'z', co ->

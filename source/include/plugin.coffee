@@ -33,3 +33,5 @@ gulpif = $p.if
 uglifyjs = require 'uglify-es'
 composer = require 'gulp-uglify/composer'
 uglify = $p.uglify = composer uglifyjs, console
+
+markdownlint = $p.markdownlint = require 'markdownlint'

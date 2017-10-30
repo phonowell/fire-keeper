@@ -214,7 +214,7 @@ $$.source = (source) ->
 
     listSource = []
 
-    gulp.src source
+    gulp.src source, read: false
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource
 

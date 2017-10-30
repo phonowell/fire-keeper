@@ -1,31 +1,5 @@
 ###
 
-  getLintRule(filename)
-
-###
-
-getLintRule = co (filename) ->
-
-  source = "./#{filename}.yaml"
-  isExisted = yield $$.isExisted source
-
-  if !isExisted
-    return null
-
-  $.info.pause 'getLintRule'
-
-  yield $$.compile source
-  fileTemp = "./#{filename}.json"
-  rule = yield $$.read fileTemp
-  yield $$.remove fileTemp
-
-  $.info.resume 'getLintRule'
-
-  # return
-  rule
-
-###
-
   lint(source)
 
 ###
@@ -42,7 +16,8 @@ do ->
     if !extname.length then throw makeError 'extname'
 
     method = switch extname
-      when 'coffee' then extname
+      when 'coffee' then 'coffee'
+      when 'md' then 'markdown'
       when 'styl' then 'stylus'
       else throw makeError 'extname'
 
@@ -54,13 +29,12 @@ do ->
   ###
 
     coffee(source)
+    markdown(source)
     stylus(source)
 
   ###
 
-  fn.coffee = co (source) ->
-
-    rule = yield getLintRule 'coffeelint'
+  fn.coffee = (source) ->
 
     new Promise (resolve) ->
 
@@ -70,12 +44,27 @@ do ->
       stream
       .pipe plumber()
       .pipe using()
-      .pipe coffeelint rule
+      .pipe coffeelint()
       .pipe coffeelint.reporter()
 
-  fn.stylus = co (source) ->
+  fn.markdown = (source) ->
 
-    rule = yield getLintRule 'stylint'
+    new Promise (resolve) ->
+
+      (stream = gulp.src source, read: false)
+      .on 'end', -> resolve()
+
+      stream
+      .pipe through2.obj (file, enc, next) ->
+        markdownlint
+          files: [file.relative]
+          (err, result) ->
+            resultString = (result or '').toString()
+            if resultString
+              $.i resultString
+            next err, file
+
+  fn.stylus = (source) ->
 
     new Promise (resolve) ->
 
@@ -85,7 +74,7 @@ do ->
       stream
       .pipe plumber()
       .pipe using()
-      .pipe stylint rules: rule
+      .pipe stylint()
       .pipe stylint.reporter()
 
   # return

@@ -5,7 +5,7 @@ A little helper to make things simple.
 ## Install
 
 ```shell
-$ npm i --save-dev fire-keeper
+npm i --save-dev fire-keeper
 ```
 
 ### Usage
@@ -20,7 +20,7 @@ $$.task 'build', co -> yield $$.compile './source/index.coffee', './'
 
 ### Method
 
-```
+```coffeescript
 $$.backup(source)
 $$.compile(source, [target], [option])
 $$.copy(source, target, [option])
@@ -78,7 +78,7 @@ $$.library.Promise # bluebird
 ### Test
 
 ```shell
-$ gulp test
+gulp test
 ```
 
 ### Caution

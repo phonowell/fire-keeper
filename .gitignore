@@ -88,4 +88,8 @@ coffeelint.yaml
 stylint.yaml
 
 # temp
+.temp
 temp
+
+# history
+.history

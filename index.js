@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, getLintRule, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, through2, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -19,6 +19,8 @@
   co = Promise.coroutine;
 
   gulp = require('gulp');
+
+  through2 = require('through2');
 
   module.exports = $$ = {};
 
@@ -49,6 +51,8 @@
   composer = require('gulp-uglify/composer');
 
   uglify = $p.uglify = composer(uglifyjs, console);
+
+  markdownlint = $p.markdownlint = require('markdownlint');
 
 
   /*
@@ -214,11 +218,11 @@
 
   fetchGitHub = co(function*(name) {
     var source;
-    source = normalizePath("./../" + name);
+    source = normalizePath("./../" + (name.split('/')[1]));
     if ((yield $$.isExisted(source))) {
-      return (yield $$.shell(["cd ./../" + name, 'git fetch', 'git pull']));
+      return (yield $$.shell(["cd " + source, 'git fetch', 'git pull']));
     }
-    return (yield $$.shell("git clone https://github.com/phonowell/" + name + ".git " + $$.path.base + "/../" + name));
+    return (yield $$.shell("git clone https://github.com/" + name + ".git " + source));
   });
 
 
@@ -264,19 +268,19 @@
   });
 
   $$.task('gurumin', co(function*() {
-    yield fetchGitHub('gurumin');
+    yield fetchGitHub('phonowell/gurumin');
     yield $$.remove('./source/gurumin');
     return (yield $$.link('./../gurumin/source', './source/gurumin'));
   }));
 
   $$.task('kokoro', co(function*() {
     var LIST, filename, i, isSame, len, listClean, results, source, target;
-    yield fetchGitHub('kokoro');
-    listClean = ['./.stylintrc', './coffeelint.json', './coffeelint.yml', './stylintrc.yaml', './stylintrc.yml'];
+    yield fetchGitHub('phonowell/kokoro');
+    listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
     $.info.pause('kokoro');
     yield $$.remove(listClean);
     $.info.resume('kokoro');
-    LIST = ['.gitignore', '.npmignore', 'coffeelint.yaml', 'license.md', 'stylint.yaml'];
+    LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
     results = [];
     for (i = 0, len = LIST.length; i < len; i++) {
       filename = LIST[i];
@@ -286,7 +290,6 @@
       if (isSame === true) {
         continue;
       }
-      yield $$.remove(target);
       yield $$.copy(source, './');
       results.push((yield $$.shell("git add -f " + $$.path.base + "/" + filename)));
     }
@@ -724,7 +727,9 @@
     return new Promise(function(resolve) {
       var listSource;
       listSource = [];
-      return gulp.src(source).on('data', function(item) {
+      return gulp.src(source, {
+        read: false
+      }).on('data', function(item) {
         return listSource.push(item.path);
       }).on('end', function() {
         return resolve(listSource);
@@ -762,28 +767,6 @@
 
   /*
   
-    getLintRule(filename)
-   */
-
-  getLintRule = co(function*(filename) {
-    var fileTemp, isExisted, rule, source;
-    source = "./" + filename + ".yaml";
-    isExisted = (yield $$.isExisted(source));
-    if (!isExisted) {
-      return null;
-    }
-    $.info.pause('getLintRule');
-    yield $$.compile(source);
-    fileTemp = "./" + filename + ".json";
-    rule = (yield $$.read(fileTemp));
-    yield $$.remove(fileTemp);
-    $.info.resume('getLintRule');
-    return rule;
-  });
-
-
-  /*
-  
     lint(source)
    */
 
@@ -799,7 +782,9 @@
       method = (function() {
         switch (extname) {
           case 'coffee':
-            return extname;
+            return 'coffee';
+          case 'md':
+            return 'markdown';
           case 'styl':
             return 'stylus';
           default:
@@ -813,32 +798,49 @@
     /*
     
       coffee(source)
+      markdown(source)
       stylus(source)
      */
-    fn.coffee = co(function*(source) {
-      var rule;
-      rule = (yield getLintRule('coffeelint'));
+    fn.coffee = function(source) {
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
-        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint(rule)).pipe(coffeelint.reporter());
+        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter());
       });
-    });
-    fn.stylus = co(function*(source) {
-      var rule;
-      rule = (yield getLintRule('stylint'));
+    };
+    fn.markdown = function(source) {
+      return new Promise(function(resolve) {
+        var stream;
+        (stream = gulp.src(source, {
+          read: false
+        })).on('end', function() {
+          return resolve();
+        });
+        return stream.pipe(through2.obj(function(file, enc, next) {
+          return markdownlint({
+            files: [file.relative]
+          }, function(err, result) {
+            var resultString;
+            resultString = (result || '').toString();
+            if (resultString) {
+              $.i(resultString);
+            }
+            return next(err, file);
+          });
+        }));
+      });
+    };
+    fn.stylus = function(source) {
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
           return resolve();
         });
-        return stream.pipe(plumber()).pipe(using()).pipe(stylint({
-          rules: rule
-        })).pipe(stylint.reporter());
+        return stream.pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter());
       });
-    });
+    };
     return $$.lint = fn;
   })();
 

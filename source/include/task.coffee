@@ -6,18 +6,18 @@
 
 fetchGitHub = co (name) ->
 
-  source = normalizePath "./../#{name}"
+  source = normalizePath "./../#{name.split('/')[1]}"
 
   if yield $$.isExisted source
     return yield $$.shell [
-      "cd ./../#{name}"
+      "cd #{source}"
       'git fetch'
       'git pull'
     ]
 
   yield $$.shell "git clone
-  https://github.com/phonowell/#{name}.git
-  #{$$.path.base}/../#{name}"
+  https://github.com/#{name}.git
+  #{source}"
 
 ###
 
@@ -52,22 +52,21 @@ $$.task 'default', ->
 
 $$.task 'gurumin', co ->
 
-  yield fetchGitHub 'gurumin'
+  yield fetchGitHub 'phonowell/gurumin'
 
   yield $$.remove './source/gurumin'
   yield $$.link './../gurumin/source', './source/gurumin'
 
 $$.task 'kokoro', co ->
 
-  yield fetchGitHub 'kokoro'
+  yield fetchGitHub 'phonowell/kokoro'
 
   # clean
 
   listClean = [
-    './.stylintrc'
-    './coffeelint.json'
+    './coffeelint.yaml'
     './coffeelint.yml'
-    './stylintrc.yaml'
+    './stylint.yaml'
     './stylintrc.yml'
   ]
   $.info.pause 'kokoro'
@@ -79,9 +78,9 @@ $$.task 'kokoro', co ->
   LIST = [
     '.gitignore'
     '.npmignore'
-    'coffeelint.yaml'
+    '.stylintrc'
+    'coffeelint.json'
     'license.md'
-    'stylint.yaml'
   ]
 
   for filename in LIST
@@ -93,7 +92,6 @@ $$.task 'kokoro', co ->
     if isSame == true
       continue
 
-    yield $$.remove target
     yield $$.copy source, './'
     yield $$.shell "git add -f #{$$.path.base}/#{filename}"
 

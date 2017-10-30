@@ -12,11 +12,9 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.compile(source, [target], [option])', ->
 
-  it "$$.compile('./temp/readme.md')", co ->
+  it "$$.compile('./readme.md')", co ->
 
-    yield $$.copy './readme.md', './temp'
-
-    res = yield $$.compile './temp/readme.md'
+    res = yield $$.compile './readme.md', './temp'
 
     if res != $$
       throw new Error 1
@@ -26,25 +24,25 @@ describe '$$.compile(source, [target], [option])', ->
 
     yield clean()
 
-  it "$$.compile('./temp/coffeelint.yaml')", co ->
+  it "$$.compile('./temp/test.yaml')", co ->
 
-    yield $$.copy './coffeelint.yaml', './temp'
+    source = './temp/test.yaml'
 
-    res = yield $$.compile './temp/coffeelint.yaml'
+    yield $$.write source, 'test: true'
+
+    res = yield $$.compile source
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/coffeelint.json'
+    unless yield $$.isExisted './temp/test.json'
       throw new Error()
 
     yield clean()
 
-  it "$$.compile('./temp/gulpfile.coffee')", co ->
+  it "$$.compile('./gulpfile.coffee')", co ->
 
-    yield $$.copy './gulpfile.coffee', './temp'
-
-    res = yield $$.compile './temp/gulpfile.coffee'
+    res = yield $$.compile './gulpfile.coffee', './temp'
 
     if res != $$
       throw new Error()
