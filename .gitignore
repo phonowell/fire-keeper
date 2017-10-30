@@ -73,8 +73,9 @@ www
 # gurumin
 gurumin
 
-# idea
+# ide
 .idea
+.vscode
 
 # npm
 .npmignore
@@ -82,8 +83,9 @@ gurumin
 # secret
 secret
 
-# stylus lint
-.stylintrc
+# lint config files
+coffeelint.yaml
+stylint.yaml
 
 # temp
 temp

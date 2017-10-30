@@ -1,10 +1,13 @@
 # folder
-.temp
+.idea
+.vscode
 secret
 source
+temp
 # file
-.stylintrc
 *.md
 *.yml
 *.coffee
 *.map
+coffeelint.yaml
+stylint.yaml
