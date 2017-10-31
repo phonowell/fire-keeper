@@ -49,20 +49,37 @@ do ->
 
   fn.markdown = (source) ->
 
-    new Promise (resolve) ->
+    new Promise co (resolve) ->
 
-      (stream = gulp.src source, read: false)
-      .on 'end', -> resolve()
+      option = files: yield $$.source source
 
-      stream
-      .pipe through2.obj (file, enc, next) ->
-        markdownlint
-          files: [file.relative]
-          (err, result) ->
-            resultString = (result or '').toString()
-            if resultString
-              $.i resultString
-            next err, file
+      markdownlint option, (err, result) ->
+        
+        if err then throw err
+        
+        for filename, list of result
+
+          if $.type(list) != 'array' then continue
+          
+          filename = filename
+          .replace $.info['__reg_base__'], '.'
+          .replace $.info['__reg_home__'], '~'
+          
+          $.i colors.magenta filename
+          
+          for item in list
+
+            listMsg = []
+            
+            listMsg.push colors.gray "##{item.lineNumber}"
+            if item.errorContext
+              listMsg.push "< #{colors.red item.errorContext} >"
+            if item.ruleDescription
+              listMsg.push item.ruleDescription
+
+            $.i listMsg.join ' '
+        
+        resolve()
 
   fn.stylus = (source) ->
 

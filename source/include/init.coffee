@@ -13,7 +13,6 @@ Promise = require 'bluebird'
 co = Promise.coroutine
 
 gulp = require 'gulp'
-through2 = require 'through2'
 
 # return
 

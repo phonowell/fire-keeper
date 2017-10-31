@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, through2, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -19,8 +19,6 @@
   co = Promise.coroutine;
 
   gulp = require('gulp');
-
-  through2 = require('through2');
 
   module.exports = $$ = {};
 
@@ -811,26 +809,39 @@
       });
     };
     fn.markdown = function(source) {
-      return new Promise(function(resolve) {
-        var stream;
-        (stream = gulp.src(source, {
-          read: false
-        })).on('end', function() {
+      return new Promise(co(function*(resolve) {
+        var option;
+        option = {
+          files: (yield $$.source(source))
+        };
+        return markdownlint(option, function(err, result) {
+          var filename, i, item, len, list, listMsg;
+          if (err) {
+            throw err;
+          }
+          for (filename in result) {
+            list = result[filename];
+            if ($.type(list) !== 'array') {
+              continue;
+            }
+            filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
+            $.i(colors.magenta(filename));
+            for (i = 0, len = list.length; i < len; i++) {
+              item = list[i];
+              listMsg = [];
+              listMsg.push(colors.gray("#" + item.lineNumber));
+              if (item.errorContext) {
+                listMsg.push("< " + (colors.red(item.errorContext)) + " >");
+              }
+              if (item.ruleDescription) {
+                listMsg.push(item.ruleDescription);
+              }
+              $.i(listMsg.join(' '));
+            }
+          }
           return resolve();
         });
-        return stream.pipe(through2.obj(function(file, enc, next) {
-          return markdownlint({
-            files: [file.relative]
-          }, function(err, result) {
-            var resultString;
-            resultString = (result || '').toString();
-            if (resultString) {
-              $.i(resultString);
-            }
-            return next(err, file);
-          });
-        }));
-      });
+      }));
     };
     fn.stylus = function(source) {
       return new Promise(function(resolve) {

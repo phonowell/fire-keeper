@@ -67,6 +67,6 @@ $$.task 'test', co ->
   yield $$.shell 'npm test'
   yield $$.remove './test/**/*.js'
 
-#$$.task 'y', ->
+# $$.task 'y', ->
 
 # $$.task 'z', co ->
