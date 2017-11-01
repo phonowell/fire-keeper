@@ -9,12 +9,9 @@ compile = ->
   gulp.src './source/index.coffee'
   .pipe include()
   .pipe coffee()
-  .pipe gulp.dest './source/'
-
-  gulp.src './source/index.js'
   .pipe gulp.dest ''
 
-#return (require 'gulp').task 'default', -> compile()
+# return (require 'gulp').task 'default', -> compile()
 
 # require
 
@@ -44,6 +41,11 @@ $$.task 'compile', -> compile()
 $$.task 'lint', co ->
 
   yield $$.task('kokoro')()
+
+  yield $$.lint [
+    './*.md'
+    './source/**/*.md'
+  ]
 
   yield $$.lint [
     './gulpfile.coffee'

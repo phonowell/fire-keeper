@@ -13,6 +13,7 @@
 #= include include/lint.coffee
 #= include include/replace.coffee
 #= include include/ssh.coffee
+#= include include/update.coffee
 #= include include/walk.coffee
 #= include include/zip.coffee
 

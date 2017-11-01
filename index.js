@@ -300,31 +300,8 @@
   });
 
   $$.task('update', co(function*() {
-    var a, alias, cmd, data, i, len, list, listCmd, npmCheck, packageJson, ref;
-    alias = $$.argv.alias;
-    npmCheck = require('npm-check');
-    data = (yield npmCheck({
-      skipUnused: true
-    }));
-    list = data.get('packages');
-    listCmd = [];
-    for (i = 0, len = list.length; i < len; i++) {
-      a = list[i];
-      packageJson = a.packageJson.replace(/[~^]/g, '');
-      if (a.isInstalled && (a.installed === (ref = a.latest) && ref === packageJson)) {
-        continue;
-      }
-      cmd = [];
-      cmd.push(alias || 'npm');
-      cmd.push('install');
-      cmd.push(a.devDependency ? '--save-dev' : '--save');
-      cmd.push(a.moduleName + "@" + a.latest);
-      listCmd.push(cmd.join(' '));
-    }
-    if (!listCmd.length) {
-      return $.info('update', 'every thing is ok');
-    }
-    return (yield $$.shell(listCmd));
+    yield $$.update();
+    return (yield $$.shell('npm prune'));
   }));
 
 
@@ -1130,6 +1107,77 @@
   })();
 
   $$.ssh = new SSH();
+
+
+  /*
+  
+    update()
+   */
+
+  (function() {
+    var REGISTRY, addCmdLines, clean, fn, getLatestVersion;
+    REGISTRY = 'https://registry.npm.taobao.org';
+
+    /*
+    
+      addCmdLines(list, type, data)
+      clean()
+      getLatestVersion(name)
+     */
+    addCmdLines = co(function*(list, data, isDev) {
+      var cmd, current, latest, name, results, version;
+      results = [];
+      for (name in data) {
+        version = data[name];
+        current = version.replace(/[~^]/, '');
+        latest = (yield getLatestVersion(name));
+        if (current === latest) {
+          continue;
+        }
+        cmd = ['npm install'];
+        cmd.push(name + "@" + latest);
+        cmd.push("--registry " + REGISTRY);
+        cmd.push(isDev ? '--save-dev' : '--save');
+        results.push(list.push(cmd.join(' ')));
+      }
+      return results;
+    });
+    clean = co(function*() {
+      var listFile;
+      yield $$.remove('./temp/update');
+      listFile = (yield $$.source('./temp/**/*.*'));
+      if (!listFile.length) {
+        return (yield $$.remove('./temp'));
+      }
+    });
+    getLatestVersion = co(function*(name) {
+      var data, source, url;
+      source = "./temp/update/" + name + ".json";
+      if (!(yield $$.isExisted(source))) {
+        url = REGISTRY + "/" + name + "/latest";
+        yield $$.download(url, './temp/update', name + ".json");
+      }
+      data = (yield $$.read(source));
+      return data.version;
+    });
+    fn = co(function*() {
+      var listCmd, pkg;
+      pkg = (yield $$.read('./package.json'));
+      listCmd = [];
+      $.info.pause('$$.update');
+      yield addCmdLines(listCmd, pkg.dependencies);
+      yield addCmdLines(listCmd, pkg.devDependencies, true);
+      yield clean();
+      $.info.resume('$$.update');
+      if (!listCmd.length) {
+        $.info('update', 'every thing is ok');
+        return;
+      }
+      yield $$.shell(listCmd);
+      return $$;
+    });
+    return $$.update = fn;
+  })();
 
 
   /*
