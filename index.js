@@ -249,6 +249,7 @@
     gurumin()
     kokoro()
     noop()
+    update()
    */
 
   $$.task('default', function() {
@@ -297,6 +298,34 @@
   $$.task('noop', function() {
     return null;
   });
+
+  $$.task('update', co(function*() {
+    var a, alias, cmd, data, i, len, list, listCmd, npmCheck, packageJson, ref;
+    alias = $$.argv.alias;
+    npmCheck = require('npm-check');
+    data = (yield npmCheck({
+      skipUnused: true
+    }));
+    list = data.get('packages');
+    listCmd = [];
+    for (i = 0, len = list.length; i < len; i++) {
+      a = list[i];
+      packageJson = a.packageJson.replace(/[~^]/g, '');
+      if (a.isInstalled && (a.installed === (ref = a.latest) && ref === packageJson)) {
+        continue;
+      }
+      cmd = [];
+      cmd.push(alias || 'npm');
+      cmd.push('install');
+      cmd.push(a.devDependency ? '--save-dev' : '--save');
+      cmd.push(a.moduleName + "@" + a.latest);
+      listCmd.push(cmd.join(' '));
+    }
+    if (!listCmd.length) {
+      return $.info('update', 'every thing is ok');
+    }
+    return (yield $$.shell(listCmd));
+  }));
 
 
   /*

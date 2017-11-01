@@ -42,6 +42,7 @@ $$.task = (arg...) ->
   gurumin()
   kokoro()
   noop()
+  update()
 
 ###
 
@@ -96,3 +97,38 @@ $$.task 'kokoro', co ->
     yield $$.shell "git add -f #{$$.path.base}/#{filename}"
 
 $$.task 'noop', -> null
+
+$$.task 'update', co ->
+
+  {alias} = $$.argv
+
+  npmCheck = require 'npm-check'
+
+  data = yield npmCheck
+    skipUnused: true
+
+  list = data.get 'packages'
+
+  listCmd = []
+  for a in list
+
+    packageJson = a.packageJson
+    .replace /[~^]/g, ''
+    
+    if a.isInstalled and a.installed == a.latest == packageJson
+      continue
+
+    cmd = []
+    cmd.push alias or 'npm'
+    cmd.push 'install'
+    cmd.push if a.devDependency
+      '--save-dev'
+    else '--save'
+    cmd.push "#{a.moduleName}@#{a.latest}"
+
+    listCmd.push cmd.join ' '
+
+  if !listCmd.length
+    return $.info 'update', 'every thing is ok'
+
+  yield $$.shell listCmd
