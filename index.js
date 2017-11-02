@@ -1130,7 +1130,9 @@
       for (name in data) {
         version = data[name];
         current = version.replace(/[~^]/, '');
-        latest = (yield getLatestVersion(name));
+        if (!(latest = (yield getLatestVersion(name)))) {
+          continue;
+        }
         if (current === latest) {
           continue;
         }
@@ -1155,9 +1157,14 @@
       source = "./temp/update/" + name + ".json";
       if (!(yield $$.isExisted(source))) {
         url = REGISTRY + "/" + name + "/latest";
-        yield $$.download(url, './temp/update', name + ".json");
+        try {
+          yield $$.download(url, './temp/update', name + ".json");
+        } catch (error) {}
       }
       data = (yield $$.read(source));
+      if (!data) {
+        return null;
+      }
       return data.version;
     });
     fn = co(function*() {

@@ -25,7 +25,8 @@ do ->
       current = version
       .replace /[~^]/, ''
 
-      latest = yield getLatestVersion(name)
+      unless latest = yield getLatestVersion name
+        continue
 
       if current == latest
         continue
@@ -54,13 +55,16 @@ do ->
 
     unless yield $$.isExisted source
       url = "#{REGISTRY}/#{name}/latest"
-      yield $$.download url
+      try yield $$.download url
       , './temp/update'
       , "#{name}.json"
 
     data = yield $$.read source
 
     # return
+    
+    if !data then return null
+
     data.version
 
   #

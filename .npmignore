@@ -1,15 +1,16 @@
 # folder
-.idea
 .history
+.idea
 .temp
 .vscode
 secret
 source
 temp
 # file
-*.md
-*.yml
 *.coffee
 *.map
+*.md
+*.yml
 coffeelint.yaml
+package-lock.json
 stylint.yaml
