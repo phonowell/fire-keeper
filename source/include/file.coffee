@@ -210,6 +210,8 @@ $$.rename = co (source, option) ->
 
 $$.source = (source) ->
 
+  source = formatPath source
+
   new Promise (resolve) ->
 
     listSource = []

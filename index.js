@@ -728,6 +728,7 @@
   });
 
   $$.source = function(source) {
+    source = formatPath(source);
     return new Promise(function(resolve) {
       var listSource;
       listSource = [];
