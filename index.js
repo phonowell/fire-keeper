@@ -249,6 +249,7 @@
     gurumin()
     kokoro()
     noop()
+    prune()
     update()
    */
 
@@ -298,6 +299,45 @@
   $$.task('noop', function() {
     return null;
   });
+
+  $$.task('prune', co(function*() {
+    var base, line, listDirectory, listExtension, listFile, listSource;
+    yield $$.shell('npm prune');
+    base = './node_modules';
+    listFile = ['.DS_Store', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.flowconfig', '.gitattributes', '.jshintrc', '.npmignore', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml'];
+    listSource = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = listFile.length; i < len; i++) {
+        line = listFile[i];
+        results.push(base + "/**/" + line);
+      }
+      return results;
+    })();
+    yield $$.remove(listSource);
+    listDirectory = ['.circleci', '.github', '.idea', '.nyc_output', '.vscode', '__tests__', 'assets', 'coverage', 'doc', 'docs', 'example', 'examples', 'images', 'powered-test', 'test', 'tests', 'website'];
+    listSource = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = listDirectory.length; i < len; i++) {
+        line = listDirectory[i];
+        results.push(base + "/**/" + line);
+      }
+      return results;
+    })();
+    yield $$.remove(listSource);
+    listExtension = ['.coffee', '.jst', '.md', '.swp', '.tgz', '.ts'];
+    listSource = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = listExtension.length; i < len; i++) {
+        line = listExtension[i];
+        results.push(base + "/**/*" + line);
+      }
+      return results;
+    })();
+    return (yield $$.remove(listSource));
+  }));
 
   $$.task('update', co(function*() {
     yield $$.update();

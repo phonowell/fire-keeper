@@ -42,6 +42,7 @@ $$.task = (arg...) ->
   gurumin()
   kokoro()
   noop()
+  prune()
   update()
 
 ###
@@ -97,6 +98,88 @@ $$.task 'kokoro', co ->
     yield $$.shell "git add -f #{$$.path.base}/#{filename}"
 
 $$.task 'noop', -> null
+
+$$.task 'prune', co ->
+
+  yield $$.shell 'npm prune'
+
+  base = './node_modules'
+
+  # file
+
+  listFile = [
+    '.DS_Store'
+    '.babelrc'
+    '.coveralls.yml'
+    '.documentup.json'
+    '.editorconfig'
+    '.eslintignore'
+    '.eslintrc'
+    '.eslintrc.js'
+    '.flowconfig'
+    '.gitattributes'
+    '.jshintrc'
+    '.npmignore'
+    '.tern-project'
+    '.travis.yml'
+    '.yarn-integrity'
+    '.yarn-metadata.json'
+    '.yarnclean'
+    '.yo-rc.json'
+    'AUTHORS'
+    'CHANGES'
+    'CONTRIBUTORS'
+    'Gruntfile.js'
+    'Gulpfile.js'
+    'LICENSE'
+    'LICENSE.txt'
+    'Makefile'
+    '_config.yml'
+    'appveyor.yml'
+    'circle.yml'
+  ]
+
+  listSource = ("#{base}/**/#{line}" for line in listFile)
+  yield $$.remove listSource
+
+  # directory
+
+  listDirectory = [
+    '.circleci'
+    '.github'
+    '.idea'
+    '.nyc_output'
+    '.vscode'
+    '__tests__'
+    'assets'
+    'coverage'
+    'doc'
+    'docs'
+    'example'
+    'examples'
+    'images'
+    'powered-test'
+    'test'
+    'tests'
+    'website'
+  ]
+
+  listSource = ("#{base}/**/#{line}" for line in listDirectory)
+  yield $$.remove listSource
+
+  # extension
+
+  listExtension = [
+    '.coffee'
+    '.jst'
+    '.md'
+    '.swp'
+    '.tgz'
+    '.ts'
+  ]
+
+  listSource = ("#{base}/**/*#{line}" for line in listExtension)
+  yield $$.remove listSource
 
 $$.task 'update', co ->
 

@@ -5,6 +5,7 @@
 .vscode
 secret
 source
+storage
 temp
 # file
 *.coffee
