@@ -405,15 +405,17 @@
           case 1:
             return [arg[0], null, {}];
           case 2:
-            switch ($.type(arg[1])) {
-              case 'object':
+            return (function() {
+              var type;
+              type = $.type(arg[1]);
+              if (type === 'object') {
                 return [arg[0], null, arg[1]];
-              case 'string':
+              }
+              if (type === 'string') {
                 return [arg[0], arg[1], {}];
-              default:
-                throw makeError('type');
-            }
-            break;
+              }
+              throw makeError('type');
+            })();
           case 3:
             return arg;
           default:
@@ -708,8 +710,10 @@
     }
     source = formatPath(source);
     target = normalizePath(target);
+    $.info.pause('$$.move');
     yield $$.copy(source, target);
     yield $$.remove(source);
+    $.info.resume('$$.move');
     $.info('move', "moved " + (wrapList(source)) + " to " + target);
     return $$;
   });
@@ -1332,7 +1336,7 @@
 
   $$.reload = function(source) {
     if (!source) {
-      throw new Error('invalid source');
+      throw makeError('source');
     }
     source = formatPath(source);
     livereload.listen();

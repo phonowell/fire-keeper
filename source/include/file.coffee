@@ -143,8 +143,10 @@ $$.move = co (source, target) ->
   source = formatPath source
   target = normalizePath target
 
+  $.info.pause '$$.move'
   yield $$.copy source, target
   yield $$.remove source
+  $.info.resume '$$.move'
 
   $.info 'move'
   , "moved #{wrapList source} to #{target}"

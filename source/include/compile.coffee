@@ -12,13 +12,11 @@ do ->
 
     [source, target, option] = switch arg.length
       when 1 then [arg[0], null, {}]
-      when 2
-
-        switch $.type arg[1]
-          when 'object' then [arg[0], null, arg[1]]
-          when 'string' then [arg[0], arg[1], {}]
-          else throw makeError 'type'
-
+      when 2 then do ->
+        type = $.type arg[1]
+        if type == 'object' then return [arg[0], null, arg[1]]
+        if type == 'string' then return [arg[0], arg[1], {}]
+        throw makeError 'type'
       when 3 then arg
       else throw makeError 'length'
 

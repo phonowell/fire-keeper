@@ -12,7 +12,7 @@ $$.delay = $.delay
 
 $$.reload = (source) ->
 
-  if !source then throw new Error 'invalid source'
+  if !source then throw makeError 'source'
 
   source = formatPath source
 
