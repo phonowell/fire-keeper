@@ -38,6 +38,7 @@ $$.task = (arg...) ->
 
 ###
 
+  check()
   default()
   gurumin()
   kokoro()
@@ -46,6 +47,32 @@ $$.task = (arg...) ->
   update()
 
 ###
+
+$$.task 'check', co ->
+
+  listSource = []
+
+  listExt = [
+    'coffee'
+    'md'
+    'pug'
+    'styl'
+    'yaml'
+  ]
+  for ext in listExt
+    listSource.push "./*.#{ext}"
+    listSource.push "./source/**/*.#{ext}"
+
+  listSource = yield $$.source listSource
+
+  for source in listSource
+
+    cont = $.parseString yield $$.read source
+    listCont = cont.split '\n'
+
+    if !_.trim(_.last listCont).length
+      listCont.pop()
+      yield $$.write source, listCont.join('\n')
 
 $$.task 'default', ->
   list = (key for key of gulp.tasks)

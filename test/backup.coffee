@@ -32,15 +32,16 @@ describe '$$.backup(source)', ->
     res = yield $$.backup listSource
 
     if res != $$
-      throw new Error()
+      throw new Error 0
 
     unless yield $$.isExisted listTarget
-      throw new Error()
+      throw new Error 1
 
-    listSourceData = (yield $$.read source for source in listSource)
-    listTargetData = (yield $$.read target for target in listTarget)
+    option = raw: true
+    listSourceData = (yield $$.read source, option for source in listSource)
+    listTargetData = (yield $$.read target, option for target in listTarget)
 
     unless _.isEqual listSourceData, listTargetData
-      throw new Error()
+      throw new Error 2
 
     yield clean()

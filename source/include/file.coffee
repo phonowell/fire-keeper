@@ -7,7 +7,7 @@
   link(source, target)
   mkdir(source)
   move(source, target)
-  read(source)
+  read(source, [option])
   remove(source)
   rename(source, option)
   source(source)
@@ -154,7 +154,7 @@ $$.move = co (source, target) ->
   # return
   $$
 
-$$.read = co (source) ->
+$$.read = co (source, option = {}) ->
 
   source = normalizePath source
 
@@ -171,9 +171,12 @@ $$.read = co (source) ->
   $.info 'file', "read #{wrapList source}"
 
   # return
+
+  if option.raw then return res
+  
   res = switch path.extname(source)[1...]
     when 'json' then $.parseJson res
-    when 'txt' then $.parseString res
+    when 'html', 'md', 'txt' then $.parseString res
     else res
 
 $$.remove = co (source) ->

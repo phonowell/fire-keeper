@@ -245,6 +245,7 @@
 
   /*
   
+    check()
     default()
     gurumin()
     kokoro()
@@ -252,6 +253,31 @@
     prune()
     update()
    */
+
+  $$.task('check', co(function*() {
+    var cont, ext, i, j, len, len1, listCont, listExt, listSource, results, source;
+    listSource = [];
+    listExt = ['coffee', 'md', 'pug', 'styl', 'yaml'];
+    for (i = 0, len = listExt.length; i < len; i++) {
+      ext = listExt[i];
+      listSource.push("./*." + ext);
+      listSource.push("./source/**/*." + ext);
+    }
+    listSource = (yield $$.source(listSource));
+    results = [];
+    for (j = 0, len1 = listSource.length; j < len1; j++) {
+      source = listSource[j];
+      cont = $.parseString((yield $$.read(source)));
+      listCont = cont.split('\n');
+      if (!_.trim(_.last(listCont)).length) {
+        listCont.pop();
+        results.push((yield $$.write(source, listCont.join('\n'))));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
+  }));
 
   $$.task('default', function() {
     var key, list;
@@ -575,7 +601,7 @@
     link(source, target)
     mkdir(source)
     move(source, target)
-    read(source)
+    read(source, [option])
     remove(source)
     rename(source, option)
     source(source)
@@ -718,8 +744,11 @@
     return $$;
   });
 
-  $$.read = co(function*(source) {
+  $$.read = co(function*(source, option) {
     var res;
+    if (option == null) {
+      option = {};
+    }
     source = normalizePath(source);
     if (!(yield $$.isExisted(source))) {
       $.info('file', (wrapList(source)) + " not existed");
@@ -734,10 +763,15 @@
       });
     }));
     $.info('file', "read " + (wrapList(source)));
+    if (option.raw) {
+      return res;
+    }
     return res = (function() {
       switch (path.extname(source).slice(1)) {
         case 'json':
           return $.parseJson(res);
+        case 'html':
+        case 'md':
         case 'txt':
           return $.parseString(res);
         default:

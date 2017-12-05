@@ -10,7 +10,7 @@ clean = co -> yield $$.remove './temp'
 
 # test
 
-describe '$$.read(source)', ->
+describe '$$.read(source, [option])', ->
 
   it "$$.read('./temp/test.txt')", co ->
 
@@ -47,3 +47,23 @@ describe '$$.read(source)', ->
 
     if cont?
       throw new Error()
+
+  it "$$.read('./temp/text.txt', raw: true)", co ->
+
+    source = './temp/test.json'
+    string = 'a test message'
+
+    yield $$.write source, string
+
+    cont = yield $$.read source,
+      raw: true
+
+    if $.type(cont) != 'buffer'
+      throw new Error()
+
+    cont = $.parseString cont
+
+    if cont != string
+      throw new Error()
+
+    yield clean()
