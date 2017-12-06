@@ -10,9 +10,9 @@ clean = co -> yield $$.remove './temp'
 
 # test
 
-describe '$$.task(source)', ->
+describe '$$.say(text)', ->
 
-  it '$$.task()', ->
+  it '$$.say()', ->
 
-    if !$$.task
+    if !$$.say
       throw new Error()

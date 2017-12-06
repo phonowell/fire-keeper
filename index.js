@@ -262,6 +262,7 @@
       ext = listExt[i];
       listSource.push("./*." + ext);
       listSource.push("./source/**/*." + ext);
+      listSource.push("./test/**/*." + ext);
     }
     listSource = (yield $$.source(listSource));
     results = [];
@@ -969,6 +970,42 @@
     });
     $.info('replace', "replaced '" + target + "' to '" + replacement + "', in " + (wrapList(pathSource)) + ", output to " + (wrapList(pathTarget)));
     return $$;
+  });
+
+
+  /*
+  
+    say(text)
+   */
+
+  $$.say = co(function*(text) {
+    var i, len, listMessage, msg;
+    if ($$.os !== 'macos') {
+      return;
+    }
+    listMessage = (function() {
+      switch ($.type(text)) {
+        case 'array':
+          return text;
+        case 'string':
+          return [text];
+        default:
+          throw makeError('type');
+      }
+    })();
+    for (i = 0, len = listMessage.length; i < len; i++) {
+      msg = listMessage[i];
+      $.info('say', msg);
+      msg = msg.replace(/[#\(\)-]/g, '');
+      msg = _.trim(msg);
+      if (!msg.length) {
+        continue;
+      }
+      $.info.pause('$$.say');
+      yield $$.shell("say " + msg);
+      $.info.resume('$$.say');
+    }
+    return text;
   });
 
   SSH = (function() {

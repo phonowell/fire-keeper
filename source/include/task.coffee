@@ -62,6 +62,7 @@ $$.task 'check', co ->
   for ext in listExt
     listSource.push "./*.#{ext}"
     listSource.push "./source/**/*.#{ext}"
+    listSource.push "./test/**/*.#{ext}"
 
   listSource = yield $$.source listSource
 
