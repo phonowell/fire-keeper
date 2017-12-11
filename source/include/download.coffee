@@ -24,5 +24,4 @@ $$.download = co (arg...) ->
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'download', msg
 
-  # return
-  $$
+  $$ # return

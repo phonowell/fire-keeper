@@ -21,8 +21,7 @@ $$.reload = (source) ->
   $$.watch source
   .pipe livereload()
 
-  # return
-  $$
+  $$ # return
 
 $$.shell = $.shell
 

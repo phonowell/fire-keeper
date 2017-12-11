@@ -23,8 +23,7 @@ do ->
 
     yield fn[method] source
 
-    # return
-    $$
+    $$ # return
 
   ###
 

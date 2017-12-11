@@ -211,5 +211,7 @@ $$.task 'prune', co ->
 
 $$.task 'update', co ->
 
-  yield $$.update()
+  {registry} = $$.argv
+
+  yield $$.update {registry}
   yield $$.shell 'npm prune'

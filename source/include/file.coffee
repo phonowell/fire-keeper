@@ -40,8 +40,7 @@ $$.copy = co (arg...) ->
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
-  # return
-  $$
+  $$ # return
 
 $$.isExisted = co (source) ->
 
@@ -52,8 +51,7 @@ $$.isExisted = co (source) ->
     unless yield fse.pathExists src
       return false
 
-  # return
-  true
+  true # return
 
 $$.isSame = co (source) ->
 
@@ -102,8 +100,7 @@ $$.isSame = co (source) ->
     if cont != CONT
       return false
 
-  # return
-  true
+  true # return
 
 $$.link = co (source, target) ->
 
@@ -117,8 +114,7 @@ $$.link = co (source, target) ->
 
   $.info 'link', "linked #{wrapList source} to #{wrapList target}"
 
-  # return
-  $$
+  $$ # return
 
 $$.mkdir = co (source) ->
 
@@ -132,8 +128,7 @@ $$.mkdir = co (source) ->
 
   $.info 'create', "created #{wrapList source}"
 
-  # return
-  $$
+  $$ # return
 
 $$.move = co (source, target) ->
 
@@ -151,8 +146,7 @@ $$.move = co (source, target) ->
   $.info 'move'
   , "moved #{wrapList source} to #{target}"
 
-  # return
-  $$
+  $$ # return
 
 $$.read = co (source, option = {}) ->
 
@@ -176,7 +170,8 @@ $$.read = co (source, option = {}) ->
   
   res = switch path.extname(source)[1...]
     when 'json' then $.parseJson res
-    when 'html', 'md', 'txt' then $.parseString res
+    when 'html', 'md', 'txt', 'yaml', 'yml'
+      $.parseString res
     else res
 
 $$.remove = co (source) ->
@@ -187,8 +182,7 @@ $$.remove = co (source) ->
 
   $.info 'remove', "removed #{wrapList source}"
 
-  # return
-  $$
+  $$ # return
 
 $$.rename = co (source, option) ->
 
@@ -210,8 +204,7 @@ $$.rename = co (source, option) ->
   $.info 'file'
   , "renamed #{wrapList source} as '#{$.parseString option}'"
 
-  # return
-  $$
+  $$ # return
 
 $$.source = (source) ->
 
@@ -251,5 +244,4 @@ $$.write = co (source, data, option) ->
 
   $.info 'file', "wrote #{wrapList source}"
 
-  # return
-  $$
+  $$ # return

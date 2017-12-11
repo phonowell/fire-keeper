@@ -6,34 +6,41 @@
 
 do ->
 
-  REGISTRY = 'https://registry.npm.taobao.org'
-
   # function
 
   ###
 
-    addCmdLines(list, type, data)
+    addCmd(list, data, isDev, option)
     clean()
-    getLatestVersion(name)
+    getLatestVersion(name, option)
 
   ###
 
-  addCmdLines = co (list, data, isDev) ->
+  addCmd = co (list, data, isDev, option) ->
+
+    {registry} = option
 
     for name, version of data
 
       current = version
       .replace /[~^]/, ''
 
-      unless latest = yield getLatestVersion name
-        continue
+      $.info.pause '$$.update'
+      latest = yield getLatestVersion name, option
+      $.info.resume '$$.update'
 
       if current == latest
+        $.info 'update'
+        , "'#{name}': '#{current}' == '#{latest}'"
         continue
+      $.info 'update'
+      , "'#{name}': '#{current}' -> '#{latest}'"
 
-      cmd = ['npm install']
+      cmd = []
+      cmd.push 'npm install'
       cmd.push "#{name}@#{latest}"
-      cmd.push "--registry #{REGISTRY}"
+      if registry
+        cmd.push "--registry #{registry}"
       cmd.push if isDev
         '--save-dev'
       else '--save'
@@ -49,34 +56,36 @@ do ->
     if !listFile.length
       yield $$.remove './temp'
 
-  getLatestVersion = co (name) ->
+  getLatestVersion = co (name, option) ->
+
+    {registry} = option
+    registry or= 'http://registry.npmjs.org'
 
     source = "./temp/update/#{name}.json"
 
     unless yield $$.isExisted source
-      url = "#{REGISTRY}/#{name}/latest"
-      try yield $$.download url
+      url = "#{registry}/#{name}/latest?salt=#{_.now()}"
+      yield $$.download url
       , './temp/update'
       , "#{name}.json"
 
-    data = yield $$.read source
+    unless data = yield $$.read source
+      throw makeError 'source'
 
     # return
-    
-    if !data then return null
-
     data.version
 
   #
   
-  fn = co ->
+  fn = co (option) ->
 
     pkg = yield $$.read './package.json'
 
     listCmd = []
+    yield addCmd listCmd, pkg.dependencies, false, option
+    yield addCmd listCmd, pkg.devDependencies, true, option
+    
     $.info.pause '$$.update'
-    yield addCmdLines listCmd, pkg.dependencies
-    yield addCmdLines listCmd, pkg.devDependencies, true
     yield clean()
     $.info.resume '$$.update'
 

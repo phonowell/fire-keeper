@@ -367,7 +367,11 @@
   }));
 
   $$.task('update', co(function*() {
-    yield $$.update();
+    var registry;
+    registry = $$.argv.registry;
+    yield $$.update({
+      registry: registry
+    });
     return (yield $$.shell('npm prune'));
   }));
 
@@ -774,6 +778,8 @@
         case 'html':
         case 'md':
         case 'txt':
+        case 'yaml':
+        case 'yml':
           return $.parseString(res);
         default:
           return res;
@@ -1231,30 +1237,35 @@
    */
 
   (function() {
-    var REGISTRY, addCmdLines, clean, fn, getLatestVersion;
-    REGISTRY = 'https://registry.npm.taobao.org';
 
     /*
     
-      addCmdLines(list, type, data)
+      addCmd(list, data, isDev, option)
       clean()
-      getLatestVersion(name)
+      getLatestVersion(name, option)
      */
-    addCmdLines = co(function*(list, data, isDev) {
-      var cmd, current, latest, name, results, version;
+    var addCmd, clean, fn, getLatestVersion;
+    addCmd = co(function*(list, data, isDev, option) {
+      var cmd, current, latest, name, registry, results, version;
+      registry = option.registry;
       results = [];
       for (name in data) {
         version = data[name];
         current = version.replace(/[~^]/, '');
-        if (!(latest = (yield getLatestVersion(name)))) {
-          continue;
-        }
+        $.info.pause('$$.update');
+        latest = (yield getLatestVersion(name, option));
+        $.info.resume('$$.update');
         if (current === latest) {
+          $.info('update', "'" + name + "': '" + current + "' == '" + latest + "'");
           continue;
         }
-        cmd = ['npm install'];
+        $.info('update', "'" + name + "': '" + current + "' -> '" + latest + "'");
+        cmd = [];
+        cmd.push('npm install');
         cmd.push(name + "@" + latest);
-        cmd.push("--registry " + REGISTRY);
+        if (registry) {
+          cmd.push("--registry " + registry);
+        }
         cmd.push(isDev ? '--save-dev' : '--save');
         results.push(list.push(cmd.join(' ')));
       }
@@ -1268,28 +1279,27 @@
         return (yield $$.remove('./temp'));
       }
     });
-    getLatestVersion = co(function*(name) {
-      var data, source, url;
+    getLatestVersion = co(function*(name, option) {
+      var data, registry, source, url;
+      registry = option.registry;
+      registry || (registry = 'http://registry.npmjs.org');
       source = "./temp/update/" + name + ".json";
       if (!(yield $$.isExisted(source))) {
-        url = REGISTRY + "/" + name + "/latest";
-        try {
-          yield $$.download(url, './temp/update', name + ".json");
-        } catch (error) {}
+        url = registry + "/" + name + "/latest?salt=" + (_.now());
+        yield $$.download(url, './temp/update', name + ".json");
       }
-      data = (yield $$.read(source));
-      if (!data) {
-        return null;
+      if (!(data = (yield $$.read(source)))) {
+        throw makeError('source');
       }
       return data.version;
     });
-    fn = co(function*() {
+    fn = co(function*(option) {
       var listCmd, pkg;
       pkg = (yield $$.read('./package.json'));
       listCmd = [];
+      yield addCmd(listCmd, pkg.dependencies, false, option);
+      yield addCmd(listCmd, pkg.devDependencies, true, option);
       $.info.pause('$$.update');
-      yield addCmdLines(listCmd, pkg.dependencies);
-      yield addCmdLines(listCmd, pkg.devDependencies, true);
       yield clean();
       $.info.resume('$$.update');
       if (!listCmd.length) {
