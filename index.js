@@ -797,16 +797,24 @@
   });
 
   $$.rename = co(function*(source, option) {
+    var i, item, len, listHistory;
     source = formatPath(source);
+    listHistory = [];
     yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(rename(option)).pipe(gulp.dest(function(e) {
+        listHistory.push(e.history);
         return e.base;
       })).on('end', function() {
         return resolve();
       });
     });
     $.info.pause('$$.rename');
-    yield $$.remove(source);
+    for (i = 0, len = listHistory.length; i < len; i++) {
+      item = listHistory[i];
+      if ((yield $$.isExisted(item[1]))) {
+        yield $$.remove(item[0]);
+      }
+    }
     $.info.resume('$$.rename');
     $.info('file', "renamed " + (wrapList(source)) + " as '" + ($.parseString(option)) + "'");
     return $$;
@@ -1016,13 +1024,11 @@
 
   SSH = (function() {
     function SSH() {
-      null;
+      this;
     }
 
 
     /*
-    
-      storage
     
       connect(option)
       disconnect()

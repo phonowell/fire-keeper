@@ -25,10 +25,10 @@ describe '$$.copy(source, target, [option])', ->
     unless yield $$.isExisted target
       throw new Error()
 
-    sourceData = yield $$.read source
-    targetData = yield $$.read target
+    contSource = yield $$.read source
+    contTarget = yield $$.read target
 
-    if sourceData.toString() != targetData.toString()
+    if contTarget != contSource
       throw new Error()
 
     yield clean()
@@ -46,10 +46,10 @@ describe '$$.copy(source, target, [option])', ->
     unless yield $$.isExisted target
       throw new Error()
 
-    sourceData = yield $$.read source
-    targetData = yield $$.read target
+    contSource = yield $$.read source
+    contTarget = yield $$.read target
 
-    if sourceData.toString() != targetData.toString()
+    if contTarget != contSource
       throw new Error()
 
     yield clean()
@@ -69,10 +69,32 @@ describe '$$.copy(source, target, [option])', ->
     unless yield $$.isExisted target
       throw new Error()
 
-    sourceData = yield $$.read source
-    targetData = yield $$.read target
+    contSource = yield $$.read source
+    contTarget = yield $$.read target
 
-    if sourceData.toString() != targetData.toString()
+    if contTarget != contSource
       throw new Error()
 
     yield $$.remove '~/Downloads/temp'
+
+  it "$$.copy('./temp/a.txt', null, 'b.txt')", co ->
+
+    source = './temp/a.txt'
+    target = './temp/b.txt'
+    string = 'a string to be copied'
+
+    yield $$.write source, string
+    res = yield $$.copy source, null, 'b.txt'
+
+    if res != $$
+      throw new Error()
+
+    unless yield $$.isExisted target
+      throw new Error()
+
+    cont = yield $$.read target
+
+    if cont != string
+      throw new Error()
+
+    yield clean()

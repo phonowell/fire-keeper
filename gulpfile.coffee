@@ -65,8 +65,32 @@ $$.task 'set', co ->
 
 $$.task 'test', co ->
 
-  yield $$.compile './test/**/*.coffee'
-  yield $$.shell 'npm test'
-  yield $$.remove './test/**/*.js'
+  {target} = $$.argv
+  target or= '**/*'
+  source = "./test/#{target}.coffee"
 
-# $$.task 'z', co ->
+  #
+
+  clean = co ->
+    yield $$.remove [
+      './test/**/*.js'
+      './test/**/*.map'
+    ]
+
+  #
+
+  yield clean()
+
+  yield $$.compile source,
+    map: true
+    minify: false
+  
+  if yield $$.shell 'npm test'
+    yield clean()
+
+$$.task 'z', co ->
+
+  yield $$.write './temp/a.txt', '123123'
+
+  yield $$.rename './temp/a.txt',
+    extname: '.md'

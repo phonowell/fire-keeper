@@ -2,11 +2,9 @@
 
 class SSH
 
-  constructor: -> null
+  constructor: -> @
 
   ###
-
-    storage
 
     connect(option)
     disconnect()

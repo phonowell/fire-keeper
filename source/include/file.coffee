@@ -188,17 +188,23 @@ $$.rename = co (source, option) ->
 
   source = formatPath source
 
+  listHistory = []
+
   yield new Promise (resolve) ->
 
     gulp.src source
     .pipe plumber()
     .pipe using()
     .pipe rename option
-    .pipe gulp.dest (e) -> e.base
+    .pipe gulp.dest (e) ->
+      listHistory.push e.history
+      e.base
     .on 'end', -> resolve()
 
   $.info.pause '$$.rename'
-  yield $$.remove source
+  for item in listHistory
+    if yield $$.isExisted item[1]
+      yield $$.remove item[0]
   $.info.resume '$$.rename'
 
   $.info 'file'
