@@ -774,7 +774,7 @@
     return res = (function() {
       switch (path.extname(source).slice(1)) {
         case 'json':
-          return $.parseJson(res);
+          return $.parseJSON(res);
         case 'html':
         case 'md':
         case 'txt':

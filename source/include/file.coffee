@@ -169,7 +169,7 @@ $$.read = co (source, option = {}) ->
   if option.raw then return res
   
   res = switch path.extname(source)[1...]
-    when 'json' then $.parseJson res
+    when 'json' then $.parseJSON res
     when 'html', 'md', 'txt', 'yaml', 'yml'
       $.parseString res
     else res

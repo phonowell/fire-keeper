@@ -88,9 +88,4 @@ $$.task 'test', co ->
   if yield $$.shell 'npm test'
     yield clean()
 
-$$.task 'z', co ->
-
-  yield $$.write './temp/a.txt', '123123'
-
-  yield $$.rename './temp/a.txt',
-    extname: '.md'
+# $$.task 'z', co ->
