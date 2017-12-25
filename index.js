@@ -1,5 +1,5 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, del, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
+  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
     slice = [].slice;
 
   path = require('path');
@@ -31,8 +31,6 @@
   };
 
   $p = $$.plugin = require('gulp-load-plugins')();
-
-  del = $p.del = require('del');
 
   download = $p.download = require('download');
 
@@ -124,6 +122,8 @@
       switch (msg) {
         case 'extname':
           return 'invalid extname';
+        case 'filename':
+          return 'invalid filename';
         case 'length':
           return 'invalid argument length';
         case 'source':
@@ -788,10 +788,19 @@
   });
 
   $$.remove = co(function*(source) {
-    source = formatPath(source);
-    yield del(source, {
-      force: true
-    });
+    var i, len, listSource, src;
+    listSource = (yield $$.source(source));
+    for (i = 0, len = listSource.length; i < len; i++) {
+      src = listSource[i];
+      yield new Promise(function(resolve) {
+        return fse.remove(src, function(err) {
+          if (err) {
+            throw err;
+          }
+          return resolve();
+        });
+      });
+    }
     $.info('remove', "removed " + (wrapList(source)));
     return $$;
   });
@@ -1343,31 +1352,25 @@
   /*
   
     unzip(source, [target])
-    zip(source, [target], [option])
+    zip(source, target, option)
    */
 
-  $$.unzip = co(function*() {
-    var arg, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
-      switch (arg.length) {
-        case 1:
-          return [arg[0], null];
-        case 2:
-          return arg;
-        default:
-          throw makeError('length');
-      }
-    })(), source = ref[0], target = ref[1];
-    source = formatPath(source);
-    target || (target = (path.dirname(source[0])) + "/" + (path.basename(source[0], '.zip')));
-    target = normalizePath(target);
-    yield new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(target)).on('end', function() {
-        return resolve();
+  $$.unzip = co(function*(source, target) {
+    var dist, i, len, src;
+    if (!source) {
+      throw makeError('source');
+    }
+    source = (yield $$.source(source));
+    for (i = 0, len = source.length; i < len; i++) {
+      src = source[i];
+      dist = target || path.dirname(src);
+      yield new Promise(function(resolve) {
+        return gulp.src(src).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(dist)).on('end', function() {
+          return resolve();
+        });
       });
-    });
-    $.info('zip', "unzipped " + (wrapList(source)) + " to " + (wrapList(target)));
+      $.info('zip', "unzipped " + src + " to " + dist);
+    }
     return $$;
   });
 
@@ -1377,17 +1380,15 @@
     ref = (function() {
       switch (arg.length) {
         case 1:
-          return [arg[0], null, {}];
+          return [arg[0], null, null];
         case 2:
-          return [arg[0], arg[1], {}];
-        case 3:
-          return arg;
+          return [arg[0], null, arg[1]];
         default:
           throw makeError('length');
       }
     })(), source = ref[0], target = ref[1], option = ref[2];
     source = formatPath(source);
-    target || (target = path.dirname(source[0]));
+    target || (target = path.dirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
     filename = (function() {
       switch ($.type(option)) {
@@ -1399,7 +1400,7 @@
           return null;
       }
     })();
-    filename || (filename = (path.basename(path.resolve(target)) || 'zip') + ".zip");
+    filename || (filename = (path.basename(target)) + ".zip");
     yield new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(target)).on('end', function() {
         return resolve();

@@ -19,5 +19,4 @@ $$.walk = co (source, callback) ->
       callback item
     .on 'end', -> resolve()
 
-  # return
-  $$
+  $$ # return

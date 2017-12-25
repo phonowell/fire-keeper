@@ -38,3 +38,21 @@ describe '$$.source(source)', ->
 
     # clean
     yield $$.remove listTarget
+
+  it "$$.source('~/Desktop/[t](e)[s](t).txt')", co ->
+
+    source = '~/Desktop/[t](e)[s](t).txt'
+    content = 'just a test file'
+
+    yield $$.write source, content
+
+    source = source
+    .replace /\[(\w)/g, '[[]$1'
+    .replace /(\w)\]/g, '$1[]]'
+    listSource = yield $$.source source
+
+    if listSource.length != 1
+      throw new Error()
+
+    # clean
+    # yield $$.remove listSource

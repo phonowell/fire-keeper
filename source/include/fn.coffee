@@ -32,6 +32,7 @@ formatPath = (source) ->
 makeError = (msg) ->
   new Error switch msg
     when 'extname' then 'invalid extname'
+    when 'filename' then 'invalid filename'
     when 'length' then 'invalid argument length'
     when 'source' then 'invalid source'
     when 'target' then 'invalid target'

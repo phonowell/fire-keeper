@@ -12,11 +12,20 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.zip(source, [target], [option])', ->
 
-  it "$$.zip('./temp/*.md')", co ->
+  it "$$.zip('./temp/*.txt', './temp', 'temp.zip')", co ->
 
-    yield $$.copy './*.md', './temp'
+    yield clean()
 
-    res = yield $$.zip './temp/*.md'
+    base = './temp'
+
+    for key in ['a', 'b', 'c']
+
+      source = "#{base}/[test](test)#{key}.txt"
+      content = "test file #{key}"
+
+      yield $$.write source, content
+
+    res = yield $$.zip './temp/*.txt'
 
     if res != $$
       throw new Error()

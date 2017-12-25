@@ -4,51 +4,50 @@
 ###
 
   unzip(source, [target])
-  zip(source, [target], [option])
+  zip(source, target, option)
 
 ###
 
-$$.unzip = co (arg...) ->
+$$.unzip = co (source, target) ->
 
-  [source, target] = switch arg.length
-    when 1 then [arg[0], null]
-    when 2 then arg
-    else throw makeError 'length'
+  if !source
+    throw makeError 'source'
 
-  source = formatPath source
-  target or= "#{path.dirname source[0]}/#{path.basename source[0], '.zip'}"
-  target = normalizePath target
+  source = yield $$.source source
 
-  yield new Promise (resolve) ->
-    gulp.src source
-    .pipe plumber()
-    .pipe using()
-    .pipe unzip()
-    .pipe gulp.dest target
-    .on 'end', -> resolve()
+  for src in source
 
-  $.info 'zip', "unzipped #{wrapList source} to #{wrapList target}"
+    dist = target or path.dirname src
 
-  # return
-  $$
+    yield new Promise (resolve) ->
+      gulp.src src
+      .pipe plumber()
+      .pipe using()
+      .pipe unzip()
+      .pipe gulp.dest dist
+      .on 'end', -> resolve()
+
+    $.info 'zip', "unzipped #{src} to #{dist}"
+
+  $$ # return
 
 $$.zip = co (arg...) ->
 
   [source, target, option] = switch arg.length
-    when 1 then [arg[0], null, {}]
-    when 2 then [arg[0], arg[1], {}]
-    when 3 then arg
+    when 1 then [arg[0], null, null]
+    when 2 then [arg[0], null, arg[1]]
     else throw makeError 'length'
 
   source = formatPath source
-  target or= path.dirname source[0]
+
+  target or= path.dirname(source[0]).replace /\*/g, ''
   target = normalizePath target
 
   filename = switch $.type option
     when 'object' then option.filename
     when 'string' then option
     else null
-  filename or= "#{path.basename(path.resolve target) or 'zip'}.zip"
+  filename or= "#{path.basename target}.zip"
 
   yield new Promise (resolve) ->
     gulp.src source
@@ -61,5 +60,4 @@ $$.zip = co (arg...) ->
   $.info 'zip'
   , "zipped #{wrapList source} to #{wrapList target}, named as '#{filename}'"
 
-  # return
-  $$
+  $$ # return

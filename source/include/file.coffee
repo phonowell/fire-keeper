@@ -176,10 +176,15 @@ $$.read = co (source, option = {}) ->
 
 $$.remove = co (source) ->
 
-  source = formatPath source
+  listSource = yield $$.source source
 
-  yield del source, force: true
+  for src in listSource
+    yield new Promise (resolve) ->
+      fse.remove src, (err) ->
+        if err then throw err
+        resolve()
 
+    # $.info 'remove', "removed '#{src}'"
   $.info 'remove', "removed #{wrapList source}"
 
   $$ # return
