@@ -1383,6 +1383,8 @@
           return [arg[0], null, null];
         case 2:
           return [arg[0], null, arg[1]];
+        case 3:
+          return arg;
         default:
           throw makeError('length');
       }

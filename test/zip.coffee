@@ -25,7 +25,7 @@ describe '$$.zip(source, [target], [option])', ->
 
       yield $$.write source, content
 
-    res = yield $$.zip './temp/*.txt'
+    res = yield $$.zip './temp/*.txt', './temp', 'temp.zip'
 
     if res != $$
       throw new Error()

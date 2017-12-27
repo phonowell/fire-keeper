@@ -36,6 +36,7 @@ $$.zip = co (arg...) ->
   [source, target, option] = switch arg.length
     when 1 then [arg[0], null, null]
     when 2 then [arg[0], null, arg[1]]
+    when 3 then arg
     else throw makeError 'length'
 
   source = formatPath source

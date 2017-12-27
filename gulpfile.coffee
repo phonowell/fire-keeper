@@ -88,4 +88,8 @@ $$.task 'test', co ->
   if yield $$.shell 'npm test'
     yield clean()
 
-# $$.task 'z', co ->
+$$.task 'z', co ->
+
+  base = '~/OneDrive'
+
+  yield $$.zip "#{base}/**/*.*", "#{base}/..", 'OneDrive.zip'
