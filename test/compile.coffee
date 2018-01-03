@@ -51,7 +51,7 @@ describe '$$.compile(source, [target], [option])', ->
 
     await clean()
 
-  it "$$.compile(['./temp/*.md')", ->
+  it "$$.compile('./temp/*.md')", ->
 
     await clean()
 
@@ -77,5 +77,37 @@ describe '$$.compile(source, [target], [option])', ->
 
       if data != "<h1 id=\"#{key}\">#{key}</h1>"
         throw new Error 3
+
+    await clean()
+
+  it "$$.compile('./source/index.coffee', harmony: false)", ->
+
+    await clean()
+
+    source = './temp/test.coffee'
+    target = './temp/test.js'
+
+    cont = [
+      'class Tester'
+      'tester = new Tester()'
+      'tester.get = => @'
+      'tester.get()'
+    ].join '\n'
+
+    await $$.write source, cont
+
+    res = await $$.compile source,
+      harmony: false
+
+    if res != $$
+      throw new Error 0
+
+    unless await $$.isExisted target
+      throw new Error 1
+
+    cont = $.parseString await $$.read target
+
+    if ~cont.search '=>'
+      throw new Error 2
 
     await clean()

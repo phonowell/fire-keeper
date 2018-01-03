@@ -487,6 +487,15 @@
     */
     fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
+        if (option.harmony == null) {
+          option.harmony = true;
+        }
+        if (!option.harmony) {
+          option.transpile = {
+            presets: ['env']
+          };
+        }
+        delete option.harmony;
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });

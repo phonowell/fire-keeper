@@ -64,6 +64,12 @@ do ->
 
     new Promise (resolve) ->
 
+      option.harmony ?= true
+      if !option.harmony
+        option.transpile =
+          presets: ['env']
+      delete option.harmony
+
       gulp.src source
       .pipe plumber()
       .pipe using()

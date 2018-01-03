@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.90",
+  "version": "0.0.91",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -24,6 +24,8 @@
     "mocha": "^4.1.0"
   },
   "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "download": "^6.2.5",
     "fs-extra": "^5.0.0",
     "gulp": "^3.9.1",
