@@ -6,7 +6,7 @@
 
 ###
 
-$$.replace = co (arg...) ->
+$$.replace = (arg...) ->
 
   [pathSource, pathTarget, target, replacement] = switch arg.length
     when 3 then [arg[0], null, arg[1], arg[2]]
@@ -17,7 +17,7 @@ $$.replace = co (arg...) ->
   pathTarget or= path.dirname(pathSource[0]).replace /\*/g, ''
   pathTarget = normalizePath pathTarget
 
-  yield new Promise (resolve) ->
+  await new Promise (resolve) ->
     gulp.src pathSource
     .pipe plumber()
     .pipe using()

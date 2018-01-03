@@ -1,29 +1,28 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.link(source, target)', ->
 
-  it "$$.link('./../gurumin/source', './temp/gurumin')", co ->
+  it "$$.link('./../gurumin/source', './temp/gurumin')", ->
 
-    res = yield $$.link './../gurumin/source'
+    res = await $$.link './../gurumin/source'
     , './temp/gurumin'
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/gurumin'
+    unless await $$.isExisted './temp/gurumin'
       throw new Error()
 
-    unless yield $$.isExisted './temp/gurumin/script/include/core/$.ago.coffee'
+    unless await $$.isExisted './temp/gurumin/script/include/core/$.ago.coffee'
       throw new Error()
 
-    yield clean()
+    await clean()

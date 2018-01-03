@@ -16,8 +16,7 @@ compile = ->
 # require
 
 $$ = require './index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # task
 
@@ -31,39 +30,39 @@ co = Promise.coroutine
 
 ###
 
-$$.task 'build', co ->
+$$.task 'build', ->
 
-  yield $$.compile './source/index.coffee', './',
+  await $$.compile './source/index.coffee', './',
     minify: false
 
 $$.task 'compile', -> compile()
 
-$$.task 'lint', co ->
+$$.task 'lint', ->
 
-  yield $$.task('kokoro')()
+  await $$.task('kokoro')()
 
-  yield $$.lint [
+  await $$.lint [
     './*.md'
     './source/**/*.md'
   ]
 
-  yield $$.lint [
+  await $$.lint [
     './gulpfile.coffee'
     './source/**/*.coffee'
     './test/**/*.coffee'
   ]
 
-$$.task 'set', co ->
+$$.task 'set', ->
 
   {ver} = $$.argv
 
   if !ver
     throw new Error 'empty ver'
 
-  yield $$.replace './package.json'
+  await $$.replace './package.json'
   , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
 
-$$.task 'test', co ->
+$$.task 'test', ->
 
   {target} = $$.argv
   target or= '**/*'
@@ -71,25 +70,21 @@ $$.task 'test', co ->
 
   #
 
-  clean = co ->
-    yield $$.remove [
+  clean = ->
+    await $$.remove [
       './test/**/*.js'
       './test/**/*.map'
     ]
 
   #
 
-  yield clean()
+  await clean()
 
-  yield $$.compile source,
+  await $$.compile source,
     map: true
     minify: false
   
-  if yield $$.shell 'npm test'
-    yield clean()
+  if await $$.shell 'npm test'
+    await clean()
 
-$$.task 'z', co ->
-
-  base = '~/OneDrive'
-
-  yield $$.zip "#{base}/**/*.*", "#{base}/..", 'OneDrive.zip'
+# $$.task 'z', ->

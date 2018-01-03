@@ -1,40 +1,39 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.remove(source)', ->
 
-  it "$$.remove('./temp/re')", co ->
+  it "$$.remove('./temp/re')", ->
 
-    yield $$.write './temp/re/move.txt', 'to be removed'
+    await $$.write './temp/re/move.txt', 'to be removed'
 
-    res = yield $$.remove './temp/re'
+    res = await $$.remove './temp/re'
 
     if res != $$
       throw new Error()
 
-    if yield $$.isExisted './temp/re'
+    if await $$.isExisted './temp/re'
       throw new Error()
 
-    yield clean()
+    await clean()
 
 
-  it "$$.remove(['./temp/a', './temp/b', './temp/c.txt'])", co ->
+  it "$$.remove(['./temp/a', './temp/b', './temp/c.txt'])", ->
 
-    yield $$.mkdir [
+    await $$.mkdir [
       './temp/a'
       './temp/b'
     ]
 
-    yield $$.write './temp/c.txt', 'empty'
+    await $$.write './temp/c.txt', 'empty'
 
     listSource = [
       './temp/a'
@@ -42,17 +41,17 @@ describe '$$.remove(source)', ->
       './temp/c.txt'
     ]
 
-    res = yield $$.remove listSource
+    res = await $$.remove listSource
 
     if res != $$
       throw new Error()
 
-    if yield $$.isExisted listSource
+    if await $$.isExisted listSource
       throw new Error()
 
-    yield clean()
+    await clean()
     
-  it "$$.remove('./temp/**/*.txt')", co ->
+  it "$$.remove('./temp/**/*.txt')", ->
     
     listSource = [
       './temp/a.txt'
@@ -61,17 +60,17 @@ describe '$$.remove(source)', ->
     string = 'empty'
 
     for source in listSource
-      yield $$.write source, string
+      await $$.write source, string
     
-    res = yield $$.remove './temp/**/*.txt'
+    res = await $$.remove './temp/**/*.txt'
     
     if res != $$
       throw new Error()
       
-    if yield $$.isExisted listSource
+    if await $$.isExisted listSource
       throw new Error()
 
-    unless yield $$.isExisted './temp/b'
+    unless await $$.isExisted './temp/b'
       throw new Error()
 
-    yield clean()
+    await clean()

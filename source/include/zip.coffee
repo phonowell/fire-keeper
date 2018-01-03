@@ -8,18 +8,18 @@
 
 ###
 
-$$.unzip = co (source, target) ->
+$$.unzip = (source, target) ->
 
   if !source
     throw makeError 'source'
 
-  source = yield $$.source source
+  source = await $$.source source
 
   for src in source
 
     dist = target or path.dirname src
 
-    yield new Promise (resolve) ->
+    await new Promise (resolve) ->
       gulp.src src
       .pipe plumber()
       .pipe using()
@@ -31,7 +31,7 @@ $$.unzip = co (source, target) ->
 
   $$ # return
 
-$$.zip = co (arg...) ->
+$$.zip = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 1 then [arg[0], null, null]
@@ -50,7 +50,7 @@ $$.zip = co (arg...) ->
     else null
   filename or= "#{path.basename target}.zip"
 
-  yield new Promise (resolve) ->
+  await new Promise (resolve) ->
     gulp.src source
     .pipe plumber()
     .pipe using()

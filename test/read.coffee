@@ -1,61 +1,60 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.read(source, [option])', ->
 
-  it "$$.read('./temp/test.txt')", co ->
+  it "$$.read('./temp/test.txt')", ->
 
     source = './temp/test.txt'
     string = 'a test message'
 
-    yield $$.write source, string
+    await $$.write source, string
 
-    cont = yield $$.read source
+    cont = await $$.read source
 
     if cont != string
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.read('./temp/test.json')", co ->
+  it "$$.read('./temp/test.json')", ->
 
     source = './temp/test.json'
     string = 'a test message'
     object = message: string
 
-    yield $$.write source, object
+    await $$.write source, object
 
-    cont = yield $$.read source
+    cont = await $$.read source
 
     if cont.message != string
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.read('./temp/null.txt')", co ->
+  it "$$.read('./temp/null.txt')", ->
 
-    cont = yield $$.read './temp/null.txt'
+    cont = await $$.read './temp/null.txt'
 
     if cont?
       throw new Error()
 
-  it "$$.read('./temp/text.txt', raw: true)", co ->
+  it "$$.read('./temp/text.txt', raw: true)", ->
 
     source = './temp/test.json'
     string = 'a test message'
 
-    yield $$.write source, string
+    await $$.write source, string
 
-    cont = yield $$.read source,
+    cont = await $$.read source,
       raw: true
 
     if $.type(cont) != 'buffer'
@@ -66,4 +65,4 @@ describe '$$.read(source, [option])', ->
     if cont != string
       throw new Error()
 
-    yield clean()
+    await clean()

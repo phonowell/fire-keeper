@@ -1,8 +1,7 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
@@ -13,19 +12,19 @@ co = Promise.coroutine
 
 ###
 
-check = co (source, target, contSource) ->
+check = (source, target, contSource) ->
 
-  if yield $$.isExisted source
+  if await $$.isExisted source
     throw new Error 'source'
 
-  unless yield $$.isExisted target
+  unless await $$.isExisted target
     throw new Error 'target'
 
-  contTarget = yield $$.read target
+  contTarget = await $$.read target
   if contTarget != contSource
     throw new Error 'cont'
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
@@ -43,52 +42,52 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.rename(source, option)', ->
 
-  it "$$.rename('./temp/a.txt', 'b.txt')", co ->
+  it "$$.rename('./temp/a.txt', 'b.txt')", ->
 
     source = './temp/a.txt'
     target = './temp/b.txt'
     contSource = 'to be renamed'
 
-    yield $$.write source, contSource
+    await $$.write source, contSource
 
-    res = yield $$.rename source, 'b.txt'
+    res = await $$.rename source, 'b.txt'
 
     if res != $$
       throw new Error()
 
-    yield check source, target, contSource
+    await check source, target, contSource
 
-    yield clean()
+    await clean()
 
-  it "$$.rename('./temp/a.txt', {extname: '.md', suffix: '-test'})", co ->
+  it "$$.rename('./temp/a.txt', {extname: '.md', suffix: '-test'})", ->
 
     source = './temp/a.txt'
     target = './temp/a-test.md'
     contSource = 'to be renamed'
 
-    yield $$.write source, contSource
+    await $$.write source, contSource
 
-    res = yield $$.rename source,
+    res = await $$.rename source,
       extname: '.md'
       suffix: '-test'
 
     if res != $$
       throw new Error()
 
-    yield check source, target, contSource
+    await check source, target, contSource
 
-    yield clean()
+    await clean()
 
-  it "$$.rename('./temp/*.txt', extname: '.md')", co ->
+  it "$$.rename('./temp/*.txt', extname: '.md')", ->
 
     listFilename = ($.parseString i for i in [0...5])
 
     for filename in listFilename
       source = "./temp/#{filename}.txt"
       contSource = filename
-      yield $$.write source, contSource
+      await $$.write source, contSource
 
-    res = yield $$.rename './temp/*.txt',
+    res = await $$.rename './temp/*.txt',
       extname: '.md'
 
     if res != $$
@@ -100,6 +99,6 @@ describe '$$.rename(source, option)', ->
       target = "./temp/#{filename}.md"
       contSource = filename
       
-      yield check source, target, contSource
+      await check source, target, contSource
 
-    yield clean()
+    await clean()

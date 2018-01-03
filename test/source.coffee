@@ -1,25 +1,24 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.source(source)', ->
 
-  it "$$.source('./*.md')", co ->
+  it "$$.source('./*.md')", ->
 
-    listSource = yield $$.source './*.md'
+    listSource = await $$.source './*.md'
 
     if listSource.length != 2
       throw new Error()
 
-  it "$$.source('~/Desktop/*.md')", co ->
+  it "$$.source('~/Desktop/*.md')", ->
 
     content = 'test text'
     listTarget = [
@@ -29,30 +28,30 @@ describe '$$.source(source)', ->
     ]
 
     for target in listTarget
-      yield $$.write target, content
+      await $$.write target, content
 
-    listSource = yield $$.source '~/Desktop/*.md'
+    listSource = await $$.source '~/Desktop/*.md'
 
     if listSource.length != 3
       throw new Error()
 
     # clean
-    yield $$.remove listTarget
+    await $$.remove listTarget
 
-  it "$$.source('~/Desktop/[t](e)[s](t).txt')", co ->
+  it "$$.source('~/Desktop/[t](e)[s](t).txt')", ->
 
     source = '~/Desktop/[t](e)[s](t).txt'
     content = 'just a test file'
 
-    yield $$.write source, content
+    await $$.write source, content
 
     source = source
     .replace /\[(\w)/g, '[[]$1'
     .replace /(\w)\]/g, '$1[]]'
-    listSource = yield $$.source source
+    listSource = await $$.source source
 
     if listSource.length != 1
       throw new Error()
 
     # clean
-    # yield $$.remove listSource
+    # await $$.remove listSource

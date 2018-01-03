@@ -16,7 +16,7 @@
 
 ###
 
-$$.copy = co (arg...) ->
+$$.copy = (arg...) ->
 
   # source, target, [option]
   [source, target, option] = switch arg.length
@@ -27,7 +27,7 @@ $$.copy = co (arg...) ->
   source = formatPath source
   if target then target = normalizePath target
 
-  yield new Promise (resolve) ->
+  await new Promise (resolve) ->
 
     gulp.src source
     .pipe plumber()
@@ -42,18 +42,18 @@ $$.copy = co (arg...) ->
 
   $$ # return
 
-$$.isExisted = co (source) ->
+$$.isExisted = (source) ->
 
   source = formatPath source
   if !source.length then return false
 
   for src in source
-    unless yield fse.pathExists src
+    unless await fse.pathExists src
       return false
 
   true # return
 
-$$.isSame = co (source) ->
+$$.isSame = (source) ->
 
   source = formatPath source
 
@@ -66,7 +66,7 @@ $$.isSame = co (source) ->
 
   for src in source
 
-    stat = yield $$.stat src
+    stat = await $$.stat src
     if !stat
       return false
 
@@ -86,7 +86,7 @@ $$.isSame = co (source) ->
   for src in source
 
     $.info.pause '$$.isSame'
-    cont = yield $$.read src
+    cont = await $$.read src
     $.info.resume '$$.isSame'
     if !cont
       return false
@@ -102,7 +102,7 @@ $$.isSame = co (source) ->
 
   true # return
 
-$$.link = co (source, target) ->
+$$.link = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -110,13 +110,13 @@ $$.link = co (source, target) ->
   source = normalizePath source
   target = normalizePath target
 
-  yield fse.ensureSymlink source, target
+  await fse.ensureSymlink source, target
 
   $.info 'link', "linked #{wrapList source} to #{wrapList target}"
 
   $$ # return
 
-$$.mkdir = co (source) ->
+$$.mkdir = (source) ->
 
   if !source then throw makeError 'length'
 
@@ -124,13 +124,13 @@ $$.mkdir = co (source) ->
 
   listPromise = (fse.ensureDir src for src in source)
 
-  yield Promise.all listPromise
+  await Promise.all listPromise
 
   $.info 'create', "created #{wrapList source}"
 
   $$ # return
 
-$$.move = co (source, target) ->
+$$.move = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -139,8 +139,8 @@ $$.move = co (source, target) ->
   target = normalizePath target
 
   $.info.pause '$$.move'
-  yield $$.copy source, target
-  yield $$.remove source
+  await $$.copy source, target
+  await $$.remove source
   $.info.resume '$$.move'
 
   $.info 'move'
@@ -148,15 +148,15 @@ $$.move = co (source, target) ->
 
   $$ # return
 
-$$.read = co (source, option = {}) ->
+$$.read = (source, option = {}) ->
 
   source = normalizePath source
 
-  unless yield $$.isExisted source
+  unless await $$.isExisted source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
-  res = yield new Promise (resolve) ->
+  res = await new Promise (resolve) ->
 
     fs.readFile source, (err, data) ->
       if err then throw err
@@ -174,12 +174,12 @@ $$.read = co (source, option = {}) ->
       $.parseString res
     else res
 
-$$.remove = co (source) ->
+$$.remove = (source) ->
 
-  listSource = yield $$.source source
+  listSource = await $$.source source
 
   for src in listSource
-    yield new Promise (resolve) ->
+    await new Promise (resolve) ->
       fse.remove src, (err) ->
         if err then throw err
         resolve()
@@ -189,13 +189,13 @@ $$.remove = co (source) ->
 
   $$ # return
 
-$$.rename = co (source, option) ->
+$$.rename = (source, option) ->
 
   source = formatPath source
 
   listHistory = []
 
-  yield new Promise (resolve) ->
+  await new Promise (resolve) ->
 
     gulp.src source
     .pipe plumber()
@@ -208,8 +208,8 @@ $$.rename = co (source, option) ->
 
   $.info.pause '$$.rename'
   for item in listHistory
-    if yield $$.isExisted item[1]
-      yield $$.remove item[0]
+    if await $$.isExisted item[1]
+      await $$.remove item[0]
   $.info.resume '$$.rename'
 
   $.info 'file'
@@ -229,11 +229,11 @@ $$.source = (source) ->
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource
 
-$$.stat = co (source) ->
+$$.stat = (source) ->
 
   source = normalizePath source
 
-  unless yield $$.isExisted source
+  unless await $$.isExisted source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
@@ -244,14 +244,14 @@ $$.stat = co (source) ->
       if err then throw err
       resolve stat
 
-$$.write = co (source, data, option) ->
+$$.write = (source, data, option) ->
 
   source = normalizePath source
 
   if $.type(data) in ['array', 'object']
     data = $.parseString data
 
-  yield fse.outputFile source, data, option
+  await fse.outputFile source, data, option
 
   $.info 'file', "wrote #{wrapList source}"
 

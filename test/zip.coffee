@@ -1,20 +1,19 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.zip(source, [target], [option])', ->
 
-  it "$$.zip('./temp/*.txt', './temp', 'temp.zip')", co ->
+  it "$$.zip('./temp/*.txt', './temp', 'temp.zip')", ->
 
-    yield clean()
+    await clean()
 
     base = './temp'
 
@@ -23,14 +22,14 @@ describe '$$.zip(source, [target], [option])', ->
       source = "#{base}/[test](test)#{key}.txt"
       content = "test file #{key}"
 
-      yield $$.write source, content
+      await $$.write source, content
 
-    res = yield $$.zip './temp/*.txt', './temp', 'temp.zip'
+    res = await $$.zip './temp/*.txt', './temp', 'temp.zip'
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/temp.zip'
+    unless await $$.isExisted './temp/temp.zip'
       throw new Error()
 
-    yield clean()
+    await clean()

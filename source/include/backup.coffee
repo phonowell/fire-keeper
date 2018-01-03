@@ -5,9 +5,9 @@
 
 ###
 
-$$.backup = co (source) ->
+$$.backup = (source) ->
 
-  source = yield $$.source source
+  source = await $$.source source
 
   for src in source
 
@@ -15,7 +15,7 @@ $$.backup = co (source) ->
     extname = '.bak'
 
     $.info.pause '$$.backup'
-    yield $$.copy src, null, {suffix, extname}
+    await $$.copy src, null, {suffix, extname}
     $.info.resume '$$.backup'
 
   $.info 'backup', "backed up #{wrapList source}"
@@ -23,21 +23,21 @@ $$.backup = co (source) ->
   # return
   $$
 
-$$.recover = co (source) ->
+$$.recover = (source) ->
 
   source = formatPath source
 
   for src in source
 
     bak = "#{src}.bak"
-    unless yield $$.isExisted bak then continue
+    unless await $$.isExisted bak then continue
 
     basename = path.basename src
 
     $.info.pause '$$.recover'
-    yield $$.remove src
-    yield $$.copy bak, null, basename
-    yield $$.remove bak
+    await $$.remove src
+    await $$.copy bak, null, basename
+    await $$.remove bak
     $.info.resume '$$.recover'
 
   $.info 'recover', "recovered #{wrapList source}"

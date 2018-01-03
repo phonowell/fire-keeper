@@ -12,10 +12,8 @@ npm install --save-dev fire-keeper
 
 ```coffeescript
 $$ = require './source/index'
-{_, Promise} = $$.library
-co = Promise.coroutine
 
-$$.task 'build', co -> yield $$.compile './source/index.coffee', './'
+$$.task 'build', -> await $$.compile './source/index.coffee', './'
 ```
 
 ### Method
@@ -73,7 +71,6 @@ $$.library.$ # node-jquery-extend, a little toolkit like jQuery
 $$.library._ # lodash
 $$.library.fse # fs-extra
 $$.library.gulp # gulp
-$$.library.Promise # bluebird
 ```
 
 ### Test

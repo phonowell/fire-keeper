@@ -16,7 +16,7 @@ do ->
 
   ###
 
-  addCmd = co (list, data, isDev, option) ->
+  addCmd = (list, data, isDev, option) ->
 
     {registry} = option
 
@@ -26,7 +26,7 @@ do ->
       .replace /[~^]/, ''
 
       $.info.pause '$$.update'
-      latest = yield getLatestVersion name, option
+      latest = await getLatestVersion name, option
       $.info.resume '$$.update'
 
       if current == latest
@@ -34,7 +34,7 @@ do ->
         , "'#{name}': '#{current}' == '#{latest}'"
         continue
       $.info 'update'
-      , "'#{name}': '#{current}' -> '#{latest}'"
+      , "'#{name}': '#{current}' #{colors.green '->'} '#{latest}'"
 
       cmd = []
       cmd.push 'npm install'
@@ -47,29 +47,29 @@ do ->
 
       list.push cmd.join ' '
 
-  clean = co ->
+  clean = ->
 
-    yield $$.remove './temp/update'
+    await $$.remove './temp/update'
 
-    listFile = yield $$.source './temp/**/*.*'
+    listFile = await $$.source './temp/**/*.*'
 
     if !listFile.length
-      yield $$.remove './temp'
+      await $$.remove './temp'
 
-  getLatestVersion = co (name, option) ->
+  getLatestVersion = (name, option) ->
 
     {registry} = option
     registry or= 'http://registry.npmjs.org'
 
     source = "./temp/update/#{name}.json"
 
-    unless yield $$.isExisted source
+    unless await $$.isExisted source
       url = "#{registry}/#{name}/latest?salt=#{_.now()}"
-      yield $$.download url
+      await $$.download url
       , './temp/update'
       , "#{name}.json"
 
-    unless data = yield $$.read source
+    unless data = await $$.read source
       throw makeError 'source'
 
     # return
@@ -77,23 +77,23 @@ do ->
 
   #
   
-  fn = co (option) ->
+  fn = (option) ->
 
-    pkg = yield $$.read './package.json'
+    pkg = await $$.read './package.json'
 
     listCmd = []
-    yield addCmd listCmd, pkg.dependencies, false, option
-    yield addCmd listCmd, pkg.devDependencies, true, option
+    await addCmd listCmd, pkg.dependencies, false, option
+    await addCmd listCmd, pkg.devDependencies, true, option
     
     $.info.pause '$$.update'
-    yield clean()
+    await clean()
     $.info.resume '$$.update'
 
     if !listCmd.length
       $.info 'update', 'every thing is ok'
       return
 
-    yield $$.shell listCmd
+    await $$.shell listCmd
 
     # return
     $$

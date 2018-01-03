@@ -1,43 +1,42 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.recover(source)', ->
 
-  it "$$.recover('./temp/readme.md')", co ->
+  it "$$.recover('./temp/readme.md')", ->
 
-    yield clean()
+    await clean()
 
     source = './temp/readme.md'
     target = './temp/readme.md.bak'
 
-    yield $$.copy './readme.md', './temp'
+    await $$.copy './readme.md', './temp'
 
-    yield $$.backup source
+    await $$.backup source
 
-    targetData = yield $$.read target
+    targetData = await $$.read target
 
-    yield $$.remove source
+    await $$.remove source
 
-    res = yield $$.recover source
+    res = await $$.recover source
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted source
+    unless await $$.isExisted source
       throw new Error 1
 
-    sourceData = yield $$.read source
+    sourceData = await $$.read source
 
     if sourceData.toString() != targetData.toString()
       throw new Error 2
 
-    yield clean()
+    await clean()

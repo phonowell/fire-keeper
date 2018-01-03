@@ -8,7 +8,7 @@ do ->
 
   # function
 
-  fn = co (arg...) ->
+  fn = (arg...) ->
 
     [source, target, option] = switch arg.length
       when 1 then [arg[0], null, {}]
@@ -41,7 +41,7 @@ do ->
 
     compiler = fn[method]
     if !compiler then throw makeError "invalid extname: '.#{extname}'"
-    yield compiler source, target, option
+    await compiler source, target, option
 
     $.info 'compile', "compiled #{wrapList source} to #{wrapList target}"
 
@@ -111,6 +111,7 @@ do ->
       .pipe plumber()
       .pipe using()
       .pipe markdown option
+      .pipe rename extname: '.html'
       .pipe gulpif option.minify, htmlmin collapseWhitespace: true
       .pipe gulp.dest target
       .on 'end', -> resolve()

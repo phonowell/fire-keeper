@@ -1,6 +1,22 @@
 (function() {
-  var $, $$, $p, Promise, SSH, _, changed, cleanCss, co, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip,
-    slice = [].slice;
+  // require
+  /*
+
+  excludeInclude(source)
+  formatArgument(arg)
+  formatPath(source)
+  getRelativePath(source, target)
+  makeError(msg)
+  normalizePath(source)
+  wrapList(list)
+
+  */
+  /*
+
+    cloneGitHub(name)
+
+  */
+  var $, $$, $p, SSH, _, changed, cleanCss, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip;
 
   path = require('path');
 
@@ -12,23 +28,14 @@
 
   $ = require('node-jquery-extend');
 
-  _ = $._;
-
-  Promise = require('bluebird');
-
-  co = Promise.coroutine;
+  ({_} = $);
 
   gulp = require('gulp');
 
+  // return
   module.exports = $$ = {};
 
-  $$.library = {
-    $: $,
-    _: _,
-    fse: fse,
-    gulp: gulp,
-    Promise: Promise
-  };
+  $$.library = {$, _, fse, gulp};
 
   $p = $$.plugin = require('gulp-load-plugins')();
 
@@ -38,9 +45,9 @@
 
   $p.yargs = require('yargs');
 
-  changed = $p.changed, cleanCss = $p.cleanCss, coffee = $p.coffee, coffeelint = $p.coffeelint, htmlmin = $p.htmlmin, ignore = $p.ignore, include = $p.include, livereload = $p.livereload, markdown = $p.markdown, plumber = $p.plumber, pug = $p.pug, rename = $p.rename, replace = $p.replace, stylint = $p.stylint, stylus = $p.stylus, sourcemaps = $p.sourcemaps, unzip = $p.unzip, using = $p.using, yaml = $p.yaml, zip = $p.zip;
+  ({changed, cleanCss, coffee, coffeelint, htmlmin, ignore, include, livereload, markdown, plumber, pug, rename, replace, stylint, stylus, sourcemaps, unzip, using, yaml, zip} = $p);
 
-  gulpif = $p["if"];
+  gulpif = $p.if;
 
   uglifyjs = require('uglify-es');
 
@@ -50,14 +57,13 @@
 
   markdownlint = $p.markdownlint = require('markdownlint');
 
-
   /*
-  
+
     argv
     os
     path
-   */
 
+  */
   $$.argv = $p.yargs.argv;
 
   $$.os = (function() {
@@ -76,22 +82,11 @@
     home: require('os').homedir()
   };
 
-
-  /*
-  
-    excludeInclude(source)
-    formatArgument(arg)
-    formatPath(source)
-    getRelativePath(source, target)
-    makeError(msg)
-    normalizePath(source)
-    wrapList(list)
-   */
-
   excludeInclude = function(source) {
     source = formatArgument(source);
     source.push('!**/include/**');
     source = _.uniq(source);
+    // return
     return source;
   };
 
@@ -143,11 +138,14 @@
     if ($.type(source) !== 'string') {
       return null;
     }
+    // check isIgnore
     if (source[0] === '!') {
       isIgnore = true;
       source = source.slice(1);
     }
+    // replace \ to /
     source = source.replace(/\\/g, '/');
+    // replace . & ~
     source = source.replace(/\.{2}/g, '__parent_directory__');
     source = (function() {
       switch (source[0]) {
@@ -160,16 +158,21 @@
       }
     })();
     source = source.replace(/__parent_directory__/g, '..');
+    // replace ../ to ./../ at start
     if (source[0] === '.' && source[1] === '.') {
-      source = $$.path.base + "/" + source;
+      source = `${$$.path.base}/${source}`;
     }
+    // normalize
     source = path.normalize(source);
+    // absolute
     if (!path.isAbsolute(source)) {
-      source = "" + $$.path.base + path.sep + source;
+      source = `${$$.path.base}${path.sep}${source}`;
     }
+    // ignore
     if (isIgnore) {
-      source = "!" + source;
+      source = `!${source}`;
     }
+    // return
     return source;
   };
 
@@ -193,58 +196,44 @@
       results = [];
       for (i = 0, len = list.length; i < len; i++) {
         key = list[i];
-        results.push("'" + key + "'");
+        results.push(`'${key}'`);
       }
       return results;
     })()).join(', ');
   };
 
-  $$.fn = {
-    excludeInclude: excludeInclude,
-    formatArgument: formatArgument,
-    formatPath: formatPath,
-    makeError: makeError,
-    normalizePath: normalizePath,
-    wrapList: wrapList
+  // return
+  $$.fn = {excludeInclude, formatArgument, formatPath, makeError, normalizePath, wrapList};
+
+  fetchGitHub = async function(name) {
+    var source;
+    source = normalizePath(`./../${(name.split('/')[1])}`);
+    if ((await $$.isExisted(source))) {
+      return (await $$.shell([`cd ${source}`, 'git fetch', 'git pull']));
+    }
+    return (await $$.shell(`git clone https://github.com/${name}.git ${source}`));
   };
 
-
   /*
-  
-    cloneGitHub(name)
-   */
 
-  fetchGitHub = co(function*(name) {
-    var source;
-    source = normalizePath("./../" + (name.split('/')[1]));
-    if ((yield $$.isExisted(source))) {
-      return (yield $$.shell(["cd " + source, 'git fetch', 'git pull']));
-    }
-    return (yield $$.shell("git clone https://github.com/" + name + ".git " + source));
-  });
+  task(name, [fn])
 
-
-  /*
-  
-    task(name, [fn])
-   */
-
-  $$.task = function() {
-    var arg;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+  */
+  // task
+  $$.task = function(...arg) {
     switch (arg.length) {
       case 1:
         return gulp.tasks[arg[0]].fn;
       case 2:
-        return gulp.task.apply(gulp, arg);
+        return gulp.task(...arg);
       default:
         throw makeError('length');
     }
   };
 
-
+  // added default tasks
   /*
-  
+
     check()
     default()
     gurumin()
@@ -252,33 +241,33 @@
     noop()
     prune()
     update()
-   */
 
-  $$.task('check', co(function*() {
+  */
+  $$.task('check', async function() {
     var cont, ext, i, j, len, len1, listCont, listExt, listSource, results, source;
     listSource = [];
     listExt = ['coffee', 'md', 'pug', 'styl', 'yaml'];
     for (i = 0, len = listExt.length; i < len; i++) {
       ext = listExt[i];
-      listSource.push("./*." + ext);
-      listSource.push("./source/**/*." + ext);
-      listSource.push("./test/**/*." + ext);
+      listSource.push(`./*.${ext}`);
+      listSource.push(`./source/**/*.${ext}`);
+      listSource.push(`./test/**/*.${ext}`);
     }
-    listSource = (yield $$.source(listSource));
+    listSource = (await $$.source(listSource));
     results = [];
     for (j = 0, len1 = listSource.length; j < len1; j++) {
       source = listSource[j];
-      cont = $.parseString((yield $$.read(source)));
+      cont = $.parseString((await $$.read(source)));
       listCont = cont.split('\n');
       if (!_.trim(_.last(listCont)).length) {
         listCont.pop();
-        results.push((yield $$.write(source, listCont.join('\n'))));
+        results.push((await $$.write(source, listCont.join('\n'))));
       } else {
         results.push(void 0);
       }
     }
     return results;
-  }));
+  });
 
   $$.task('default', function() {
     var key, list;
@@ -294,144 +283,143 @@
     return $.info('task', wrapList(list));
   });
 
-  $$.task('gurumin', co(function*() {
-    yield fetchGitHub('phonowell/gurumin');
-    yield $$.remove('./source/gurumin');
-    return (yield $$.link('./../gurumin/source', './source/gurumin'));
-  }));
+  $$.task('gurumin', async function() {
+    await fetchGitHub('phonowell/gurumin');
+    await $$.remove('./source/gurumin');
+    return (await $$.link('./../gurumin/source', './source/gurumin'));
+  });
 
-  $$.task('kokoro', co(function*() {
+  $$.task('kokoro', async function() {
     var LIST, filename, i, isSame, len, listClean, results, source, target;
-    yield fetchGitHub('phonowell/kokoro');
+    await fetchGitHub('phonowell/kokoro');
+    // clean
     listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
     $.info.pause('kokoro');
-    yield $$.remove(listClean);
+    await $$.remove(listClean);
     $.info.resume('kokoro');
+    // copy
     LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
     results = [];
     for (i = 0, len = LIST.length; i < len; i++) {
       filename = LIST[i];
-      source = "./../kokoro/" + filename;
-      target = "./" + filename;
-      isSame = (yield $$.isSame([source, target]));
+      source = `./../kokoro/${filename}`;
+      target = `./${filename}`;
+      isSame = (await $$.isSame([source, target]));
       if (isSame === true) {
         continue;
       }
-      yield $$.copy(source, './');
-      results.push((yield $$.shell("git add -f " + $$.path.base + "/" + filename)));
+      await $$.copy(source, './');
+      results.push((await $$.shell(`git add -f ${$$.path.base}/${filename}`)));
     }
     return results;
-  }));
+  });
 
   $$.task('noop', function() {
     return null;
   });
 
-  $$.task('prune', co(function*() {
+  $$.task('prune', async function() {
     var base, line, listDirectory, listExtension, listFile, listSource;
-    yield $$.shell('npm prune');
+    await $$.shell('npm prune');
     base = './node_modules';
+    // file
     listFile = ['.DS_Store', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.flowconfig', '.gitattributes', '.jshintrc', '.npmignore', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml'];
     listSource = (function() {
       var i, len, results;
       results = [];
       for (i = 0, len = listFile.length; i < len; i++) {
         line = listFile[i];
-        results.push(base + "/**/" + line);
+        results.push(`${base}/**/${line}`);
       }
       return results;
     })();
-    yield $$.remove(listSource);
+    await $$.remove(listSource);
+    // directory
     listDirectory = ['.circleci', '.github', '.idea', '.nyc_output', '.vscode', '__tests__', 'assets', 'coverage', 'doc', 'docs', 'example', 'examples', 'images', 'powered-test', 'test', 'tests', 'website'];
     listSource = (function() {
       var i, len, results;
       results = [];
       for (i = 0, len = listDirectory.length; i < len; i++) {
         line = listDirectory[i];
-        results.push(base + "/**/" + line);
+        results.push(`${base}/**/${line}`);
       }
       return results;
     })();
-    yield $$.remove(listSource);
+    await $$.remove(listSource);
+    // extension
     listExtension = ['.coffee', '.jst', '.md', '.swp', '.tgz', '.ts'];
     listSource = (function() {
       var i, len, results;
       results = [];
       for (i = 0, len = listExtension.length; i < len; i++) {
         line = listExtension[i];
-        results.push(base + "/**/*" + line);
+        results.push(`${base}/**/*${line}`);
       }
       return results;
     })();
-    return (yield $$.remove(listSource));
-  }));
+    return (await $$.remove(listSource));
+  });
 
-  $$.task('update', co(function*() {
+  $$.task('update', async function() {
     var registry;
-    registry = $$.argv.registry;
-    yield $$.update({
-      registry: registry
-    });
-    return (yield $$.shell('npm prune'));
-  }));
-
+    ({registry} = $$.argv);
+    await $$.update({registry});
+    return (await $$.shell('npm prune'));
+  });
 
   /*
-  
-    backup(source)
-    recover(source)
-   */
 
-  $$.backup = co(function*(source) {
+  backup(source)
+  recover(source)
+
+  */
+  $$.backup = async function(source) {
     var extname, i, len, src, suffix;
-    source = (yield $$.source(source));
+    source = (await $$.source(source));
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
       suffix = path.extname(src);
       extname = '.bak';
       $.info.pause('$$.backup');
-      yield $$.copy(src, null, {
-        suffix: suffix,
-        extname: extname
-      });
+      await $$.copy(src, null, {suffix, extname});
       $.info.resume('$$.backup');
     }
-    $.info('backup', "backed up " + (wrapList(source)));
+    $.info('backup', `backed up ${wrapList(source)}`);
+    // return
     return $$;
-  });
+  };
 
-  $$.recover = co(function*(source) {
+  $$.recover = async function(source) {
     var bak, basename, i, len, src;
     source = formatPath(source);
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
-      bak = src + ".bak";
-      if (!(yield $$.isExisted(bak))) {
+      bak = `${src}.bak`;
+      if (!(await $$.isExisted(bak))) {
         continue;
       }
       basename = path.basename(src);
       $.info.pause('$$.recover');
-      yield $$.remove(src);
-      yield $$.copy(bak, null, basename);
-      yield $$.remove(bak);
+      await $$.remove(src);
+      await $$.copy(bak, null, basename);
+      await $$.remove(bak);
       $.info.resume('$$.recover');
     }
-    $.info('recover', "recovered " + (wrapList(source)));
+    $.info('recover', `recovered ${wrapList(source)}`);
+    // return
     return $$;
-  });
+  };
 
+  (function() {    /*
 
-  /*
-  
     compile(source, [target], [option])
-   */
 
-  (function() {
+    */
     var fn;
-    fn = co(function*() {
-      var arg, compiler, extname, method, option, ref, source, target;
-      arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      ref = (function() {
+    // function
+    fn = async function(...arg) {
+      var compiler, extname, method, option, source, target;
+      [source, target, option] = (function() {
         switch (arg.length) {
           case 1:
             return [arg[0], null, {}];
@@ -452,7 +440,7 @@
           default:
             throw makeError('length');
         }
-      })(), source = ref[0], target = ref[1], option = ref[2];
+      })();
       source = formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
@@ -479,23 +467,24 @@
       }, option);
       compiler = fn[method];
       if (!compiler) {
-        throw makeError("invalid extname: '." + extname + "'");
+        throw makeError(`invalid extname: '.${extname}'`);
       }
-      yield compiler(source, target, option);
-      $.info('compile', "compiled " + (wrapList(source)) + " to " + (wrapList(target)));
+      await compiler(source, target, option);
+      $.info('compile', `compiled ${wrapList(source)} to ${wrapList(target)}`);
+      // return
       return $$;
-    });
-
+    };
     /*
-    
-      coffee(source, target, option)
-      css(source, target, option)
-      js(source, target, option)
-      markdown(source, target, option)
-      pug(source, target, option)
-      stylus(source, target, option)
-      yaml(source, target, option)
-     */
+
+    coffee(source, target, option)
+    css(source, target, option)
+    js(source, target, option)
+    markdown(source, target, option)
+    pug(source, target, option)
+    stylus(source, target, option)
+    yaml(source, target, option)
+
+    */
     fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
@@ -522,7 +511,9 @@
         if (option.sanitize == null) {
           option.sanitize = true;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(gulpif(option.minify, htmlmin({
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+          extname: '.html'
+        })).pipe(gulpif(option.minify, htmlmin({
           collapseWhitespace: true
         }))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
@@ -559,19 +550,19 @@
         });
       });
     };
+    // return
     return $$.compile = fn;
   })();
 
-
+  // https://github.com/kevva/download
   /*
-  
-    download(source, target, [option])
-   */
 
-  $$.download = co(function*() {
-    var arg, msg, option, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
+  download(source, target, [option])
+
+  */
+  $$.download = async function(...arg) {
+    var msg, option, source, target;
+    [source, target, option] = (function() {
       switch (arg.length) {
         case 2:
           return [arg[0], arg[1], null];
@@ -580,44 +571,43 @@
         default:
           throw makeError('length');
       }
-    })(), source = ref[0], target = ref[1], option = ref[2];
+    })();
     target = normalizePath(target);
     if ($.type(option) === 'string') {
       option = {
         filename: option
       };
     }
-    yield download(source, target, option);
-    msg = "downloaded " + (wrapList(source)) + " to " + (wrapList(target));
+    await download(source, target, option);
+    msg = `downloaded ${wrapList(source)} to ${wrapList(target)}`;
     if (option) {
-      msg += ", as '" + ($.parseString(option)) + "'";
+      msg += `, as '${$.parseString(option)}'`;
     }
     $.info('download', msg);
-    return $$;
-  });
-
+    return $$; // return
+  };
 
   /*
-  
-    copy(source, target, [option])
-    isChanged(source)
-    isExisted(source)
-    isSame(source, target)
-    link(source, target)
-    mkdir(source)
-    move(source, target)
-    read(source, [option])
-    remove(source)
-    rename(source, option)
-    source(source)
-    stat(source)
-    write(source, data)
-   */
 
-  $$.copy = co(function*() {
-    var arg, msg, option, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
+  copy(source, target, [option])
+  isChanged(source)
+  isExisted(source)
+  isSame(source, target)
+  link(source, target)
+  mkdir(source)
+  move(source, target)
+  read(source, [option])
+  remove(source)
+  rename(source, option)
+  source(source)
+  stat(source)
+  write(source, data)
+
+  */
+  $$.copy = async function(...arg) {
+    var msg, option, source, target;
+    // source, target, [option]
+    [source, target, option] = (function() {
       switch (arg.length) {
         case 2:
           return [arg[0], arg[1], null];
@@ -626,27 +616,27 @@
         default:
           throw makeError('length');
       }
-    })(), source = ref[0], target = ref[1], option = ref[2];
+    })();
     source = formatPath(source);
     if (target) {
       target = normalizePath(target);
     }
-    yield new Promise(function(resolve) {
+    await new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
         return target || e.base;
       })).on('end', function() {
         return resolve();
       });
     });
-    msg = "copied " + (wrapList(source)) + " to " + (wrapList(target));
+    msg = `copied ${wrapList(source)} to ${wrapList(target)}`;
     if (option) {
-      msg += ", as '" + ($.parseString(option)) + "'";
+      msg += `, as '${$.parseString(option)}'`;
     }
     $.info('copy', msg);
-    return $$;
-  });
+    return $$; // return
+  };
 
-  $$.isExisted = co(function*(source) {
+  $$.isExisted = async function(source) {
     var i, len, src;
     source = formatPath(source);
     if (!source.length) {
@@ -654,27 +644,28 @@
     }
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
-      if (!(yield fse.pathExists(src))) {
+      if (!(await fse.pathExists(src))) {
         return false;
       }
     }
-    return true;
-  });
+    return true; // return
+  };
 
-  $$.isSame = co(function*(source) {
+  $$.isSame = async function(source) {
     var CONT, SIZE, cont, i, j, len, len1, size, src, stat;
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
+    // check size
     SIZE = null;
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
-      stat = (yield $$.stat(src));
+      stat = (await $$.stat(src));
       if (!stat) {
         return false;
       }
-      size = stat.size;
+      ({size} = stat);
       if (!SIZE) {
         SIZE = size;
         continue;
@@ -683,11 +674,12 @@
         return false;
       }
     }
+    // check cont
     CONT = null;
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
       $.info.pause('$$.isSame');
-      cont = (yield $$.read(src));
+      cont = (await $$.read(src));
       $.info.resume('$$.isSame');
       if (!cont) {
         return false;
@@ -701,21 +693,21 @@
         return false;
       }
     }
-    return true;
-  });
+    return true; // return
+  };
 
-  $$.link = co(function*(source, target) {
+  $$.link = async function(source, target) {
     if (!(source && target)) {
       throw makeError('length');
     }
     source = normalizePath(source);
     target = normalizePath(target);
-    yield fse.ensureSymlink(source, target);
-    $.info('link', "linked " + (wrapList(source)) + " to " + (wrapList(target)));
-    return $$;
-  });
+    await fse.ensureSymlink(source, target);
+    $.info('link', `linked ${wrapList(source)} to ${wrapList(target)}`);
+    return $$; // return
+  };
 
-  $$.mkdir = co(function*(source) {
+  $$.mkdir = async function(source) {
     var listPromise, src;
     if (!source) {
       throw makeError('length');
@@ -730,36 +722,33 @@
       }
       return results;
     })();
-    yield Promise.all(listPromise);
-    $.info('create', "created " + (wrapList(source)));
-    return $$;
-  });
+    await Promise.all(listPromise);
+    $.info('create', `created ${wrapList(source)}`);
+    return $$; // return
+  };
 
-  $$.move = co(function*(source, target) {
+  $$.move = async function(source, target) {
     if (!(source && target)) {
       throw makeError('length');
     }
     source = formatPath(source);
     target = normalizePath(target);
     $.info.pause('$$.move');
-    yield $$.copy(source, target);
-    yield $$.remove(source);
+    await $$.copy(source, target);
+    await $$.remove(source);
     $.info.resume('$$.move');
-    $.info('move', "moved " + (wrapList(source)) + " to " + target);
-    return $$;
-  });
+    $.info('move', `moved ${wrapList(source)} to ${target}`);
+    return $$; // return
+  };
 
-  $$.read = co(function*(source, option) {
+  $$.read = async function(source, option = {}) {
     var res;
-    if (option == null) {
-      option = {};
-    }
     source = normalizePath(source);
-    if (!(yield $$.isExisted(source))) {
-      $.info('file', (wrapList(source)) + " not existed");
+    if (!(await $$.isExisted(source))) {
+      $.info('file', `${wrapList(source)} not existed`);
       return null;
     }
-    res = (yield new Promise(function(resolve) {
+    res = (await new Promise(function(resolve) {
       return fs.readFile(source, function(err, data) {
         if (err) {
           throw err;
@@ -767,7 +756,8 @@
         return resolve(data);
       });
     }));
-    $.info('file', "read " + (wrapList(source)));
+    $.info('file', `read ${wrapList(source)}`);
+    // return
     if (option.raw) {
       return res;
     }
@@ -785,14 +775,14 @@
           return res;
       }
     })();
-  });
+  };
 
-  $$.remove = co(function*(source) {
+  $$.remove = async function(source) {
     var i, len, listSource, src;
-    listSource = (yield $$.source(source));
+    listSource = (await $$.source(source));
     for (i = 0, len = listSource.length; i < len; i++) {
       src = listSource[i];
-      yield new Promise(function(resolve) {
+      await new Promise(function(resolve) {
         return fse.remove(src, function(err) {
           if (err) {
             throw err;
@@ -801,15 +791,16 @@
         });
       });
     }
-    $.info('remove', "removed " + (wrapList(source)));
-    return $$;
-  });
+    // $.info 'remove', "removed '#{src}'"
+    $.info('remove', `removed ${wrapList(source)}`);
+    return $$; // return
+  };
 
-  $$.rename = co(function*(source, option) {
+  $$.rename = async function(source, option) {
     var i, item, len, listHistory;
     source = formatPath(source);
     listHistory = [];
-    yield new Promise(function(resolve) {
+    await new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(rename(option)).pipe(gulp.dest(function(e) {
         listHistory.push(e.history);
         return e.base;
@@ -820,14 +811,14 @@
     $.info.pause('$$.rename');
     for (i = 0, len = listHistory.length; i < len; i++) {
       item = listHistory[i];
-      if ((yield $$.isExisted(item[1]))) {
-        yield $$.remove(item[0]);
+      if ((await $$.isExisted(item[1]))) {
+        await $$.remove(item[0]);
       }
     }
     $.info.resume('$$.rename');
-    $.info('file', "renamed " + (wrapList(source)) + " as '" + ($.parseString(option)) + "'");
-    return $$;
-  });
+    $.info('file', `renamed ${wrapList(source)} as '${$.parseString(option)}'`);
+    return $$; // return
+  };
 
   $$.source = function(source) {
     source = formatPath(source);
@@ -844,12 +835,13 @@
     });
   };
 
-  $$.stat = co(function*(source) {
+  $$.stat = async function(source) {
     source = normalizePath(source);
-    if (!(yield $$.isExisted(source))) {
-      $.info('file', (wrapList(source)) + " not existed");
+    if (!(await $$.isExisted(source))) {
+      $.info('file', `${wrapList(source)} not existed`);
       return null;
     }
+    // return
     return new Promise(function(resolve) {
       return fs.stat(source, function(err, stat) {
         if (err) {
@@ -858,28 +850,27 @@
         return resolve(stat);
       });
     });
-  });
+  };
 
-  $$.write = co(function*(source, data, option) {
+  $$.write = async function(source, data, option) {
     var ref;
     source = normalizePath(source);
     if ((ref = $.type(data)) === 'array' || ref === 'object') {
       data = $.parseString(data);
     }
-    yield fse.outputFile(source, data, option);
-    $.info('file', "wrote " + (wrapList(source)));
-    return $$;
-  });
+    await fse.outputFile(source, data, option);
+    $.info('file', `wrote ${wrapList(source)}`);
+    return $$; // return
+  };
 
+  (function() {    /*
 
-  /*
-  
     lint(source)
-   */
 
-  (function() {
+    */
     var fn;
-    fn = co(function*(source) {
+    // function
+    fn = async function(source) {
       var extname, method;
       source = formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
@@ -898,16 +889,16 @@
             throw makeError('extname');
         }
       })();
-      yield fn[method](source);
-      return $$;
-    });
-
+      await fn[method](source);
+      return $$; // return
+    };
     /*
-    
-      coffee(source)
-      markdown(source)
-      stylus(source)
-     */
+
+    coffee(source)
+    markdown(source)
+    stylus(source)
+
+    */
     fn.coffee = function(source) {
       return new Promise(function(resolve) {
         var stream;
@@ -918,10 +909,10 @@
       });
     };
     fn.markdown = function(source) {
-      return new Promise(co(function*(resolve) {
+      return new Promise(async function(resolve) {
         var option;
         option = {
-          files: (yield $$.source(source))
+          files: (await $$.source(source))
         };
         return markdownlint(option, function(err, result) {
           var filename, i, item, len, list, listMsg;
@@ -938,9 +929,9 @@
             for (i = 0, len = list.length; i < len; i++) {
               item = list[i];
               listMsg = [];
-              listMsg.push(colors.gray("#" + item.lineNumber));
+              listMsg.push(colors.gray(`#${item.lineNumber}`));
               if (item.errorContext) {
-                listMsg.push("< " + (colors.red(item.errorContext)) + " >");
+                listMsg.push(`< ${colors.red(item.errorContext)} >`);
               }
               if (item.ruleDescription) {
                 listMsg.push(item.ruleDescription);
@@ -950,7 +941,7 @@
           }
           return resolve();
         });
-      }));
+      });
     };
     fn.stylus = function(source) {
       return new Promise(function(resolve) {
@@ -961,19 +952,19 @@
         return stream.pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter());
       });
     };
+    // return
     return $$.lint = fn;
   })();
 
-
+  // https://github.com/lazd/gulp-replace
   /*
-  
-    replace(pathSource, [pathTarget], target, replacement)
-   */
 
-  $$.replace = co(function*() {
-    var arg, pathSource, pathTarget, ref, replacement, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
+  replace(pathSource, [pathTarget], target, replacement)
+
+  */
+  $$.replace = async function(...arg) {
+    var pathSource, pathTarget, replacement, target;
+    [pathSource, pathTarget, target, replacement] = (function() {
       switch (arg.length) {
         case 3:
           return [arg[0], null, arg[1], arg[2]];
@@ -982,26 +973,26 @@
         default:
           throw makeError('length');
       }
-    })(), pathSource = ref[0], pathTarget = ref[1], target = ref[2], replacement = ref[3];
+    })();
     pathSource = formatPath(pathSource);
     pathTarget || (pathTarget = path.dirname(pathSource[0]).replace(/\*/g, ''));
     pathTarget = normalizePath(pathTarget);
-    yield new Promise(function(resolve) {
+    await new Promise(function(resolve) {
       return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
         return resolve();
       });
     });
-    $.info('replace', "replaced '" + target + "' to '" + replacement + "', in " + (wrapList(pathSource)) + ", output to " + (wrapList(pathTarget)));
+    $.info('replace', `replaced '${target}' to '${replacement}', in ${wrapList(pathSource)}, output to ${wrapList(pathTarget)}`);
+    // return
     return $$;
-  });
-
+  };
 
   /*
-  
-    say(text)
-   */
 
-  $$.say = co(function*(text) {
+  say(text)
+
+  */
+  $$.say = async function(text) {
     var i, len, listMessage, msg;
     if ($$.os !== 'macos') {
       return;
@@ -1025,20 +1016,20 @@
         continue;
       }
       $.info.pause('$$.say');
-      yield $$.shell("say " + msg);
+      await $$.shell(`say ${msg}`);
       $.info.resume('$$.say');
     }
-    return text;
-  });
+    return text; // return
+  };
 
-  SSH = (function() {
-    function SSH() {
+  // https://github.com/mscdex/ssh2
+  SSH = class SSH {
+    constructor() {
       this;
     }
 
-
     /*
-    
+
       connect(option)
       disconnect()
       info(chunk)
@@ -1048,51 +1039,44 @@
       upload(source, target, [option])
       uploadDir(sftp, source, target)
       uploadFile(sftp, source, target)
-     */
 
-    SSH.prototype.connect = function(option) {
-      return new Promise((function(_this) {
-        return function(resolve) {
-          var Client, conn;
-          Client = require('ssh2').Client;
-          conn = new Client();
-          conn.on('error', function(err) {
-            throw err;
-          }).on('ready', function() {
-            $.info('ssh', "connected to '" + option.username + "@" + option.host + "'");
-            return resolve();
-          }).connect(option);
-          return _this.storage = {
-            conn: conn,
-            option: option
-          };
-        };
-      })(this));
-    };
+    */
+    connect(option) {
+      return new Promise((resolve) => {
+        var Client, conn;
+        ({Client} = require('ssh2'));
+        conn = new Client();
+        conn.on('error', function(err) {
+          throw err;
+        }).on('ready', function() {
+          $.info('ssh', `connected to '${option.username}@${option.host}'`);
+          return resolve();
+        }).connect(option);
+        return this.storage = {conn, option};
+      });
+    }
 
-    SSH.prototype.disconnect = function() {
-      return new Promise((function(_this) {
-        return function(resolve) {
-          var conn, option, ref;
-          ref = _this.storage, conn = ref.conn, option = ref.option;
-          return conn.on('end', function() {
-            $.info('ssh', "disconnected from '" + option.username + "@" + option.host + "'");
-            return resolve();
-          }).end();
-        };
-      })(this));
-    };
+    disconnect() {
+      return new Promise((resolve) => {
+        var conn, option;
+        ({conn, option} = this.storage);
+        return conn.on('end', function() {
+          $.info('ssh', `disconnected from '${option.username}@${option.host}'`);
+          return resolve();
+        }).end();
+      });
+    }
 
-    SSH.prototype.info = function(chunk) {
+    info(chunk) {
       string = $.trim($.parseString(chunk));
       if (!string.length) {
         return;
       }
       string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
       return $.i(string);
-    };
+    }
 
-    SSH.prototype.mkdir = co(function*(source) {
+    async mkdir(source) {
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
@@ -1100,17 +1084,17 @@
         results = [];
         for (i = 0, len = source.length; i < len; i++) {
           src = source[i];
-          results.push("mkdir -p " + src);
+          results.push(`mkdir -p ${src}`);
         }
         return results;
       })()).join('; ');
       $.info.pause('$$.ssh.mkdir');
-      yield this.shell(cmd);
+      await this.shell(cmd);
       $.info.resume('$$.ssh.mkdir');
-      return $.info('ssh', "created " + (wrapList(source)));
-    });
+      return $.info('ssh', `created ${wrapList(source)}`);
+    }
 
-    SSH.prototype.remove = co(function*(source) {
+    async remove(source) {
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
@@ -1118,266 +1102,256 @@
         results = [];
         for (i = 0, len = source.length; i < len; i++) {
           src = source[i];
-          results.push("rm -fr " + src);
+          results.push(`rm -fr ${src}`);
         }
         return results;
       })()).join('; ');
       $.info.pause('$$.ssh.remove');
-      yield this.shell(cmd);
+      await this.shell(cmd);
       $.info.resume('$$.ssh.remove');
-      return $.info('ssh', "removed " + (wrapList(source)));
-    });
+      return $.info('ssh', `removed ${wrapList(source)}`);
+    }
 
-    SSH.prototype.shell = function(cmd, option) {
-      if (option == null) {
-        option = {};
-      }
-      return new Promise((function(_this) {
-        return function(resolve) {
-          var conn;
-          conn = _this.storage.conn;
-          cmd = formatArgument(cmd);
-          cmd = cmd.join(' && ');
-          $.info('ssh', colors.blue(cmd));
-          return conn.exec(cmd, function(err, stream) {
-            if (err) {
-              throw err;
-            }
-            stream.on('end', function() {
-              return resolve();
-            });
-            stream.stderr.on('data', function(chunk) {
-              if (option.ignoreError) {
-                return _this.info(chunk);
-              }
-              throw $.parseString(chunk);
-            });
-            return stream.stdout.on('data', function(chunk) {
-              return _this.info(chunk);
-            });
-          });
-        };
-      })(this));
-    };
-
-    SSH.prototype.upload = function(source, target, option) {
-      if (option == null) {
-        option = {};
-      }
-      return new Promise((function(_this) {
-        return function(resolve) {
-          var conn;
-          conn = _this.storage.conn;
-          source = formatPath(source);
-          option = (function() {
-            switch ($.type(option)) {
-              case 'object':
-                return _.clone(option);
-              case 'string':
-                return {
-                  filename: option
-                };
-              default:
-                throw makeError('type');
-            }
-          })();
-          return conn.sftp(co(function*(err, sftp) {
-            var filename, i, len, src, stat;
-            if (err) {
-              throw err;
-            }
-            for (i = 0, len = source.length; i < len; i++) {
-              src = source[i];
-              stat = (yield $$.stat(src));
-              filename = option.filename || path.basename(src);
-              if (stat.isDirectory()) {
-                yield _this.uploadDir(sftp, src, target + "/" + filename);
-              } else if (stat.isFile()) {
-                yield _this.mkdir(target);
-                yield _this.uploadFile(sftp, src, target + "/" + filename);
-              }
-            }
-            sftp.end();
+    shell(cmd, option = {}) {
+      return new Promise((resolve) => {
+        var conn;
+        ({conn} = this.storage);
+        cmd = formatArgument(cmd);
+        cmd = cmd.join(' && ');
+        $.info('ssh', colors.blue(cmd));
+        return conn.exec(cmd, (err, stream) => {
+          if (err) {
+            throw err;
+          }
+          stream.on('end', function() {
             return resolve();
-          }));
-        };
-      })(this));
-    };
-
-    SSH.prototype.uploadDir = function(sftp, source, target) {
-      return new Promise(co((function(_this) {
-        return function*(resolve) {
-          var i, len, listSource, relativeTarget, src, stat;
-          listSource = [];
-          yield $$.walk(source, function(item) {
-            return listSource.push(item.path);
           });
-          for (i = 0, len = listSource.length; i < len; i++) {
-            src = listSource[i];
-            stat = (yield $$.stat(src));
-            relativeTarget = path.normalize(target + "/" + (path.relative(source, src)));
+          stream.stderr.on('data', (chunk) => {
+            if (option.ignoreError) {
+              return this.info(chunk);
+            }
+            throw $.parseString(chunk);
+          });
+          return stream.stdout.on('data', (chunk) => {
+            return this.info(chunk);
+          });
+        });
+      });
+    }
+
+    upload(source, target, option = {}) {
+      return new Promise((resolve) => {
+        var conn;
+        ({conn} = this.storage);
+        source = formatPath(source);
+        option = (function() {
+          switch ($.type(option)) {
+            case 'object':
+              return _.clone(option);
+            case 'string':
+              return {
+                filename: option
+              };
+            default:
+              throw makeError('type');
+          }
+        })();
+        return conn.sftp(async(err, sftp) => {
+          var filename, i, len, src, stat;
+          if (err) {
+            throw err;
+          }
+          for (i = 0, len = source.length; i < len; i++) {
+            src = source[i];
+            stat = (await $$.stat(src));
+            filename = option.filename || path.basename(src);
             if (stat.isDirectory()) {
-              yield _this.mkdir(relativeTarget);
+              await this.uploadDir(sftp, src, `${target}/${filename}`);
             } else if (stat.isFile()) {
-              yield _this.uploadFile(sftp, src, relativeTarget);
+              await this.mkdir(target);
+              await this.uploadFile(sftp, src, `${target}/${filename}`);
             }
           }
+          sftp.end();
           return resolve();
-        };
-      })(this)));
-    };
+        });
+      });
+    }
 
-    SSH.prototype.uploadFile = function(sftp, source, target) {
+    uploadDir(sftp, source, target) {
+      return new Promise(async(resolve) => {
+        var i, len, listSource, relativeTarget, src, stat;
+        listSource = [];
+        await $$.walk(source, function(item) {
+          return listSource.push(item.path);
+        });
+        for (i = 0, len = listSource.length; i < len; i++) {
+          src = listSource[i];
+          stat = (await $$.stat(src));
+          relativeTarget = path.normalize(`${target}/${path.relative(source, src)}`);
+          if (stat.isDirectory()) {
+            await this.mkdir(relativeTarget);
+          } else if (stat.isFile()) {
+            await this.uploadFile(sftp, src, relativeTarget);
+          }
+        }
+        return resolve();
+      });
+    }
+
+    uploadFile(sftp, source, target) {
       return new Promise(function(resolve) {
         return sftp.fastPut(source, target, function(err) {
           if (err) {
             throw err;
           }
-          $.info('ssh', "uploaded '" + source + "' to '" + target + "'");
+          $.info('ssh', `uploaded '${source}' to '${target}'`);
           return resolve();
         });
       });
-    };
+    }
 
-    return SSH;
+  };
 
-  })();
-
+  // return
   $$.ssh = new SSH();
 
+  (function() {    /*
 
-  /*
-  
-    update()
-   */
+      update()
 
-  (function() {
-
+    */
+    var addCmd, clean, fn, getLatestVersion;
+    // function
     /*
-    
+
       addCmd(list, data, isDev, option)
       clean()
       getLatestVersion(name, option)
-     */
-    var addCmd, clean, fn, getLatestVersion;
-    addCmd = co(function*(list, data, isDev, option) {
+
+    */
+    addCmd = async function(list, data, isDev, option) {
       var cmd, current, latest, name, registry, results, version;
-      registry = option.registry;
+      ({registry} = option);
       results = [];
       for (name in data) {
         version = data[name];
         current = version.replace(/[~^]/, '');
         $.info.pause('$$.update');
-        latest = (yield getLatestVersion(name, option));
+        latest = (await getLatestVersion(name, option));
         $.info.resume('$$.update');
         if (current === latest) {
-          $.info('update', "'" + name + "': '" + current + "' == '" + latest + "'");
+          $.info('update', `'${name}': '${current}' == '${latest}'`);
           continue;
         }
-        $.info('update', "'" + name + "': '" + current + "' -> '" + latest + "'");
+        $.info('update', `'${name}': '${current}' ${colors.green('->')} '${latest}'`);
         cmd = [];
         cmd.push('npm install');
-        cmd.push(name + "@" + latest);
+        cmd.push(`${name}@${latest}`);
         if (registry) {
-          cmd.push("--registry " + registry);
+          cmd.push(`--registry ${registry}`);
         }
         cmd.push(isDev ? '--save-dev' : '--save');
         results.push(list.push(cmd.join(' ')));
       }
       return results;
-    });
-    clean = co(function*() {
+    };
+    clean = async function() {
       var listFile;
-      yield $$.remove('./temp/update');
-      listFile = (yield $$.source('./temp/**/*.*'));
+      await $$.remove('./temp/update');
+      listFile = (await $$.source('./temp/**/*.*'));
       if (!listFile.length) {
-        return (yield $$.remove('./temp'));
+        return (await $$.remove('./temp'));
       }
-    });
-    getLatestVersion = co(function*(name, option) {
+    };
+    getLatestVersion = async function(name, option) {
       var data, registry, source, url;
-      registry = option.registry;
+      ({registry} = option);
       registry || (registry = 'http://registry.npmjs.org');
-      source = "./temp/update/" + name + ".json";
-      if (!(yield $$.isExisted(source))) {
-        url = registry + "/" + name + "/latest?salt=" + (_.now());
-        yield $$.download(url, './temp/update', name + ".json");
+      source = `./temp/update/${name}.json`;
+      if (!(await $$.isExisted(source))) {
+        url = `${registry}/${name}/latest?salt=${_.now()}`;
+        await $$.download(url, './temp/update', `${name}.json`);
       }
-      if (!(data = (yield $$.read(source)))) {
+      if (!(data = (await $$.read(source)))) {
         throw makeError('source');
       }
+      // return
       return data.version;
-    });
-    fn = co(function*(option) {
+    };
+    
+    fn = async function(option) {
       var listCmd, pkg;
-      pkg = (yield $$.read('./package.json'));
+      pkg = (await $$.read('./package.json'));
       listCmd = [];
-      yield addCmd(listCmd, pkg.dependencies, false, option);
-      yield addCmd(listCmd, pkg.devDependencies, true, option);
+      await addCmd(listCmd, pkg.dependencies, false, option);
+      await addCmd(listCmd, pkg.devDependencies, true, option);
       $.info.pause('$$.update');
-      yield clean();
+      await clean();
       $.info.resume('$$.update');
       if (!listCmd.length) {
         $.info('update', 'every thing is ok');
         return;
       }
-      yield $$.shell(listCmd);
+      await $$.shell(listCmd);
+      // return
       return $$;
-    });
+    };
+    // return
     return $$.update = fn;
   })();
 
-
+  // https://github.com/jprichardson/node-klaw
   /*
-  
-    walk(source, callback)
-   */
 
-  $$.walk = co(function*(source, callback) {
+  walk(source, callback)
+
+  */
+  $$.walk = async function(source, callback) {
     if (!(source && callback)) {
       throw makeError('length');
     }
     source = normalizePath(source);
-    yield new Promise(function(resolve) {
+    await new Promise(function(resolve) {
       return walk(source).on('data', function(item) {
         return callback(item);
       }).on('end', function() {
         return resolve();
       });
     });
-    return $$;
-  });
+    return $$; // return
+  };
 
-
+  // https://github.com/sindresorhus/gulp-zip
+  // https://github.com/inuscript/gulp-unzip
   /*
-  
-    unzip(source, [target])
-    zip(source, target, option)
-   */
 
-  $$.unzip = co(function*(source, target) {
+  unzip(source, [target])
+  zip(source, target, option)
+
+  */
+  $$.unzip = async function(source, target) {
     var dist, i, len, src;
     if (!source) {
       throw makeError('source');
     }
-    source = (yield $$.source(source));
+    source = (await $$.source(source));
     for (i = 0, len = source.length; i < len; i++) {
       src = source[i];
       dist = target || path.dirname(src);
-      yield new Promise(function(resolve) {
+      await new Promise(function(resolve) {
         return gulp.src(src).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(dist)).on('end', function() {
           return resolve();
         });
       });
-      $.info('zip', "unzipped " + src + " to " + dist);
+      $.info('zip', `unzipped ${src} to ${dist}`);
     }
-    return $$;
-  });
+    return $$; // return
+  };
 
-  $$.zip = co(function*() {
-    var arg, filename, option, ref, source, target;
-    arg = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    ref = (function() {
+  $$.zip = async function(...arg) {
+    var filename, option, source, target;
+    [source, target, option] = (function() {
       switch (arg.length) {
         case 1:
           return [arg[0], null, null];
@@ -1388,7 +1362,7 @@
         default:
           throw makeError('length');
       }
-    })(), source = ref[0], target = ref[1], option = ref[2];
+    })();
     source = formatPath(source);
     target || (target = path.dirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
@@ -1402,26 +1376,25 @@
           return null;
       }
     })();
-    filename || (filename = (path.basename(target)) + ".zip");
-    yield new Promise(function(resolve) {
+    filename || (filename = `${path.basename(target)}.zip`);
+    await new Promise(function(resolve) {
       return gulp.src(source).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(target)).on('end', function() {
         return resolve();
       });
     });
-    $.info('zip', "zipped " + (wrapList(source)) + " to " + (wrapList(target)) + ", named as '" + filename + "'");
-    return $$;
-  });
-
+    $.info('zip', `zipped ${wrapList(source)} to ${wrapList(target)}, named as '${filename}'`);
+    return $$; // return
+  };
 
   /*
-  
-    delay([time])
-    reload(source)
-    shell(cmd)
-    watch(source)
-    yargs()
-   */
 
+  delay([time])
+  reload(source)
+  shell(cmd)
+  watch(source)
+  yargs()
+
+  */
   $$.delay = $.delay;
 
   $$.reload = function(source) {
@@ -1431,7 +1404,7 @@
     source = formatPath(source);
     livereload.listen();
     $$.watch(source).pipe(livereload());
-    return $$;
+    return $$; // return
   };
 
   $$.shell = $.shell;

@@ -6,7 +6,7 @@
 
 ###
 
-$$.download = co (arg...) ->
+$$.download = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
@@ -18,7 +18,7 @@ $$.download = co (arg...) ->
   if $.type(option) == 'string'
     option = filename: option
 
-  yield download source, target, option
+  await download source, target, option
 
   msg = "downloaded #{wrapList source} to #{wrapList target}"
   if option then msg += ", as '#{$.parseString option}'"

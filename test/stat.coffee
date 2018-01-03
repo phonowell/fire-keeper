@@ -1,22 +1,21 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.stat(source)', ->
 
-  it '$$.stat("./temp/package.json")', co ->
+  it '$$.stat("./temp/package.json")', ->
 
-    yield $$.copy './package.json', './temp'
+    await $$.copy './package.json', './temp'
 
-    stat = yield $$.stat './package.json'
+    stat = await $$.stat './package.json'
 
     if $.type(stat) != 'object'
       throw new Error()
@@ -27,11 +26,11 @@ describe '$$.stat(source)', ->
     if $.type(stat.size) != 'number'
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it '$$.stat("./temp/null.txt")', co ->
+  it '$$.stat("./temp/null.txt")', ->
 
-    stat = yield $$.stat './temp/null.txt'
+    stat = await $$.stat './temp/null.txt'
 
     if stat?
       throw new Error()

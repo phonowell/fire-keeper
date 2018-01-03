@@ -1,12 +1,11 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
@@ -18,29 +17,29 @@ clean = co -> yield $$.remove './temp'
 
 describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
 
-  it "$$.replace('./temp/replace.txt', 'to be replaced', 'replaced')", co ->
+  it "$$.replace('./temp/replace.txt', 'to be replaced', 'replaced')", ->
 
     source = './temp/replace.txt'
     sourceData = 'to be replaced'
     targetData = 'replaced'
 
-    yield $$.write source, sourceData
+    await $$.write source, sourceData
 
-    res = yield $$.replace source, sourceData, targetData
+    res = await $$.replace source, sourceData, targetData
 
     if res != $$
       throw new Error()
 
-    cont = yield $$.read source
+    cont = await $$.read source
 
     if cont != targetData
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.replace('./temp/**/*.txt', 'to be replaced', 'replaced')", co ->
+  it "$$.replace('./temp/**/*.txt', 'to be replaced', 'replaced')", ->
 
-    yield clean()
+    await clean()
 
     listName = ['a', 'b', 'c', 'd']
 
@@ -48,19 +47,19 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
     targetData = 'replaced'
 
     for filename in listName
-      yield $$.write "./temp/#{filename}.txt", sourceData
+      await $$.write "./temp/#{filename}.txt", sourceData
 
-    yield $$.replace './temp/**/*.txt', sourceData, targetData
+    await $$.replace './temp/**/*.txt', sourceData, targetData
 
-    isExisted = yield $$.isExisted './temp/**'
+    isExisted = await $$.isExisted './temp/**'
     if isExisted
       throw new Error 1
 
     for filename in listName
 
-      cont = yield $$.read "./temp/#{filename}.txt"
+      cont = await $$.read "./temp/#{filename}.txt"
 
       if cont != targetData
         throw new Error 2
 
-    yield clean()
+    await clean()

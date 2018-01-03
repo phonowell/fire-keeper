@@ -64,26 +64,26 @@ class SSH
 
     $.i string
 
-  mkdir: co (source) ->
+  mkdir: (source) ->
 
     source = formatArgument source
 
     cmd = ("mkdir -p #{src}" for src in source).join '; '
 
     $.info.pause '$$.ssh.mkdir'
-    yield @shell cmd
+    await @shell cmd
     $.info.resume '$$.ssh.mkdir'
 
     $.info 'ssh', "created #{wrapList source}"
 
-  remove: co (source) ->
+  remove: (source) ->
 
     source = formatArgument source
 
     cmd = ("rm -fr #{src}" for src in source).join '; '
 
     $.info.pause '$$.ssh.remove'
-    yield @shell cmd
+    await @shell cmd
     $.info.resume '$$.ssh.remove'
 
     $.info 'ssh', "removed #{wrapList source}"
@@ -123,42 +123,42 @@ class SSH
         when 'string' then filename: option
         else throw makeError 'type'
 
-      conn.sftp co (err, sftp) =>
+      conn.sftp (err, sftp) =>
 
         if err then throw err
 
         for src in source
 
-          stat = yield $$.stat src
+          stat = await $$.stat src
           filename = option.filename or path.basename src
 
           if stat.isDirectory()
-            yield @uploadDir sftp, src, "#{target}/#{filename}"
+            await @uploadDir sftp, src, "#{target}/#{filename}"
 
           else if stat.isFile()
-            yield @mkdir target
-            yield @uploadFile sftp, src, "#{target}/#{filename}"
+            await @mkdir target
+            await @uploadFile sftp, src, "#{target}/#{filename}"
 
         sftp.end()
         resolve()
 
   uploadDir: (sftp, source, target) ->
 
-    new Promise co (resolve) =>
+    new Promise (resolve) =>
 
       listSource = []
-      yield $$.walk source, (item) -> listSource.push item.path
+      await $$.walk source, (item) -> listSource.push item.path
 
       for src in listSource
 
-        stat = yield $$.stat src
+        stat = await $$.stat src
         relativeTarget = path.normalize "#{target}/#{path.relative source, src}"
 
         if stat.isDirectory()
-          yield @mkdir relativeTarget
+          await @mkdir relativeTarget
 
         else if stat.isFile()
-          yield @uploadFile sftp, src, relativeTarget
+          await @uploadFile sftp, src, relativeTarget
 
       resolve()
 

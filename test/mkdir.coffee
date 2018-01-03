@@ -1,30 +1,29 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.mkdir(source)', ->
 
-  it "$$.mkdir('./temp/m/k/d/i/r')", co ->
+  it "$$.mkdir('./temp/m/k/d/i/r')", ->
 
-    res = yield $$.mkdir './temp/m/k/d/i/r'
+    res = await $$.mkdir './temp/m/k/d/i/r'
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/m/k/d/i/r'
+    unless await $$.isExisted './temp/m/k/d/i/r'
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.mkdir(['./temp/a', './temp/b', './temp/c'])", co ->
+  it "$$.mkdir(['./temp/a', './temp/b', './temp/c'])", ->
 
     listSource = [
       './temp/a'
@@ -32,12 +31,12 @@ describe '$$.mkdir(source)', ->
       './temp/c'
     ]
 
-    res = yield $$.mkdir listSource
+    res = await $$.mkdir listSource
 
     if res != $$
       throw new Error()
 
-    isExisted = yield $$.isExisted [
+    isExisted = await $$.isExisted [
       './temp/a'
       './temp/b'
       './temp/c'
@@ -46,4 +45,4 @@ describe '$$.mkdir(source)', ->
     if !isExisted
       throw new Error()
 
-    yield clean()
+    await clean()

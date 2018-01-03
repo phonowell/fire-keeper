@@ -1,22 +1,21 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.move(source, target)', ->
 
-  it "$$.move('./temp/*.md', './temp/test')", co ->
+  it "$$.move('./temp/*.md', './temp/test')", ->
 
-    yield clean()
+    await clean()
 
-    yield $$.copy [
+    await $$.copy [
       './license.md'
       './readme.md'
     ], './temp'
@@ -27,15 +26,15 @@ describe '$$.move(source, target)', ->
       './temp/test/readme.md'
     ]
 
-    res = yield $$.move './temp/*.md', './temp/test'
+    res = await $$.move './temp/*.md', './temp/test'
 
     if res != $$
       thrwo new Error()
 
-    if yield $$.isExisted source
+    if await $$.isExisted source
       throw new Error()
 
-    unless yield $$.isExisted target
+    unless await $$.isExisted target
       throw new Error()
 
-    yield clean()
+    await clean()

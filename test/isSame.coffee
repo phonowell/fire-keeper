@@ -1,18 +1,17 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.isSame(source)', ->
 
-  it "$$.isSame(['./readme.md', './temp/a.md', './temp/b.md'])", co ->
+  it "$$.isSame(['./readme.md', './temp/a.md', './temp/b.md'])", ->
 
     listSource = [
       './readme.md'
@@ -20,19 +19,19 @@ describe '$$.isSame(source)', ->
       './temp/b.md'
     ]
 
-    yield $$.copy listSource[0], './temp', 'a.md'
-    yield $$.copy listSource[0], './temp', 'b.md'
+    await $$.copy listSource[0], './temp', 'a.md'
+    await $$.copy listSource[0], './temp', 'b.md'
 
-    res = yield $$.isSame listSource
+    res = await $$.isSame listSource
 
     if !res
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.isSame(['./temp/null.txt', './readme.md'])", co ->
+  it "$$.isSame(['./temp/null.txt', './readme.md'])", ->
 
-    res = yield $$.isSame ['./temp/null/txt', './readme.md']
+    res = await $$.isSame ['./temp/null/txt', './readme.md']
 
     if res
       throw new Error()

@@ -1,63 +1,62 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
     
 describe '$$.isExisted(source)', ->
 
-  it "$$.isExisted('./temp/existed')", co ->
+  it "$$.isExisted('./temp/existed')", ->
 
     source = './temp/existed'
 
-    yield $$.mkdir source
+    await $$.mkdir source
 
-    unless yield $$.isExisted source
+    unless await $$.isExisted source
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.isExisted('./temp/null')", co ->
+  it "$$.isExisted('./temp/null')", ->
 
-    if yield $$.isExisted './temp/null'
+    if await $$.isExisted './temp/null'
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.isExisted('./temp/existed/existed.txt')", co ->
+  it "$$.isExisted('./temp/existed/existed.txt')", ->
 
     source = './temp/existed/existed.txt'
 
-    yield $$.write source, 'existed'
+    await $$.write source, 'existed'
 
-    unless yield $$.isExisted source
+    unless await $$.isExisted source
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.isExisted('./temp/existed/null.txt')", co ->
+  it "$$.isExisted('./temp/existed/null.txt')", ->
 
-    yield $$.mkdir './temp/existed'
+    await $$.mkdir './temp/existed'
 
-    if yield $$.isExisted './temp/existed/null.txt'
+    if await $$.isExisted './temp/existed/null.txt'
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it '$$.isExisted([])', co ->
+  it '$$.isExisted([])', ->
 
-    isExisted = yield $$.isExisted []
+    isExisted = await $$.isExisted []
 
     if isExisted
       throw new Error()
 
-  it "$$.isExisted(['./temp/a', './temp/b', './temp/c'])", co ->
+  it "$$.isExisted(['./temp/a', './temp/b', './temp/c'])", ->
 
     listSource = [
       './temp/a'
@@ -65,27 +64,27 @@ describe '$$.isExisted(source)', ->
       './temp/c'
     ]
 
-    yield $$.mkdir listSource
+    await $$.mkdir listSource
 
-    isExisted = yield $$.isExisted listSource
+    isExisted = await $$.isExisted listSource
 
     if !isExisted
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.isExisted(['./temp/existed.txt', './temp/null.txt'])", co ->
+  it "$$.isExisted(['./temp/existed.txt', './temp/null.txt'])", ->
 
     listSource = [
       './temp/existed.txt'
       './temp/null.txt'
     ]
 
-    yield $$.write listSource[0], 'existed'
+    await $$.write listSource[0], 'existed'
 
-    isExisted = yield $$.isExisted listSource
+    isExisted = await $$.isExisted listSource
 
     if isExisted
       throw new Error()
 
-    yield clean()
+    await clean()

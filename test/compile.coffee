@@ -1,80 +1,81 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.compile(source, [target], [option])', ->
 
-  it "$$.compile('./readme.md')", co ->
+  it "$$.compile('./readme.md')", ->
 
-    res = yield $$.compile './readme.md', './temp'
+    res = await $$.compile './readme.md', './temp'
 
     if res != $$
       throw new Error 1
 
-    unless yield $$.isExisted './temp/readme.html'
+    unless await $$.isExisted './temp/readme.html'
       throw new Error 2
 
-    yield clean()
+    await clean()
 
-  it "$$.compile('./temp/test.yaml')", co ->
+  it "$$.compile('./temp/test.yaml')", ->
 
     source = './temp/test.yaml'
 
-    yield $$.write source, 'test: true'
+    await $$.write source, 'test: true'
 
-    res = yield $$.compile source
-
-    if res != $$
-      throw new Error()
-
-    unless yield $$.isExisted './temp/test.json'
-      throw new Error()
-
-    yield clean()
-
-  it "$$.compile('./gulpfile.coffee')", co ->
-
-    res = yield $$.compile './gulpfile.coffee', './temp'
+    res = await $$.compile source
 
     if res != $$
       throw new Error()
 
-    unless yield $$.isExisted './temp/gulpfile.js'
+    unless await $$.isExisted './temp/test.json'
       throw new Error()
 
-    yield clean()
+    await clean()
 
-  it "$$.compile(['./temp/*.md', '!./temp/a.md'])", co ->
+  it "$$.compile('./gulpfile.coffee')", ->
 
-    yield clean()
+    res = await $$.compile './gulpfile.coffee', './temp'
 
-    data = 'empty'
+    if res != $$
+      throw new Error()
 
-    yield $$.write './temp/a.md', data
-    yield $$.write './temp/b.md', data
+    unless await $$.isExisted './temp/gulpfile.js'
+      throw new Error()
 
-    res = yield $$.compile [
-      './temp/*.md'
-      '!./temp/a.md'
-    ]
+    await clean()
+
+  it "$$.compile(['./temp/*.md')", ->
+
+    await clean()
+
+    listKey = ['a', 'b', 'c']
+
+    for key in listKey
+
+      await $$.write "./temp/#{key}.md", "# #{key}"
+
+    res = await $$.compile './temp/*.md'
 
     if res != $$
       throw new Error 1
 
-    isExisted = yield $$.isExisted './temp/a.html'
-    if isExisted
-      throw new Error 2
+    for key in listKey
 
-    isExisted = yield $$.isExisted './temp/b.html'
-    if !isExisted
-      throw new Error 3
+      source = "./temp/#{key}.html"
 
-    yield clean()
+      unless await $$.isExisted source
+        throw new Error 2
+
+      data = await $$.read source
+
+      if data != "<h1 id=\"#{key}\">#{key}</h1>"
+        throw new Error 3
+
+    await clean()

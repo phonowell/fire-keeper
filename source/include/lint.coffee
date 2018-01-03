@@ -8,7 +8,7 @@ do ->
 
   # function
 
-  fn = co (source) ->
+  fn = (source) ->
 
     source = formatPath source
 
@@ -21,7 +21,7 @@ do ->
       when 'styl' then 'stylus'
       else throw makeError 'extname'
 
-    yield fn[method] source
+    await fn[method] source
 
     $$ # return
 
@@ -48,9 +48,9 @@ do ->
 
   fn.markdown = (source) ->
 
-    new Promise co (resolve) ->
+    new Promise (resolve) ->
 
-      option = files: yield $$.source source
+      option = files: await $$.source source
 
       markdownlint option, (err, result) ->
         

@@ -4,7 +4,7 @@
 
 ###
 
-$$.say = co (text) ->
+$$.say = (text) ->
 
   if $$.os != 'macos' then return
 
@@ -25,7 +25,7 @@ $$.say = co (text) ->
     if !msg.length then continue
 
     $.info.pause '$$.say'
-    yield $$.shell "say #{msg}"
+    await $$.shell "say #{msg}"
     $.info.resume '$$.say'
 
   text # return

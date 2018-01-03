@@ -1,29 +1,28 @@
 # require
 
 $$ = require './../index'
-{$, _, Promise} = $$.library
-co = Promise.coroutine
+{$, _} = $$.library
 
 # function
 
-clean = co -> yield $$.remove './temp'
+clean = -> await $$.remove './temp'
 
 # test
 
 describe '$$.walk(source, callback)', ->
 
-  it "$$.walk('./temp')", co ->
+  it "$$.walk('./temp')", ->
 
-    yield $$.mkdir './temp/a'
+    await $$.mkdir './temp/a'
 
     string = 'empty'
 
-    yield $$.write './temp/b/c.txt', string
-    yield $$.write './temp/d.txt', string
+    await $$.write './temp/b/c.txt', string
+    await $$.write './temp/d.txt', string
 
     listResult = []
 
-    res = yield $$.walk './temp', (item) ->
+    res = await $$.walk './temp', (item) ->
       listResult.push item.path
 
     if res != $$
@@ -38,4 +37,4 @@ describe '$$.walk(source, callback)', ->
     ]
       throw new Error()
 
-    yield clean()
+    await clean()
