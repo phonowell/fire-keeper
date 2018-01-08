@@ -17,7 +17,6 @@ $p.yargs = require 'yargs'
   plumber
   pug
   rename
-  replace
   stylint
   stylus
   sourcemaps

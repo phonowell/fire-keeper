@@ -11,33 +11,13 @@ clean = -> await $$.remove './temp'
 
 ###
 
-  replace(pathSource, [pathTarget], target, replacement)
+replace(source, option...)
 
 ###
 
-describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
+describe '$$.replace(source, option...)', ->
 
-  it "$$.replace('./temp/replace.txt', 'to be replaced', 'replaced')", ->
-
-    source = './temp/replace.txt'
-    sourceData = 'to be replaced'
-    targetData = 'replaced'
-
-    await $$.write source, sourceData
-
-    res = await $$.replace source, sourceData, targetData
-
-    if res != $$
-      throw new Error()
-
-    cont = await $$.read source
-
-    if cont != targetData
-      throw new Error()
-
-    await clean()
-
-  it "$$.replace('./temp/**/*.txt', 'to be replaced', 'replaced')", ->
+  it "$$.replace('./temp/*.txt', 'to be replaced', 'replaced')", ->
 
     await clean()
 
@@ -49,17 +29,49 @@ describe '$$.replace(pathSource, [pathTarget], target, replacement)', ->
     for filename in listName
       await $$.write "./temp/#{filename}.txt", sourceData
 
-    await $$.replace './temp/**/*.txt', sourceData, targetData
+    res = await $$.replace './temp/*.txt', sourceData, targetData
 
-    isExisted = await $$.isExisted './temp/**'
-    if isExisted
-      throw new Error 1
+    if res != $$
+      throw new Error()
 
     for filename in listName
 
       cont = await $$.read "./temp/#{filename}.txt"
 
       if cont != targetData
-        throw new Error 2
+        throw new Error()
+
+    await clean()
+
+  it "$$.replace('./temp/*.json', (cont) -> ...)", ->
+
+    await clean()
+
+    listKey = [
+      'a'
+      'b'
+      'c'
+    ]
+
+    for key in listKey
+      data =
+        content: key
+      await $$.write "./temp/#{key}.json", data
+
+    res = await $$.replace './temp/*.json', (cont) ->
+      data = $.parseJson cont
+      data.content += ' new'
+      data
+
+    if res != $$
+      throw new Error()
+
+    for key in listKey
+
+      cont = await $$.read "./temp/#{key}.json"
+      data = $.parseJson cont
+
+      if data.content != "#{key} new"
+        throw new Error()
 
     await clean()

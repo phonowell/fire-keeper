@@ -16,7 +16,7 @@
     cloneGitHub(name)
 
   */
-  var $, $$, $p, SSH, _, changed, cleanCss, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, replace, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip;
+  var $, $$, $p, SSH, _, changed, cleanCss, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip;
 
   path = require('path');
 
@@ -45,7 +45,7 @@
 
   $p.yargs = require('yargs');
 
-  ({changed, cleanCss, coffee, coffeelint, htmlmin, ignore, include, livereload, markdown, plumber, pug, rename, replace, stylint, stylus, sourcemaps, unzip, using, yaml, zip} = $p);
+  ({changed, cleanCss, coffee, coffeelint, htmlmin, ignore, include, livereload, markdown, plumber, pug, rename, stylint, stylus, sourcemaps, unzip, using, yaml, zip} = $p);
 
   gulpif = $p.if;
 
@@ -965,35 +965,42 @@
     return $$.lint = fn;
   })();
 
-  // https://github.com/lazd/gulp-replace
   /*
 
-  replace(pathSource, [pathTarget], target, replacement)
+  replace(source, option...)
 
   */
-  $$.replace = async function(...arg) {
-    var pathSource, pathTarget, replacement, target;
-    [pathSource, pathTarget, target, replacement] = (function() {
-      switch (arg.length) {
-        case 3:
-          return [arg[0], null, arg[1], arg[2]];
-        case 4:
-          return arg;
-        default:
-          throw makeError('length');
+  $$.replace = async function(source, ...option) {
+    var callback, cont, i, len, listSource, msg, reg, replacement, res, src;
+    if (!source) {
+      throw makeError('source');
+    }
+    listSource = (await $$.source(source));
+    switch (option.length) {
+      case 1:
+        callback = option[0];
+        break;
+      case 2:
+        [reg, replacement] = option;
+        break;
+      default:
+        throw makeError('length');
+    }
+    $.info.pause('$$.replace');
+    for (i = 0, len = listSource.length; i < len; i++) {
+      src = listSource[i];
+      cont = $.parseString((await $$.read(src)));
+      res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
+      if (res === cont) {
+        continue;
       }
-    })();
-    pathSource = formatPath(pathSource);
-    pathTarget || (pathTarget = path.dirname(pathSource[0]).replace(/\*/g, ''));
-    pathTarget = normalizePath(pathTarget);
-    await new Promise(function(resolve) {
-      return gulp.src(pathSource).pipe(plumber()).pipe(using()).pipe(replace(target, replacement)).pipe(gulp.dest(pathTarget)).on('end', function() {
-        return resolve();
-      });
-    });
-    $.info('replace', `replaced '${target}' to '${replacement}', in ${wrapList(pathSource)}, output to ${wrapList(pathTarget)}`);
-    // return
-    return $$;
+      await $$.write(src, res);
+    }
+    $.info.resume('$$.replace');
+    msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
+    msg += `, in ${wrapList(source)}`;
+    $.info('replace', msg);
+    return $$; // return
   };
 
   /*

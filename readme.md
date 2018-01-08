@@ -35,7 +35,7 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
     $$.reload(source)
     $$.remove(source)
     $$.rename(source, option)
-    $$.replace(pathSource, [pathTarget], target, replacement)
+    $$.replace(source, option...)
     $$.say(text)
     $$.shell(cmd)
     $$.source(source)

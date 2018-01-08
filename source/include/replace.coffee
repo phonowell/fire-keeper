@@ -1,34 +1,43 @@
-# https://github.com/lazd/gulp-replace
+###
+
+replace(source, option...)
 
 ###
 
-  replace(pathSource, [pathTarget], target, replacement)
+$$.replace = (source, option...) ->
 
-###
+  if !source
+    throw makeError 'source'
 
-$$.replace = (arg...) ->
+  listSource = await $$.source source
 
-  [pathSource, pathTarget, target, replacement] = switch arg.length
-    when 3 then [arg[0], null, arg[1], arg[2]]
-    when 4 then arg
+  switch option.length
+    when 1 then callback = option[0]
+    when 2 then [reg, replacement] = option
     else throw makeError 'length'
 
-  pathSource = formatPath pathSource
-  pathTarget or= path.dirname(pathSource[0]).replace /\*/g, ''
-  pathTarget = normalizePath pathTarget
+  $.info.pause '$$.replace'
 
-  await new Promise (resolve) ->
-    gulp.src pathSource
-    .pipe plumber()
-    .pipe using()
-    .pipe replace target, replacement
-    .pipe gulp.dest pathTarget
-    .on 'end', -> resolve()
+  for src in listSource
+    
+    cont = $.parseString await $$.read src
 
-  $.info 'replace'
-  , "replaced '#{target}' to '#{replacement}',
-    in #{wrapList pathSource},
-    output to #{wrapList pathTarget}"
+    res = if callback
+      $.parseString callback cont
+    else cont.replace reg, replacement
 
-  # return
-  $$
+    if res == cont
+      continue
+
+    await $$.write src, res
+
+  $.info.resume '$$.replace'
+
+  msg = if callback
+    'replaced with function'
+  else "replaced '#{reg}' to '#{replacement}'"
+  msg += ", in #{wrapList source}"
+
+  $.info 'replace', msg
+
+  $$ # return

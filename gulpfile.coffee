@@ -59,8 +59,10 @@ $$.task 'set', ->
   if !ver
     throw new Error 'empty ver'
 
-  await $$.replace './package.json'
-  , /"version": "[\d.]+"/, "\"version\": \"#{ver}\""
+  await $$.replace './package.json', (cont) ->
+    data = $.parseJson cont
+    data.version = ver
+    data
 
 $$.task 'test', ->
 
