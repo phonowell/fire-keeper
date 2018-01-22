@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 
-Copyright © 2015-2017, Mimiko Phonowell.
+Copyright © 2015-2018, Mimiko Phonowell.
 
 ---
 
