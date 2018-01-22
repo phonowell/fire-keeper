@@ -16,7 +16,7 @@
     cloneGitHub(name)
 
   */
-  var $, $$, $p, SSH, _, changed, cleanCss, coffee, coffeelint, colors, composer, download, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpif, htmlmin, ignore, include, livereload, makeError, markdown, markdownlint, normalizePath, path, plumber, pug, rename, sourcemaps, string, stylint, stylus, uglify, uglifyjs, unzip, using, walk, wrapList, yaml, zip;
+  var $, $$, $p, SSH, _, colors, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
@@ -37,25 +37,28 @@
 
   $$.library = {$, _, fse, gulp};
 
-  $p = $$.plugin = require('gulp-load-plugins')();
+  $p = {};
 
-  download = $p.download = require('download');
+  ref = ['download', 'gulp-changed', 'gulp-clean-css', 'gulp-coffee', 'gulp-coffeelint', 'gulp-htmlmin', 'gulp-ignore', 'gulp-include', 'gulp-livereload', 'gulp-markdown', 'gulp-plumber', 'gulp-pug', 'gulp-rename', 'gulp-sourcemaps', 'gulp-stylint', 'gulp-stylus', 'gulp-unzip', 'gulp-using', 'gulp-yaml', 'gulp-zip', 'markdownlint', 'yargs'];
+  for (i = 0, len = ref.length; i < len; i++) {
+    key = ref[i];
+    name = _.camelCase(key.replace(/gulp-/, ''));
+    global[name] = $p[name] = require(key);
+  }
 
   walk = $p.walk = require('klaw');
 
-  $p.yargs = require('yargs');
+  gulpIf = $p.if = require('gulp-if');
 
-  ({changed, cleanCss, coffee, coffeelint, htmlmin, ignore, include, livereload, markdown, plumber, pug, rename, stylint, stylus, sourcemaps, unzip, using, yaml, zip} = $p);
+  uglify = $p.uglify = (function() {
+    var composer, uglifyEs;
+    uglifyEs = require('uglify-es');
+    composer = require('gulp-uglify/composer');
+    return composer(uglifyEs, console);
+  })();
 
-  gulpif = $p.if;
-
-  uglifyjs = require('uglify-es');
-
-  composer = require('gulp-uglify/composer');
-
-  uglify = $p.uglify = composer(uglifyjs, console);
-
-  markdownlint = $p.markdownlint = require('markdownlint');
+  // return
+  $$.plugin = $p;
 
   /*
 
@@ -102,11 +105,11 @@
   };
 
   formatPath = function(source) {
-    var i, len, results, src;
+    var j, len1, results, src;
     source = formatArgument(source);
     results = [];
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       results.push(normalizePath(src));
     }
     return results;
@@ -177,7 +180,6 @@
   };
 
   wrapList = function(list) {
-    var key;
     if (!list) {
       return '';
     }
@@ -192,10 +194,10 @@
       }
     })();
     return ((function() {
-      var i, len, results;
+      var j, len1, results;
       results = [];
-      for (i = 0, len = list.length; i < len; i++) {
-        key = list[i];
+      for (j = 0, len1 = list.length; j < len1; j++) {
+        key = list[j];
         results.push(`'${key}'`);
       }
       return results;
@@ -244,19 +246,19 @@
 
   */
   $$.task('check', async function() {
-    var cont, ext, i, j, len, len1, listCont, listExt, listSource, results, source;
+    var cont, ext, j, k, len1, len2, listCont, listExt, listSource, results, source;
     listSource = [];
     listExt = ['coffee', 'md', 'pug', 'styl', 'yaml'];
-    for (i = 0, len = listExt.length; i < len; i++) {
-      ext = listExt[i];
+    for (j = 0, len1 = listExt.length; j < len1; j++) {
+      ext = listExt[j];
       listSource.push(`./*.${ext}`);
       listSource.push(`./source/**/*.${ext}`);
       listSource.push(`./test/**/*.${ext}`);
     }
     listSource = (await $$.source(listSource));
     results = [];
-    for (j = 0, len1 = listSource.length; j < len1; j++) {
-      source = listSource[j];
+    for (k = 0, len2 = listSource.length; k < len2; k++) {
+      source = listSource[k];
       cont = $.parseString((await $$.read(source)));
       listCont = cont.split('\n');
       if (!_.trim(_.last(listCont)).length) {
@@ -270,7 +272,7 @@
   });
 
   $$.task('default', function() {
-    var key, list;
+    var list;
     list = (function() {
       var results;
       results = [];
@@ -290,7 +292,7 @@
   });
 
   $$.task('kokoro', async function() {
-    var LIST, filename, i, isSame, len, listClean, results, source, target;
+    var LIST, filename, isSame, j, len1, listClean, results, source, target;
     await fetchGitHub('phonowell/kokoro');
     // clean
     listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
@@ -300,8 +302,8 @@
     // copy
     LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
     results = [];
-    for (i = 0, len = LIST.length; i < len; i++) {
-      filename = LIST[i];
+    for (j = 0, len1 = LIST.length; j < len1; j++) {
+      filename = LIST[j];
       source = `./../kokoro/${filename}`;
       target = `./${filename}`;
       isSame = (await $$.isSame([source, target]));
@@ -325,10 +327,10 @@
     // file
     listFile = ['.DS_Store', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.flowconfig', '.gitattributes', '.jshintrc', '.npmignore', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml'];
     listSource = (function() {
-      var i, len, results;
+      var j, len1, results;
       results = [];
-      for (i = 0, len = listFile.length; i < len; i++) {
-        line = listFile[i];
+      for (j = 0, len1 = listFile.length; j < len1; j++) {
+        line = listFile[j];
         results.push(`${base}/**/${line}`);
       }
       return results;
@@ -337,10 +339,10 @@
     // directory
     listDirectory = ['.circleci', '.github', '.idea', '.nyc_output', '.vscode', '__tests__', 'assets', 'coverage', 'doc', 'docs', 'example', 'examples', 'images', 'powered-test', 'test', 'tests', 'website'];
     listSource = (function() {
-      var i, len, results;
+      var j, len1, results;
       results = [];
-      for (i = 0, len = listDirectory.length; i < len; i++) {
-        line = listDirectory[i];
+      for (j = 0, len1 = listDirectory.length; j < len1; j++) {
+        line = listDirectory[j];
         results.push(`${base}/**/${line}`);
       }
       return results;
@@ -349,10 +351,10 @@
     // extension
     listExtension = ['.coffee', '.jst', '.md', '.swp', '.tgz', '.ts'];
     listSource = (function() {
-      var i, len, results;
+      var j, len1, results;
       results = [];
-      for (i = 0, len = listExtension.length; i < len; i++) {
-        line = listExtension[i];
+      for (j = 0, len1 = listExtension.length; j < len1; j++) {
+        line = listExtension[j];
         results.push(`${base}/**/*${line}`);
       }
       return results;
@@ -374,10 +376,10 @@
 
   */
   $$.backup = async function(source) {
-    var extname, i, len, src, suffix;
+    var extname, j, len1, src, suffix;
     source = (await $$.source(source));
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       suffix = path.extname(src);
       extname = '.bak';
       $.info.pause('$$.backup');
@@ -390,10 +392,10 @@
   };
 
   $$.recover = async function(source) {
-    var bak, basename, i, len, src;
+    var bak, basename, j, len1, src;
     source = formatPath(source);
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       bak = `${src}.bak`;
       if (!(await $$.isExisted(bak))) {
         continue;
@@ -496,21 +498,21 @@
           };
         }
         delete option.harmony;
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.css = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, cleanCss())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, cleanCss())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
     fn.js = function(source, target, option) {
       return new Promise(function(resolve) {
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(gulpif(option.minify, uglify())).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, uglify())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -522,7 +524,7 @@
         }
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
           extname: '.html'
-        })).pipe(gulpif(option.minify, htmlmin({
+        })).pipe(gulpIf(option.minify, htmlmin({
           collapseWhitespace: true
         }))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
@@ -544,7 +546,7 @@
         if (option.compress == null) {
           option.compress = option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpif(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
@@ -631,7 +633,7 @@
       target = normalizePath(target);
     }
     await new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpif(!!option, rename(option))).pipe(gulp.dest(function(e) {
+      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(!!option, rename(option))).pipe(gulp.dest(function(e) {
         return target || e.base;
       })).on('end', function() {
         return resolve();
@@ -646,13 +648,13 @@
   };
 
   $$.isExisted = async function(source) {
-    var i, len, src;
+    var j, len1, src;
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       if (!(await fse.pathExists(src))) {
         return false;
       }
@@ -661,15 +663,15 @@
   };
 
   $$.isSame = async function(source) {
-    var CONT, SIZE, cont, i, j, len, len1, size, src, stat;
+    var CONT, SIZE, cont, j, k, len1, len2, size, src, stat;
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
     // check size
     SIZE = null;
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       stat = (await $$.stat(src));
       if (!stat) {
         return false;
@@ -685,8 +687,8 @@
     }
     // check cont
     CONT = null;
-    for (j = 0, len1 = source.length; j < len1; j++) {
-      src = source[j];
+    for (k = 0, len2 = source.length; k < len2; k++) {
+      src = source[k];
       $.info.pause('$$.isSame');
       cont = (await $$.read(src));
       $.info.resume('$$.isSame');
@@ -723,10 +725,10 @@
     }
     source = formatPath(source);
     listPromise = (function() {
-      var i, len, results;
+      var j, len1, results;
       results = [];
-      for (i = 0, len = source.length; i < len; i++) {
-        src = source[i];
+      for (j = 0, len1 = source.length; j < len1; j++) {
+        src = source[j];
         results.push(fse.ensureDir(src));
       }
       return results;
@@ -787,10 +789,10 @@
   };
 
   $$.remove = async function(source) {
-    var i, len, listSource, src;
+    var j, len1, listSource, src;
     listSource = (await $$.source(source));
-    for (i = 0, len = listSource.length; i < len; i++) {
-      src = listSource[i];
+    for (j = 0, len1 = listSource.length; j < len1; j++) {
+      src = listSource[j];
       await new Promise(function(resolve) {
         return fse.remove(src, function(err) {
           if (err) {
@@ -806,7 +808,7 @@
   };
 
   $$.rename = async function(source, option) {
-    var i, item, len, listHistory;
+    var item, j, len1, listHistory;
     source = formatPath(source);
     listHistory = [];
     await new Promise(function(resolve) {
@@ -818,8 +820,8 @@
       });
     });
     $.info.pause('$$.rename');
-    for (i = 0, len = listHistory.length; i < len; i++) {
-      item = listHistory[i];
+    for (j = 0, len1 = listHistory.length; j < len1; j++) {
+      item = listHistory[j];
       if ((await $$.isExisted(item[1]))) {
         await $$.remove(item[0]);
       }
@@ -862,9 +864,9 @@
   };
 
   $$.write = async function(source, data, option) {
-    var ref;
+    var ref1;
     source = normalizePath(source);
-    if ((ref = $.type(data)) === 'array' || ref === 'object') {
+    if ((ref1 = $.type(data)) === 'array' || ref1 === 'object') {
       data = $.parseString(data);
     }
     await fse.outputFile(source, data, option);
@@ -924,7 +926,7 @@
           files: (await $$.source(source))
         };
         return markdownlint(option, function(err, result) {
-          var filename, i, item, len, list, listMsg;
+          var filename, item, j, len1, list, listMsg;
           if (err) {
             throw err;
           }
@@ -935,8 +937,8 @@
             }
             filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
             $.i(colors.magenta(filename));
-            for (i = 0, len = list.length; i < len; i++) {
-              item = list[i];
+            for (j = 0, len1 = list.length; j < len1; j++) {
+              item = list[j];
               listMsg = [];
               listMsg.push(colors.gray(`#${item.lineNumber}`));
               if (item.errorContext) {
@@ -971,7 +973,7 @@
 
   */
   $$.replace = async function(source, ...option) {
-    var callback, cont, i, len, listSource, msg, reg, replacement, res, src;
+    var callback, cont, j, len1, listSource, msg, reg, replacement, res, src;
     if (!source) {
       throw makeError('source');
     }
@@ -987,8 +989,8 @@
         throw makeError('length');
     }
     $.info.pause('$$.replace');
-    for (i = 0, len = listSource.length; i < len; i++) {
-      src = listSource[i];
+    for (j = 0, len1 = listSource.length; j < len1; j++) {
+      src = listSource[j];
       cont = $.parseString((await $$.read(src)));
       res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
       if (res === cont) {
@@ -1009,7 +1011,7 @@
 
   */
   $$.say = async function(text) {
-    var i, len, listMessage, msg;
+    var j, len1, listMessage, msg;
     if ($$.os !== 'macos') {
       return;
     }
@@ -1023,8 +1025,8 @@
           throw makeError('type');
       }
     })();
-    for (i = 0, len = listMessage.length; i < len; i++) {
-      msg = listMessage[i];
+    for (j = 0, len1 = listMessage.length; j < len1; j++) {
+      msg = listMessage[j];
       $.info('say', msg);
       msg = msg.replace(/[#\(\)-]/g, '');
       msg = _.trim(msg);
@@ -1096,10 +1098,10 @@
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
-        var i, len, results;
+        var j, len1, results;
         results = [];
-        for (i = 0, len = source.length; i < len; i++) {
-          src = source[i];
+        for (j = 0, len1 = source.length; j < len1; j++) {
+          src = source[j];
           results.push(`mkdir -p ${src}`);
         }
         return results;
@@ -1114,10 +1116,10 @@
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
-        var i, len, results;
+        var j, len1, results;
         results = [];
-        for (i = 0, len = source.length; i < len; i++) {
-          src = source[i];
+        for (j = 0, len1 = source.length; j < len1; j++) {
+          src = source[j];
           results.push(`rm -fr ${src}`);
         }
         return results;
@@ -1173,12 +1175,12 @@
           }
         })();
         return conn.sftp(async(err, sftp) => {
-          var filename, i, len, src, stat;
+          var filename, j, len1, src, stat;
           if (err) {
             throw err;
           }
-          for (i = 0, len = source.length; i < len; i++) {
-            src = source[i];
+          for (j = 0, len1 = source.length; j < len1; j++) {
+            src = source[j];
             stat = (await $$.stat(src));
             filename = option.filename || path.basename(src);
             if (stat.isDirectory()) {
@@ -1196,13 +1198,13 @@
 
     uploadDir(sftp, source, target) {
       return new Promise(async(resolve) => {
-        var i, len, listSource, relativeTarget, src, stat;
+        var j, len1, listSource, relativeTarget, src, stat;
         listSource = [];
         await $$.walk(source, function(item) {
           return listSource.push(item.path);
         });
-        for (i = 0, len = listSource.length; i < len; i++) {
-          src = listSource[i];
+        for (j = 0, len1 = listSource.length; j < len1; j++) {
+          src = listSource[j];
           stat = (await $$.stat(src));
           relativeTarget = path.normalize(`${target}/${path.relative(source, src)}`);
           if (stat.isDirectory()) {
@@ -1247,7 +1249,7 @@
 
     */
     addCmd = async function(list, data, isDev, option) {
-      var cmd, current, latest, name, registry, results, version;
+      var cmd, current, latest, registry, results, version;
       ({registry} = option);
       results = [];
       for (name in data) {
@@ -1347,13 +1349,13 @@
 
   */
   $$.unzip = async function(source, target) {
-    var dist, i, len, src;
+    var dist, j, len1, src;
     if (!source) {
       throw makeError('source');
     }
     source = (await $$.source(source));
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len1 = source.length; j < len1; j++) {
+      src = source[j];
       dist = target || path.dirname(src);
       await new Promise(function(resolve) {
         return gulp.src(src).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(dist)).on('end', function() {

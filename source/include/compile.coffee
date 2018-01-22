@@ -73,11 +73,11 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe using()
-      .pipe gulpif option.map, sourcemaps.init()
+      .pipe gulpIf option.map, sourcemaps.init()
       .pipe include()
       .pipe coffee option
-      .pipe gulpif option.minify, uglify()
-      .pipe gulpif option.map, sourcemaps.write ''
+      .pipe gulpIf option.minify, uglify()
+      .pipe gulpIf option.map, sourcemaps.write ''
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
@@ -88,9 +88,9 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe using()
-      .pipe gulpif option.map, sourcemaps.init()
-      .pipe gulpif option.minify, cleanCss()
-      .pipe gulpif option.map, sourcemaps.write ''
+      .pipe gulpIf option.map, sourcemaps.init()
+      .pipe gulpIf option.minify, cleanCss()
+      .pipe gulpIf option.map, sourcemaps.write ''
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
@@ -101,9 +101,9 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe using()
-      .pipe gulpif option.map, sourcemaps.init()
-      .pipe gulpif option.minify, uglify()
-      .pipe gulpif option.map, sourcemaps.write ''
+      .pipe gulpIf option.map, sourcemaps.init()
+      .pipe gulpIf option.minify, uglify()
+      .pipe gulpIf option.map, sourcemaps.write ''
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
@@ -118,7 +118,7 @@ do ->
       .pipe using()
       .pipe markdown option
       .pipe rename extname: '.html'
-      .pipe gulpif option.minify, htmlmin collapseWhitespace: true
+      .pipe gulpIf option.minify, htmlmin collapseWhitespace: true
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
@@ -144,9 +144,9 @@ do ->
       gulp.src source
       .pipe plumber()
       .pipe using()
-      .pipe gulpif option.map, sourcemaps.init()
+      .pipe gulpIf option.map, sourcemaps.init()
       .pipe stylus option
-      .pipe gulpif option.map, sourcemaps.write ''
+      .pipe gulpIf option.map, sourcemaps.write ''
       .pipe gulp.dest target
       .on 'end', -> resolve()
 

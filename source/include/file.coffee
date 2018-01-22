@@ -32,7 +32,7 @@ $$.copy = (arg...) ->
     gulp.src source
     .pipe plumber()
     .pipe using()
-    .pipe gulpif !!option, rename option
+    .pipe gulpIf !!option, rename option
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 

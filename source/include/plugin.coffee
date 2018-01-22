@@ -1,35 +1,40 @@
-$p = $$.plugin = require('gulp-load-plugins')()
+$p = {}
 
-download = $p.download = require 'download'
+for key in [
+  'download'
+  'gulp-changed'
+  'gulp-clean-css'
+  'gulp-coffee'
+  'gulp-coffeelint'
+  'gulp-htmlmin'
+  'gulp-ignore'
+  'gulp-include'
+  'gulp-livereload'
+  'gulp-markdown'
+  'gulp-plumber'
+  'gulp-pug'
+  'gulp-rename'
+  'gulp-sourcemaps'
+  'gulp-stylint'
+  'gulp-stylus'
+  'gulp-unzip'
+  'gulp-using'
+  'gulp-yaml'
+  'gulp-zip'
+  'markdownlint'
+  'yargs'
+]
+  name = _.camelCase key.replace /gulp-/, ''
+  global[name] = $p[name] = require key
+
 walk = $p.walk = require 'klaw'
-$p.yargs = require 'yargs'
 
-{
-  changed
-  cleanCss
-  coffee
-  coffeelint
-  htmlmin
-  ignore
-  include
-  livereload
-  markdown
-  plumber
-  pug
-  rename
-  stylint
-  stylus
-  sourcemaps
-  unzip
-  using
-  yaml
-  zip
-} = $p
+gulpIf = $p.if = require 'gulp-if'
 
-gulpif = $p.if
+uglify = $p.uglify = do ->
+  uglifyEs = require 'uglify-es'
+  composer = require 'gulp-uglify/composer'
+  composer uglifyEs, console
 
-uglifyjs = require 'uglify-es'
-composer = require 'gulp-uglify/composer'
-uglify = $p.uglify = composer uglifyjs, console
-
-markdownlint = $p.markdownlint = require 'markdownlint'
+# return
+$$.plugin = $p
