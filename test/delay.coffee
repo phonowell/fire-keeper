@@ -15,3 +15,6 @@ describe '$$.delay([time])', ->
 
     if $$.delay != $.delay
       throw new Error()
+
+    unless _.isFunction $$.delay
+      throw new Error()

@@ -15,3 +15,6 @@ describe '$$.reload(source)', ->
 
     if !$$.reload
       throw new Error()
+
+    unless _.isFunction $$.reload
+      throw new Error()

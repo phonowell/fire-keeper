@@ -39,7 +39,7 @@
 
   $p = {};
 
-  ref = ['download', 'gulp-changed', 'gulp-clean-css', 'gulp-coffee', 'gulp-coffeelint', 'gulp-htmlmin', 'gulp-ignore', 'gulp-include', 'gulp-livereload', 'gulp-markdown', 'gulp-plumber', 'gulp-pug', 'gulp-rename', 'gulp-sourcemaps', 'gulp-stylint', 'gulp-stylus', 'gulp-unzip', 'gulp-using', 'gulp-yaml', 'gulp-zip', 'markdownlint', 'yargs'];
+  ref = ['download', 'gulp-changed', 'gulp-clean-css', 'gulp-coffee', 'gulp-coffeelint', 'gulp-htmlmin', 'gulp-ignore', 'gulp-include', 'gulp-livereload', 'gulp-markdown', 'gulp-plumber', 'gulp-pug', 'gulp-rename', 'gulp-sourcemaps', 'gulp-stylint', 'gulp-stylus', 'gulp-unzip', 'gulp-using', 'gulp-yaml', 'gulp-zip', 'gulp-watch', 'markdownlint', 'yargs'];
   for (i = 0, len = ref.length; i < len; i++) {
     key = ref[i];
     name = _.camelCase(key.replace(/gulp-/, ''));

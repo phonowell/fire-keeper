@@ -15,3 +15,6 @@ describe '$$.say(text)', ->
 
     if !$$.say
       throw new Error()
+
+    unless _.isFunction $$.say
+      throw new Error()

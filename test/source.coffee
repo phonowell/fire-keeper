@@ -37,21 +37,3 @@ describe '$$.source(source)', ->
 
     # clean
     await $$.remove listTarget
-
-  it "$$.source('~/Desktop/[t](e)[s](t).txt')", ->
-
-    source = '~/Desktop/[t](e)[s](t).txt'
-    content = 'just a test file'
-
-    await $$.write source, content
-
-    source = source
-    .replace /\[(\w)/g, '[[]$1'
-    .replace /(\w)\]/g, '$1[]]'
-    listSource = await $$.source source
-
-    if listSource.length != 1
-      throw new Error()
-
-    # clean
-    # await $$.remove listSource

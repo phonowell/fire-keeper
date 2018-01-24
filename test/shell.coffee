@@ -15,3 +15,6 @@ describe '$$.shell()', ->
 
     if $$.shell != $.shell
       throw new Error()
+
+    unless _.isFunction $$.shell
+      throw new Error()

@@ -15,3 +15,6 @@ describe '$$.update()', ->
 
     if !$$.update
       throw new Error()
+
+    unless _.isFunction $$.update
+      throw new Error()

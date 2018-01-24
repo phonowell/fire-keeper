@@ -15,3 +15,6 @@ describe '$$.watch()', ->
 
     if $$.watch != $$.plugin.watch
       throw new Error()
+
+    unless _.isFunction $$.watch
+      throw new Error()

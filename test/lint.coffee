@@ -15,3 +15,6 @@ describe '$$.lint(source)', ->
 
     if !$$.lint
       throw new Error()
+
+    unless _.isFunction $$.lint
+      throw new Error()

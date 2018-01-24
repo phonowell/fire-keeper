@@ -21,6 +21,7 @@ for key in [
   'gulp-using'
   'gulp-yaml'
   'gulp-zip'
+  'gulp-watch'
   'markdownlint'
   'yargs'
 ]

@@ -15,3 +15,6 @@ describe '$$.task(source)', ->
 
     if !$$.task
       throw new Error()
+
+    unless _.isFunction $$.task
+      throw new Error()
