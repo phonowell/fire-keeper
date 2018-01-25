@@ -9,12 +9,9 @@ clean = -> await $$.remove './temp'
 
 # test
 
-describe '$$.delay([time])', ->
+describe '$$.delay([time], [callback])', ->
 
   it '$$.delay()', ->
-
-    if $$.delay != $.delay
-      throw new Error()
 
     unless _.isFunction $$.delay
       throw new Error()

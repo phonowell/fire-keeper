@@ -9,12 +9,9 @@ clean = -> await $$.remove './temp'
 
 # test
 
-describe '$$.shell()', ->
+describe '$$.shell(cmd, [option])', ->
 
   it '$$.shell()', ->
-
-    if $$.shell != $.shell
-      throw new Error()
 
     unless _.isFunction $$.shell
       throw new Error()

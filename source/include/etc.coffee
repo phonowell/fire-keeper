@@ -1,14 +1,24 @@
 ###
 
-  delay([time])
+  delay([time], [callback])
   reload(source)
-  shell(cmd)
   watch(source)
   yargs()
 
 ###
 
-$$.delay = $.delay
+$$.delay = (time = 0, callback) ->
+  
+  await new Promise (resolve) ->
+    setTimeout ->
+      resolve()
+    , time
+    
+  $.info 'delay', "delayed '#{time} ms'"
+
+  callback?()
+
+  $$ # return
 
 $$.reload = (source) ->
 
@@ -22,8 +32,6 @@ $$.reload = (source) ->
   .pipe livereload()
 
   $$ # return
-
-$$.shell = $.shell
 
 $$.watch = $p.watch
 

@@ -16,7 +16,7 @@
     cloneGitHub(name)
 
   */
-  var $, $$, $p, SSH, _, colors, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
+  var $, $$, $p, SSH, Shell, _, colors, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
@@ -1040,6 +1040,117 @@
     return text; // return
   };
 
+  Shell = (function() {
+    class Shell {
+      /*
+      bind()
+      close()
+      exec
+      execute(cmd, [option])
+      info([type], string)
+      separator
+      */
+      bind() {
+        this.process.stdout.on('data', (data) => {
+          return this.info(data);
+        });
+        this.process.stderr.on('data', (data) => {
+          return this.info('error', data);
+        });
+        return this;
+      }
+
+      close() {
+        process.exit();
+        return this;
+      }
+
+      execute(cmd, option = {}) {
+        return new Promise((resolve) => {
+          var type;
+          type = $.type(cmd);
+          cmd = (function() {
+            switch (type) {
+              case 'array':
+                return cmd.join(` ${this.separator} `);
+              case 'string':
+                return cmd;
+              default:
+                throw new Error(`invalid argument type <${type}>`);
+            }
+          }).call(this);
+          $.info('shell', cmd);
+          this.process = this.exec(cmd, function(err) {
+            if (!err) {
+              return resolve(true);
+            }
+            if (option.ignoreError) {
+              return resolve(false);
+            }
+            throw new Error(err);
+          });
+          return this.bind();
+        });
+      }
+
+      info(...arg) {
+        var type;
+        [type, string] = (function() {
+          switch (arg.length) {
+            case 1:
+              return [null, arg[0]];
+            case 2:
+              return arg;
+            default:
+              throw makeError('length');
+          }
+        })();
+        string = $.trim(string);
+        if (!string.length) {
+          return;
+        }
+        string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
+        string = (function() {
+          switch (type) {
+            case 'error':
+              return colors.red(string);
+            default:
+              return colors.gray(string);
+          }
+        })();
+        // string = $.info.renderColor string
+        return $.log(string);
+      }
+
+    };
+
+    Shell.prototype.exec = require('child_process').exec;
+
+    Shell.prototype.separator = (function() {
+      var platform;
+      platform = (require('os')).platform();
+      switch (platform) {
+        case 'win32':
+          return '&';
+        default:
+          return '&&';
+      }
+    })();
+
+    return Shell;
+
+  }).call(this);
+
+  // return
+  $$.shell = function(cmd, option) {
+    var shell;
+    shell = new Shell();
+    if (!cmd) {
+      return shell;
+    }
+    return shell.execute(cmd, option);
+  };
+
   // https://github.com/mscdex/ssh2
   SSH = class SSH {
     constructor() {
@@ -1406,14 +1517,24 @@
 
   /*
 
-  delay([time])
+  delay([time], [callback])
   reload(source)
-  shell(cmd)
   watch(source)
   yargs()
 
   */
-  $$.delay = $.delay;
+  $$.delay = async function(time = 0, callback) {
+    await new Promise(function(resolve) {
+      return setTimeout(function() {
+        return resolve();
+      }, time);
+    });
+    $.info('delay', `delayed '${time} ms'`);
+    if (typeof callback === "function") {
+      callback();
+    }
+    return $$; // return
+  };
 
   $$.reload = function(source) {
     if (!source) {
@@ -1424,8 +1545,6 @@
     $$.watch(source).pipe(livereload());
     return $$; // return
   };
-
-  $$.shell = $.shell;
 
   $$.watch = $p.watch;
 
