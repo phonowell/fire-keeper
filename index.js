@@ -1051,17 +1051,17 @@
       separator
       */
       bind() {
-        this.process.stdout.on('data', (data) => {
-          return this.info(data);
-        });
         this.process.stderr.on('data', (data) => {
           return this.info('error', data);
+        });
+        this.process.stdout.on('data', (data) => {
+          return this.info(data);
         });
         return this;
       }
 
       close() {
-        process.exit();
+        this.process.kill();
         return this;
       }
 

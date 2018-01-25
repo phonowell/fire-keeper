@@ -93,4 +93,30 @@ $$.task 'test', ->
   
   await clean()
 
+# $$.task 'x', ->
+
+#   i = 0
+#   setInterval ->
+#     $.info 'x', i++
+#   , 200
+
+# $$.task 'y', ->
+
+#   i = 0
+#   setInterval ->
+#     $.info 'y', i--
+#   , 200
+
 # $$.task 'z', ->
+
+#   a = $$.shell()
+#   a.execute [
+#     'gulp x'
+#   ], ignoreError: true
+#   $$.delay 5e3, -> a.close()
+
+#   b = $$.shell()
+#   b.execute [
+#     'gulp y'
+#   ], ignoreError: true
+#   $$.delay 1e4, -> b.close()

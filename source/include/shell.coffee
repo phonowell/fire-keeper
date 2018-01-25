@@ -10,12 +10,12 @@ class Shell
   ###
 
   bind: ->
-    @process.stdout.on 'data', (data) => @info data
     @process.stderr.on 'data', (data) => @info 'error', data
+    @process.stdout.on 'data', (data) => @info data
     @ # return
 
   close: ->
-    process.exit()
+    @process.kill()
     @ # return
 
   exec: require('child_process').exec

@@ -39,9 +39,11 @@ describe '$$.compile(source, [target], [option])', ->
 
     await clean()
 
-  it "$$.compile('./gulpfile.coffee')", ->
+  it "$$.compile('./temp/gulpfile.coffee')", ->
 
-    res = await $$.compile './gulpfile.coffee', './temp'
+    await $$.copy './gulpfile.coffee', './temp'
+
+    res = await $$.compile './temp/gulpfile.coffee'
 
     if res != $$
       throw new Error()
@@ -80,7 +82,7 @@ describe '$$.compile(source, [target], [option])', ->
 
     await clean()
 
-  it "$$.compile('./source/index.coffee', harmony: false)", ->
+  it "$$.compile('./temp/test.coffee', harmony: false)", ->
 
     await clean()
 
