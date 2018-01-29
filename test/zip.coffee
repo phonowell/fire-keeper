@@ -19,7 +19,7 @@ describe '$$.zip(source, [target], [option])', ->
 
     for key in ['a', 'b', 'c']
 
-      source = "#{base}/[test](test)#{key}.txt"
+      source = "#{base}/#{key}.txt"
       content = "test file #{key}"
 
       await $$.write source, content
@@ -27,9 +27,9 @@ describe '$$.zip(source, [target], [option])', ->
     res = await $$.zip './temp/*.txt', './temp', 'temp.zip'
 
     if res != $$
-      throw new Error()
+      throw new Error 0
 
     unless await $$.isExisted './temp/temp.zip'
-      throw new Error()
+      throw new Error 1
 
     await clean()

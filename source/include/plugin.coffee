@@ -1,6 +1,7 @@
 $p = {}
 
 for key in [
+  'archiver'
   'download'
   'gulp-changed'
   'gulp-clean-css'
@@ -19,9 +20,8 @@ for key in [
   'gulp-stylus'
   'gulp-unzip'
   'gulp-using'
-  'gulp-yaml'
-  'gulp-zip'
   'gulp-watch'
+  'gulp-yaml'
   'markdownlint'
   'yargs'
 ]

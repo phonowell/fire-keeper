@@ -1,10 +1,7 @@
-# https://github.com/sindresorhus/gulp-zip
-# https://github.com/inuscript/gulp-unzip
-
 ###
 
-  unzip(source, [target])
-  zip(source, target, option)
+unzip(source, [target])
+zip(source, [target], [option])
 
 ###
 
@@ -39,26 +36,64 @@ $$.zip = (arg...) ->
     when 3 then arg
     else throw makeError 'length'
 
+  _source = source
   source = formatPath source
 
   target or= path.dirname(source[0]).replace /\*/g, ''
   target = normalizePath target
 
-  filename = switch $.type option
-    when 'object' then option.filename
-    when 'string' then option
-    else null
+  [base, filename] = switch $.type option
+    when 'object' then [option.base, option.filename]
+    when 'string' then [null, option]
+    else [null, null]
+    
+  base or= if ~_source.search /\*/
+    _.trim (_source.replace /\*.*/, ''), '/'
+  else path.dirname _source
+  base = normalizePath base
+
   filename or= "#{path.basename target}.zip"
+  filename = "#{target}/#{filename}"
 
   await new Promise (resolve) ->
-    gulp.src source
-    .pipe plumber()
-    .pipe using()
-    .pipe zip filename
-    .pipe gulp.dest target
-    .on 'end', -> resolve()
+
+    output = fs.createWriteStream filename
+    archive = archiver 'zip',
+      zlib:
+        level: 9
+
+    output.on 'end', ->
+      $.i 'end'
+      $.i archive.pointer()
+
+    archive.on 'warning', (err) -> throw err
+    archive.on 'error', (err) -> throw err
+    
+    msg = null
+    archive.on 'entry', (e) -> msg = e.sourcePath
+      
+    archive.on 'progress', (e) ->
+      unless msg and a = e.entries
+        return
+      gray = colors.gray "(#{a.processed}/#{a.total})"
+      msg = "#{gray} '#{msg}'"
+      $.info 'zip', msg
+      msg = null
+      
+    archive.on 'end', -> resolve()
+
+    archive.pipe output
+
+    listSource = await $$.source source
+    for src in listSource
+      name = src.replace base, ''
+      archive.file src, {name}
+
+    archive.finalize()
 
   $.info 'zip'
-  , "zipped #{wrapList source} to #{wrapList target}, named as '#{filename}'"
+  , "zipped #{wrapList source}
+  to #{wrapList target},
+  named as '#{filename}'"
 
   $$ # return

@@ -70,7 +70,7 @@ $$.task 'test', ->
   target or= '**/*'
   source = "./test/#{target}.coffee"
 
-  #
+  # function
 
   clean = ->
     await $$.remove [
@@ -78,7 +78,7 @@ $$.task 'test', ->
       './test/**/*.map'
     ]
 
-  #
+  # execute
 
   await clean()
 
@@ -93,30 +93,14 @@ $$.task 'test', ->
   
   await clean()
 
-# $$.task 'x', ->
+$$.task 'z', ->
 
-#   i = 0
-#   setInterval ->
-#     $.info 'x', i++
-#   , 200
+  await $$.remove [
+    '~/Downloads/test.zip'
+    '~/Downloads/test'
+    './*.zip'
+  ]
 
-# $$.task 'y', ->
-
-#   i = 0
-#   setInterval ->
-#     $.info 'y', i--
-#   , 200
-
-# $$.task 'z', ->
-
-#   a = $$.shell()
-#   a.execute [
-#     'gulp x'
-#   ], ignoreError: true
-#   $$.delay 5e3, -> a.close()
-
-#   b = $$.shell()
-#   b.execute [
-#     'gulp y'
-#   ], ignoreError: true
-#   $$.delay 1e4, -> b.close()
+  await $$.zip './source/**/*.*'
+  , '~/Downloads'
+  , 'test.zip'

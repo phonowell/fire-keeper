@@ -39,7 +39,7 @@
 
   $p = {};
 
-  ref = ['download', 'gulp-changed', 'gulp-clean-css', 'gulp-coffee', 'gulp-coffeelint', 'gulp-htmlmin', 'gulp-ignore', 'gulp-include', 'gulp-livereload', 'gulp-markdown', 'gulp-plumber', 'gulp-pug', 'gulp-rename', 'gulp-sourcemaps', 'gulp-stylint', 'gulp-stylus', 'gulp-unzip', 'gulp-using', 'gulp-yaml', 'gulp-zip', 'gulp-watch', 'markdownlint', 'yargs'];
+  ref = ['archiver', 'download', 'gulp-changed', 'gulp-clean-css', 'gulp-coffee', 'gulp-coffeelint', 'gulp-htmlmin', 'gulp-ignore', 'gulp-include', 'gulp-livereload', 'gulp-markdown', 'gulp-plumber', 'gulp-pug', 'gulp-rename', 'gulp-sourcemaps', 'gulp-stylint', 'gulp-stylus', 'gulp-unzip', 'gulp-using', 'gulp-watch', 'gulp-yaml', 'markdownlint', 'yargs'];
   for (i = 0, len = ref.length; i < len; i++) {
     key = ref[i];
     name = _.camelCase(key.replace(/gulp-/, ''));
@@ -1451,12 +1451,10 @@
     return $$; // return
   };
 
-  // https://github.com/sindresorhus/gulp-zip
-  // https://github.com/inuscript/gulp-unzip
   /*
 
   unzip(source, [target])
-  zip(source, target, option)
+  zip(source, [target], [option])
 
   */
   $$.unzip = async function(source, target) {
@@ -1479,7 +1477,7 @@
   };
 
   $$.zip = async function(...arg) {
-    var filename, option, source, target;
+    var _source, base, filename, option, source, target;
     [source, target, option] = (function() {
       switch (arg.length) {
         case 1:
@@ -1492,24 +1490,67 @@
           throw makeError('length');
       }
     })();
+    _source = source;
     source = formatPath(source);
     target || (target = path.dirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
-    filename = (function() {
+    [base, filename] = (function() {
       switch ($.type(option)) {
         case 'object':
-          return option.filename;
+          return [option.base, option.filename];
         case 'string':
-          return option;
+          return [null, option];
         default:
-          return null;
+          return [null, null];
       }
     })();
+    base || (base = ~_source.search(/\*/) ? _.trim(_source.replace(/\*.*/, ''), '/') : path.dirname(_source));
+    base = normalizePath(base);
     filename || (filename = `${path.basename(target)}.zip`);
-    await new Promise(function(resolve) {
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(zip(filename)).pipe(gulp.dest(target)).on('end', function() {
+    filename = `${target}/${filename}`;
+    await new Promise(async function(resolve) {
+      var archive, j, len1, listSource, msg, output, src;
+      output = fs.createWriteStream(filename);
+      archive = archiver('zip', {
+        zlib: {
+          level: 9
+        }
+      });
+      output.on('end', function() {
+        $.i('end');
+        return $.i(archive.pointer());
+      });
+      archive.on('warning', function(err) {
+        throw err;
+      });
+      archive.on('error', function(err) {
+        throw err;
+      });
+      msg = null;
+      archive.on('entry', function(e) {
+        return msg = e.sourcePath;
+      });
+      archive.on('progress', function(e) {
+        var a, gray;
+        if (!(msg && (a = e.entries))) {
+          return;
+        }
+        gray = colors.gray(`(${a.processed}/${a.total})`);
+        msg = `${gray} '${msg}'`;
+        $.info('zip', msg);
+        return msg = null;
+      });
+      archive.on('end', function() {
         return resolve();
       });
+      archive.pipe(output);
+      listSource = (await $$.source(source));
+      for (j = 0, len1 = listSource.length; j < len1; j++) {
+        src = listSource[j];
+        name = src.replace(base, '');
+        archive.file(src, {name});
+      }
+      return archive.finalize();
     });
     $.info('zip', `zipped ${wrapList(source)} to ${wrapList(target)}, named as '${filename}'`);
     return $$; // return
