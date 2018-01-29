@@ -66,7 +66,7 @@ $$.zip = (arg...) ->
     archive.on 'error', (err) -> throw err
     
     msg = null
-    archive.on 'entry', (e) -> msg = e.sourcePath
+    archive.on 'entry', (e) -> msg = $.info.renderPath e.sourcePath
       
     archive.on 'progress', (e) ->
       if !msg then return

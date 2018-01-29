@@ -1526,7 +1526,7 @@
       });
       msg = null;
       archive.on('entry', function(e) {
-        return msg = e.sourcePath;
+        return msg = $.info.renderPath(e.sourcePath);
       });
       archive.on('progress', function(e) {
         var gray, magenta;
