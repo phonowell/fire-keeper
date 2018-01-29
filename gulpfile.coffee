@@ -86,21 +86,16 @@ $$.task 'test', ->
     map: true
     minify: false
   
-  for i in [1..10]
+  for i in [1..5]
     $.info 'test', "round '#{i}'"
     unless await $$.shell 'npm test'
       throw new Error()
   
   await clean()
 
+  await $$.say 'mission completed'
+
 $$.task 'z', ->
 
-  await $$.remove [
-    '~/Downloads/test.zip'
-    '~/Downloads/test'
-    './*.zip'
-  ]
-
-  await $$.zip './source/**/*.*'
-  , '~/Downloads'
-  , 'test.zip'
+  base = '~/OneDrive/临时'
+  await $$.zip "#{base}/**/*.*", '~/Downloads', 'OneDrive.zip'

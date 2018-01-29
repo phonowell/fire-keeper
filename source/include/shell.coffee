@@ -32,9 +32,12 @@ class Shell
 
       $.info 'shell', cmd
 
-      @process = @exec cmd, (err) ->
+      isIgnoreError = !!option.ignoreError
+      delete option.ignoreError
+
+      @process = @exec cmd, option, (err) ->
         if !err then return resolve true
-        if option.ignoreError then return resolve false
+        if isIgnoreError then return resolve false
         throw new Error err
       
       @bind()

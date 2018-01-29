@@ -62,10 +62,6 @@ $$.zip = (arg...) ->
       zlib:
         level: 9
 
-    output.on 'end', ->
-      $.i 'end'
-      $.i archive.pointer()
-
     archive.on 'warning', (err) -> throw err
     archive.on 'error', (err) -> throw err
     
@@ -73,11 +69,11 @@ $$.zip = (arg...) ->
     archive.on 'entry', (e) -> msg = e.sourcePath
       
     archive.on 'progress', (e) ->
-      unless msg and a = e.entries
-        return
-      gray = colors.gray "(#{a.processed}/#{a.total})"
-      msg = "#{gray} '#{msg}'"
-      $.info 'zip', msg
+      if !msg then return
+      gray = colors.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
+      magenta = colors.magenta msg
+      msg = "#{gray} #{magenta}"
+      $.i msg
       msg = null
       
     archive.on 'end', -> resolve()

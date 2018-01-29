@@ -1067,7 +1067,7 @@
 
       execute(cmd, option = {}) {
         return new Promise((resolve) => {
-          var type;
+          var isIgnoreError, type;
           type = $.type(cmd);
           cmd = (function() {
             switch (type) {
@@ -1080,11 +1080,13 @@
             }
           }).call(this);
           $.info('shell', cmd);
-          this.process = this.exec(cmd, function(err) {
+          isIgnoreError = !!option.ignoreError;
+          delete option.ignoreError;
+          this.process = this.exec(cmd, option, function(err) {
             if (!err) {
               return resolve(true);
             }
-            if (option.ignoreError) {
+            if (isIgnoreError) {
               return resolve(false);
             }
             throw new Error(err);
@@ -1516,10 +1518,6 @@
           level: 9
         }
       });
-      output.on('end', function() {
-        $.i('end');
-        return $.i(archive.pointer());
-      });
       archive.on('warning', function(err) {
         throw err;
       });
@@ -1531,13 +1529,14 @@
         return msg = e.sourcePath;
       });
       archive.on('progress', function(e) {
-        var a, gray;
-        if (!(msg && (a = e.entries))) {
+        var gray, magenta;
+        if (!msg) {
           return;
         }
-        gray = colors.gray(`(${a.processed}/${a.total})`);
-        msg = `${gray} '${msg}'`;
-        $.info('zip', msg);
+        gray = colors.gray(`${Math.floor(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`);
+        magenta = colors.magenta(msg);
+        msg = `${gray} ${magenta}`;
+        $.i(msg);
         return msg = null;
       });
       archive.on('end', function() {
