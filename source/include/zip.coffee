@@ -42,14 +42,23 @@ $$.zip = (arg...) ->
   target or= path.dirname(source[0]).replace /\*/g, ''
   target = normalizePath target
 
-  [base, filename] = switch $.type option
-    when 'object' then [option.base, option.filename]
-    when 'string' then [null, option]
-    else [null, null]
+  [base, filename, isSilent] = switch $.type option
+    when 'object' then [
+      option.base
+      option.filename
+      option.silent or option.isSilent
+    ]
+    when 'string' then [null, option, false]
+    else [null, null, false]
     
-  base or= if ~_source.search /\*/
-    _.trim (_source.replace /\*.*/, ''), '/'
-  else path.dirname _source
+  base or= do ->
+    _source = switch $.type _source
+      when 'array' then _source[0]
+      when 'string' then _source
+      else throw makeError 'type'
+    if ~_source.search /\*/
+      return _.trim (_source.replace /\*.*/, ''), '/'
+    path.dirname _source
   base = normalizePath base
 
   filename or= "#{path.basename target}.zip"
@@ -66,9 +75,12 @@ $$.zip = (arg...) ->
     archive.on 'error', (err) -> throw err
     
     msg = null
-    archive.on 'entry', (e) -> msg = $.info.renderPath e.sourcePath
+    archive.on 'entry', (e) ->
+      if isSilent then return
+      msg = $.info.renderPath e.sourcePath
       
     archive.on 'progress', (e) ->
+      if isSilent then return
       if !msg then return
       gray = colors.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
       magenta = colors.magenta msg

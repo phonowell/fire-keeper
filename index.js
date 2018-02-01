@@ -1479,7 +1479,7 @@
   };
 
   $$.zip = async function(...arg) {
-    var _source, base, filename, option, source, target;
+    var _source, base, filename, isSilent, option, source, target;
     [source, target, option] = (function() {
       switch (arg.length) {
         case 1:
@@ -1496,17 +1496,32 @@
     source = formatPath(source);
     target || (target = path.dirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
-    [base, filename] = (function() {
+    [base, filename, isSilent] = (function() {
       switch ($.type(option)) {
         case 'object':
-          return [option.base, option.filename];
+          return [option.base, option.filename, option.silent || option.isSilent];
         case 'string':
-          return [null, option];
+          return [null, option, false];
         default:
-          return [null, null];
+          return [null, null, false];
       }
     })();
-    base || (base = ~_source.search(/\*/) ? _.trim(_source.replace(/\*.*/, ''), '/') : path.dirname(_source));
+    base || (base = (function() {
+      _source = (function() {
+        switch ($.type(_source)) {
+          case 'array':
+            return _source[0];
+          case 'string':
+            return _source;
+          default:
+            throw makeError('type');
+        }
+      })();
+      if (~_source.search(/\*/)) {
+        return _.trim(_source.replace(/\*.*/, ''), '/');
+      }
+      return path.dirname(_source);
+    })());
     base = normalizePath(base);
     filename || (filename = `${path.basename(target)}.zip`);
     filename = `${target}/${filename}`;
@@ -1526,10 +1541,16 @@
       });
       msg = null;
       archive.on('entry', function(e) {
+        if (isSilent) {
+          return;
+        }
         return msg = $.info.renderPath(e.sourcePath);
       });
       archive.on('progress', function(e) {
         var gray, magenta;
+        if (isSilent) {
+          return;
+        }
         if (!msg) {
           return;
         }

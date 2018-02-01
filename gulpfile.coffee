@@ -95,7 +95,13 @@ $$.task 'test', ->
 
   await $$.say 'mission completed'
 
-$$.task 'z', ->
+# $$.task 'z', ->
 
-  base = '~/OneDrive/临时'
-  await $$.zip "#{base}/**/*.*", '~/Downloads', 'OneDrive.zip'
+#   listSource = [
+#     '~/OneDrive/**/*.*'
+#     '!~/OneDrive/程序/**/*.*'
+#   ]
+
+#   await $$.zip listSource, '~/Downloads',
+#     filename: 'OneDrive.zip'
+#     silent: true
