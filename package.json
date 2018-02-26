@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.99",
+  "version": "0.0.100",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/phonowell/fire-keeper",
   "devDependencies": {
-    "mocha": "^5.0.0"
+    "mocha": "^5.0.1"
   },
   "dependencies": {
     "archiver": "^2.1.1",

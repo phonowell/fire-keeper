@@ -1043,23 +1043,12 @@
   Shell = (function() {
     class Shell {
       /*
-      bind()
       close()
-      exec
       execute(cmd, [option])
       info([type], string)
       separator
+      spawn
       */
-      bind() {
-        this.process.stderr.on('data', (data) => {
-          return this.info('error', data);
-        });
-        this.process.stdout.on('data', (data) => {
-          return this.info(data);
-        });
-        return this;
-      }
-
       close() {
         this.process.kill();
         return this;
@@ -1067,7 +1056,7 @@
 
       execute(cmd, option = {}) {
         return new Promise((resolve) => {
-          var isIgnoreError, type;
+          var arg, cmder, isIgnoreError, type;
           type = $.type(cmd);
           cmd = (function() {
             switch (type) {
@@ -1082,16 +1071,21 @@
           $.info('shell', cmd);
           isIgnoreError = !!option.ignoreError;
           delete option.ignoreError;
-          this.process = this.exec(cmd, option, function(err) {
-            if (!err) {
+          [cmder, arg] = $$.os === 'windows' ? ['cmd.exe', ['/s', '/c', `"${cmd}"`]] : ['/bin/sh', ['-c', cmd]];
+          this.process = this.spawn(cmder, arg, option);
+          // bind
+          this.process.stderr.on('data', (data) => {
+            return this.info('error', data);
+          });
+          this.process.stdout.on('data', (data) => {
+            return this.info(data);
+          });
+          return this.process.on('close', function(code) {
+            if (code === 0 || isIgnoreError) {
               return resolve(true);
             }
-            if (isIgnoreError) {
-              return resolve(false);
-            }
-            throw new Error(err);
+            return resolve(false);
           });
-          return this.bind();
         });
       }
 
@@ -1120,13 +1114,10 @@
               return colors.gray(string);
           }
         })();
-        // string = $.info.renderColor string
         return $.log(string);
       }
 
     };
-
-    Shell.prototype.exec = require('child_process').exec;
 
     Shell.prototype.separator = (function() {
       var platform;
@@ -1138,6 +1129,8 @@
           return '&&';
       }
     })();
+
+    Shell.prototype.spawn = require('child_process').spawn;
 
     return Shell;
 

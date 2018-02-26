@@ -95,13 +95,14 @@ $$.task 'test', ->
 
   await $$.say 'mission completed'
 
+# $$.task 'x', -> throw new Error()
+# $$.task 'y', -> $.i 'Y'
+
 # $$.task 'z', ->
 
-#   listSource = [
-#     '~/OneDrive/**/*.*'
-#     '!~/OneDrive/程序/**/*.*'
-#   ]
+#   res = await $$.shell [
+#     'gulp x'
+#     'gulp y'
+#   ], ignoreError: true
 
-#   await $$.zip listSource, '~/Downloads',
-#     filename: 'OneDrive.zip'
-#     silent: true
+#   $.info res

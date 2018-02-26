@@ -1,24 +1,16 @@
 class Shell
 
   ###
-  bind()
   close()
-  exec
   execute(cmd, [option])
   info([type], string)
   separator
+  spawn
   ###
-
-  bind: ->
-    @process.stderr.on 'data', (data) => @info 'error', data
-    @process.stdout.on 'data', (data) => @info data
-    @ # return
 
   close: ->
     @process.kill()
     @ # return
-
-  exec: require('child_process').exec
 
   execute: (cmd, option = {}) ->
 
@@ -35,12 +27,28 @@ class Shell
       isIgnoreError = !!option.ignoreError
       delete option.ignoreError
 
-      @process = @exec cmd, option, (err) ->
-        if !err then return resolve true
-        if isIgnoreError then return resolve false
-        throw new Error err
+      [cmder, arg] = if $$.os == 'windows'
+        [
+          'cmd.exe'
+          ['/s', '/c', "\"#{cmd}\""]
+        ]
+      else
+        [
+          '/bin/sh'
+          ['-c', cmd]
+        ]
+
+      @process = @spawn cmder, arg, option
+
+      # bind
       
-      @bind()
+      @process.stderr.on 'data', (data) => @info 'error', data
+      @process.stdout.on 'data', (data) => @info data
+
+      @process.on 'close', (code) ->
+        if code == 0 or isIgnoreError
+          return resolve true
+        resolve false
 
   info: (arg...) ->
 
@@ -60,8 +68,6 @@ class Shell
       when 'error' then colors.red string
       else colors.gray string
 
-    # string = $.info.renderColor string
-
     $.log string
 
   separator: do ->
@@ -69,6 +75,8 @@ class Shell
     switch platform
       when 'win32' then '&'
       else '&&'
+
+  spawn: require('child_process').spawn
 
 # return
 $$.shell = (cmd, option) ->
