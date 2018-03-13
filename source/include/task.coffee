@@ -1,7 +1,5 @@
 ###
-
-  cloneGitHub(name)
-
+cloneGitHub(name)
 ###
 
 fetchGitHub = (name) ->
@@ -20,9 +18,7 @@ fetchGitHub = (name) ->
   #{source}"
 
 ###
-
-  task(name, [fn])
-
+task(name, [fn])
 ###
 
 # task
@@ -37,15 +33,13 @@ $$.task = (arg...) ->
 # added default tasks
 
 ###
-
-  check()
-  default()
-  gurumin()
-  kokoro()
-  noop()
-  prune()
-  update()
-
+check()
+default()
+gurumin()
+kokoro()
+noop()
+prune()
+update()
 ###
 
 $$.task 'check', ->
@@ -137,6 +131,7 @@ $$.task 'prune', ->
 
   listFile = [
     '.DS_Store'
+    '.appveyor.yml'
     '.babelrc'
     '.coveralls.yml'
     '.documentup.json'
@@ -144,10 +139,19 @@ $$.task 'prune', ->
     '.eslintignore'
     '.eslintrc'
     '.eslintrc.js'
+    '.eslintrc.json'
     '.flowconfig'
     '.gitattributes'
+    '.gitlab-ci.yml'
+    '.htmllintrc'
     '.jshintrc'
+    '.lint'
     '.npmignore'
+    '.stylelintrc'
+    '.stylelintrc.js'
+    '.stylelintrc.json'
+    '.stylelintrc.yaml'
+    '.stylelintrc.yml'
     '.tern-project'
     '.travis.yml'
     '.yarn-integrity'
@@ -165,6 +169,14 @@ $$.task 'prune', ->
     '_config.yml'
     'appveyor.yml'
     'circle.yml'
+    'eslint'
+    'gulpfile.js'
+    'htmllint.js'
+    'jest.config.js'
+    'karma.conf.js'
+    'license'
+    'stylelint.config.js'
+    'tsconfig.json'
   ]
 
   listSource = ("#{base}/**/#{line}" for line in listFile)
@@ -200,6 +212,7 @@ $$.task 'prune', ->
   listExtension = [
     '.coffee'
     '.jst'
+    '.markdown'
     '.md'
     '.swp'
     '.tgz'

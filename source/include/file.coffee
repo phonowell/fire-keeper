@@ -1,19 +1,17 @@
 ###
-
-  copy(source, target, [option])
-  isChanged(source)
-  isExisted(source)
-  isSame(source, target)
-  link(source, target)
-  mkdir(source)
-  move(source, target)
-  read(source, [option])
-  remove(source)
-  rename(source, option)
-  source(source)
-  stat(source)
-  write(source, data)
-
+copy(source, target, [option])
+isChanged(source)
+isExisted(source)
+isSame(source, target)
+link(source, target)
+mkdir(source)
+move(source, target)
+read(source, [option])
+remove(source)
+rename(source, option)
+source(source)
+stat(source)
+write(source, data)
 ###
 
 $$.copy = (arg...) ->

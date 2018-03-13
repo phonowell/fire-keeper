@@ -1,7 +1,5 @@
 ###
-
-  lint(source)
-
+lint(source)
 ###
 
 do ->
@@ -26,11 +24,9 @@ do ->
     $$ # return
 
   ###
-
-    coffee(source)
-    markdown(source)
-    stylus(source)
-
+  coffee(source)
+  markdown(source)
+  stylus(source)
   ###
 
   fn.coffee = (source) ->

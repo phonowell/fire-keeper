@@ -1,7 +1,5 @@
 ###
-
-  update()
-
+update()
 ###
 
 do ->
@@ -9,11 +7,9 @@ do ->
   # function
 
   ###
-
-    addCmd(list, data, isDev, option)
-    clean()
-    getLatestVersion(name, option)
-
+  addCmd(list, data, isDev, option)
+  clean()
+  getLatestVersion(name, option)
   ###
 
   addCmd = (list, data, isDev, option) ->
@@ -39,6 +35,7 @@ do ->
       cmd = []
       cmd.push 'npm install'
       cmd.push "#{name}@#{latest}"
+      cmd.push '--production'
       if registry
         cmd.push "--registry #{registry}"
       cmd.push if isDev

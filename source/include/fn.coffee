@@ -1,13 +1,11 @@
 ###
-
-  excludeInclude(source)
-  formatArgument(arg)
-  formatPath(source)
-  getRelativePath(source, target)
-  makeError(msg)
-  normalizePath(source)
-  wrapList(list)
-
+excludeInclude(source)
+formatArgument(arg)
+formatPath(source)
+getRelativePath(source, target)
+makeError(msg)
+normalizePath(source)
+wrapList(list)
 ###
 
 excludeInclude = (source) ->

@@ -1,9 +1,7 @@
 # https://github.com/kevva/download
 
 ###
-
-  download(source, target, [option])
-
+download(source, target, [option])
 ###
 
 $$.download = (arg...) ->

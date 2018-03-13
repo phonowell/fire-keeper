@@ -1,7 +1,5 @@
 ###
-
-  say(text)
-
+say(text)
 ###
 
 $$.say = (text) ->

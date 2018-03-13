@@ -1,10 +1,8 @@
 ###
-
-  delay([time], [callback])
-  reload(source)
-  watch(source)
-  yargs()
-
+delay([time], [callback])
+reload(source)
+watch(source)
+yargs()
 ###
 
 $$.delay = (time = 0, callback) ->

@@ -1,8 +1,6 @@
 ###
-
 unzip(source, [target])
 zip(source, [target], [option])
-
 ###
 
 $$.unzip = (source, target) ->

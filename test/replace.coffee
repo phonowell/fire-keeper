@@ -10,9 +10,7 @@ clean = -> await $$.remove './temp'
 # test
 
 ###
-
 replace(source, option...)
-
 ###
 
 describe '$$.replace(source, option...)', ->

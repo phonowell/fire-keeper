@@ -6,10 +6,8 @@ $$ = require './../index'
 # function
 
 ###
-
-  check(source, target, contSource)
-  clean()
-
+check(source, target, contSource)
+clean()
 ###
 
 check = (source, target, contSource) ->
@@ -29,15 +27,13 @@ clean = -> await $$.remove './temp'
 # test
 
 ###
+‘./temp/a.txt’, 'b.txt'
+'./temp/a.txt', {extname: '.md', suffix: '-test'}
+'./temp/*.txt', extname: '.md'
 
-  ‘./temp/a.txt’, 'b.txt'
-  './temp/a.txt', {extname: '.md', suffix: '-test'}
-  './temp/*.txt', extname: '.md'
-
-  './temp/a', 'b'
-  './temp/a', suffix: '-test'
-  './temp/**', suffix: '-test'
-
+'./temp/a', 'b'
+'./temp/a', suffix: '-test'
+'./temp/**', suffix: '-test'
 ###
 
 describe '$$.rename(source, option)', ->

@@ -1,7 +1,5 @@
 ###
-
 replace(source, option...)
-
 ###
 
 $$.replace = (source, option...) ->

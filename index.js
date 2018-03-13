@@ -1,7 +1,6 @@
 (function() {
   // require
   /*
-
   excludeInclude(source)
   formatArgument(arg)
   formatPath(source)
@@ -9,12 +8,9 @@
   makeError(msg)
   normalizePath(source)
   wrapList(list)
-
   */
   /*
-
-    cloneGitHub(name)
-
+  cloneGitHub(name)
   */
   var $, $$, $p, SSH, Shell, _, colors, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
@@ -61,11 +57,9 @@
   $$.plugin = $p;
 
   /*
-
-    argv
-    os
-    path
-
+  argv
+  os
+  path
   */
   $$.argv = $p.yargs.argv;
 
@@ -217,9 +211,7 @@
   };
 
   /*
-
   task(name, [fn])
-
   */
   // task
   $$.task = function(...arg) {
@@ -235,15 +227,13 @@
 
   // added default tasks
   /*
-
-    check()
-    default()
-    gurumin()
-    kokoro()
-    noop()
-    prune()
-    update()
-
+  check()
+  default()
+  gurumin()
+  kokoro()
+  noop()
+  prune()
+  update()
   */
   $$.task('check', async function() {
     var cont, ext, j, k, len1, len2, listCont, listExt, listSource, results, source;
@@ -325,7 +315,7 @@
     await $$.shell('npm prune');
     base = './node_modules';
     // file
-    listFile = ['.DS_Store', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.flowconfig', '.gitattributes', '.jshintrc', '.npmignore', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml'];
+    listFile = ['.DS_Store', '.appveyor.yml', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.flowconfig', '.gitattributes', '.gitlab-ci.yml', '.htmllintrc', '.jshintrc', '.lint', '.npmignore', '.stylelintrc', '.stylelintrc.js', '.stylelintrc.json', '.stylelintrc.yaml', '.stylelintrc.yml', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml', 'eslint', 'gulpfile.js', 'htmllint.js', 'jest.config.js', 'karma.conf.js', 'license', 'stylelint.config.js', 'tsconfig.json'];
     listSource = (function() {
       var j, len1, results;
       results = [];
@@ -349,7 +339,7 @@
     })();
     await $$.remove(listSource);
     // extension
-    listExtension = ['.coffee', '.jst', '.md', '.swp', '.tgz', '.ts'];
+    listExtension = ['.coffee', '.jst', '.markdown', '.md', '.swp', '.tgz', '.ts'];
     listSource = (function() {
       var j, len1, results;
       results = [];
@@ -370,10 +360,8 @@
   });
 
   /*
-
   backup(source)
   recover(source)
-
   */
   $$.backup = async function(source) {
     var extname, j, len1, src, suffix;
@@ -412,10 +400,13 @@
     return $$;
   };
 
+  /*
+  chain(fn, option)
+  */
+  $$.chain = require('achain');
+
   (function() {    /*
-
     compile(source, [target], [option])
-
     */
     var fn;
     // function
@@ -477,7 +468,6 @@
       return $$;
     };
     /*
-
     coffee(source, target, option)
     css(source, target, option)
     js(source, target, option)
@@ -485,7 +475,6 @@
     pug(source, target, option)
     stylus(source, target, option)
     yaml(source, target, option)
-
     */
     fn.coffee = function(source, target, option) {
       return new Promise(function(resolve) {
@@ -567,9 +556,7 @@
 
   // https://github.com/kevva/download
   /*
-
   download(source, target, [option])
-
   */
   $$.download = async function(...arg) {
     var msg, option, source, target;
@@ -599,7 +586,6 @@
   };
 
   /*
-
   copy(source, target, [option])
   isChanged(source)
   isExisted(source)
@@ -613,7 +599,6 @@
   source(source)
   stat(source)
   write(source, data)
-
   */
   $$.copy = async function(...arg) {
     var msg, option, source, target;
@@ -875,9 +860,7 @@
   };
 
   (function() {    /*
-
     lint(source)
-
     */
     var fn;
     // function
@@ -904,11 +887,9 @@
       return $$; // return
     };
     /*
-
     coffee(source)
     markdown(source)
     stylus(source)
-
     */
     fn.coffee = function(source) {
       return new Promise(function(resolve) {
@@ -968,9 +949,7 @@
   })();
 
   /*
-
   replace(source, option...)
-
   */
   $$.replace = async function(source, ...option) {
     var callback, cont, j, len1, listSource, msg, reg, replacement, res, src;
@@ -1006,9 +985,7 @@
   };
 
   /*
-
   say(text)
-
   */
   $$.say = async function(text) {
     var j, len1, listMessage, msg;
@@ -1153,17 +1130,15 @@
     }
 
     /*
-
-      connect(option)
-      disconnect()
-      info(chunk)
-      mkdir(source)
-      remove(source)
-      shell(cmd, [option])
-      upload(source, target, [option])
-      uploadDir(sftp, source, target)
-      uploadFile(sftp, source, target)
-
+    connect(option)
+    disconnect()
+    info(chunk)
+    mkdir(source)
+    remove(source)
+    shell(cmd, [option])
+    upload(source, target, [option])
+    uploadDir(sftp, source, target)
+    uploadFile(sftp, source, target)
     */
     connect(option) {
       return new Promise((resolve) => {
@@ -1341,18 +1316,14 @@
   $$.ssh = new SSH();
 
   (function() {    /*
-
-      update()
-
+    update()
     */
     var addCmd, clean, fn, getLatestVersion;
     // function
     /*
-
-      addCmd(list, data, isDev, option)
-      clean()
-      getLatestVersion(name, option)
-
+    addCmd(list, data, isDev, option)
+    clean()
+    getLatestVersion(name, option)
     */
     addCmd = async function(list, data, isDev, option) {
       var cmd, current, latest, registry, results, version;
@@ -1372,6 +1343,7 @@
         cmd = [];
         cmd.push('npm install');
         cmd.push(`${name}@${latest}`);
+        cmd.push('--production');
         if (registry) {
           cmd.push(`--registry ${registry}`);
         }
@@ -1427,9 +1399,7 @@
 
   // https://github.com/jprichardson/node-klaw
   /*
-
   walk(source, callback)
-
   */
   $$.walk = async function(source, callback) {
     if (!(source && callback)) {
@@ -1447,10 +1417,8 @@
   };
 
   /*
-
   unzip(source, [target])
   zip(source, [target], [option])
-
   */
   $$.unzip = async function(source, target) {
     var dist, j, len1, src;
@@ -1570,12 +1538,10 @@
   };
 
   /*
-
   delay([time], [callback])
   reload(source)
   watch(source)
   yargs()
-
   */
   $$.delay = async function(time = 0, callback) {
     await new Promise(function(resolve) {

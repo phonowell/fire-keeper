@@ -1,9 +1,7 @@
 ###
-
-  argv
-  os
-  path
-
+argv
+os
+path
 ###
 
 $$.argv = $p.yargs.argv

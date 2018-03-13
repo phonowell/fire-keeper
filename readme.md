@@ -20,6 +20,7 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
 
 >
     $$.backup(source)
+    $$.chain(fn, option)
     $$.compile(source, [target], [option])
     $$.copy(source, target, [option])
     $$.delay([time], [callback])

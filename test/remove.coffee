@@ -25,7 +25,6 @@ describe '$$.remove(source)', ->
 
     await clean()
 
-
   it "$$.remove(['./temp/a', './temp/b', './temp/c.txt'])", ->
 
     await $$.mkdir [

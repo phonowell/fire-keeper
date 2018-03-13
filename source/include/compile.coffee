@@ -1,7 +1,5 @@
 ###
-
-  compile(source, [target], [option])
-
+compile(source, [target], [option])
 ###
 
 do ->
@@ -49,15 +47,13 @@ do ->
     $$
 
   ###
-
-    coffee(source, target, option)
-    css(source, target, option)
-    js(source, target, option)
-    markdown(source, target, option)
-    pug(source, target, option)
-    stylus(source, target, option)
-    yaml(source, target, option)
-
+  coffee(source, target, option)
+  css(source, target, option)
+  js(source, target, option)
+  markdown(source, target, option)
+  pug(source, target, option)
+  stylus(source, target, option)
+  yaml(source, target, option)
   ###
 
   fn.coffee = (source, target, option) ->

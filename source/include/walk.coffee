@@ -1,9 +1,7 @@
 # https://github.com/jprichardson/node-klaw
 
 ###
-
-  walk(source, callback)
-
+walk(source, callback)
 ###
 
 $$.walk = (source, callback) ->

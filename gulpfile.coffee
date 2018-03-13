@@ -21,13 +21,11 @@ $$ = require './index'
 # task
 
 ###
-
-  build()
-  compile()
-  lint()
-  set(ver)
-  test()
-
+build()
+compile()
+lint()
+set(ver)
+test()
 ###
 
 $$.task 'build', ->
@@ -98,11 +96,8 @@ $$.task 'test', ->
 # $$.task 'x', -> throw new Error()
 # $$.task 'y', -> $.i 'Y'
 
-# $$.task 'z', ->
+$$.task 'z', ->
 
-#   res = await $$.shell [
-#     'gulp x'
-#     'gulp y'
-#   ], ignoreError: true
-
-#   $.info res
+  await $$.chain $$.remove './temp'
+  .remove './tepm'
+  .say 'mission completed'

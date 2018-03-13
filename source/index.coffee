@@ -7,6 +7,7 @@
 #= include include/task.coffee
 
 #= include include/backup.coffee
+#= include include/chain.coffee
 #= include include/compile.coffee
 #= include include/download.coffee
 #= include include/file.coffee

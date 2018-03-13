@@ -5,17 +5,15 @@ class SSH
   constructor: -> @
 
   ###
-
-    connect(option)
-    disconnect()
-    info(chunk)
-    mkdir(source)
-    remove(source)
-    shell(cmd, [option])
-    upload(source, target, [option])
-    uploadDir(sftp, source, target)
-    uploadFile(sftp, source, target)
-
+  connect(option)
+  disconnect()
+  info(chunk)
+  mkdir(source)
+  remove(source)
+  shell(cmd, [option])
+  upload(source, target, [option])
+  uploadDir(sftp, source, target)
+  uploadFile(sftp, source, target)
   ###
 
   connect: (option) ->

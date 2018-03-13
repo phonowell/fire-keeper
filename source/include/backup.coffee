@@ -1,8 +1,6 @@
 ###
-
-  backup(source)
-  recover(source)
-
+backup(source)
+recover(source)
 ###
 
 $$.backup = (source) ->
