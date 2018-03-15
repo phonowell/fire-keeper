@@ -14,9 +14,13 @@ $$.replace = (source, option...) ->
     when 2 then [reg, replacement] = option
     else throw makeError 'length'
 
-  $.info.pause '$$.replace'
+  msg = if callback
+    'replaced with function'
+  else "replaced '#{reg}' to '#{replacement}'"
 
   for src in listSource
+
+    $.info.pause '$$.replace'
     
     cont = $.parseString await $$.read src
 
@@ -24,18 +28,11 @@ $$.replace = (source, option...) ->
       $.parseString callback cont
     else cont.replace reg, replacement
 
-    if res == cont
-      continue
+    if res == cont then continue
 
     await $$.write src, res
 
-  $.info.resume '$$.replace'
-
-  msg = if callback
-    'replaced with function'
-  else "replaced '#{reg}' to '#{replacement}'"
-  msg += ", in #{wrapList source}"
-
-  $.info 'replace', msg
+    $.info.resume '$$.replace'
+    $.info 'replace', "#{msg}, in '#{src}'"
 
   $$ # return

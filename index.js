@@ -733,7 +733,7 @@
     await $$.copy(source, target);
     await $$.remove(source);
     $.info.resume('$$.move');
-    $.info('move', `moved ${wrapList(source)} to ${target}`);
+    $.info('move', `moved ${wrapList(source)} to '${target}'`);
     return $$; // return
   };
 
@@ -761,9 +761,16 @@
       switch (path.extname(source).slice(1)) {
         case 'json':
           return $.parseJSON(res);
+        case 'coffee':
+        case 'css':
         case 'html':
+        case 'js':
         case 'md':
+        case 'pug':
+        case 'sh':
+        case 'styl':
         case 'txt':
+        case 'xml':
         case 'yaml':
         case 'yml':
           return $.parseString(res);
@@ -967,20 +974,19 @@
       default:
         throw makeError('length');
     }
-    $.info.pause('$$.replace');
+    msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
     for (j = 0, len1 = listSource.length; j < len1; j++) {
       src = listSource[j];
+      $.info.pause('$$.replace');
       cont = $.parseString((await $$.read(src)));
       res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
       if (res === cont) {
         continue;
       }
       await $$.write(src, res);
+      $.info.resume('$$.replace');
+      $.info('replace', `${msg}, in '${src}'`);
     }
-    $.info.resume('$$.replace');
-    msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
-    msg += `, in ${wrapList(source)}`;
-    $.info('replace', msg);
     return $$; // return
   };
 

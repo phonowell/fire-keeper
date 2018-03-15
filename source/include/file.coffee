@@ -142,7 +142,7 @@ $$.move = (source, target) ->
   $.info.resume '$$.move'
 
   $.info 'move'
-  , "moved #{wrapList source} to #{target}"
+  , "moved #{wrapList source} to '#{target}'"
 
   $$ # return
 
@@ -168,7 +168,7 @@ $$.read = (source, option = {}) ->
   
   res = switch path.extname(source)[1...]
     when 'json' then $.parseJSON res
-    when 'html', 'md', 'txt', 'yaml', 'yml'
+    when 'coffee', 'css', 'html', 'js', 'md', 'pug', 'sh', 'styl', 'txt', 'xml', 'yaml', 'yml'
       $.parseString res
     else res
 

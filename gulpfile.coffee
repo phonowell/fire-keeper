@@ -93,11 +93,4 @@ $$.task 'test', ->
 
   await $$.say 'mission completed'
 
-# $$.task 'x', -> throw new Error()
-# $$.task 'y', -> $.i 'Y'
-
-$$.task 'z', ->
-
-  await $$.chain $$.remove './temp'
-  .remove './tepm'
-  .say 'mission completed'
+# $$.task 'z', ->
