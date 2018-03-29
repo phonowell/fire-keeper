@@ -3,6 +3,10 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
 ###
@@ -22,26 +26,17 @@ check = (source, target, contSource) ->
   if contTarget != contSource
     throw new Error 'cont'
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
-###
-‘./temp/a.txt’, 'b.txt'
-'./temp/a.txt', {extname: '.md', suffix: '-test'}
-'./temp/*.txt', extname: '.md'
-
-'./temp/a', 'b'
-'./temp/a', suffix: '-test'
-'./temp/**', suffix: '-test'
-###
-
 describe '$$.rename(source, option)', ->
 
-  it "$$.rename('./temp/a.txt', 'b.txt')", ->
+  it "$$.rename('#{temp}/a.txt', 'b.txt')", ->
+    await clean()
 
-    source = './temp/a.txt'
-    target = './temp/b.txt'
+    source = "#{temp}/a.txt"
+    target = "#{temp}/b.txt"
     contSource = 'to be renamed'
 
     await $$.write source, contSource
@@ -55,10 +50,11 @@ describe '$$.rename(source, option)', ->
 
     await clean()
 
-  it "$$.rename('./temp/a.txt', {extname: '.md', suffix: '-test'})", ->
+  it "$$.rename('#{temp}/a.txt', {extname: '.md', suffix: '-test'})", ->
+    await clean()
 
-    source = './temp/a.txt'
-    target = './temp/a-test.md'
+    source = "#{temp}/a.txt"
+    target = "#{temp}/a-test.md"
     contSource = 'to be renamed'
 
     await $$.write source, contSource
@@ -74,7 +70,8 @@ describe '$$.rename(source, option)', ->
 
     await clean()
 
-  it "$$.rename('./temp/*.txt', extname: '.md')", ->
+  it "$$.rename('#{temp}/*.txt', extname: '.md')", ->
+    await clean()
 
     listFilename = ($.parseString i for i in [0...5])
 
@@ -83,7 +80,7 @@ describe '$$.rename(source, option)', ->
       contSource = filename
       await $$.write source, contSource
 
-    res = await $$.rename './temp/*.txt',
+    res = await $$.rename "#{temp}/*.txt",
       extname: '.md'
 
     if res != $$

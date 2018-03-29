@@ -3,22 +3,25 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.recover(source)', ->
 
-  it "$$.recover('./temp/readme.md')", ->
-
+  it "$$.recover('#{temp}/readme.md')", ->
     await clean()
 
-    source = './temp/readme.md'
-    target = './temp/readme.md.bak'
+    source = "#{temp}/readme.md"
+    target = "#{temp}/readme.md.bak"
 
-    await $$.copy './readme.md', './temp'
+    await $$.copy './readme.md', temp
 
     await $$.backup source
 

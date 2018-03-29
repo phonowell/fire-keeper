@@ -3,17 +3,22 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.stat(source)', ->
 
   it '$$.stat("./temp/package.json")', ->
+    await clean()
 
-    await $$.copy './package.json', './temp'
+    await $$.copy './package.json', temp
 
     stat = await $$.stat './package.json'
 
@@ -29,8 +34,11 @@ describe '$$.stat(source)', ->
     await clean()
 
   it '$$.stat("./temp/null.txt")', ->
+    await clean()
 
-    stat = await $$.stat './temp/null.txt'
+    stat = await $$.stat "#{temp}/null.txt"
 
     if stat?
       throw new Error()
+
+    await clean()

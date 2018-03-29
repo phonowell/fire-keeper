@@ -3,19 +3,22 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.unzip(source, [target])', ->
 
-  it "$$.unzip('./temp/*.zip')", ->
-
+  it "$$.unzip('#{temp}/*.zip')", ->
     await clean()
 
-    base = './temp'
+    base = temp
 
     listSource = []
     for key in ['a', 'b', 'c']

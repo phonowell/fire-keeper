@@ -3,20 +3,25 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.copy(source, target, [option])', ->
 
-  it "$$.copy('./license.md', './temp', 'test.md')", ->
+  it "$$.copy('./license.md', '#{temp}', 'test.md')", ->
+    await clean()
 
     source = './license.md'
-    target = './temp/test.md'
+    target = "#{temp}/test.md"
 
-    res = await $$.copy source, './temp', 'test.md'
+    res = await $$.copy source, temp, 'test.md'
 
     if res != $$
       throw new Error()
@@ -32,12 +37,13 @@ describe '$$.copy(source, target, [option])', ->
 
     await clean()
 
-  it "$$.copy('./license.md', './temp/new')", ->
+  it "$$.copy('./license.md', '#{temp}/new')", ->
+    await clean()
 
     source = './license.md'
-    target = './temp/new/license.md'
+    target = "#{temp}/new/license.md"
 
-    res = await $$.copy source, './temp/new'
+    res = await $$.copy source, "#{temp}/new"
 
     if res != $$
       throw new Error()
@@ -54,6 +60,7 @@ describe '$$.copy(source, target, [option])', ->
     await clean()
 
   it "$$.copy('./license.md', '~/Downloads/temp')", ->
+    await clean()
 
     if $$.os != 'macos' then return
 
@@ -76,10 +83,11 @@ describe '$$.copy(source, target, [option])', ->
 
     await $$.remove '~/Downloads/temp'
 
-  it "$$.copy('./temp/a.txt', null, 'b.txt')", ->
+  it "$$.copy('#{temp}/a.txt', null, 'b.txt')", ->
+    await clean()
 
-    source = './temp/a.txt'
-    target = './temp/b.txt'
+    source = "#{temp}/a.txt"
+    target = "#{temp}/b.txt"
     string = 'a string to be copied'
 
     await $$.write source, string

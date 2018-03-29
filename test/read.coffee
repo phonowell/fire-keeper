@@ -3,17 +3,22 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.read(source, [option])', ->
 
-  it "$$.read('./temp/test.txt')", ->
+  it "$$.read('#{temp}/test.txt')", ->
+    await clean()
 
-    source = './temp/test.txt'
+    source = "#{temp}/test.txt"
     string = 'a test message'
 
     await $$.write source, string
@@ -25,9 +30,10 @@ describe '$$.read(source, [option])', ->
 
     await clean()
 
-  it "$$.read('./temp/test.json')", ->
+  it "$$.read('#{temp}/test.json')", ->
+    await clean()
 
-    source = './temp/test.json'
+    source = "#{temp}/test.json"
     string = 'a test message'
     object = message: string
 
@@ -40,16 +46,20 @@ describe '$$.read(source, [option])', ->
 
     await clean()
 
-  it "$$.read('./temp/null.txt')", ->
+  it "$$.read('#{temp}/null.txt')", ->
+    await clean()
 
-    cont = await $$.read './temp/null.txt'
+    cont = await $$.read "#{temp}/null.txt"
 
     if cont?
       throw new Error()
+    
+    await clean()
 
-  it "$$.read('./temp/text.txt', raw: true)", ->
+  it "$$.read('#{temp}/text.txt', raw: true)", ->
+    await clean()
 
-    source = './temp/test.json'
+    source = "#{temp}/test.json"
     string = 'a test message'
 
     await $$.write source, string

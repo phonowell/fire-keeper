@@ -3,30 +3,35 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.backup(source)', ->
 
-  it "$$.backup(['./temp/license.md', './temp/readme.md'])", ->
+  it "$$.backup(['#{temp}/license.md', '#{temp}/readme.md'])", ->
+    await clean()
 
     listSource = [
-      './temp/license.md'
-      './temp/readme.md'
+      "#{temp}/license.md"
+      "#{temp}/readme.md"
     ]
 
     listTarget = [
-      './temp/license.md.bak'
-      './temp/readme.md.bak'
+      "#{temp}/license.md.bak"
+      "#{temp}/readme.md.bak"
     ]
 
     await $$.copy [
       './license.md'
       './readme.md'
-    ], './temp'
+    ], temp
 
     res = await $$.backup listSource
 

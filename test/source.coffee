@@ -3,22 +3,30 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.source(source)', ->
 
   it "$$.source('./*.md')", ->
+    await clean()
 
     listSource = await $$.source './*.md'
 
     if listSource.length != 2
       throw new Error()
 
+    await clean()
+
   it "$$.source('~/Desktop/*.md')", ->
+    await clean()
 
     content = 'test text'
     listTarget = [
@@ -37,3 +45,4 @@ describe '$$.source(source)', ->
 
     # clean
     await $$.remove listTarget
+    await clean()

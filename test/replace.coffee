@@ -3,9 +3,13 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
@@ -15,8 +19,7 @@ replace(source, option...)
 
 describe '$$.replace(source, option...)', ->
 
-  it "$$.replace('./temp/*.txt', 'to be replaced', 'replaced')", ->
-
+  it "$$.replace('#{temp}/*.txt', 'to be replaced', 'replaced')", ->
     await clean()
 
     listName = ['a', 'b', 'c', 'd']
@@ -27,7 +30,7 @@ describe '$$.replace(source, option...)', ->
     for filename in listName
       await $$.write "./temp/#{filename}.txt", sourceData
 
-    res = await $$.replace './temp/*.txt', sourceData, targetData
+    res = await $$.replace "#{temp}/*.txt", sourceData, targetData
 
     if res != $$
       throw new Error()
@@ -41,8 +44,7 @@ describe '$$.replace(source, option...)', ->
 
     await clean()
 
-  it "$$.replace('./temp/*.json', (cont) -> ...)", ->
-
+  it "$$.replace('#{temp}/*.json', (cont) -> ...)", ->
     await clean()
 
     listKey = [
@@ -56,7 +58,7 @@ describe '$$.replace(source, option...)', ->
         content: key
       await $$.write "./temp/#{key}.json", data
 
-    res = await $$.replace './temp/*.json', (cont) ->
+    res = await $$.replace "#{temp}/*.json", (cont) ->
       data = $.parseJson cont
       data.content += ' new'
       data

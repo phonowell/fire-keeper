@@ -1,11 +1,15 @@
 class Shell
 
   ###
+  spawn
+  ###
+
+  spawn: require('child_process').spawn
+
+  ###
   close()
   execute(cmd, [option])
   info([type], string)
-  separator
-  spawn
   ###
 
   close: ->
@@ -18,7 +22,7 @@ class Shell
 
       type = $.type cmd
       cmd = switch type
-        when 'array' then cmd.join " #{@separator} "
+        when 'array' then cmd.join ' && '
         when 'string' then cmd
         else throw new Error "invalid argument type <#{type}>"
 
@@ -69,14 +73,6 @@ class Shell
       else colors.gray string
 
     $.log string
-
-  separator: do ->
-    platform = (require 'os').platform()
-    switch platform
-      when 'win32' then '&'
-      else '&&'
-
-  spawn: require('child_process').spawn
 
 # return
 $$.shell = (cmd, option) ->

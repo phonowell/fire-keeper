@@ -84,10 +84,8 @@ $$.task 'test', ->
     map: true
     minify: false
   
-  for i in [1..5]
-    $.info 'test', "round '#{i}'"
-    unless await $$.shell 'npm test'
-      throw new Error()
+  unless await $$.shell 'npm test'
+    throw new Error()
   
   await clean()
 

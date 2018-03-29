@@ -1029,8 +1029,6 @@
       close()
       execute(cmd, [option])
       info([type], string)
-      separator
-      spawn
       */
       close() {
         this.process.kill();
@@ -1044,13 +1042,13 @@
           cmd = (function() {
             switch (type) {
               case 'array':
-                return cmd.join(` ${this.separator} `);
+                return cmd.join(' && ');
               case 'string':
                 return cmd;
               default:
                 throw new Error(`invalid argument type <${type}>`);
             }
-          }).call(this);
+          })();
           $.info('shell', cmd);
           isIgnoreError = !!option.ignoreError;
           delete option.ignoreError;
@@ -1102,17 +1100,9 @@
 
     };
 
-    Shell.prototype.separator = (function() {
-      var platform;
-      platform = (require('os')).platform();
-      switch (platform) {
-        case 'win32':
-          return '&';
-        default:
-          return '&&';
-      }
-    })();
-
+    /*
+    spawn
+    */
     Shell.prototype.spawn = require('child_process').spawn;
 
     return Shell;

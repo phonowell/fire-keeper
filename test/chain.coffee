@@ -3,16 +3,19 @@
 $$ = require './../index'
 {$, _} = $$.library
 
+# variable
+
+temp = './temp'
+
 # function
 
-clean = -> await $$.remove './temp'
+clean = -> await $$.remove temp
 
 # test
 
 describe '$$.chain(fn, option)', ->
 
   it '$$.chain()', ->
-
     await clean()
 
     if $.type($$.chain) != 'function'
