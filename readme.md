@@ -1,87 +1,91 @@
 # Fire Keeper
 
-A little helper to make things simple.
+一个简单的项目构建工具。
 
-## Install
+## 安装
 
 ```shell
 npm install --save-dev fire-keeper
 ```
 
-### Usage
+## 使用
+
+首先，在代码中引入模块。
 
 ```coffeescript
-$$ = require './source/index'
+$$ = require 'fire-keeper'
+```
 
+之后就可以愉快地玩耍啦。
+
+```coffeescript
 $$.task 'build', -> await $$.compile './source/index.coffee', './'
 ```
 
-### Method
+## 方法
 
->
-    $$.backup(source)
-    $$.chain(fn, option)
-    $$.compile(source, [target], [option])
-    $$.copy(source, target, [option])
-    $$.delay([time], [callback])
-    $$.download(source, target, [option])
-    $$.isExisted(source)
-    $$.isSame(source)
-    $$.link(source, target)
-    $$.lint(source)
-    $$.mkdir(source)
-    $$.move(source, target)
-    $$.read(source, [option])
-    $$.recover(source)
-    $$.reload(source)
-    $$.remove(source)
-    $$.rename(source, option)
-    $$.replace(source, option...)
-    $$.say(text)
-    $$.shell(cmd, [option])
-    $$.source(source)
-    $$.ssh()
-    $$.ssh.connect(option)
-    $$.ssh.disconnect()
-    $$.ssh.mkdir(source)
-    $$.ssh.remove(source)
-    $$.ssh.shell(cmd, [option])
-    $$.ssh.upload(source, target, [option])
-    $$.stat(source)
-    $$.task(name, [fn])
-    $$.unzip(source, [target])
-    $$.update()
-    $$.walk(source, callback)
-    $$.watch(source)
-    $$.write(source, data, [option])
-    $$.yargs()
-    $$.zip(source, [target], [option])
+- [$$.backup(source)](doc/backup.md)
+- [$$.chain(fn)](doc/chain.md)
 
-### Variable
+- $$.compile(source, [target], [option])
+- $$.copy(source, target, [option])
+- [$$.delay([time], [callback])](doc/delay.md)
+- $$.download(source, target, [option])
+- [$$.isExisted(source)](doc/isExisted.md)
+- [$$.isSame(source)](doc/isSame.md)
+- $$.link(source, target)
+- $$.lint(source)
+- $$.mkdir(source)
+- $$.move(source, target)
+- $$.read(source, [option])
+- [$$.recover(source)](doc/recover.md)
+- $$.reload(source)
+- [$$.remove(source)](doc/remove.md)
+- $$.rename(source, option)
+- $$.replace(source, option...)
+- [$$.say(text)](doc/say.md)
+- $$.shell(cmd, [option])
+- $$.source(source)
+- $$.ssh()
+- $$.ssh.connect(option)
+- $$.ssh.disconnect()
+- $$.ssh.mkdir(source)
+- $$.ssh.remove(source)
+- $$.ssh.shell(cmd, [option])
+- $$.ssh.upload(source, target, [option])
+- $$.stat(source)
+- $$.task(name, [fn])
+- $$.unzip(source, [target])
+- $$.update()
+- $$.walk(source, callback)
+- $$.watch(source)
+- $$.write(source, data, [option])
+- $$.yargs()
+- [$$.zip(source, [target], [option])](doc/zip.md)
+
+## 变量
 
 ```coffeescript
-$$.argv
-$$.os
-$$.path
+$$.argv # 命令行的传入参数
+$$.os # 系统信息
+$$.path # 路径信息
 ```
 
-### Library
+## 库
 
 ```coffeescript
-$$.library.$ # node-jquery-extend, a little toolkit like jQuery
+$$.library.$ # node-jquery-extend
 $$.library._ # lodash
 $$.library.fse # fs-extra
 $$.library.gulp # gulp
 ```
 
-### Test
+## 测试
 
 ```shell
 gulp test
 ```
 
-### Caution
+## 注意
 
-This project is **NOT STABLE**.
-
-I made this project for writing gulpfile(s) , which of my own projects, a little easier. And that might be not very suitable for yours.
+该项目**并不稳定**。
