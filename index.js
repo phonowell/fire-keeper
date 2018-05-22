@@ -1311,18 +1311,17 @@
   // return
   $$.ssh = new SSH();
 
-  (function() {    /*
-    update()
-    */
-    var addCmd, clean, fn, getLatestVersion;
+  (function() {
+    var addCmd, clean, execute, getLatestVersion;
     // function
     /*
     addCmd(list, data, isDev, option)
     clean()
+    execute(option)
     getLatestVersion(name, option)
     */
     addCmd = async function(list, data, isDev, option) {
-      var cmd, current, latest, registry, results, version;
+      var current, latest, registry, results, version;
       ({registry} = option);
       results = [];
       for (name in data) {
@@ -1336,15 +1335,7 @@
           continue;
         }
         $.info('update', `'${name}': '${current}' ${colors.green('->')} '${latest}'`);
-        cmd = [];
-        cmd.push('npm install');
-        cmd.push(`${name}@${latest}`);
-        cmd.push('--production');
-        if (registry) {
-          cmd.push(`--registry ${registry}`);
-        }
-        cmd.push(isDev ? '--save-dev' : '--save');
-        results.push(list.push(cmd.join(' ')));
+        results.push(list.push(['npm install', `${name}@${latest}`, isDev ? '' : '--production', registry ? `--registry ${registry}` : '', isDev ? '--save-dev' : '--save'].join(' ').replace(/\s{2,}/g, ' ')));
       }
       return results;
     };
@@ -1356,23 +1347,7 @@
         return (await $$.remove('./temp'));
       }
     };
-    getLatestVersion = async function(name, option) {
-      var data, registry, source, url;
-      ({registry} = option);
-      registry || (registry = 'http://registry.npmjs.org');
-      source = `./temp/update/${name}.json`;
-      if (!(await $$.isExisted(source))) {
-        url = `${registry}/${name}/latest?salt=${_.now()}`;
-        await $$.download(url, './temp/update', `${name}.json`);
-      }
-      if (!(data = (await $$.read(source)))) {
-        throw makeError('source');
-      }
-      // return
-      return data.version;
-    };
-    
-    fn = async function(option) {
+    execute = async function(option) {
       var listCmd, pkg;
       pkg = (await $$.read('./package.json'));
       listCmd = [];
@@ -1386,11 +1361,27 @@
         return;
       }
       await $$.shell(listCmd);
+      return $$; // return
+    };
+    getLatestVersion = async function(name, option) {
+      var data, registry, source, url;
+      ({registry} = option);
+      registry || (registry = 'http://registry.npmjs.org');
+      source = `./temp/update/${name}.json`;
+      if (!(await $$.isExisted(source))) {
+        url = `${registry}/${name}?salt=${_.now()}`;
+        await $$.download(url, './temp/update', `${name}.json`);
+      }
+      if (!(data = (await $$.read(source)))) {
+        throw makeError('source');
+      }
       // return
-      return $$;
+      return _.get(data, 'dist-tags.latest');
     };
     // return
-    return $$.update = fn;
+    return $$.update = function(...arg) {
+      return execute(...arg);
+    };
   })();
 
   // https://github.com/jprichardson/node-klaw

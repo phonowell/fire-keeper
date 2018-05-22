@@ -1,7 +1,3 @@
-###
-update()
-###
-
 do ->
 
   # function
@@ -9,6 +5,7 @@ do ->
   ###
   addCmd(list, data, isDev, option)
   clean()
+  execute(option)
   getLatestVersion(name, option)
   ###
 
@@ -32,17 +29,13 @@ do ->
       $.info 'update'
       , "'#{name}': '#{current}' #{colors.green '->'} '#{latest}'"
 
-      cmd = []
-      cmd.push 'npm install'
-      cmd.push "#{name}@#{latest}"
-      cmd.push '--production'
-      if registry
-        cmd.push "--registry #{registry}"
-      cmd.push if isDev
-        '--save-dev'
-      else '--save'
-
-      list.push cmd.join ' '
+      list.push [
+        'npm install'
+        "#{name}@#{latest}"
+        if isDev then '' else '--production'
+        if registry then "--registry #{registry}" else ''
+        if isDev then '--save-dev' else '--save'
+      ].join(' ').replace /\s{2,}/g, ' '
 
   clean = ->
 
@@ -53,28 +46,7 @@ do ->
     if !listFile.length
       await $$.remove './temp'
 
-  getLatestVersion = (name, option) ->
-
-    {registry} = option
-    registry or= 'http://registry.npmjs.org'
-
-    source = "./temp/update/#{name}.json"
-
-    unless await $$.isExisted source
-      url = "#{registry}/#{name}/latest?salt=#{_.now()}"
-      await $$.download url
-      , './temp/update'
-      , "#{name}.json"
-
-    unless data = await $$.read source
-      throw makeError 'source'
-
-    # return
-    data.version
-
-  #
-  
-  fn = (option) ->
+  execute = (option) ->
 
     pkg = await $$.read './package.json'
 
@@ -92,8 +64,27 @@ do ->
 
     await $$.shell listCmd
 
+    $$ # return
+
+  getLatestVersion = (name, option) ->
+
+    {registry} = option
+    registry or= 'http://registry.npmjs.org'
+
+    source = "./temp/update/#{name}.json"
+
+    unless await $$.isExisted source
+      
+      url = "#{registry}/#{name}?salt=#{_.now()}"
+      await $$.download url
+      , './temp/update'
+      , "#{name}.json"
+
+    unless data = await $$.read source
+      throw makeError 'source'
+
     # return
-    $$
+    _.get data, 'dist-tags.latest'
 
   # return
-  $$.update = fn
+  $$.update = (arg...) -> execute arg...

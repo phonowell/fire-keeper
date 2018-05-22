@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.103",
+  "version": "0.0.104",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -21,18 +21,18 @@
   },
   "homepage": "https://github.com/phonowell/fire-keeper",
   "devDependencies": {
-    "mocha": "^5.1.1"
+    "mocha": "^5.2.0"
   },
   "dependencies": {
     "achain": "^1.1.1",
     "archiver": "^2.1.1",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "download": "^7.0.0",
-    "fs-extra": "^6.0.0",
+    "fs-extra": "^6.0.1",
     "gulp": "^3.9.1",
     "gulp-changed": "^3.2.0",
-    "gulp-clean-css": "^3.9.3",
+    "gulp-clean-css": "^3.9.4",
     "gulp-coffee": "^3.0.2",
     "gulp-coffeelint": "^0.6.0",
     "gulp-htmlmin": "^4.0.0",
@@ -43,7 +43,7 @@
     "gulp-markdown": "^2.0.1",
     "gulp-plumber": "^1.2.0",
     "gulp-pug": "^4.0.1",
-    "gulp-rename": "^1.2.2",
+    "gulp-rename": "^1.2.3",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-stylint": "^4.0.2",
     "gulp-stylus": "^2.7.0",
@@ -55,9 +55,9 @@
     "gulp-yaml": "^2.0.1",
     "gulp-zip": "^4.1.0",
     "klaw": "^2.1.1",
-    "markdownlint": "^0.8.1",
+    "markdownlint": "^0.9.0",
     "node-jquery-extend": "0.0.22",
-    "ssh2": "^0.6.0",
+    "ssh2": "^0.6.1",
     "uglify-es": "^3.3.9",
     "yargs": "^11.0.0"
   }
