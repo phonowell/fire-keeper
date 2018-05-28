@@ -55,7 +55,7 @@
     "gulp-yaml": "^2.0.1",
     "gulp-zip": "^4.1.0",
     "klaw": "^2.1.1",
-    "markdownlint": "^0.9.0",
+    "markdownlint": "^0.10.0",
     "node-jquery-extend": "0.0.22",
     "ssh2": "^0.6.1",
     "uglify-es": "^3.3.9",

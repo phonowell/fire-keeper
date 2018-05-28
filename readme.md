@@ -26,9 +26,8 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
 
 - [$$.backup(source)](doc/backup.md)
 - [$$.chain(fn)](doc/chain.md)
-
 - $$.compile(source, [target], [option])
-- $$.copy(source, target, [option])
+- [$$.copy(source, target, [option])](doc/copy.md)
 - [$$.delay([time], [callback])](doc/delay.md)
 - $$.download(source, target, [option])
 - [$$.isExisted(source)](doc/isExisted.md)
@@ -37,7 +36,7 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
 - $$.lint(source)
 - $$.mkdir(source)
 - $$.move(source, target)
-- $$.read(source, [option])
+- [$$.read(source, [option])](doc/read.md)
 - [$$.recover(source)](doc/recover.md)
 - $$.reload(source)
 - [$$.remove(source)](doc/remove.md)
@@ -45,7 +44,7 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
 - $$.replace(source, option...)
 - [$$.say(text)](doc/say.md)
 - $$.shell(cmd, [option])
-- $$.source(source)
+- [$$.source(source)](doc/source.md)
 - $$.ssh()
 - $$.ssh.connect(option)
 - $$.ssh.disconnect()
@@ -59,7 +58,7 @@ $$.task 'build', -> await $$.compile './source/index.coffee', './'
 - $$.update()
 - $$.walk(source, callback)
 - $$.watch(source)
-- $$.write(source, data, [option])
+- [$$.write(source, data, [option])](doc/write.md)
 - $$.yargs()
 - [$$.zip(source, [target], [option])](doc/zip.md)
 
