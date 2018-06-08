@@ -1,4 +1,4 @@
-# $$.say(text)
+# $.say(text)
 
 使用`tts`输出一段音频。该方法仅供`macOS`使用。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-await $$.say '香香的口味，你吃过没？'
+await $.say '香香的口味，你吃过没？'
 ```

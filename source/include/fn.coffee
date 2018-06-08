@@ -57,8 +57,8 @@ normalizePath = (source) ->
   source = source.replace /\.{2}/g, '__parent_directory__'
 
   source = switch source[0]
-    when '.' then source.replace /\./, $$.path.base
-    when '~' then source.replace /~/, $$.path.home
+    when '.' then source.replace /\./, $.path.base
+    when '~' then source.replace /~/, $.path.home
     else source
 
   source = source.replace /__parent_directory__/g, '..'
@@ -66,7 +66,7 @@ normalizePath = (source) ->
   # replace ../ to ./../ at start
 
   if source[0] == '.' and source[1] == '.'
-    source = "#{$$.path.base}/#{source}"
+    source = "#{$.path.base}/#{source}"
 
   # normalize
 
@@ -75,7 +75,7 @@ normalizePath = (source) ->
   # absolute
 
   unless path.isAbsolute source
-    source = "#{$$.path.base}#{path.sep}#{source}"
+    source = "#{$.path.base}#{path.sep}#{source}"
 
   # ignore
   if isIgnore
@@ -96,7 +96,7 @@ wrapList = (list) ->
   ("'#{key}'" for key in list).join ', '
 
 # return
-$$.fn = {
+$.fn = {
   excludeInclude
   formatArgument
   formatPath

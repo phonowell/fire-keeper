@@ -38,4 +38,4 @@ uglify = $p.uglify = do ->
   composer uglifyEs, console
 
 # return
-$$.plugin = $p
+$.plugin = $p

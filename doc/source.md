@@ -1,4 +1,4 @@
-# $$.source(source)
+# $.source(source)
 
 返回资源列表。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-listSource = await $$.source './source/*'
+listSource = await $.source './source/*'
 ```

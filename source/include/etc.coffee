@@ -5,7 +5,7 @@ watch(source)
 yargs()
 ###
 
-$$.delay = (time = 0, callback) ->
+$.delay = (time = 0, callback) ->
   
   await new Promise (resolve) ->
     setTimeout ->
@@ -16,9 +16,9 @@ $$.delay = (time = 0, callback) ->
 
   callback?()
 
-  $$ # return
+  $ # return
 
-$$.reload = (source) ->
+$.reload = (source) ->
 
   if !source then throw makeError 'source'
 
@@ -26,11 +26,11 @@ $$.reload = (source) ->
 
   livereload.listen()
 
-  $$.watch source
+  $.watch source
   .pipe livereload()
 
-  $$ # return
+  $ # return
 
-$$.watch = $p.watch
+$.watch = $p.watch
 
-$$.yargs = $p.yargs
+$.yargs = $p.yargs

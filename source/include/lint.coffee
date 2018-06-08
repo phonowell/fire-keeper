@@ -21,7 +21,7 @@ do ->
 
     await fn[method] source
 
-    $$ # return
+    $ # return
 
   ###
   coffee(source)
@@ -46,7 +46,7 @@ do ->
 
     new Promise (resolve) ->
 
-      option = files: await $$.source source
+      option = files: await $.source source
 
       markdownlint option, (err, result) ->
         
@@ -90,4 +90,4 @@ do ->
       .pipe stylint.reporter()
 
   # return
-  $$.lint = fn
+  $.lint = fn

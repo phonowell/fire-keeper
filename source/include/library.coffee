@@ -1,5 +1,4 @@
-$$.library = {
-  $
+$.library = {
   _
   fse
   gulp

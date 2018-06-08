@@ -18,9 +18,9 @@ do ->
       current = version
       .replace /[~^]/, ''
 
-      $.info.pause '$$.update'
+      $.info.pause '$.update'
       latest = await getLatestVersion name, option
-      $.info.resume '$$.update'
+      $.info.resume '$.update'
 
       if current == latest
         $.info 'update'
@@ -39,32 +39,32 @@ do ->
 
   clean = ->
 
-    await $$.remove './temp/update'
+    await $.remove './temp/update'
 
-    listFile = await $$.source './temp/**/*.*'
+    listFile = await $.source './temp/**/*.*'
 
     if !listFile.length
-      await $$.remove './temp'
+      await $.remove './temp'
 
   execute = (option) ->
 
-    pkg = await $$.read './package.json'
+    pkg = await $.read './package.json'
 
     listCmd = []
     await addCmd listCmd, pkg.dependencies, false, option
     await addCmd listCmd, pkg.devDependencies, true, option
     
-    $.info.pause '$$.update'
+    $.info.pause '$.update'
     await clean()
-    $.info.resume '$$.update'
+    $.info.resume '$.update'
 
     if !listCmd.length
       $.info 'update', 'every thing is ok'
       return
 
-    await $$.shell listCmd
+    await $.shell listCmd
 
-    $$ # return
+    $ # return
 
   getLatestVersion = (name, option) ->
 
@@ -73,18 +73,18 @@ do ->
 
     source = "./temp/update/#{name}.json"
 
-    unless await $$.isExisted source
+    unless await $.isExisted source
       
       url = "#{registry}/#{name}?salt=#{_.now()}"
-      await $$.download url
+      await $.download url
       , './temp/update'
       , "#{name}.json"
 
-    unless data = await $$.read source
+    unless data = await $.read source
       throw makeError 'source'
 
     # return
     _.get data, 'dist-tags.latest'
 
   # return
-  $$.update = (arg...) -> execute arg...
+  $.update = (arg...) -> execute arg...

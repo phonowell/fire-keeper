@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -16,61 +16,61 @@ clean()
 
 check = (source, target, contSource) ->
 
-  if await $$.isExisted source
+  if await $.isExisted source
     throw new Error 'source'
 
-  unless await $$.isExisted target
+  unless await $.isExisted target
     throw new Error 'target'
 
-  contTarget = await $$.read target
+  contTarget = await $.read target
   if contTarget != contSource
     throw new Error 'cont'
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.rename(source, option)', ->
+describe '$.rename(source, option)', ->
 
-  it "$$.rename('#{temp}/a.txt', 'b.txt')", ->
+  it "$.rename('#{temp}/a.txt', 'b.txt')", ->
     await clean()
 
     source = "#{temp}/a.txt"
     target = "#{temp}/b.txt"
     contSource = 'to be renamed'
 
-    await $$.write source, contSource
+    await $.write source, contSource
 
-    res = await $$.rename source, 'b.txt'
+    res = await $.rename source, 'b.txt'
 
-    if res != $$
+    if res != $
       throw new Error()
 
     await check source, target, contSource
 
     await clean()
 
-  it "$$.rename('#{temp}/a.txt', {extname: '.md', suffix: '-test'})", ->
+  it "$.rename('#{temp}/a.txt', {extname: '.md', suffix: '-test'})", ->
     await clean()
 
     source = "#{temp}/a.txt"
     target = "#{temp}/a-test.md"
     contSource = 'to be renamed'
 
-    await $$.write source, contSource
+    await $.write source, contSource
 
-    res = await $$.rename source,
+    res = await $.rename source,
       extname: '.md'
       suffix: '-test'
 
-    if res != $$
+    if res != $
       throw new Error()
 
     await check source, target, contSource
 
     await clean()
 
-  it "$$.rename('#{temp}/*.txt', extname: '.md')", ->
+  it "$.rename('#{temp}/*.txt', extname: '.md')", ->
     await clean()
 
     listFilename = ($.parseString i for i in [0...5])
@@ -78,12 +78,12 @@ describe '$$.rename(source, option)', ->
     for filename in listFilename
       source = "./temp/#{filename}.txt"
       contSource = filename
-      await $$.write source, contSource
+      await $.write source, contSource
 
-    res = await $$.rename "#{temp}/*.txt",
+    res = await $.rename "#{temp}/*.txt",
       extname: '.md'
 
-    if res != $$
+    if res != $
       throw new Error()
 
     for filename in listFilename

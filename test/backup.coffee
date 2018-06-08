@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,13 +9,13 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.backup(source)', ->
+describe '$.backup(source)', ->
 
-  it "$$.backup(['#{temp}/license.md', '#{temp}/readme.md'])", ->
+  it "$.backup(['#{temp}/license.md', '#{temp}/readme.md'])", ->
     await clean()
 
     listSource = [
@@ -28,22 +28,22 @@ describe '$$.backup(source)', ->
       "#{temp}/readme.md.bak"
     ]
 
-    await $$.copy [
+    await $.copy [
       './license.md'
       './readme.md'
     ], temp
 
-    res = await $$.backup listSource
+    res = await $.backup listSource
 
-    if res != $$
+    if res != $
       throw new Error 0
 
-    unless await $$.isExisted listTarget
+    unless await $.isExisted listTarget
       throw new Error 1
 
     option = raw: true
-    listSourceData = (await $$.read source, option for source in listSource)
-    listTargetData = (await $$.read target, option for target in listTarget)
+    listSourceData = (await $.read source, option for source in listSource)
+    listTargetData = (await $.read target, option for target in listTarget)
 
     unless _.isEqual listSourceData, listTargetData
       throw new Error 2

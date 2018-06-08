@@ -3,12 +3,12 @@ unzip(source, [target])
 zip(source, [target], [option])
 ###
 
-$$.unzip = (source, target) ->
+$.unzip = (source, target) ->
 
   if !source
     throw makeError 'source'
 
-  source = await $$.source source
+  source = await $.source source
 
   for src in source
 
@@ -24,9 +24,9 @@ $$.unzip = (source, target) ->
 
     $.info 'zip', "unzipped #{src} to #{dist}"
 
-  $$ # return
+  $ # return
 
-$$.zip = (arg...) ->
+$.zip = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 1 then [arg[0], null, null]
@@ -90,7 +90,7 @@ $$.zip = (arg...) ->
 
     archive.pipe output
 
-    listSource = await $$.source source
+    listSource = await $.source source
     for src in listSource
       name = src.replace base, ''
       archive.file src, {name}
@@ -102,4 +102,4 @@ $$.zip = (arg...) ->
   to #{wrapList target},
   named as '#{filename}'"
 
-  $$ # return
+  $ # return

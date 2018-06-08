@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,19 +9,19 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.update()', ->
+describe '$.update()', ->
 
-  it '$$.update()', ->
+  it '$.update()', ->
     await clean()
 
-    if !$$.update
+    if !$.update
       throw new Error()
 
-    unless _.isFunction $$.update
+    unless _.isFunction $.update
       throw new Error()
 
     await clean()

@@ -15,8 +15,8 @@ compile = ->
 
 # require
 
-$$ = require './index'
-{$, _} = $$.library
+$ = require './index'
+{_} = $.library
 
 # task
 
@@ -28,50 +28,50 @@ set(ver)
 test()
 ###
 
-$$.task 'build', ->
+$.task 'build', ->
 
-  await $$.compile './source/index.coffee', './',
+  await $.compile './source/index.coffee', './',
     minify: false
 
-$$.task 'compile', -> compile()
+$.task 'compile', -> compile()
 
-$$.task 'lint', ->
+$.task 'lint', ->
 
-  await $$.task('kokoro')()
+  await $.task('kokoro')()
 
-  await $$.lint [
+  await $.lint [
     './*.md'
     './source/**/*.md'
   ]
 
-  await $$.lint [
+  await $.lint [
     './gulpfile.coffee'
     './source/**/*.coffee'
     './test/**/*.coffee'
   ]
 
-$$.task 'set', ->
+$.task 'set', ->
 
-  {ver} = $$.argv
+  {ver} = $.argv
 
   if !ver
     throw new Error 'empty ver'
 
-  await $$.replace './package.json', (cont) ->
+  await $.replace './package.json', (cont) ->
     data = $.parseJson cont
     data.version = ver
     data
 
-$$.task 'test', ->
+$.task 'test', ->
 
-  {target} = $$.argv
+  {target} = $.argv
   target or= '**/*'
   source = "./test/#{target}.coffee"
 
   # function
 
   clean = ->
-    await $$.remove [
+    await $.remove [
       './test/**/*.js'
       './test/**/*.map'
     ]
@@ -80,15 +80,15 @@ $$.task 'test', ->
 
   await clean()
 
-  await $$.compile source,
+  await $.compile source,
     map: true
     minify: false
   
-  unless await $$.shell 'npm test'
+  unless await $.shell 'npm test'
     throw new Error()
   
   await clean()
 
-  await $$.say 'mission completed'
+  await $.say 'mission completed'
 
-# $$.task 'z', ->
+# $.task 'z', ->

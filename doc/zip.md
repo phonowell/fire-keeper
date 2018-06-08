@@ -1,4 +1,4 @@
-# $$.zip(source, [target], [option])
+# $.zip(source, [target], [option])
 
 文件打包。
 
@@ -11,5 +11,5 @@
 ## 示例
 
 ```coffeescript
-await $$.zip './source/*', './', 'source.zip'
+await $.zip './source/*', './', 'source.zip'
 ```

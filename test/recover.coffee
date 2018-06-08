@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,35 +9,35 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.recover(source)', ->
+describe '$.recover(source)', ->
 
-  it "$$.recover('#{temp}/readme.md')", ->
+  it "$.recover('#{temp}/readme.md')", ->
     await clean()
 
     source = "#{temp}/readme.md"
     target = "#{temp}/readme.md.bak"
 
-    await $$.copy './readme.md', temp
+    await $.copy './readme.md', temp
 
-    await $$.backup source
+    await $.backup source
 
-    targetData = await $$.read target
+    targetData = await $.read target
 
-    await $$.remove source
+    await $.remove source
 
-    res = await $$.recover source
+    res = await $.recover source
 
-    if res != $$
+    if res != $
       throw new Error()
 
-    unless await $$.isExisted source
+    unless await $.isExisted source
       throw new Error 1
 
-    sourceData = await $$.read source
+    sourceData = await $.read source
 
     if sourceData.toString() != targetData.toString()
       throw new Error 2

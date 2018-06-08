@@ -12,5 +12,4 @@ $ = require 'node-jquery-extend'
 gulp = require 'gulp'
 
 # return
-
-module.exports = $$ = {}
+module.exports = $

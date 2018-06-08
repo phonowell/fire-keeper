@@ -4,7 +4,7 @@
 download(source, target, [option])
 ###
 
-$$.download = (arg...) ->
+$.download = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
@@ -22,4 +22,4 @@ $$.download = (arg...) ->
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'download', msg
 
-  $$ # return
+  $ # return

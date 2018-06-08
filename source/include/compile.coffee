@@ -43,8 +43,7 @@ do ->
 
     $.info 'compile', "compiled #{wrapList source} to #{wrapList target}"
 
-    # return
-    $$
+    $ # return
 
   ###
   coffee(source, target, option)
@@ -160,4 +159,4 @@ do ->
       .on 'end', -> resolve()
 
   # return
-  $$.compile = fn
+  $.compile = fn

@@ -2,9 +2,9 @@
 say(text)
 ###
 
-$$.say = (text) ->
+$.say = (text) ->
 
-  if $$.os != 'macos' then return
+  if $.os != 'macos' then return
 
   listMessage = switch $.type text
     when 'array' then text
@@ -22,8 +22,8 @@ $$.say = (text) ->
 
     if !msg.length then continue
 
-    $.info.pause '$$.say'
-    await $$.shell "say #{msg}"
-    $.info.resume '$$.say'
+    $.info.pause '$.say'
+    await $.shell "say #{msg}"
+    $.info.resume '$.say'
 
   text # return

@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,19 +9,19 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.reload(source)', ->
+describe '$.reload(source)', ->
 
-  it '$$.reload()', ->
+  it '$.reload()', ->
     await clean()
 
-    if !$$.reload
+    if !$.reload
       throw new Error()
 
-    unless _.isFunction $$.reload
+    unless _.isFunction $.reload
       throw new Error()
 
     await clean()

@@ -4,7 +4,7 @@
 walk(source, callback)
 ###
 
-$$.walk = (source, callback) ->
+$.walk = (source, callback) ->
 
   unless source and callback
     throw makeError 'length'
@@ -17,4 +17,4 @@ $$.walk = (source, callback) ->
       callback item
     .on 'end', -> resolve()
 
-  $$ # return
+  $ # return

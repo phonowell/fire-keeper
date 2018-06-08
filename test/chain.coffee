@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,16 +9,16 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.chain(fn, option)', ->
+describe '$.chain(fn, option)', ->
 
-  it '$$.chain()', ->
+  it '$.chain()', ->
     await clean()
 
-    if $.type($$.chain) != 'function'
+    if $.type($.chain) != 'function'
       throw new Error()
 
     await clean()

@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,23 +9,23 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
-describe '$$.source(source)', ->
+describe '$.source(source)', ->
 
-  it "$$.source('./*.md')", ->
+  it "$.source('./*.md')", ->
     await clean()
 
-    listSource = await $$.source './*.md'
+    listSource = await $.source './*.md'
 
     if listSource.length != 2
       throw new Error()
 
     await clean()
 
-  it "$$.source('~/Desktop/*.md')", ->
+  it "$.source('~/Desktop/*.md')", ->
     await clean()
 
     content = 'test text'
@@ -36,13 +36,13 @@ describe '$$.source(source)', ->
     ]
 
     for target in listTarget
-      await $$.write target, content
+      await $.write target, content
 
-    listSource = await $$.source '~/Desktop/*.md'
+    listSource = await $.source '~/Desktop/*.md'
 
     if listSource.length != 3
       throw new Error()
 
     # clean
-    await $$.remove listTarget
+    await $.remove listTarget
     await clean()

@@ -1,7 +1,7 @@
 # require
 
-$$ = require './../index'
-{$, _} = $$.library
+$ = require './../index'
+{_} = $.library
 
 # variable
 
@@ -9,7 +9,7 @@ temp = './temp'
 
 # function
 
-clean = -> await $$.remove temp
+clean = -> await $.remove temp
 
 # test
 
@@ -17,9 +17,9 @@ clean = -> await $$.remove temp
 replace(source, option...)
 ###
 
-describe '$$.replace(source, option...)', ->
+describe '$.replace(source, option...)', ->
 
-  it "$$.replace('#{temp}/*.txt', 'to be replaced', 'replaced')", ->
+  it "$.replace('#{temp}/*.txt', 'to be replaced', 'replaced')", ->
     await clean()
 
     listName = ['a', 'b', 'c', 'd']
@@ -28,23 +28,23 @@ describe '$$.replace(source, option...)', ->
     targetData = 'replaced'
 
     for filename in listName
-      await $$.write "./temp/#{filename}.txt", sourceData
+      await $.write "./temp/#{filename}.txt", sourceData
 
-    res = await $$.replace "#{temp}/*.txt", sourceData, targetData
+    res = await $.replace "#{temp}/*.txt", sourceData, targetData
 
-    if res != $$
+    if res != $
       throw new Error()
 
     for filename in listName
 
-      cont = await $$.read "./temp/#{filename}.txt"
+      cont = await $.read "./temp/#{filename}.txt"
 
       if cont != targetData
         throw new Error()
 
     await clean()
 
-  it "$$.replace('#{temp}/*.json', (cont) -> ...)", ->
+  it "$.replace('#{temp}/*.json', (cont) -> ...)", ->
     await clean()
 
     listKey = [
@@ -56,19 +56,19 @@ describe '$$.replace(source, option...)', ->
     for key in listKey
       data =
         content: key
-      await $$.write "./temp/#{key}.json", data
+      await $.write "./temp/#{key}.json", data
 
-    res = await $$.replace "#{temp}/*.json", (cont) ->
+    res = await $.replace "#{temp}/*.json", (cont) ->
       data = $.parseJson cont
       data.content += ' new'
       data
 
-    if res != $$
+    if res != $
       throw new Error()
 
     for key in listKey
 
-      cont = await $$.read "./temp/#{key}.json"
+      cont = await $.read "./temp/#{key}.json"
       data = $.parseJson cont
 
       if data.content != "#{key} new"

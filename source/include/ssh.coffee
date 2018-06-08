@@ -68,9 +68,9 @@ class SSH
 
     cmd = ("mkdir -p #{src}" for src in source).join '; '
 
-    $.info.pause '$$.ssh.mkdir'
+    $.info.pause '$.ssh.mkdir'
     await @shell cmd
-    $.info.resume '$$.ssh.mkdir'
+    $.info.resume '$.ssh.mkdir'
 
     $.info 'ssh', "created #{wrapList source}"
 
@@ -80,9 +80,9 @@ class SSH
 
     cmd = ("rm -fr #{src}" for src in source).join '; '
 
-    $.info.pause '$$.ssh.remove'
+    $.info.pause '$.ssh.remove'
     await @shell cmd
-    $.info.resume '$$.ssh.remove'
+    $.info.resume '$.ssh.remove'
 
     $.info 'ssh', "removed #{wrapList source}"
 
@@ -127,7 +127,7 @@ class SSH
 
         for src in source
 
-          stat = await $$.stat src
+          stat = await $.stat src
           filename = option.filename or path.basename src
 
           if stat.isDirectory()
@@ -145,11 +145,11 @@ class SSH
     new Promise (resolve) =>
 
       listSource = []
-      await $$.walk source, (item) -> listSource.push item.path
+      await $.walk source, (item) -> listSource.push item.path
 
       for src in listSource
 
-        stat = await $$.stat src
+        stat = await $.stat src
         relativeTarget = path.normalize "#{target}/#{path.relative source, src}"
 
         if stat.isDirectory()
@@ -170,4 +170,4 @@ class SSH
         resolve()
 
 # return
-$$.ssh = new SSH()
+$.ssh = new SSH()

@@ -1,4 +1,4 @@
-# $$.chain(fn)
+# $.chain(fn)
 
 链式调用。
 
@@ -12,7 +12,7 @@
 source = './temp/test.txt'
 text = 'A test message.'
 
-string = await $$.chain $$.write source, text
+string = await $.chain $.write source, text
 .read source
 
 console.log string == text # true

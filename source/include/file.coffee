@@ -14,7 +14,7 @@ stat(source)
 write(source, data)
 ###
 
-$$.copy = (arg...) ->
+$.copy = (arg...) ->
 
   # source, target, [option]
   [source, target, option] = switch arg.length
@@ -38,9 +38,9 @@ $$.copy = (arg...) ->
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
-  $$ # return
+  $ # return
 
-$$.isExisted = (source) ->
+$.isExisted = (source) ->
 
   source = formatPath source
   if !source.length then return false
@@ -51,7 +51,7 @@ $$.isExisted = (source) ->
 
   true # return
 
-$$.isSame = (source) ->
+$.isSame = (source) ->
 
   source = formatPath source
 
@@ -64,7 +64,7 @@ $$.isSame = (source) ->
 
   for src in source
 
-    stat = await $$.stat src
+    stat = await $.stat src
     if !stat
       return false
 
@@ -83,9 +83,9 @@ $$.isSame = (source) ->
 
   for src in source
 
-    $.info.pause '$$.isSame'
-    cont = await $$.read src
-    $.info.resume '$$.isSame'
+    $.info.pause '$.isSame'
+    cont = await $.read src
+    $.info.resume '$.isSame'
     if !cont
       return false
 
@@ -100,7 +100,7 @@ $$.isSame = (source) ->
 
   true # return
 
-$$.link = (source, target) ->
+$.link = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -112,9 +112,9 @@ $$.link = (source, target) ->
 
   $.info 'link', "linked #{wrapList source} to #{wrapList target}"
 
-  $$ # return
+  $ # return
 
-$$.mkdir = (source) ->
+$.mkdir = (source) ->
 
   if !source then throw makeError 'length'
 
@@ -126,9 +126,9 @@ $$.mkdir = (source) ->
 
   $.info 'create', "created #{wrapList source}"
 
-  $$ # return
+  $ # return
 
-$$.move = (source, target) ->
+$.move = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -136,21 +136,21 @@ $$.move = (source, target) ->
   source = formatPath source
   target = normalizePath target
 
-  $.info.pause '$$.move'
-  await $$.copy source, target
-  await $$.remove source
-  $.info.resume '$$.move'
+  $.info.pause '$.move'
+  await $.copy source, target
+  await $.remove source
+  $.info.resume '$.move'
 
   $.info 'move'
   , "moved #{wrapList source} to '#{target}'"
 
-  $$ # return
+  $ # return
 
-$$.read = (source, option = {}) ->
+$.read = (source, option = {}) ->
 
   source = normalizePath source
 
-  unless await $$.isExisted source
+  unless await $.isExisted source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
@@ -172,9 +172,9 @@ $$.read = (source, option = {}) ->
       $.parseString res
     else res
 
-$$.remove = (source) ->
+$.remove = (source) ->
 
-  listSource = await $$.source source
+  listSource = await $.source source
 
   for src in listSource
     await new Promise (resolve) ->
@@ -185,9 +185,9 @@ $$.remove = (source) ->
     # $.info 'remove', "removed '#{src}'"
   $.info 'remove', "removed #{wrapList source}"
 
-  $$ # return
+  $ # return
 
-$$.rename = (source, option) ->
+$.rename = (source, option) ->
 
   source = formatPath source
 
@@ -204,18 +204,18 @@ $$.rename = (source, option) ->
       e.base
     .on 'end', -> resolve()
 
-  $.info.pause '$$.rename'
+  $.info.pause '$.rename'
   for item in listHistory
-    if await $$.isExisted item[1]
-      await $$.remove item[0]
-  $.info.resume '$$.rename'
+    if await $.isExisted item[1]
+      await $.remove item[0]
+  $.info.resume '$.rename'
 
   $.info 'file'
   , "renamed #{wrapList source} as '#{$.parseString option}'"
 
-  $$ # return
+  $ # return
 
-$$.source = (source) ->
+$.source = (source) ->
 
   source = formatPath source
 
@@ -227,11 +227,11 @@ $$.source = (source) ->
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource
 
-$$.stat = (source) ->
+$.stat = (source) ->
 
   source = normalizePath source
 
-  unless await $$.isExisted source
+  unless await $.isExisted source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
@@ -242,7 +242,7 @@ $$.stat = (source) ->
       if err then throw err
       resolve stat
 
-$$.write = (source, data, option) ->
+$.write = (source, data, option) ->
 
   source = normalizePath source
 
@@ -253,4 +253,4 @@ $$.write = (source, data, option) ->
 
   $.info 'file', "wrote #{wrapList source}"
 
-  $$ # return
+  $ # return

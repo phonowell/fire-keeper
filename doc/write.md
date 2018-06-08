@@ -1,4 +1,4 @@
-# $$.write(source, data, [option])
+# $.write(source, data, [option])
 
 写入文件内容。
 
@@ -11,5 +11,5 @@
 ## 示例
 
 ```coffeescript
-await $$.write './test.txt', 'A test message.'
+await $.write './test.txt', 'A test message.'
 ```

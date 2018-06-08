@@ -31,7 +31,7 @@ class Shell
       isIgnoreError = !!option.ignoreError
       delete option.ignoreError
 
-      [cmder, arg] = if $$.os == 'windows'
+      [cmder, arg] = if $.os == 'windows'
         [
           'cmd.exe'
           ['/s', '/c', "\"#{cmd}\""]
@@ -75,7 +75,7 @@ class Shell
     $.log string
 
 # return
-$$.shell = (cmd, option) ->
+$.shell = (cmd, option) ->
   shell = new Shell()
   if !cmd then return shell
   shell.execute cmd, option

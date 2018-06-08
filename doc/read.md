@@ -1,4 +1,4 @@
-# $$.read(source, [option])
+# $.read(source, [option])
 
 读取文件内容。
 
@@ -11,7 +11,7 @@
 ## 示例
 
 ```coffeescript
-data = await $$.read './package.json'
+data = await $.read './package.json'
 ```
 
 ## 备注

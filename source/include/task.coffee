@@ -6,14 +6,14 @@ fetchGitHub = (name) ->
 
   source = normalizePath "./../#{name.split('/')[1]}"
 
-  if await $$.isExisted source
-    return await $$.shell [
+  if await $.isExisted source
+    return await $.shell [
       "cd #{source}"
       'git fetch'
       'git pull'
     ]
 
-  await $$.shell "git clone
+  await $.shell "git clone
   https://github.com/#{name}.git
   #{source}"
 
@@ -23,7 +23,7 @@ task(name, [fn])
 
 # task
 
-$$.task = (arg...) ->
+$.task = (arg...) ->
 
   switch arg.length
     when 1 then gulp.tasks[arg[0]].fn
@@ -42,7 +42,7 @@ prune()
 update()
 ###
 
-$$.task 'check', ->
+$.task 'check', ->
 
   listSource = []
 
@@ -58,30 +58,30 @@ $$.task 'check', ->
     listSource.push "./source/**/*.#{ext}"
     listSource.push "./test/**/*.#{ext}"
 
-  listSource = await $$.source listSource
+  listSource = await $.source listSource
 
   for source in listSource
 
-    cont = $.parseString await $$.read source
+    cont = $.parseString await $.read source
     listCont = cont.split '\n'
 
     if !_.trim(_.last listCont).length
       listCont.pop()
-      await $$.write source, listCont.join('\n')
+      await $.write source, listCont.join('\n')
 
-$$.task 'default', ->
+$.task 'default', ->
   list = (key for key of gulp.tasks)
   list.sort()
   $.info 'task', wrapList list
 
-$$.task 'gurumin', ->
+$.task 'gurumin', ->
 
   await fetchGitHub 'phonowell/gurumin'
 
-  await $$.remove './source/gurumin'
-  await $$.link './../gurumin/source', './source/gurumin'
+  await $.remove './source/gurumin'
+  await $.link './../gurumin/source', './source/gurumin'
 
-$$.task 'kokoro', ->
+$.task 'kokoro', ->
 
   await fetchGitHub 'phonowell/kokoro'
 
@@ -94,7 +94,7 @@ $$.task 'kokoro', ->
     './stylintrc.yml'
   ]
   $.info.pause 'kokoro'
-  await $$.remove listClean
+  await $.remove listClean
   $.info.resume 'kokoro'
 
   # copy
@@ -112,18 +112,18 @@ $$.task 'kokoro', ->
     source = "./../kokoro/#{filename}"
     target = "./#{filename}"
 
-    isSame = await $$.isSame [source, target]
+    isSame = await $.isSame [source, target]
     if isSame == true
       continue
 
-    await $$.copy source, './'
-    await $$.shell "git add -f #{$$.path.base}/#{filename}"
+    await $.copy source, './'
+    await $.shell "git add -f #{$.path.base}/#{filename}"
 
-$$.task 'noop', -> null
+$.task 'noop', -> null
 
-$$.task 'prune', ->
+$.task 'prune', ->
 
-  await $$.shell 'npm prune'
+  await $.shell 'npm prune'
 
   base = './node_modules'
 
@@ -180,7 +180,7 @@ $$.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/#{line}" for line in listFile)
-  await $$.remove listSource
+  await $.remove listSource
 
   # directory
 
@@ -205,7 +205,7 @@ $$.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/#{line}" for line in listDirectory)
-  await $$.remove listSource
+  await $.remove listSource
 
   # extension
 
@@ -220,11 +220,11 @@ $$.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/*#{line}" for line in listExtension)
-  await $$.remove listSource
+  await $.remove listSource
 
-$$.task 'update', ->
+$.task 'update', ->
 
-  {registry} = $$.argv
+  {registry} = $.argv
 
-  await $$.update {registry}
-  await $$.shell 'npm prune'
+  await $.update {registry}
+  await $.shell 'npm prune'

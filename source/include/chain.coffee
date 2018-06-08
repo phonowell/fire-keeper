@@ -2,4 +2,4 @@
 chain(fn, option)
 ###
 
-$$.chain = require 'achain'
+$.chain = require 'achain'
