@@ -32,7 +32,7 @@ $.task 'build', -> await $.compile './source/index.coffee', './'
 - $.download(source, target, [option])
 - [$.isExisted(source)](doc/isExisted.md)
 - [$.isSame(source)](doc/isSame.md)
-- $.link(source, target)
+- [$.link(source, target)](doc/link.md)
 - $.lint(source)
 - $.mkdir(source)
 - $.move(source, target)
@@ -86,4 +86,4 @@ gulp test
 
 ## 注意
 
-该项目**并不稳定**。
+该项目**并不特别稳定**。

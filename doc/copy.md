@@ -11,5 +11,6 @@
 ## 示例
 
 ```coffeescript
-await $.copy './package.json', './template'
+await $.copy './package.json', './template' # 单个文件
+await $.copy './test/*', './shadow' # 多个文件
 ```

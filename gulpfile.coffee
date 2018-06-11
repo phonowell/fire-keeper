@@ -91,4 +91,6 @@ $.task 'test', ->
 
   await $.say 'mission completed'
 
-# $.task 'z', ->
+$.task 'z', ->
+
+  await $.copy './test/*', './shadow'
