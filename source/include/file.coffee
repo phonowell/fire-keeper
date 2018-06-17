@@ -1,20 +1,19 @@
 ###
-copy(source, target, [option])
-isChanged(source)
-isExisted(source)
-isSame(source, target)
-link(source, target)
-mkdir(source)
-move(source, target)
-read(source, [option])
-remove(source)
-rename(source, option)
-source(source)
-stat(source)
-write(source, data)
+copy_(source, target, [option])
+isExisted_(source)
+isSame_(source, target)
+link_(source, target)
+mkdir_(source)
+move_(source, target)
+read_(source, [option])
+remove_(source)
+rename_(source, option)
+source_(source)
+stat_(source)
+write_(source, data)
 ###
 
-$.copy = (arg...) ->
+$.copy_ = (arg...) ->
 
   # source, target, [option]
   [source, target, option] = switch arg.length
@@ -40,7 +39,7 @@ $.copy = (arg...) ->
 
   $ # return
 
-$.isExisted = (source) ->
+$.isExisted_ = (source) ->
 
   source = formatPath source
   if !source.length then return false
@@ -51,7 +50,7 @@ $.isExisted = (source) ->
 
   true # return
 
-$.isSame = (source) ->
+$.isSame_ = (source) ->
 
   source = formatPath source
 
@@ -64,7 +63,7 @@ $.isSame = (source) ->
 
   for src in source
 
-    stat = await $.stat src
+    stat = await $.stat_ src
     if !stat
       return false
 
@@ -83,9 +82,9 @@ $.isSame = (source) ->
 
   for src in source
 
-    $.info.pause '$.isSame'
-    cont = await $.read src
-    $.info.resume '$.isSame'
+    $.info.pause '$.isSame_'
+    cont = await $.read_ src
+    $.info.resume '$.isSame_'
     if !cont
       return false
 
@@ -100,7 +99,7 @@ $.isSame = (source) ->
 
   true # return
 
-$.link = (source, target) ->
+$.link_ = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -114,7 +113,7 @@ $.link = (source, target) ->
 
   $ # return
 
-$.mkdir = (source) ->
+$.mkdir_ = (source) ->
 
   if !source then throw makeError 'length'
 
@@ -128,7 +127,7 @@ $.mkdir = (source) ->
 
   $ # return
 
-$.move = (source, target) ->
+$.move_ = (source, target) ->
 
   unless source and target
     throw makeError 'length'
@@ -136,21 +135,21 @@ $.move = (source, target) ->
   source = formatPath source
   target = normalizePath target
 
-  $.info.pause '$.move'
-  await $.copy source, target
-  await $.remove source
-  $.info.resume '$.move'
+  $.info.pause '$.move_'
+  await $.copy_ source, target
+  await $.remove_ source
+  $.info.resume '$.move_'
 
   $.info 'move'
   , "moved #{wrapList source} to '#{target}'"
 
   $ # return
 
-$.read = (source, option = {}) ->
+$.read_ = (source, option = {}) ->
 
   source = normalizePath source
 
-  unless await $.isExisted source
+  unless await $.isExisted_ source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
@@ -172,9 +171,9 @@ $.read = (source, option = {}) ->
       $.parseString res
     else res
 
-$.remove = (source) ->
+$.remove_ = (source) ->
 
-  listSource = await $.source source
+  listSource = await $.source_ source
 
   for src in listSource
     await new Promise (resolve) ->
@@ -187,7 +186,7 @@ $.remove = (source) ->
 
   $ # return
 
-$.rename = (source, option) ->
+$.rename_ = (source, option) ->
 
   source = formatPath source
 
@@ -204,18 +203,18 @@ $.rename = (source, option) ->
       e.base
     .on 'end', -> resolve()
 
-  $.info.pause '$.rename'
+  $.info.pause '$.rename_'
   for item in listHistory
-    if await $.isExisted item[1]
-      await $.remove item[0]
-  $.info.resume '$.rename'
+    if await $.isExisted_ item[1]
+      await $.remove_ item[0]
+  $.info.resume '$.rename_'
 
   $.info 'file'
   , "renamed #{wrapList source} as '#{$.parseString option}'"
 
   $ # return
 
-$.source = (source) ->
+$.source_ = (source) ->
 
   source = formatPath source
 
@@ -227,11 +226,11 @@ $.source = (source) ->
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource
 
-$.stat = (source) ->
+$.stat_ = (source) ->
 
   source = normalizePath source
 
-  unless await $.isExisted source
+  unless await $.isExisted_ source
     $.info 'file', "#{wrapList source} not existed"
     return null
 
@@ -242,7 +241,7 @@ $.stat = (source) ->
       if err then throw err
       resolve stat
 
-$.write = (source, data, option) ->
+$.write_ = (source, data, option) ->
 
   source = normalizePath source
 

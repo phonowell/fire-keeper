@@ -1,33 +1,30 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.link(source, target)', ->
+describe '$.link_(source, target)', ->
 
-  it "$.link('./../gurumin/source', '#{temp}/gurumin')", ->
-    await clean()
+  it "$.link_('./../gurumin/source', '#{temp}/gurumin')", ->
+    await clean_()
 
-    res = await $.link './../gurumin/source'
+    res = await $.link_ './../gurumin/source'
     , "#{temp}/gurumin"
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted "#{temp}/gurumin"
+    unless await $.isExisted_ "#{temp}/gurumin"
       throw new Error()
 
-    unless await $.isExisted "#{temp}/gurumin/script/include/core/$.ago.coffee"
+    unless await $.isExisted_ "#{temp}/gurumin/script/include/core/$.ago.coffee"
       throw new Error()
 
-    await clean()
+    await clean_()

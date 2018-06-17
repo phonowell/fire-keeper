@@ -1,11 +1,11 @@
 ###
-delay([time], [callback])
+delay_([time], [callback])
 reload(source)
 watch(source)
 yargs()
 ###
 
-$.delay = (time = 0, callback) ->
+$.delay_ = (time = 0, callback) ->
   
   await new Promise (resolve) ->
     setTimeout ->

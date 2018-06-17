@@ -8,7 +8,7 @@ class Shell
 
   ###
   close()
-  execute(cmd, [option])
+  execute_(cmd, [option])
   info([type], string)
   ###
 
@@ -16,7 +16,7 @@ class Shell
     @process.kill()
     @ # return
 
-  execute: (cmd, option = {}) ->
+  execute_: (cmd, option = {}) ->
 
     new Promise (resolve) =>
 
@@ -69,13 +69,13 @@ class Shell
     .replace /\n{2,}/g, ''
 
     string = switch type
-      when 'error' then colors.red string
-      else colors.gray string
+      when 'error' then chalk.red string
+      else chalk.gray string
 
     $.log string
 
 # return
-$.shell = (cmd, option) ->
+$.shell_ = (cmd, option) ->
   shell = new Shell()
   if !cmd then return shell
-  shell.execute cmd, option
+  shell.execute_ cmd, option

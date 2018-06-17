@@ -1,15 +1,12 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
@@ -19,7 +16,7 @@ if $.os == 'windows'
 describe '$.fn.formatPath(source)', ->
 
   it "$.fn.formatPath('./source')", ->
-    await clean()
+    await clean_()
 
     source = './source'
     target = [
@@ -31,10 +28,10 @@ describe '$.fn.formatPath(source)', ->
     unless _.isEqual res, target
       throw new Error()
 
-    await clean()
+    await clean_()
 
   it "$.fn.formatPath(['./source', '~/opt', '!**/include/**'])", ->
-    await clean()
+    await clean_()
 
     source = [
       './source'
@@ -52,10 +49,10 @@ describe '$.fn.formatPath(source)', ->
     unless _.isEqual res, target
       throw new Error()
 
-    await clean()
+    await clean_()
 
   it "$.fn.formatPath('/opt/a/b/../c')", ->
-    await clean()
+    await clean_()
 
     source = '/opt/a/b/../c'
     target = [
@@ -67,12 +64,12 @@ describe '$.fn.formatPath(source)', ->
     unless _.isEqual res, target
       throw new Error()
 
-    await clean()
+    await clean_()
 
 describe '$.fn.normalizePath(source)', ->
 
   it "$.fn.normalizePath('./source')", ->
-    await clean()
+    await clean_()
 
     source = './source'
     target = "#{$.path.base}/source"
@@ -82,10 +79,10 @@ describe '$.fn.normalizePath(source)', ->
     if res != target
       throw new Error()
 
-    await clean()
+    await clean_()
 
   it "$.fn.normalizePath('~/opt')", ->
-    await clean()
+    await clean_()
 
     source = '~/opt'
     target = "#{$.path.home}/opt"
@@ -95,10 +92,10 @@ describe '$.fn.normalizePath(source)', ->
     if res != target
       throw new Error()
 
-    await clean()
+    await clean_()
 
   it "$.fn.normalizePath('./a/b/../c')", ->
-    await clean()
+    await clean_()
 
     source = './a/b/../c'
     target = "#{$.path.base}/a/c"
@@ -108,10 +105,10 @@ describe '$.fn.normalizePath(source)', ->
     if res != target
       throw new Error()
 
-    await clean()
+    await clean_()
 
   it "$.fn.normalizePath('../a')", ->
-    await clean()
+    await clean_()
 
     path = require 'path'
 
@@ -123,4 +120,4 @@ describe '$.fn.normalizePath(source)', ->
     if res != target
       throw new Error()
 
-    await clean()
+    await clean_()

@@ -1,22 +1,19 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.unzip(source, [target])', ->
+describe '$.unzip_(source, [target])', ->
 
-  it "$.unzip('#{temp}/*.zip')", ->
-    await clean()
+  it "$.unzip_('#{temp}/*.zip')", ->
+    await clean_()
 
     base = temp
 
@@ -26,18 +23,18 @@ describe '$.unzip(source, [target])', ->
       source = "#{base}/[test](test)#{key}.txt"
       content = "test file #{key}"
 
-      await $.write source, content
-      await $.zip source, "#{key}.zip"
-      await $.remove source
+      await $.write_ source, content
+      await $.zip_ source, "#{key}.zip"
+      await $.remove_ source
 
       listSource.push source
 
-    res = await $.unzip "#{base}/*.zip"
+    res = await $.unzip_ "#{base}/*.zip"
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted listSource
+    unless await $.isExisted_ listSource
       throw new Error()
 
-    await clean()
+    await clean_()

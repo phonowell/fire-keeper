@@ -1,8 +1,8 @@
 ###
-say(text)
+say_(text)
 ###
 
-$.say = (text) ->
+$.say_ = (text) ->
 
   if $.os != 'macos' then return
 
@@ -22,8 +22,8 @@ $.say = (text) ->
 
     if !msg.length then continue
 
-    $.info.pause '$.say'
-    await $.shell "say #{msg}"
-    $.info.resume '$.say'
+    $.info.pause '$.say_'
+    await $.shell_ "say #{msg}"
+    $.info.resume '$.say_'
 
   text # return

@@ -1,12 +1,12 @@
 ###
-lint(source)
+lint_(source)
 ###
 
 do ->
 
   # function
 
-  fn = (source) ->
+  fn_ = (source) ->
 
     source = formatPath source
 
@@ -19,17 +19,17 @@ do ->
       when 'styl' then 'stylus'
       else throw makeError 'extname'
 
-    await fn[method] source
+    await fn_["#{method}_"] source
 
     $ # return
 
   ###
-  coffee(source)
-  markdown(source)
-  stylus(source)
+  coffee_(source)
+  markdown_(source)
+  stylus_(source)
   ###
 
-  fn.coffee = (source) ->
+  fn_.coffee_ = (source) ->
 
     new Promise (resolve) ->
 
@@ -42,11 +42,11 @@ do ->
       .pipe coffeelint()
       .pipe coffeelint.reporter()
 
-  fn.markdown = (source) ->
+  fn_.markdown_ = (source) ->
 
     new Promise (resolve) ->
 
-      option = files: await $.source source
+      option = files: await $.source_ source
 
       markdownlint option, (err, result) ->
         
@@ -60,15 +60,15 @@ do ->
           .replace $.info['__reg_base__'], '.'
           .replace $.info['__reg_home__'], '~'
           
-          $.i colors.magenta filename
+          $.i chalk.magenta filename
           
           for item in list
 
             listMsg = []
             
-            listMsg.push colors.gray "##{item.lineNumber}"
+            listMsg.push chalk.gray "##{item.lineNumber}"
             if item.errorContext
-              listMsg.push "< #{colors.red item.errorContext} >"
+              listMsg.push "< #{chalk.red item.errorContext} >"
             if item.ruleDescription
               listMsg.push item.ruleDescription
 
@@ -76,7 +76,7 @@ do ->
         
         resolve()
 
-  fn.stylus = (source) ->
+  fn_.stylus_ = (source) ->
 
     new Promise (resolve) ->
 
@@ -90,4 +90,4 @@ do ->
       .pipe stylint.reporter()
 
   # return
-  $.lint = fn
+  $.lint_ = fn_

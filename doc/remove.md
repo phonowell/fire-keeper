@@ -1,4 +1,4 @@
-# $.remove(source)
+# $.remove_(source)
 
 删除文件。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-await $.remove './build'
+await $.remove_ './build'
 ```

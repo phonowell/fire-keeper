@@ -1,10 +1,10 @@
 # https://github.com/kevva/download
 
 ###
-download(source, target, [option])
+download_(source, target, [option])
 ###
 
-$.download = (arg...) ->
+$.download_ = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
@@ -16,6 +16,7 @@ $.download = (arg...) ->
   if $.type(option) == 'string'
     option = filename: option
 
+  # this function download was from plugin
   await download source, target, option
 
   msg = "downloaded #{wrapList source} to #{wrapList target}"

@@ -3,7 +3,7 @@
 path = require 'path'
 fs = require 'fs'
 
-colors = require 'colors/safe'
+chalk = require 'chalk'
 fse = require 'fs-extra'
 
 $ = require 'node-jquery-extend'

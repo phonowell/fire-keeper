@@ -1,4 +1,4 @@
-# $.delay([time], [callback])
+# $.delay_([time], [callback])
 
 等待一段时间。
 
@@ -10,5 +10,5 @@
 ## 示例
 
 ```coffeescript
-await $.delay 500
+await $.delay_ 500
 ```

@@ -1,45 +1,42 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.recover(source)', ->
+describe '$.recover_(source)', ->
 
-  it "$.recover('#{temp}/readme.md')", ->
-    await clean()
+  it "$.recover_('#{temp}/readme.md')", ->
+    await clean_()
 
     source = "#{temp}/readme.md"
     target = "#{temp}/readme.md.bak"
 
-    await $.copy './readme.md', temp
+    await $.copy_ './readme.md', temp
 
-    await $.backup source
+    await $.backup_ source
 
-    targetData = await $.read target
+    targetData = await $.read_ target
 
-    await $.remove source
+    await $.remove_ source
 
-    res = await $.recover source
+    res = await $.recover_ source
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted source
+    unless await $.isExisted_ source
       throw new Error 1
 
-    sourceData = await $.read source
+    sourceData = await $.read_ source
 
     if sourceData.toString() != targetData.toString()
       throw new Error 2
 
-    await clean()
+    await clean_()

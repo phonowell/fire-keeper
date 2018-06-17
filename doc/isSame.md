@@ -1,4 +1,4 @@
-# $.isSame(source)
+# $.isSame_(source)
 
 判断文件内容是否相同。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-isSame = await $.isSame './doc/*.md'
+isSame = await $.isSame_ './doc/*.md'
 ```

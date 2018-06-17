@@ -1,12 +1,12 @@
 ###
-compile(source, [target], [option])
+compile_(source, [target], [option])
 ###
 
 do ->
 
   # function
 
-  fn = (arg...) ->
+  fn_ = (arg...) ->
 
     [source, target, option] = switch arg.length
       when 1 then [arg[0], null, {}]
@@ -37,25 +37,25 @@ do ->
       minify: true
     , option
 
-    compiler = fn[method]
-    if !compiler then throw makeError "invalid extname: '.#{extname}'"
-    await compiler source, target, option
+    compile_ = fn_["#{method}_"]
+    if !compile_ then throw makeError "invalid extname: '.#{extname}'"
+    await compile_ source, target, option
 
     $.info 'compile', "compiled #{wrapList source} to #{wrapList target}"
 
     $ # return
 
   ###
-  coffee(source, target, option)
-  css(source, target, option)
-  js(source, target, option)
-  markdown(source, target, option)
-  pug(source, target, option)
-  stylus(source, target, option)
-  yaml(source, target, option)
+  coffee_(source, target, option)
+  css_(source, target, option)
+  js_(source, target, option)
+  markdown_(source, target, option)
+  pug_(source, target, option)
+  stylus_(source, target, option)
+  yaml_(source, target, option)
   ###
 
-  fn.coffee = (source, target, option) ->
+  fn_.coffee_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -76,7 +76,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.css = (source, target, option) ->
+  fn_.css_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -89,7 +89,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.js = (source, target, option) ->
+  fn_.js_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -102,7 +102,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.markdown = (source, target, option) ->
+  fn_.markdown_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -117,7 +117,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.pug = (source, target, option) ->
+  fn_.pug_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -130,7 +130,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.stylus = (source, target, option) ->
+  fn_.stylus_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -145,7 +145,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn.yaml = (source, target, option) ->
+  fn_.yaml_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -159,4 +159,4 @@ do ->
       .on 'end', -> resolve()
 
   # return
-  $.compile = fn
+  $.compile_ = fn_

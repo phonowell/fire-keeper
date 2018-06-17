@@ -1,33 +1,30 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.walk(source, callback)', ->
+describe '$.walk_(source, callback)', ->
 
-  it "$.walk('#{temp}')", ->
-    await clean()
+  it "$.walk_('#{temp}')", ->
+    await clean_()
 
-    await $.mkdir "#{temp}/a"
+    await $.mkdir_ "#{temp}/a"
 
     string = 'empty'
 
-    await $.write "#{temp}/b/c.txt", string
-    await $.write "#{temp}/d.txt", string
+    await $.write_ "#{temp}/b/c.txt", string
+    await $.write_ "#{temp}/d.txt", string
 
     listResult = []
 
-    res = await $.walk temp, (item) ->
+    res = await $.walk_ temp, (item) ->
       listResult.push item.path
 
     if res != $
@@ -42,4 +39,4 @@ describe '$.walk(source, callback)', ->
     ]
       throw new Error()
 
-    await clean()
+    await clean_()

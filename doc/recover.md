@@ -1,4 +1,4 @@
-# $.recover(source)
+# $.recover_(source)
 
 恢复备份。
 
@@ -9,6 +9,6 @@
 ## 示例
 
 ```coffeescript
-await $.recover './package.json'
+await $.recover_ './package.json'
 # 使用 ./ 下的 package.json.bak 覆盖同一目录下的 package.json，并删除 package.json.bak
 ```

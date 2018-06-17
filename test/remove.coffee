@@ -1,44 +1,41 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.remove(source)', ->
+describe '$.remove_(source)', ->
 
-  it "$.remove('#{temp}/re')", ->
-    await clean()
+  it "$.remove_('#{temp}/re')", ->
+    await clean_()
 
-    await $.write "#{temp}/re/move.txt", 'to be removed'
+    await $.write_ "#{temp}/re/move.txt", 'to be removed'
 
-    res = await $.remove "#{temp}/re"
+    res = await $.remove_ "#{temp}/re"
 
     if res != $
       throw new Error()
 
-    if await $.isExisted "#{temp}/re"
+    if await $.isExisted_ "#{temp}/re"
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.remove(['#{temp}/a', '#{temp}/b', '#{temp}/c.txt'])", ->
-    await clean()
+  it "$.remove_(['#{temp}/a', '#{temp}/b', '#{temp}/c.txt'])", ->
+    await clean_()
 
-    await $.mkdir [
+    await $.mkdir_ [
       "#{temp}/a"
       "#{temp}/b"
     ]
 
-    await $.write "#{temp}/c.txt", 'empty'
+    await $.write_ "#{temp}/c.txt", 'empty'
 
     listSource = [
       "#{temp}/a"
@@ -46,18 +43,18 @@ describe '$.remove(source)', ->
       "#{temp}/c.txt"
     ]
 
-    res = await $.remove listSource
+    res = await $.remove_ listSource
 
     if res != $
       throw new Error()
 
-    if await $.isExisted listSource
+    if await $.isExisted_ listSource
       throw new Error()
 
-    await clean()
+    await clean_()
     
-  it "$.remove('#{temp}/**/*.txt')", ->
-    await clean()
+  it "$.remove_('#{temp}/**/*.txt')", ->
+    await clean_()
     
     listSource = [
       "#{temp}/a.txt"
@@ -66,17 +63,17 @@ describe '$.remove(source)', ->
     string = 'empty'
 
     for source in listSource
-      await $.write source, string
+      await $.write_ source, string
     
-    res = await $.remove "#{temp}/**/*.txt"
+    res = await $.remove_ "#{temp}/**/*.txt"
     
     if res != $
       throw new Error()
       
-    if await $.isExisted listSource
+    if await $.isExisted_ listSource
       throw new Error()
 
-    unless await $.isExisted "#{temp}/b"
+    unless await $.isExisted_ "#{temp}/b"
       throw new Error()
 
-    await clean()
+    await clean_()

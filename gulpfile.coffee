@@ -30,7 +30,7 @@ test()
 
 $.task 'build', ->
 
-  await $.compile './source/index.coffee', './',
+  await $.compile_ './source/index.coffee', './',
     minify: false
 
 $.task 'compile', -> compile()
@@ -39,12 +39,12 @@ $.task 'lint', ->
 
   await $.task('kokoro')()
 
-  await $.lint [
+  await $.lint_ [
     './*.md'
     './source/**/*.md'
   ]
 
-  await $.lint [
+  await $.lint_ [
     './gulpfile.coffee'
     './source/**/*.coffee'
     './test/**/*.coffee'
@@ -57,7 +57,7 @@ $.task 'set', ->
   if !ver
     throw new Error 'empty ver'
 
-  await $.replace './package.json', (cont) ->
+  await $.replace_ './package.json', (cont) ->
     data = $.parseJson cont
     data.version = ver
     data
@@ -70,27 +70,80 @@ $.task 'test', ->
 
   # function
 
-  clean = ->
-    await $.remove [
+  clean_ = ->
+    await $.remove_ [
       './test/**/*.js'
       './test/**/*.map'
     ]
 
   # execute
 
-  await clean()
+  await clean_()
 
-  await $.compile source,
+  await $.compile_ source,
     map: true
     minify: false
   
-  unless await $.shell 'npm test'
+  unless await $.shell_ 'npm test'
     throw new Error()
   
-  await clean()
+  await clean_()
 
-  await $.say 'mission completed'
+  await $.say_ 'mission completed'
+
+$.task 'y', ->
+
+  listSource = await $.source_ './test/*.coffee'
+
+  for source in listSource
+
+    await $.replace_ source
+    , /# function\n/g
+    , '# function'
 
 $.task 'z', ->
 
-  await $.copy './test/*', './shadow'
+  listSource = await $.source_ './source/**/*.coffee'
+
+  for source in listSource
+
+    await $.replace_ source, /\$\.([^\s\(]+)/g, (s, string) ->
+      
+      listKey = [
+        'backup'
+        'compile'
+        'copy'
+        'delay'
+        'download'
+        'isExisted'
+        'isSame'
+        'link'
+        'lint'
+        'mkdir'
+        'move'
+        'read'
+        'recover'
+        'remove'
+        'rename'
+        'replace'
+        'say'
+        'shell'
+        'source'
+        'ssh.connect'
+        'ssh.disconnect'
+        'ssh.mkdir'
+        'ssh.remove'
+        'ssh.shell'
+        'ssh.upload'
+        'stat'
+        'unzip'
+        'update'
+        'walk'
+        'write'
+        'zip'
+      ]
+
+      unless string in listKey
+        return s
+
+      "$.#{_.trim string, '_'}_"

@@ -1,70 +1,67 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.read(source, [option])', ->
+describe '$.read_(source, [option])', ->
 
-  it "$.read('#{temp}/test.txt')", ->
-    await clean()
+  it "$.read_('#{temp}/test.txt')", ->
+    await clean_()
 
     source = "#{temp}/test.txt"
     string = 'a test message'
 
-    await $.write source, string
+    await $.write_ source, string
 
-    cont = await $.read source
+    cont = await $.read_ source
 
     if cont != string
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.read('#{temp}/test.json')", ->
-    await clean()
+  it "$.read_('#{temp}/test.json')", ->
+    await clean_()
 
     source = "#{temp}/test.json"
     string = 'a test message'
     object = message: string
 
-    await $.write source, object
+    await $.write_ source, object
 
-    cont = await $.read source
+    cont = await $.read_ source
 
     if cont.message != string
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.read('#{temp}/null.txt')", ->
-    await clean()
+  it "$.read_('#{temp}/null.txt')", ->
+    await clean_()
 
-    cont = await $.read "#{temp}/null.txt"
+    cont = await $.read_ "#{temp}/null.txt"
 
     if cont?
       throw new Error()
     
-    await clean()
+    await clean_()
 
-  it "$.read('#{temp}/text.txt', raw: true)", ->
-    await clean()
+  it "$.read_('#{temp}/text.txt', raw: true)", ->
+    await clean_()
 
     source = "#{temp}/test.json"
     string = 'a test message'
 
-    await $.write source, string
+    await $.write_ source, string
 
-    cont = await $.read source,
+    cont = await $.read_ source,
       raw: true
 
     if $.type(cont) != 'buffer'
@@ -75,4 +72,4 @@ describe '$.read(source, [option])', ->
     if cont != string
       throw new Error()
 
-    await clean()
+    await clean_()

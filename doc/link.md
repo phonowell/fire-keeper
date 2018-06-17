@@ -1,4 +1,4 @@
-# $.link(source, target)
+# $.link_(source, target)
 
 ~~拯救海拉尔。~~建立软链接。
 
@@ -10,6 +10,6 @@
 ## 示例
 
 ```coffeescript
-await $.link './package.json', './shadow.json' # 文件
-await $.link './test', './shadow' # 目录
+await $.link_ './package.json', './shadow.json' # 文件
+await $.link_ './test', './shadow' # 目录
 ```

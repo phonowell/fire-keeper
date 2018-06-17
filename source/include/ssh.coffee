@@ -2,21 +2,19 @@
 
 class SSH
 
-  constructor: -> @
-
   ###
-  connect(option)
-  disconnect()
+  connect_(option)
+  disconnect_()
   info(chunk)
-  mkdir(source)
-  remove(source)
-  shell(cmd, [option])
-  upload(source, target, [option])
-  uploadDir(sftp, source, target)
-  uploadFile(sftp, source, target)
+  mkdir_(source)
+  remove_(source)
+  shell_(cmd, [option])
+  upload_(source, target, [option])
+  uploadDir_(sftp, source, target)
+  uploadFile_(sftp, source, target)
   ###
 
-  connect: (option) ->
+  connect_: (option) ->
 
     new Promise (resolve) =>
 
@@ -36,7 +34,7 @@ class SSH
 
       @storage = {conn, option}
 
-  disconnect: ->
+  disconnect_: ->
 
     new Promise (resolve) =>
 
@@ -62,31 +60,31 @@ class SSH
 
     $.i string
 
-  mkdir: (source) ->
+  mkdir_: (source) ->
 
     source = formatArgument source
 
     cmd = ("mkdir -p #{src}" for src in source).join '; '
 
-    $.info.pause '$.ssh.mkdir'
-    await @shell cmd
-    $.info.resume '$.ssh.mkdir'
+    $.info.pause '$.ssh.mkdir_'
+    await @shell_ cmd
+    $.info.resume '$.ssh.mkdir_'
 
     $.info 'ssh', "created #{wrapList source}"
 
-  remove: (source) ->
+  remove_: (source) ->
 
     source = formatArgument source
 
     cmd = ("rm -fr #{src}" for src in source).join '; '
 
-    $.info.pause '$.ssh.remove'
-    await @shell cmd
-    $.info.resume '$.ssh.remove'
+    $.info.pause '$.ssh.remove_'
+    await @shell_ cmd
+    $.info.resume '$.ssh.remove_'
 
     $.info 'ssh', "removed #{wrapList source}"
 
-  shell: (cmd, option = {}) ->
+  shell_: (cmd, option = {}) ->
 
     new Promise (resolve) =>
 
@@ -95,7 +93,7 @@ class SSH
       cmd = formatArgument cmd
       cmd = cmd.join ' && '
 
-      $.info 'ssh', colors.blue cmd
+      $.info 'ssh', chalk.blue cmd
 
       conn.exec cmd, (err, stream) =>
         if err then throw err
@@ -108,7 +106,7 @@ class SSH
           throw $.parseString chunk
         stream.stdout.on 'data', (chunk) => @info chunk
 
-  upload: (source, target, option = {}) ->
+  upload_: (source, target, option = {}) ->
 
     new Promise (resolve) =>
 
@@ -127,40 +125,40 @@ class SSH
 
         for src in source
 
-          stat = await $.stat src
+          stat = await $.stat_ src
           filename = option.filename or path.basename src
 
           if stat.isDirectory()
-            await @uploadDir sftp, src, "#{target}/#{filename}"
+            await @uploadDir_ sftp, src, "#{target}/#{filename}"
 
           else if stat.isFile()
-            await @mkdir target
-            await @uploadFile sftp, src, "#{target}/#{filename}"
+            await @mkdir_ target
+            await @uploadFile_ sftp, src, "#{target}/#{filename}"
 
         sftp.end()
         resolve()
 
-  uploadDir: (sftp, source, target) ->
+  uploadDir_: (sftp, source, target) ->
 
     new Promise (resolve) =>
 
       listSource = []
-      await $.walk source, (item) -> listSource.push item.path
+      await $.walk_ source, (item) -> listSource.push item.path
 
       for src in listSource
 
-        stat = await $.stat src
+        stat = await $.stat_ src
         relativeTarget = path.normalize "#{target}/#{path.relative source, src}"
 
         if stat.isDirectory()
-          await @mkdir relativeTarget
+          await @mkdir_ relativeTarget
 
         else if stat.isFile()
-          await @uploadFile sftp, src, relativeTarget
+          await @uploadFile_ sftp, src, relativeTarget
 
       resolve()
 
-  uploadFile: (sftp, source, target) ->
+  uploadFile_: (sftp, source, target) ->
 
     new Promise (resolve) ->
 

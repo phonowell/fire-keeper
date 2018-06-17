@@ -1,26 +1,23 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.stat(source)', ->
+describe '$.stat_(source)', ->
 
-  it '$.stat("./temp/package.json")', ->
-    await clean()
+  it '$.stat_("./temp/package.json")', ->
+    await clean_()
 
-    await $.copy './package.json', temp
+    await $.copy_ './package.json', temp
 
-    stat = await $.stat './package.json'
+    stat = await $.stat_ './package.json'
 
     if $.type(stat) != 'object'
       throw new Error()
@@ -31,14 +28,14 @@ describe '$.stat(source)', ->
     if $.type(stat.size) != 'number'
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it '$.stat("./temp/null.txt")', ->
-    await clean()
+  it '$.stat_("./temp/null.txt")', ->
+    await clean_()
 
-    stat = await $.stat "#{temp}/null.txt"
+    stat = await $.stat_ "#{temp}/null.txt"
 
     if stat?
       throw new Error()
 
-    await clean()
+    await clean_()

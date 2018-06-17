@@ -1,74 +1,71 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
     
-describe '$.isExisted(source)', ->
+describe '$.isExisted_(source)', ->
 
-  it "$.isExisted('#{temp}/existed')", ->
-    await clean()
+  it "$.isExisted_('#{temp}/existed')", ->
+    await clean_()
 
     source = "#{temp}/existed"
 
-    await $.mkdir source
+    await $.mkdir_ source
 
-    unless await $.isExisted source
+    unless await $.isExisted_ source
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.isExisted('#{temp}/null')", ->
-    await clean()
+  it "$.isExisted_('#{temp}/null')", ->
+    await clean_()
 
-    if await $.isExisted "#{temp}/null"
+    if await $.isExisted_ "#{temp}/null"
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.isExisted('#{temp}/existed/existed.txt')", ->
-    await clean()
+  it "$.isExisted_('#{temp}/existed/existed.txt')", ->
+    await clean_()
 
     source = "#{temp}/existed/existed.txt"
 
-    await $.write source, 'existed'
+    await $.write_ source, 'existed'
 
-    unless await $.isExisted source
+    unless await $.isExisted_ source
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.isExisted('#{temp}/existed/null.txt')", ->
-    await clean()
+  it "$.isExisted_('#{temp}/existed/null.txt')", ->
+    await clean_()
 
-    await $.mkdir "#{temp}/existed"
+    await $.mkdir_ "#{temp}/existed"
 
-    if await $.isExisted "#{temp}/existed/null.txt"
+    if await $.isExisted_ "#{temp}/existed/null.txt"
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it '$.isExisted([])', ->
-    await clean()
+  it '$.isExisted_([])', ->
+    await clean_()
 
-    isExisted = await $.isExisted []
+    isExisted = await $.isExisted_ []
 
     if isExisted
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.isExisted(['#{temp}/a', '#{temp}/b', '#{temp}/c'])", ->
-    await clean()
+  it "$.isExisted_(['#{temp}/a', '#{temp}/b', '#{temp}/c'])", ->
+    await clean_()
 
     listSource = [
       "#{temp}/a"
@@ -76,28 +73,28 @@ describe '$.isExisted(source)', ->
       "#{temp}/c"
     ]
 
-    await $.mkdir listSource
+    await $.mkdir_ listSource
 
-    isExisted = await $.isExisted listSource
+    isExisted = await $.isExisted_ listSource
 
     if !isExisted
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.isExisted(['#{temp}/existed.txt', '#{temp}/null.txt'])", ->
-    await clean()
+  it "$.isExisted_(['#{temp}/existed.txt', '#{temp}/null.txt'])", ->
+    await clean_()
 
     listSource = [
       "#{temp}/existed.txt"
       "#{temp}/null.txt"
     ]
 
-    await $.write listSource[0], 'existed'
+    await $.write_ listSource[0], 'existed'
 
-    isExisted = await $.isExisted listSource
+    isExisted = await $.isExisted_ listSource
 
     if isExisted
       throw new Error()
 
-    await clean()
+    await clean_()

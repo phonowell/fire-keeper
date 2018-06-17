@@ -1,10 +1,10 @@
 # https://github.com/jprichardson/node-klaw
 
 ###
-walk(source, callback)
+walk_(source, callback)
 ###
 
-$.walk = (source, callback) ->
+$.walk_ = (source, callback) ->
 
   unless source and callback
     throw makeError 'length'

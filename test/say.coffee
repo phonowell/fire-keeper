@@ -1,27 +1,24 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.say(text)', ->
+describe '$.say_(text)', ->
 
-  it '$.say()', ->
-    await clean()
+  it '$.say_()', ->
+    await clean_()
 
-    if !$.say
+    if !$.say_
       throw new Error()
 
-    unless _.isFunction $.say
+    unless _.isFunction $.say_
       throw new Error()
 
-    await clean()
+    await clean_()

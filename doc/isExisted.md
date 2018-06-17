@@ -1,4 +1,4 @@
-# $.isExisted(source)
+# $.isExisted_(source)
 
 判断文件是否存在。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-isExisted = await $.isExisted './unexisted'
+isExisted = await $.isExisted_ './unexisted'
 ```

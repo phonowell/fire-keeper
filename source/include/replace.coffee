@@ -1,13 +1,13 @@
 ###
-replace(source, option...)
+replace_(source, option...)
 ###
 
-$.replace = (source, option...) ->
+$.replace_ = (source, option...) ->
 
   if !source
     throw makeError 'source'
 
-  listSource = await $.source source
+  listSource = await $.source_ source
 
   switch option.length
     when 1 then callback = option[0]
@@ -20,9 +20,9 @@ $.replace = (source, option...) ->
 
   for src in listSource
 
-    $.info.pause '$.replace'
+    $.info.pause '$.replace_'
     
-    cont = $.parseString await $.read src
+    cont = $.parseString await $.read_ src
 
     res = if callback
       $.parseString callback cont
@@ -30,9 +30,9 @@ $.replace = (source, option...) ->
 
     if res == cont then continue
 
-    await $.write src, res
+    await $.write_ src, res
 
-    $.info.resume '$.replace'
+    $.info.resume '$.replace_'
     $.info 'replace', "#{msg}, in '#{src}'"
 
   $ # return

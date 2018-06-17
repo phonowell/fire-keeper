@@ -1,107 +1,104 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.copy(source, target, [option])', ->
+describe '$.copy_(source, target, [option])', ->
 
-  it "$.copy('./license.md', '#{temp}', 'test.md')", ->
-    await clean()
+  it "$.copy_('./license.md', '#{temp}', 'test.md')", ->
+    await clean_()
 
     source = './license.md'
     target = "#{temp}/test.md"
 
-    res = await $.copy source, temp, 'test.md'
+    res = await $.copy_ source, temp, 'test.md'
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted target
+    unless await $.isExisted_ target
       throw new Error()
 
-    contSource = await $.read source
-    contTarget = await $.read target
+    contSource = await $.read_ source
+    contTarget = await $.read_ target
 
     if contTarget != contSource
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.copy('./license.md', '#{temp}/new')", ->
-    await clean()
+  it "$.copy_('./license.md', '#{temp}/new')", ->
+    await clean_()
 
     source = './license.md'
     target = "#{temp}/new/license.md"
 
-    res = await $.copy source, "#{temp}/new"
+    res = await $.copy_ source, "#{temp}/new"
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted target
+    unless await $.isExisted_ target
       throw new Error()
 
-    contSource = await $.read source
-    contTarget = await $.read target
+    contSource = await $.read_ source
+    contTarget = await $.read_ target
 
     if contTarget != contSource
       throw new Error()
 
-    await clean()
+    await clean_()
 
-  it "$.copy('./license.md', '~/Downloads/temp')", ->
-    await clean()
+  it "$.copy_('./license.md', '~/Downloads/temp')", ->
+    await clean_()
 
     if $.os != 'macos' then return
 
     source = './license.md'
     target = '~/Downloads/temp/license.md'
 
-    res = await $.copy source, '~/Downloads/temp'
+    res = await $.copy_ source, '~/Downloads/temp'
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted target
+    unless await $.isExisted_ target
       throw new Error()
 
-    contSource = await $.read source
-    contTarget = await $.read target
+    contSource = await $.read_ source
+    contTarget = await $.read_ target
 
     if contTarget != contSource
       throw new Error()
 
-    await $.remove '~/Downloads/temp'
+    await $.remove_ '~/Downloads/temp'
 
-  it "$.copy('#{temp}/a.txt', null, 'b.txt')", ->
-    await clean()
+  it "$.copy_('#{temp}/a.txt', null, 'b.txt')", ->
+    await clean_()
 
     source = "#{temp}/a.txt"
     target = "#{temp}/b.txt"
     string = 'a string to be copied'
 
-    await $.write source, string
-    res = await $.copy source, null, 'b.txt'
+    await $.write_ source, string
+    res = await $.copy_ source, null, 'b.txt'
 
     if res != $
       throw new Error()
 
-    unless await $.isExisted target
+    unless await $.isExisted_ target
       throw new Error()
 
-    cont = await $.read target
+    cont = await $.read_ target
 
     if cont != string
       throw new Error()
 
-    await clean()
+    await clean_()

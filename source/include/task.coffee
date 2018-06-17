@@ -1,19 +1,19 @@
 ###
-cloneGitHub(name)
+fetchGitHub_(name)
 ###
 
-fetchGitHub = (name) ->
+fetchGitHub_ = (name) ->
 
   source = normalizePath "./../#{name.split('/')[1]}"
 
-  if await $.isExisted source
-    return await $.shell [
+  if await $.isExisted_ source
+    return await $.shell_ [
       "cd #{source}"
       'git fetch'
       'git pull'
     ]
 
-  await $.shell "git clone
+  await $.shell_ "git clone
   https://github.com/#{name}.git
   #{source}"
 
@@ -58,16 +58,16 @@ $.task 'check', ->
     listSource.push "./source/**/*.#{ext}"
     listSource.push "./test/**/*.#{ext}"
 
-  listSource = await $.source listSource
+  listSource = await $.source_ listSource
 
   for source in listSource
 
-    cont = $.parseString await $.read source
+    cont = $.parseString await $.read_ source
     listCont = cont.split '\n'
 
     if !_.trim(_.last listCont).length
       listCont.pop()
-      await $.write source, listCont.join('\n')
+      await $.write_ source, listCont.join('\n')
 
 $.task 'default', ->
   list = (key for key of gulp.tasks)
@@ -76,14 +76,14 @@ $.task 'default', ->
 
 $.task 'gurumin', ->
 
-  await fetchGitHub 'phonowell/gurumin'
+  await fetchGitHub_ 'phonowell/gurumin'
 
-  await $.remove './source/gurumin'
-  await $.link './../gurumin/source', './source/gurumin'
+  await $.remove_ './source/gurumin'
+  await $.link_ './../gurumin/source', './source/gurumin'
 
 $.task 'kokoro', ->
 
-  await fetchGitHub 'phonowell/kokoro'
+  await fetchGitHub_ 'phonowell/kokoro'
 
   # clean
 
@@ -94,7 +94,7 @@ $.task 'kokoro', ->
     './stylintrc.yml'
   ]
   $.info.pause 'kokoro'
-  await $.remove listClean
+  await $.remove_ listClean
   $.info.resume 'kokoro'
 
   # copy
@@ -112,18 +112,18 @@ $.task 'kokoro', ->
     source = "./../kokoro/#{filename}"
     target = "./#{filename}"
 
-    isSame = await $.isSame [source, target]
+    isSame = await $.isSame_ [source, target]
     if isSame == true
       continue
 
-    await $.copy source, './'
-    await $.shell "git add -f #{$.path.base}/#{filename}"
+    await $.copy_ source, './'
+    await $.shell_ "git add -f #{$.path.base}/#{filename}"
 
 $.task 'noop', -> null
 
 $.task 'prune', ->
 
-  await $.shell 'npm prune'
+  await $.shell_ 'npm prune'
 
   base = './node_modules'
 
@@ -180,7 +180,7 @@ $.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/#{line}" for line in listFile)
-  await $.remove listSource
+  await $.remove_ listSource
 
   # directory
 
@@ -205,7 +205,7 @@ $.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/#{line}" for line in listDirectory)
-  await $.remove listSource
+  await $.remove_ listSource
 
   # extension
 
@@ -220,11 +220,11 @@ $.task 'prune', ->
   ]
 
   listSource = ("#{base}/**/*#{line}" for line in listExtension)
-  await $.remove listSource
+  await $.remove_ listSource
 
 $.task 'update', ->
 
   {registry} = $.argv
 
-  await $.update {registry}
-  await $.shell 'npm prune'
+  await $.update_ {registry}
+  await $.shell_ 'npm prune'

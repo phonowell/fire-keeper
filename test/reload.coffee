@@ -1,22 +1,19 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
 describe '$.reload(source)', ->
 
   it '$.reload()', ->
-    await clean()
+    await clean_()
 
     if !$.reload
       throw new Error()
@@ -24,4 +21,4 @@ describe '$.reload(source)', ->
     unless _.isFunction $.reload
       throw new Error()
 
-    await clean()
+    await clean_()

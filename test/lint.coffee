@@ -1,27 +1,24 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.lint(source)', ->
+describe '$.lint_(source)', ->
 
-  it '$.lint()', ->
-    await clean()
+  it '$.lint_()', ->
+    await clean_()
 
-    if !$.lint
+    if !$.lint_
       throw new Error()
 
-    unless _.isFunction $.lint
+    unless _.isFunction $.lint_
       throw new Error()
 
-    await clean()
+    await clean_()

@@ -1,22 +1,19 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
 describe '$.yargs()', ->
 
   it '$.yargs()', ->
-    await clean()
+    await clean_()
 
     if $.yargs != $.plugin.yargs
       throw new Error()
@@ -24,4 +21,4 @@ describe '$.yargs()', ->
     unless _.isFunction $.yargs
       throw new Error()
 
-    await clean()
+    await clean_()

@@ -1,22 +1,19 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
 describe '$.watch()', ->
 
   it '$.watch()', ->
-    await clean()
+    await clean_()
 
     if $.watch != $.plugin.watch
       throw new Error()
@@ -24,4 +21,4 @@ describe '$.watch()', ->
     unless _.isFunction $.watch
       throw new Error()
 
-    await clean()
+    await clean_()

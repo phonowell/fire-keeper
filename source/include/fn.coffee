@@ -14,8 +14,7 @@ excludeInclude = (source) ->
   source.push '!**/include/**'
   source = _.uniq source
 
-  # return
-  source
+  source # return
 
 formatArgument = (arg) ->
   switch $.type arg
@@ -43,13 +42,11 @@ normalizePath = (source) ->
     return null
 
   # check isIgnore
-
   if source[0] == '!'
     isIgnore = true
     source = source[1...]
 
   # replace \ to /
-
   source = source.replace /\\/g, '/'
 
   # replace . & ~
@@ -64,16 +61,13 @@ normalizePath = (source) ->
   source = source.replace /__parent_directory__/g, '..'
 
   # replace ../ to ./../ at start
-
   if source[0] == '.' and source[1] == '.'
     source = "#{$.path.base}/#{source}"
 
   # normalize
-
   source = path.normalize source
 
   # absolute
-
   unless path.isAbsolute source
     source = "#{$.path.base}#{path.sep}#{source}"
 
@@ -81,8 +75,7 @@ normalizePath = (source) ->
   if isIgnore
     source = "!#{source}"
 
-  # return
-  source
+  source # return
 
 wrapList = (list) ->
 

@@ -1,14 +1,14 @@
 ###
-unzip(source, [target])
-zip(source, [target], [option])
+unzip_(source, [target])
+zip_(source, [target], [option])
 ###
 
-$.unzip = (source, target) ->
+$.unzip_ = (source, target) ->
 
   if !source
     throw makeError 'source'
 
-  source = await $.source source
+  source = await $.source_ source
 
   for src in source
 
@@ -26,7 +26,7 @@ $.unzip = (source, target) ->
 
   $ # return
 
-$.zip = (arg...) ->
+$.zip_ = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 1 then [arg[0], null, null]
@@ -80,8 +80,8 @@ $.zip = (arg...) ->
     archive.on 'progress', (e) ->
       if isSilent then return
       if !msg then return
-      gray = colors.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
-      magenta = colors.magenta msg
+      gray = chalk.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
+      magenta = chalk.magenta msg
       msg = "#{gray} #{magenta}"
       $.i msg
       msg = null
@@ -90,7 +90,7 @@ $.zip = (arg...) ->
 
     archive.pipe output
 
-    listSource = await $.source source
+    listSource = await $.source_ source
     for src in listSource
       name = src.replace base, ''
       archive.file src, {name}

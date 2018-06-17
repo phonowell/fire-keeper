@@ -1,24 +1,21 @@
 # require
-
 $ = require './../index'
-{_} = $.library
+{_} = $
 
 # variable
-
 temp = './temp'
 
 # function
-
-clean = -> await $.remove temp
+clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.move(source, target)', ->
+describe '$.move_(source, target)', ->
 
-  it "$.move('#{temp}/*.md', '#{temp}/test')", ->
-    await clean()
+  it "$.move_('#{temp}/*.md', '#{temp}/test')", ->
+    await clean_()
 
-    await $.copy [
+    await $.copy_ [
       './license.md'
       './readme.md'
     ], temp
@@ -29,15 +26,15 @@ describe '$.move(source, target)', ->
       "#{temp}/test/readme.md"
     ]
 
-    res = await $.move "#{temp}/*.md", "#{temp}/test"
+    res = await $.move_ "#{temp}/*.md", "#{temp}/test"
 
     if res != $
       thrwo new Error()
 
-    if await $.isExisted source
+    if await $.isExisted_ source
       throw new Error()
 
-    unless await $.isExisted target
+    unless await $.isExisted_ target
       throw new Error()
 
-    await clean()
+    await clean_()

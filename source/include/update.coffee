@@ -3,13 +3,13 @@ do ->
   # function
 
   ###
-  addCmd(list, data, isDev, option)
-  clean()
-  execute(option)
-  getLatestVersion(name, option)
+  addCmd_(list, data, isDev, option)
+  clean_()
+  execute_(option)
+  getLatestVersion_(name, option)
   ###
 
-  addCmd = (list, data, isDev, option) ->
+  addCmd_ = (list, data, isDev, option) ->
 
     {registry} = option
 
@@ -18,16 +18,16 @@ do ->
       current = version
       .replace /[~^]/, ''
 
-      $.info.pause '$.update'
-      latest = await getLatestVersion name, option
-      $.info.resume '$.update'
+      $.info.pause '$.update_'
+      latest = await getLatestVersion_ name, option
+      $.info.resume '$.update_'
 
       if current == latest
         $.info 'update'
         , "'#{name}': '#{current}' == '#{latest}'"
         continue
       $.info 'update'
-      , "'#{name}': '#{current}' #{colors.green '->'} '#{latest}'"
+      , "'#{name}': '#{current}' #{chalk.green '->'} '#{latest}'"
 
       list.push [
         'npm install'
@@ -37,54 +37,54 @@ do ->
         if isDev then '--save-dev' else '--save'
       ].join(' ').replace /\s{2,}/g, ' '
 
-  clean = ->
+  clean_ = ->
 
-    await $.remove './temp/update'
+    await $.remove_ './temp/update'
 
-    listFile = await $.source './temp/**/*.*'
+    listFile = await $.source_ './temp/**/*.*'
 
     if !listFile.length
-      await $.remove './temp'
+      await $.remove_ './temp'
 
-  execute = (option) ->
+  execute_ = (option) ->
 
-    pkg = await $.read './package.json'
+    pkg = await $.read_ './package.json'
 
     listCmd = []
-    await addCmd listCmd, pkg.dependencies, false, option
-    await addCmd listCmd, pkg.devDependencies, true, option
+    await addCmd_ listCmd, pkg.dependencies, false, option
+    await addCmd_ listCmd, pkg.devDependencies, true, option
     
-    $.info.pause '$.update'
-    await clean()
-    $.info.resume '$.update'
+    $.info.pause '$.update_'
+    await clean_()
+    $.info.resume '$.update_'
 
     if !listCmd.length
       $.info 'update', 'every thing is ok'
       return
 
-    await $.shell listCmd
+    await $.shell_ listCmd
 
     $ # return
 
-  getLatestVersion = (name, option) ->
+  getLatestVersion_ = (name, option) ->
 
     {registry} = option
     registry or= 'http://registry.npmjs.org'
 
     source = "./temp/update/#{name}.json"
 
-    unless await $.isExisted source
+    unless await $.isExisted_ source
       
       url = "#{registry}/#{name}?salt=#{_.now()}"
-      await $.download url
+      await $.download_ url
       , './temp/update'
       , "#{name}.json"
 
-    unless data = await $.read source
+    unless data = await $.read_ source
       throw makeError 'source'
 
     # return
     _.get data, 'dist-tags.latest'
 
   # return
-  $.update = (arg...) -> execute arg...
+  $.update_ = (arg...) -> execute_ arg...

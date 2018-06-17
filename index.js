@@ -10,15 +10,15 @@
   wrapList(list)
   */
   /*
-  cloneGitHub(name)
+  fetchGitHub_(name)
   */
-  var $, $p, SSH, Shell, _, colors, excludeInclude, fetchGitHub, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
+  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
   fs = require('fs');
 
-  colors = require('colors/safe');
+  chalk = require('chalk');
 
   fse = require('fs-extra');
 
@@ -83,8 +83,7 @@
     source = formatArgument(source);
     source.push('!**/include/**');
     source = _.uniq(source);
-    // return
-    return source;
+    return source; // return
   };
 
   formatArgument = function(arg) {
@@ -169,8 +168,7 @@
     if (isIgnore) {
       source = `!${source}`;
     }
-    // return
-    return source;
+    return source; // return
   };
 
   wrapList = function(list) {
@@ -201,13 +199,13 @@
   // return
   $.fn = {excludeInclude, formatArgument, formatPath, makeError, normalizePath, wrapList};
 
-  fetchGitHub = async function(name) {
+  fetchGitHub_ = async function(name) {
     var source;
     source = normalizePath(`./../${(name.split('/')[1])}`);
-    if ((await $.isExisted(source))) {
-      return (await $.shell([`cd ${source}`, 'git fetch', 'git pull']));
+    if ((await $.isExisted_(source))) {
+      return (await $.shell_([`cd ${source}`, 'git fetch', 'git pull']));
     }
-    return (await $.shell(`git clone https://github.com/${name}.git ${source}`));
+    return (await $.shell_(`git clone https://github.com/${name}.git ${source}`));
   };
 
   /*
@@ -245,15 +243,15 @@
       listSource.push(`./source/**/*.${ext}`);
       listSource.push(`./test/**/*.${ext}`);
     }
-    listSource = (await $.source(listSource));
+    listSource = (await $.source_(listSource));
     results = [];
     for (k = 0, len2 = listSource.length; k < len2; k++) {
       source = listSource[k];
-      cont = $.parseString((await $.read(source)));
+      cont = $.parseString((await $.read_(source)));
       listCont = cont.split('\n');
       if (!_.trim(_.last(listCont)).length) {
         listCont.pop();
-        results.push((await $.write(source, listCont.join('\n'))));
+        results.push((await $.write_(source, listCont.join('\n'))));
       } else {
         results.push(void 0);
       }
@@ -276,18 +274,18 @@
   });
 
   $.task('gurumin', async function() {
-    await fetchGitHub('phonowell/gurumin');
-    await $.remove('./source/gurumin');
-    return (await $.link('./../gurumin/source', './source/gurumin'));
+    await fetchGitHub_('phonowell/gurumin');
+    await $.remove_('./source/gurumin');
+    return (await $.link_('./../gurumin/source', './source/gurumin'));
   });
 
   $.task('kokoro', async function() {
     var LIST, filename, isSame, j, len1, listClean, results, source, target;
-    await fetchGitHub('phonowell/kokoro');
+    await fetchGitHub_('phonowell/kokoro');
     // clean
     listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
     $.info.pause('kokoro');
-    await $.remove(listClean);
+    await $.remove_(listClean);
     $.info.resume('kokoro');
     // copy
     LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
@@ -296,12 +294,12 @@
       filename = LIST[j];
       source = `./../kokoro/${filename}`;
       target = `./${filename}`;
-      isSame = (await $.isSame([source, target]));
+      isSame = (await $.isSame_([source, target]));
       if (isSame === true) {
         continue;
       }
-      await $.copy(source, './');
-      results.push((await $.shell(`git add -f ${$.path.base}/${filename}`)));
+      await $.copy_(source, './');
+      results.push((await $.shell_(`git add -f ${$.path.base}/${filename}`)));
     }
     return results;
   });
@@ -312,7 +310,7 @@
 
   $.task('prune', async function() {
     var base, line, listDirectory, listExtension, listFile, listSource;
-    await $.shell('npm prune');
+    await $.shell_('npm prune');
     base = './node_modules';
     // file
     listFile = ['.DS_Store', '.appveyor.yml', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.flowconfig', '.gitattributes', '.gitlab-ci.yml', '.htmllintrc', '.jshintrc', '.lint', '.npmignore', '.stylelintrc', '.stylelintrc.js', '.stylelintrc.json', '.stylelintrc.yaml', '.stylelintrc.yml', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml', 'eslint', 'gulpfile.js', 'htmllint.js', 'jest.config.js', 'karma.conf.js', 'license', 'stylelint.config.js', 'tsconfig.json'];
@@ -325,7 +323,7 @@
       }
       return results;
     })();
-    await $.remove(listSource);
+    await $.remove_(listSource);
     // directory
     listDirectory = ['.circleci', '.github', '.idea', '.nyc_output', '.vscode', '__tests__', 'assets', 'coverage', 'doc', 'docs', 'example', 'examples', 'images', 'powered-test', 'test', 'tests', 'website'];
     listSource = (function() {
@@ -337,7 +335,7 @@
       }
       return results;
     })();
-    await $.remove(listSource);
+    await $.remove_(listSource);
     // extension
     listExtension = ['.coffee', '.jst', '.markdown', '.md', '.swp', '.tgz', '.ts'];
     listSource = (function() {
@@ -349,55 +347,53 @@
       }
       return results;
     })();
-    return (await $.remove(listSource));
+    return (await $.remove_(listSource));
   });
 
   $.task('update', async function() {
     var registry;
     ({registry} = $.argv);
-    await $.update({registry});
-    return (await $.shell('npm prune'));
+    await $.update_({registry});
+    return (await $.shell_('npm prune'));
   });
 
   /*
-  backup(source)
-  recover(source)
+  backup_(source)
+  recover_(source)
   */
-  $.backup = async function(source) {
+  $.backup_ = async function(source) {
     var extname, j, len1, src, suffix;
-    source = (await $.source(source));
+    source = (await $.source_(source));
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
       suffix = path.extname(src);
       extname = '.bak';
-      $.info.pause('$.backup');
-      await $.copy(src, null, {suffix, extname});
-      $.info.resume('$.backup');
+      $.info.pause('$.backup_');
+      await $.copy_(src, null, {suffix, extname});
+      $.info.resume('$.backup_');
     }
     $.info('backup', `backed up ${wrapList(source)}`);
-    // return
-    return $;
+    return $; // return
   };
 
-  $.recover = async function(source) {
+  $.recover_ = async function(source) {
     var bak, basename, j, len1, src;
     source = formatPath(source);
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
       bak = `${src}.bak`;
-      if (!(await $.isExisted(bak))) {
+      if (!(await $.isExisted_(bak))) {
         continue;
       }
       basename = path.basename(src);
-      $.info.pause('$.recover');
-      await $.remove(src);
-      await $.copy(bak, null, basename);
-      await $.remove(bak);
-      $.info.resume('$.recover');
+      $.info.pause('$.recover_');
+      await $.remove_(src);
+      await $.copy_(bak, null, basename);
+      await $.remove_(bak);
+      $.info.resume('$.recover_');
     }
     $.info('recover', `recovered ${wrapList(source)}`);
-    // return
-    return $;
+    return $; // return
   };
 
   /*
@@ -406,12 +402,12 @@
   $.chain = require('achain');
 
   (function() {    /*
-    compile(source, [target], [option])
+    compile_(source, [target], [option])
     */
-    var fn;
+    var fn_;
     // function
-    fn = async function(...arg) {
-      var compiler, extname, method, option, source, target;
+    fn_ = async function(...arg) {
+      var compile_, extname, method, option, source, target;
       [source, target, option] = (function() {
         switch (arg.length) {
           case 1:
@@ -458,24 +454,24 @@
         map: false,
         minify: true
       }, option);
-      compiler = fn[method];
-      if (!compiler) {
+      compile_ = fn_[`${method}_`];
+      if (!compile_) {
         throw makeError(`invalid extname: '.${extname}'`);
       }
-      await compiler(source, target, option);
+      await compile_(source, target, option);
       $.info('compile', `compiled ${wrapList(source)} to ${wrapList(target)}`);
       return $; // return
     };
     /*
-    coffee(source, target, option)
-    css(source, target, option)
-    js(source, target, option)
-    markdown(source, target, option)
-    pug(source, target, option)
-    stylus(source, target, option)
-    yaml(source, target, option)
+    coffee_(source, target, option)
+    css_(source, target, option)
+    js_(source, target, option)
+    markdown_(source, target, option)
+    pug_(source, target, option)
+    stylus_(source, target, option)
+    yaml_(source, target, option)
     */
-    fn.coffee = function(source, target, option) {
+    fn_.coffee_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.harmony == null) {
           option.harmony = true;
@@ -491,21 +487,21 @@
         });
       });
     };
-    fn.css = function(source, target, option) {
+    fn_.css_ = function(source, target, option) {
       return new Promise(function(resolve) {
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, cleanCss())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.js = function(source, target, option) {
+    fn_.js_ = function(source, target, option) {
       return new Promise(function(resolve) {
         return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, uglify())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
           return resolve();
         });
       });
     };
-    fn.markdown = function(source, target, option) {
+    fn_.markdown_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.sanitize == null) {
           option.sanitize = true;
@@ -519,7 +515,7 @@
         });
       });
     };
-    fn.pug = function(source, target, option) {
+    fn_.pug_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.pretty == null) {
           option.pretty = !option.minify;
@@ -529,7 +525,7 @@
         });
       });
     };
-    fn.stylus = function(source, target, option) {
+    fn_.stylus_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.compress == null) {
           option.compress = option.minify;
@@ -539,7 +535,7 @@
         });
       });
     };
-    fn.yaml = function(source, target, option) {
+    fn_.yaml_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.safe == null) {
           option.safe = true;
@@ -550,14 +546,14 @@
       });
     };
     // return
-    return $.compile = fn;
+    return $.compile_ = fn_;
   })();
 
   // https://github.com/kevva/download
   /*
-  download(source, target, [option])
+  download_(source, target, [option])
   */
-  $.download = async function(...arg) {
+  $.download_ = async function(...arg) {
     var msg, option, source, target;
     [source, target, option] = (function() {
       switch (arg.length) {
@@ -575,6 +571,7 @@
         filename: option
       };
     }
+    // this function download was from plugin
     await download(source, target, option);
     msg = `downloaded ${wrapList(source)} to ${wrapList(target)}`;
     if (option) {
@@ -585,21 +582,20 @@
   };
 
   /*
-  copy(source, target, [option])
-  isChanged(source)
-  isExisted(source)
-  isSame(source, target)
-  link(source, target)
-  mkdir(source)
-  move(source, target)
-  read(source, [option])
-  remove(source)
-  rename(source, option)
-  source(source)
-  stat(source)
-  write(source, data)
+  copy_(source, target, [option])
+  isExisted_(source)
+  isSame_(source, target)
+  link_(source, target)
+  mkdir_(source)
+  move_(source, target)
+  read_(source, [option])
+  remove_(source)
+  rename_(source, option)
+  source_(source)
+  stat_(source)
+  write_(source, data)
   */
-  $.copy = async function(...arg) {
+  $.copy_ = async function(...arg) {
     var msg, option, source, target;
     // source, target, [option]
     [source, target, option] = (function() {
@@ -631,7 +627,7 @@
     return $; // return
   };
 
-  $.isExisted = async function(source) {
+  $.isExisted_ = async function(source) {
     var j, len1, src;
     source = formatPath(source);
     if (!source.length) {
@@ -646,7 +642,7 @@
     return true; // return
   };
 
-  $.isSame = async function(source) {
+  $.isSame_ = async function(source) {
     var CONT, SIZE, cont, j, k, len1, len2, size, src, stat;
     source = formatPath(source);
     if (!source.length) {
@@ -656,7 +652,7 @@
     SIZE = null;
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
-      stat = (await $.stat(src));
+      stat = (await $.stat_(src));
       if (!stat) {
         return false;
       }
@@ -673,9 +669,9 @@
     CONT = null;
     for (k = 0, len2 = source.length; k < len2; k++) {
       src = source[k];
-      $.info.pause('$.isSame');
-      cont = (await $.read(src));
-      $.info.resume('$.isSame');
+      $.info.pause('$.isSame_');
+      cont = (await $.read_(src));
+      $.info.resume('$.isSame_');
       if (!cont) {
         return false;
       }
@@ -691,7 +687,7 @@
     return true; // return
   };
 
-  $.link = async function(source, target) {
+  $.link_ = async function(source, target) {
     if (!(source && target)) {
       throw makeError('length');
     }
@@ -702,7 +698,7 @@
     return $; // return
   };
 
-  $.mkdir = async function(source) {
+  $.mkdir_ = async function(source) {
     var listPromise, src;
     if (!source) {
       throw makeError('length');
@@ -722,24 +718,24 @@
     return $; // return
   };
 
-  $.move = async function(source, target) {
+  $.move_ = async function(source, target) {
     if (!(source && target)) {
       throw makeError('length');
     }
     source = formatPath(source);
     target = normalizePath(target);
-    $.info.pause('$.move');
-    await $.copy(source, target);
-    await $.remove(source);
-    $.info.resume('$.move');
+    $.info.pause('$.move_');
+    await $.copy_(source, target);
+    await $.remove_(source);
+    $.info.resume('$.move_');
     $.info('move', `moved ${wrapList(source)} to '${target}'`);
     return $; // return
   };
 
-  $.read = async function(source, option = {}) {
+  $.read_ = async function(source, option = {}) {
     var res;
     source = normalizePath(source);
-    if (!(await $.isExisted(source))) {
+    if (!(await $.isExisted_(source))) {
       $.info('file', `${wrapList(source)} not existed`);
       return null;
     }
@@ -779,9 +775,9 @@
     })();
   };
 
-  $.remove = async function(source) {
+  $.remove_ = async function(source) {
     var j, len1, listSource, src;
-    listSource = (await $.source(source));
+    listSource = (await $.source_(source));
     for (j = 0, len1 = listSource.length; j < len1; j++) {
       src = listSource[j];
       await new Promise(function(resolve) {
@@ -798,7 +794,7 @@
     return $; // return
   };
 
-  $.rename = async function(source, option) {
+  $.rename_ = async function(source, option) {
     var item, j, len1, listHistory;
     source = formatPath(source);
     listHistory = [];
@@ -810,19 +806,19 @@
         return resolve();
       });
     });
-    $.info.pause('$.rename');
+    $.info.pause('$.rename_');
     for (j = 0, len1 = listHistory.length; j < len1; j++) {
       item = listHistory[j];
-      if ((await $.isExisted(item[1]))) {
-        await $.remove(item[0]);
+      if ((await $.isExisted_(item[1]))) {
+        await $.remove_(item[0]);
       }
     }
-    $.info.resume('$.rename');
+    $.info.resume('$.rename_');
     $.info('file', `renamed ${wrapList(source)} as '${$.parseString(option)}'`);
     return $; // return
   };
 
-  $.source = function(source) {
+  $.source_ = function(source) {
     source = formatPath(source);
     return new Promise(function(resolve) {
       var listSource;
@@ -837,9 +833,9 @@
     });
   };
 
-  $.stat = async function(source) {
+  $.stat_ = async function(source) {
     source = normalizePath(source);
-    if (!(await $.isExisted(source))) {
+    if (!(await $.isExisted_(source))) {
       $.info('file', `${wrapList(source)} not existed`);
       return null;
     }
@@ -854,7 +850,7 @@
     });
   };
 
-  $.write = async function(source, data, option) {
+  $.write_ = async function(source, data, option) {
     var ref1;
     source = normalizePath(source);
     if ((ref1 = $.type(data)) === 'array' || ref1 === 'object') {
@@ -866,11 +862,11 @@
   };
 
   (function() {    /*
-    lint(source)
+    lint_(source)
     */
-    var fn;
+    var fn_;
     // function
-    fn = async function(source) {
+    fn_ = async function(source) {
       var extname, method;
       source = formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
@@ -889,15 +885,15 @@
             throw makeError('extname');
         }
       })();
-      await fn[method](source);
+      await fn_[`${method}_`](source);
       return $; // return
     };
     /*
-    coffee(source)
-    markdown(source)
-    stylus(source)
+    coffee_(source)
+    markdown_(source)
+    stylus_(source)
     */
-    fn.coffee = function(source) {
+    fn_.coffee_ = function(source) {
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
@@ -906,11 +902,11 @@
         return stream.pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter());
       });
     };
-    fn.markdown = function(source) {
+    fn_.markdown_ = function(source) {
       return new Promise(async function(resolve) {
         var option;
         option = {
-          files: (await $.source(source))
+          files: (await $.source_(source))
         };
         return markdownlint(option, function(err, result) {
           var filename, item, j, len1, list, listMsg;
@@ -923,13 +919,13 @@
               continue;
             }
             filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
-            $.i(colors.magenta(filename));
+            $.i(chalk.magenta(filename));
             for (j = 0, len1 = list.length; j < len1; j++) {
               item = list[j];
               listMsg = [];
-              listMsg.push(colors.gray(`#${item.lineNumber}`));
+              listMsg.push(chalk.gray(`#${item.lineNumber}`));
               if (item.errorContext) {
-                listMsg.push(`< ${colors.red(item.errorContext)} >`);
+                listMsg.push(`< ${chalk.red(item.errorContext)} >`);
               }
               if (item.ruleDescription) {
                 listMsg.push(item.ruleDescription);
@@ -941,7 +937,7 @@
         });
       });
     };
-    fn.stylus = function(source) {
+    fn_.stylus_ = function(source) {
       return new Promise(function(resolve) {
         var stream;
         (stream = gulp.src(source)).on('end', function() {
@@ -951,18 +947,18 @@
       });
     };
     // return
-    return $.lint = fn;
+    return $.lint_ = fn_;
   })();
 
   /*
-  replace(source, option...)
+  replace_(source, option...)
   */
-  $.replace = async function(source, ...option) {
+  $.replace_ = async function(source, ...option) {
     var callback, cont, j, len1, listSource, msg, reg, replacement, res, src;
     if (!source) {
       throw makeError('source');
     }
-    listSource = (await $.source(source));
+    listSource = (await $.source_(source));
     switch (option.length) {
       case 1:
         callback = option[0];
@@ -976,23 +972,23 @@
     msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
     for (j = 0, len1 = listSource.length; j < len1; j++) {
       src = listSource[j];
-      $.info.pause('$.replace');
-      cont = $.parseString((await $.read(src)));
+      $.info.pause('$.replace_');
+      cont = $.parseString((await $.read_(src)));
       res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
       if (res === cont) {
         continue;
       }
-      await $.write(src, res);
-      $.info.resume('$.replace');
+      await $.write_(src, res);
+      $.info.resume('$.replace_');
       $.info('replace', `${msg}, in '${src}'`);
     }
     return $; // return
   };
 
   /*
-  say(text)
+  say_(text)
   */
-  $.say = async function(text) {
+  $.say_ = async function(text) {
     var j, len1, listMessage, msg;
     if ($.os !== 'macos') {
       return;
@@ -1015,9 +1011,9 @@
       if (!msg.length) {
         continue;
       }
-      $.info.pause('$.say');
-      await $.shell(`say ${msg}`);
-      $.info.resume('$.say');
+      $.info.pause('$.say_');
+      await $.shell_(`say ${msg}`);
+      $.info.resume('$.say_');
     }
     return text; // return
   };
@@ -1026,7 +1022,7 @@
     class Shell {
       /*
       close()
-      execute(cmd, [option])
+      execute_(cmd, [option])
       info([type], string)
       */
       close() {
@@ -1034,7 +1030,7 @@
         return this;
       }
 
-      execute(cmd, option = {}) {
+      execute_(cmd, option = {}) {
         return new Promise((resolve) => {
           var arg, cmder, isIgnoreError, type;
           type = $.type(cmd);
@@ -1089,9 +1085,9 @@
         string = (function() {
           switch (type) {
             case 'error':
-              return colors.red(string);
+              return chalk.red(string);
             default:
-              return colors.gray(string);
+              return chalk.gray(string);
           }
         })();
         return $.log(string);
@@ -1109,33 +1105,29 @@
   }).call(this);
 
   // return
-  $.shell = function(cmd, option) {
+  $.shell_ = function(cmd, option) {
     var shell;
     shell = new Shell();
     if (!cmd) {
       return shell;
     }
-    return shell.execute(cmd, option);
+    return shell.execute_(cmd, option);
   };
 
   // https://github.com/mscdex/ssh2
   SSH = class SSH {
-    constructor() {
-      this;
-    }
-
     /*
-    connect(option)
-    disconnect()
+    connect_(option)
+    disconnect_()
     info(chunk)
-    mkdir(source)
-    remove(source)
-    shell(cmd, [option])
-    upload(source, target, [option])
-    uploadDir(sftp, source, target)
-    uploadFile(sftp, source, target)
+    mkdir_(source)
+    remove_(source)
+    shell_(cmd, [option])
+    upload_(source, target, [option])
+    uploadDir_(sftp, source, target)
+    uploadFile_(sftp, source, target)
     */
-    connect(option) {
+    connect_(option) {
       return new Promise((resolve) => {
         var Client, conn;
         ({Client} = require('ssh2'));
@@ -1150,7 +1142,7 @@
       });
     }
 
-    disconnect() {
+    disconnect_() {
       return new Promise((resolve) => {
         var conn, option;
         ({conn, option} = this.storage);
@@ -1170,7 +1162,7 @@
       return $.i(string);
     }
 
-    async mkdir(source) {
+    async mkdir_(source) {
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
@@ -1182,13 +1174,13 @@
         }
         return results;
       })()).join('; ');
-      $.info.pause('$.ssh.mkdir');
-      await this.shell(cmd);
-      $.info.resume('$.ssh.mkdir');
+      $.info.pause('$.ssh.mkdir_');
+      await this.shell_(cmd);
+      $.info.resume('$.ssh.mkdir_');
       return $.info('ssh', `created ${wrapList(source)}`);
     }
 
-    async remove(source) {
+    async remove_(source) {
       var cmd, src;
       source = formatArgument(source);
       cmd = ((function() {
@@ -1200,19 +1192,19 @@
         }
         return results;
       })()).join('; ');
-      $.info.pause('$.ssh.remove');
-      await this.shell(cmd);
-      $.info.resume('$.ssh.remove');
+      $.info.pause('$.ssh.remove_');
+      await this.shell_(cmd);
+      $.info.resume('$.ssh.remove_');
       return $.info('ssh', `removed ${wrapList(source)}`);
     }
 
-    shell(cmd, option = {}) {
+    shell_(cmd, option = {}) {
       return new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
         cmd = formatArgument(cmd);
         cmd = cmd.join(' && ');
-        $.info('ssh', colors.blue(cmd));
+        $.info('ssh', chalk.blue(cmd));
         return conn.exec(cmd, (err, stream) => {
           if (err) {
             throw err;
@@ -1233,7 +1225,7 @@
       });
     }
 
-    upload(source, target, option = {}) {
+    upload_(source, target, option = {}) {
       return new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
@@ -1257,13 +1249,13 @@
           }
           for (j = 0, len1 = source.length; j < len1; j++) {
             src = source[j];
-            stat = (await $.stat(src));
+            stat = (await $.stat_(src));
             filename = option.filename || path.basename(src);
             if (stat.isDirectory()) {
-              await this.uploadDir(sftp, src, `${target}/${filename}`);
+              await this.uploadDir_(sftp, src, `${target}/${filename}`);
             } else if (stat.isFile()) {
-              await this.mkdir(target);
-              await this.uploadFile(sftp, src, `${target}/${filename}`);
+              await this.mkdir_(target);
+              await this.uploadFile_(sftp, src, `${target}/${filename}`);
             }
           }
           sftp.end();
@@ -1272,28 +1264,28 @@
       });
     }
 
-    uploadDir(sftp, source, target) {
+    uploadDir_(sftp, source, target) {
       return new Promise(async(resolve) => {
         var j, len1, listSource, relativeTarget, src, stat;
         listSource = [];
-        await $.walk(source, function(item) {
+        await $.walk_(source, function(item) {
           return listSource.push(item.path);
         });
         for (j = 0, len1 = listSource.length; j < len1; j++) {
           src = listSource[j];
-          stat = (await $.stat(src));
+          stat = (await $.stat_(src));
           relativeTarget = path.normalize(`${target}/${path.relative(source, src)}`);
           if (stat.isDirectory()) {
-            await this.mkdir(relativeTarget);
+            await this.mkdir_(relativeTarget);
           } else if (stat.isFile()) {
-            await this.uploadFile(sftp, src, relativeTarget);
+            await this.uploadFile_(sftp, src, relativeTarget);
           }
         }
         return resolve();
       });
     }
 
-    uploadFile(sftp, source, target) {
+    uploadFile_(sftp, source, target) {
       return new Promise(function(resolve) {
         return sftp.fastPut(source, target, function(err) {
           if (err) {
@@ -1311,83 +1303,83 @@
   $.ssh = new SSH();
 
   (function() {
-    var addCmd, clean, execute, getLatestVersion;
+    var addCmd_, clean_, execute_, getLatestVersion_;
     // function
     /*
-    addCmd(list, data, isDev, option)
-    clean()
-    execute(option)
-    getLatestVersion(name, option)
+    addCmd_(list, data, isDev, option)
+    clean_()
+    execute_(option)
+    getLatestVersion_(name, option)
     */
-    addCmd = async function(list, data, isDev, option) {
+    addCmd_ = async function(list, data, isDev, option) {
       var current, latest, registry, results, version;
       ({registry} = option);
       results = [];
       for (name in data) {
         version = data[name];
         current = version.replace(/[~^]/, '');
-        $.info.pause('$.update');
-        latest = (await getLatestVersion(name, option));
-        $.info.resume('$.update');
+        $.info.pause('$.update_');
+        latest = (await getLatestVersion_(name, option));
+        $.info.resume('$.update_');
         if (current === latest) {
           $.info('update', `'${name}': '${current}' == '${latest}'`);
           continue;
         }
-        $.info('update', `'${name}': '${current}' ${colors.green('->')} '${latest}'`);
+        $.info('update', `'${name}': '${current}' ${chalk.green('->')} '${latest}'`);
         results.push(list.push(['npm install', `${name}@${latest}`, isDev ? '' : '--production', registry ? `--registry ${registry}` : '', isDev ? '--save-dev' : '--save'].join(' ').replace(/\s{2,}/g, ' ')));
       }
       return results;
     };
-    clean = async function() {
+    clean_ = async function() {
       var listFile;
-      await $.remove('./temp/update');
-      listFile = (await $.source('./temp/**/*.*'));
+      await $.remove_('./temp/update');
+      listFile = (await $.source_('./temp/**/*.*'));
       if (!listFile.length) {
-        return (await $.remove('./temp'));
+        return (await $.remove_('./temp'));
       }
     };
-    execute = async function(option) {
+    execute_ = async function(option) {
       var listCmd, pkg;
-      pkg = (await $.read('./package.json'));
+      pkg = (await $.read_('./package.json'));
       listCmd = [];
-      await addCmd(listCmd, pkg.dependencies, false, option);
-      await addCmd(listCmd, pkg.devDependencies, true, option);
-      $.info.pause('$.update');
-      await clean();
-      $.info.resume('$.update');
+      await addCmd_(listCmd, pkg.dependencies, false, option);
+      await addCmd_(listCmd, pkg.devDependencies, true, option);
+      $.info.pause('$.update_');
+      await clean_();
+      $.info.resume('$.update_');
       if (!listCmd.length) {
         $.info('update', 'every thing is ok');
         return;
       }
-      await $.shell(listCmd);
+      await $.shell_(listCmd);
       return $; // return
     };
-    getLatestVersion = async function(name, option) {
+    getLatestVersion_ = async function(name, option) {
       var data, registry, source, url;
       ({registry} = option);
       registry || (registry = 'http://registry.npmjs.org');
       source = `./temp/update/${name}.json`;
-      if (!(await $.isExisted(source))) {
+      if (!(await $.isExisted_(source))) {
         url = `${registry}/${name}?salt=${_.now()}`;
-        await $.download(url, './temp/update', `${name}.json`);
+        await $.download_(url, './temp/update', `${name}.json`);
       }
-      if (!(data = (await $.read(source)))) {
+      if (!(data = (await $.read_(source)))) {
         throw makeError('source');
       }
       // return
       return _.get(data, 'dist-tags.latest');
     };
     // return
-    return $.update = function(...arg) {
-      return execute(...arg);
+    return $.update_ = function(...arg) {
+      return execute_(...arg);
     };
   })();
 
   // https://github.com/jprichardson/node-klaw
   /*
-  walk(source, callback)
+  walk_(source, callback)
   */
-  $.walk = async function(source, callback) {
+  $.walk_ = async function(source, callback) {
     if (!(source && callback)) {
       throw makeError('length');
     }
@@ -1403,15 +1395,15 @@
   };
 
   /*
-  unzip(source, [target])
-  zip(source, [target], [option])
+  unzip_(source, [target])
+  zip_(source, [target], [option])
   */
-  $.unzip = async function(source, target) {
+  $.unzip_ = async function(source, target) {
     var dist, j, len1, src;
     if (!source) {
       throw makeError('source');
     }
-    source = (await $.source(source));
+    source = (await $.source_(source));
     for (j = 0, len1 = source.length; j < len1; j++) {
       src = source[j];
       dist = target || path.dirname(src);
@@ -1425,7 +1417,7 @@
     return $; // return
   };
 
-  $.zip = async function(...arg) {
+  $.zip_ = async function(...arg) {
     var _source, base, filename, isSilent, option, source, target;
     [source, target, option] = (function() {
       switch (arg.length) {
@@ -1501,8 +1493,8 @@
         if (!msg) {
           return;
         }
-        gray = colors.gray(`${Math.floor(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`);
-        magenta = colors.magenta(msg);
+        gray = chalk.gray(`${Math.floor(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`);
+        magenta = chalk.magenta(msg);
         msg = `${gray} ${magenta}`;
         $.i(msg);
         return msg = null;
@@ -1511,7 +1503,7 @@
         return resolve();
       });
       archive.pipe(output);
-      listSource = (await $.source(source));
+      listSource = (await $.source_(source));
       for (j = 0, len1 = listSource.length; j < len1; j++) {
         src = listSource[j];
         name = src.replace(base, '');
@@ -1524,12 +1516,12 @@
   };
 
   /*
-  delay([time], [callback])
+  delay_([time], [callback])
   reload(source)
   watch(source)
   yargs()
   */
-  $.delay = async function(time = 0, callback) {
+  $.delay_ = async function(time = 0, callback) {
     await new Promise(function(resolve) {
       return setTimeout(function() {
         return resolve();
