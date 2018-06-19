@@ -12,7 +12,7 @@
   /*
   fetchGitHub_(name)
   */
-  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, key, len, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
+  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, j, k, key, len, len1, len2, listKey, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
@@ -818,9 +818,9 @@
     return $; // return
   };
 
-  $.source_ = function(source) {
+  $.source_ = async function(source) {
     source = formatPath(source);
-    return new Promise(function(resolve) {
+    return (await new Promise(function(resolve) {
       var listSource;
       listSource = [];
       return gulp.src(source, {
@@ -830,7 +830,7 @@
       }).on('end', function() {
         return resolve(listSource);
       });
-    });
+    }));
   };
 
   $.stat_ = async function(source) {
@@ -1105,13 +1105,13 @@
   }).call(this);
 
   // return
-  $.shell_ = function(cmd, option) {
+  $.shell_ = async function(cmd, option) {
     var shell;
     shell = new Shell();
     if (!cmd) {
       return shell;
     }
-    return shell.execute_(cmd, option);
+    return (await shell.execute_(cmd, option));
   };
 
   // https://github.com/mscdex/ssh2
@@ -1370,8 +1370,8 @@
       return _.get(data, 'dist-tags.latest');
     };
     // return
-    return $.update_ = function(...arg) {
-      return execute_(...arg);
+    return $.update_ = async function(...arg) {
+      return (await execute_(...arg));
     };
   })();
 
@@ -1547,5 +1547,19 @@
   $.watch = $p.watch;
 
   $.yargs = $p.yargs;
+
+  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'shell', 'source', 'stat', 'unzip', 'update', 'walk', 'write', 'zip'];
+
+  for (j = 0, len1 = listKey.length; j < len1; j++) {
+    key = listKey[j];
+    $[`${key}Async`] = $[`${key}_`];
+  }
+
+  listKey = ['connect', 'disconnect', 'mkdir', 'remove', 'shell', 'upload'];
+
+  for (k = 0, len2 = listKey.length; k < len2; k++) {
+    key = listKey[k];
+    $.ssh[`${key}Async`] = $.ssh[`${key}_`];
+  }
 
 }).call(this);

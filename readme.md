@@ -24,7 +24,13 @@ $.task 'build', -> await $.compile_ './source/index.coffee', './'
 
 ## 方法
 
-方法名末尾带有`_`符号的方法，均为`async function`，须使用`await`调用。
+以`_`结尾的方法均为`async function`，需要加`await`调用。
+在调用方法时，`_`亦可视作`async`的缩写。
+
+```coffeescript
+pkg = await $.readAsync './package.json'
+# 等同于 $.read_()
+```
 
 - [$.backup_(source)](doc/backup.md)
 - [$.chain(fn)](doc/chain.md)

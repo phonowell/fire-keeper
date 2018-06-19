@@ -103,11 +103,15 @@ $.task 'y', ->
 
 $.task 'z', ->
 
-  listSource = await $.source_ './source/**/*.coffee'
+  listSource = await $.source_ [
+    './gulpfile.coffee'
+    './source/**/*.coffee'
+    './test/**/*.coffee'
+  ]
 
   for source in listSource
 
-    await $.replace_ source, /\$\.([^\s\(]+)/g, (s, string) ->
+    await $.replace_ source, /\$\.([^\s\(]+)Async/g, (s, string) ->
       
       listKey = [
         'backup'

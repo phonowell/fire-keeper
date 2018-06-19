@@ -21,3 +21,5 @@
 #= include include/zip.coffee
 
 #= include include/etc.coffee
+
+#= include include/re-name.coffee

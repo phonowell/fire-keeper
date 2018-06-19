@@ -218,7 +218,7 @@ $.source_ = (source) ->
 
   source = formatPath source
 
-  new Promise (resolve) ->
+  await new Promise (resolve) ->
 
     listSource = []
 

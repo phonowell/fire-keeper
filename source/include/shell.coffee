@@ -78,4 +78,4 @@ class Shell
 $.shell_ = (cmd, option) ->
   shell = new Shell()
   if !cmd then return shell
-  shell.execute_ cmd, option
+  await shell.execute_ cmd, option
