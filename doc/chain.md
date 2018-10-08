@@ -12,8 +12,9 @@
 source = './temp/test.txt'
 text = 'A test message.'
 
-string = await $.chain $.write_ source, text
-.read source
+string = await $.chain $
+.write_ source, text
+.read_ source
 
 console.log string == text # true
 ```

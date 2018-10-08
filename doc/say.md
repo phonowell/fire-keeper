@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-await $.say_ '香香的口味，你吃过没？'
+await $.say_ '诶嘿！'
 ```

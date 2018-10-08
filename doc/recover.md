@@ -10,5 +10,6 @@
 
 ```coffeescript
 await $.recover_ './package.json'
-# 使用 ./ 下的 package.json.bak 覆盖同一目录下的 package.json，并删除 package.json.bak
+# 使用 ./ 下的 package.json.bak 覆盖同一目录下的 package.json
+# 并删除 package.json.bak
 ```
