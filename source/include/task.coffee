@@ -28,7 +28,7 @@ $.task = (arg...) ->
   switch arg.length
     when 1 then gulp.tasks[arg[0]].fn
     when 2 then gulp.task arg...
-    else throw makeError 'length'
+    else throw new Error 'invalid argument length'
 
 # added default tasks
 

@@ -14,22 +14,23 @@ do ->
         type = $.type arg[1]
         if type == 'object' then return [arg[0], null, arg[1]]
         if type == 'string' then return [arg[0], arg[1], {}]
-        throw makeError 'type'
+        throw new Error 'invalid type'
       when 3 then arg
-      else throw makeError 'length'
+      else throw new Error 'invalid argument length'
 
     source = formatPath source
 
-    extname = path.extname(source[0]).replace /\./, ''
-    if !extname.length then throw makeError 'extname'
+    extname = path.extname source[0]
+    .replace /\./, ''
+    if !extname.length then throw new Error "invalid extname '#{extname}'"
 
     method = switch extname
-      when 'yaml', 'yml' then 'yaml'
-      when 'md' then 'markdown'
-      when 'styl' then 'stylus'
+      when 'markdown' then 'md'
+      when 'yml' then 'yaml'
       else extname
 
-    target or= path.dirname(source[0]).replace /\*/g, ''
+    target or= path.dirname source[0]
+    .replace /\*/g, ''
     target = normalizePath target
 
     option = _.extend
@@ -38,7 +39,7 @@ do ->
     , option
 
     compile_ = fn_["#{method}_"]
-    if !compile_ then throw makeError "invalid extname: '.#{extname}'"
+    if !compile_ then throw new Error 'invalid extname'
     await compile_ source, target, option
 
     $.info 'compile', "compiled #{wrapList source} to #{wrapList target}"
@@ -49,9 +50,9 @@ do ->
   coffee_(source, target, option)
   css_(source, target, option)
   js_(source, target, option)
-  markdown_(source, target, option)
+  md_(source, target, option)
   pug_(source, target, option)
-  stylus_(source, target, option)
+  styl_(source, target, option)
   yaml_(source, target, option)
   ###
 
@@ -102,7 +103,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn_.markdown_ = (source, target, option) ->
+  fn_.md_ = (source, target, option) ->
 
     new Promise (resolve) ->
 
@@ -130,7 +131,7 @@ do ->
       .pipe gulp.dest target
       .on 'end', -> resolve()
 
-  fn_.stylus_ = (source, target, option) ->
+  fn_.styl_ = (source, target, option) ->
 
     new Promise (resolve) ->
 

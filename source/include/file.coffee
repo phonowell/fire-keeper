@@ -8,7 +8,6 @@ move_(source, target)
 read_(source, [option])
 remove_(source)
 rename_(source, option)
-source_(source)
 stat_(source)
 write_(source, data)
 ###
@@ -19,7 +18,7 @@ $.copy_ = (arg...) ->
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
     when 3 then arg
-    else throw makeError 'length'
+    else throw new Error 'invalid argument length'
 
   source = formatPath source
   if target then target = normalizePath target
@@ -102,7 +101,7 @@ $.isSame_ = (source) ->
 $.link_ = (source, target) ->
 
   unless source and target
-    throw makeError 'length'
+    throw new Error 'invalid argument length'
 
   source = normalizePath source
   target = normalizePath target
@@ -115,7 +114,7 @@ $.link_ = (source, target) ->
 
 $.mkdir_ = (source) ->
 
-  if !source then throw makeError 'length'
+  if !source then throw new Error 'invalid argument length'
 
   source = formatPath source
 
@@ -130,7 +129,7 @@ $.mkdir_ = (source) ->
 $.move_ = (source, target) ->
 
   unless source and target
-    throw makeError 'length'
+    throw new Error 'invalid argument length'
 
   source = formatPath source
   target = normalizePath target
@@ -213,18 +212,6 @@ $.rename_ = (source, option) ->
   , "renamed #{wrapList source} as '#{$.parseString option}'"
 
   $ # return
-
-$.source_ = (source) ->
-
-  source = formatPath source
-
-  await new Promise (resolve) ->
-
-    listSource = []
-
-    gulp.src source, read: false
-    .on 'data', (item) -> listSource.push item.path
-    .on 'end', -> resolve listSource
 
 $.stat_ = (source) ->
 

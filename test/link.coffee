@@ -19,12 +19,12 @@ describe '$.link_(source, target)', ->
     , "#{temp}/gurumin"
 
     if res != $
-      throw new Error()
+      throw new Error 0
 
     unless await $.isExisted_ "#{temp}/gurumin"
-      throw new Error()
+      throw new Error 1
 
     unless await $.isExisted_ "#{temp}/gurumin/script/include/core/$.ago.coffee"
-      throw new Error()
+      throw new Error 2
 
     await clean_()

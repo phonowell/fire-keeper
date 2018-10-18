@@ -5,14 +5,13 @@
   formatArgument(arg)
   formatPath(source)
   getRelativePath(source, target)
-  makeError(msg)
   normalizePath(source)
   wrapList(list)
   */
   /*
   fetchGitHub_(name)
   */
-  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, j, k, key, len, len1, len2, listKey, makeError, name, normalizePath, path, ref, string, uglify, walk, wrapList;
+  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, j, k, key, len, len1, len2, listKey, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
@@ -93,7 +92,7 @@
       case 'string':
         return [arg];
       default:
-        throw makeError('type');
+        throw new Error('invalid type');
     }
   };
 
@@ -106,27 +105,6 @@
       results.push(normalizePath(src));
     }
     return results;
-  };
-
-  makeError = function(msg) {
-    return new Error((function() {
-      switch (msg) {
-        case 'extname':
-          return 'invalid extname';
-        case 'filename':
-          return 'invalid filename';
-        case 'length':
-          return 'invalid argument length';
-        case 'source':
-          return 'invalid source';
-        case 'target':
-          return 'invalid target';
-        case 'type':
-          return 'invalid argument type';
-        default:
-          return msg;
-      }
-    })());
   };
 
   normalizePath = function(source) {
@@ -182,7 +160,7 @@
         case 'string':
           return [list];
         default:
-          throw makeError('type');
+          throw new Error('invalid type');
       }
     })();
     return ((function() {
@@ -197,7 +175,61 @@
   };
 
   // return
-  $.fn = {excludeInclude, formatArgument, formatPath, makeError, normalizePath, wrapList};
+  $.fn = {excludeInclude, formatArgument, formatPath, normalizePath, wrapList};
+
+  /*
+  $.fn.read_(source)
+  $.fn.require(source)
+  */
+  $.fn.read_ = async function(source) {
+    var basename, extname, filename, result, target, type;
+    type = $.type(source);
+    if (type !== 'string') {
+      throw new Error('invalid type');
+    }
+    extname = path.extname(source);
+    basename = path.basename(source, extname);
+    extname = _.trim(extname, '.');
+    if (extname !== 'yaml' && extname !== 'yml') {
+      throw new Error(`invalid extname '${extname}'`);
+    }
+    extname = (function() {
+      switch (extname) {
+        case 'markdown':
+          return 'md';
+        case 'yml':
+          return 'yaml';
+        default:
+          return extname;
+      }
+    })();
+    extname = (function() {
+      switch (extname) {
+        case 'coffee':
+          return 'js';
+        case 'md':
+          return 'html';
+        case 'pug':
+          return 'html';
+        case 'styl':
+          return 'css';
+        case 'yaml':
+          return 'json';
+        default:
+          throw new Error(`invalid extname '${extname}'`);
+      }
+    })();
+    filename = `${basename}.${extname}`;
+    target = `./temp/${filename}`;
+    await $.compile_(source, './temp');
+    result = (await $.read_(target));
+    await $.remove_(target);
+    return result; // return
+  };
+
+  $.fn.require = function(source) {
+    return require(normalizePath(source));
+  };
 
   fetchGitHub_ = async function(name) {
     var source;
@@ -219,7 +251,7 @@
       case 2:
         return gulp.task(...arg);
       default:
-        throw makeError('length');
+        throw new Error('invalid argument length');
     }
   };
 
@@ -422,28 +454,25 @@
               if (type === 'string') {
                 return [arg[0], arg[1], {}];
               }
-              throw makeError('type');
+              throw new Error('invalid type');
             })();
           case 3:
             return arg;
           default:
-            throw makeError('length');
+            throw new Error('invalid argument length');
         }
       })();
       source = formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
-        throw makeError('extname');
+        throw new Error(`invalid extname '${extname}'`);
       }
       method = (function() {
         switch (extname) {
-          case 'yaml':
+          case 'markdown':
+            return 'md';
           case 'yml':
             return 'yaml';
-          case 'md':
-            return 'markdown';
-          case 'styl':
-            return 'stylus';
           default:
             return extname;
         }
@@ -456,7 +485,7 @@
       }, option);
       compile_ = fn_[`${method}_`];
       if (!compile_) {
-        throw makeError(`invalid extname: '.${extname}'`);
+        throw new Error('invalid extname');
       }
       await compile_(source, target, option);
       $.info('compile', `compiled ${wrapList(source)} to ${wrapList(target)}`);
@@ -466,9 +495,9 @@
     coffee_(source, target, option)
     css_(source, target, option)
     js_(source, target, option)
-    markdown_(source, target, option)
+    md_(source, target, option)
     pug_(source, target, option)
-    stylus_(source, target, option)
+    styl_(source, target, option)
     yaml_(source, target, option)
     */
     fn_.coffee_ = function(source, target, option) {
@@ -501,7 +530,7 @@
         });
       });
     };
-    fn_.markdown_ = function(source, target, option) {
+    fn_.md_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.sanitize == null) {
           option.sanitize = true;
@@ -525,7 +554,7 @@
         });
       });
     };
-    fn_.stylus_ = function(source, target, option) {
+    fn_.styl_ = function(source, target, option) {
       return new Promise(function(resolve) {
         if (option.compress == null) {
           option.compress = option.minify;
@@ -562,7 +591,7 @@
         case 3:
           return arg;
         default:
-          throw makeError('length');
+          throw new Error('invalid argument length');
       }
     })();
     target = normalizePath(target);
@@ -591,7 +620,6 @@
   read_(source, [option])
   remove_(source)
   rename_(source, option)
-  source_(source)
   stat_(source)
   write_(source, data)
   */
@@ -605,7 +633,7 @@
         case 3:
           return arg;
         default:
-          throw makeError('length');
+          throw new Error('invalid argument length');
       }
     })();
     source = formatPath(source);
@@ -689,7 +717,7 @@
 
   $.link_ = async function(source, target) {
     if (!(source && target)) {
-      throw makeError('length');
+      throw new Error('invalid argument length');
     }
     source = normalizePath(source);
     target = normalizePath(target);
@@ -701,7 +729,7 @@
   $.mkdir_ = async function(source) {
     var listPromise, src;
     if (!source) {
-      throw makeError('length');
+      throw new Error('invalid argument length');
     }
     source = formatPath(source);
     listPromise = (function() {
@@ -720,7 +748,7 @@
 
   $.move_ = async function(source, target) {
     if (!(source && target)) {
-      throw makeError('length');
+      throw new Error('invalid argument length');
     }
     source = formatPath(source);
     target = normalizePath(target);
@@ -818,21 +846,6 @@
     return $; // return
   };
 
-  $.source_ = async function(source) {
-    source = formatPath(source);
-    return (await new Promise(function(resolve) {
-      var listSource;
-      listSource = [];
-      return gulp.src(source, {
-        read: false
-      }).on('data', function(item) {
-        return listSource.push(item.path);
-      }).on('end', function() {
-        return resolve(listSource);
-      });
-    }));
-  };
-
   $.stat_ = async function(source) {
     source = normalizePath(source);
     if (!(await $.isExisted_(source))) {
@@ -871,7 +884,7 @@
       source = formatPath(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
-        throw makeError('extname');
+        throw new Error('invalid extname');
       }
       method = (function() {
         switch (extname) {
@@ -882,7 +895,7 @@
           case 'styl':
             return 'stylus';
           default:
-            throw makeError('extname');
+            throw new Error('invalid extname');
         }
       })();
       await fn_[`${method}_`](source);
@@ -956,7 +969,7 @@
   $.replace_ = async function(source, ...option) {
     var callback, cont, j, len1, listSource, msg, reg, replacement, res, src;
     if (!source) {
-      throw makeError('source');
+      throw new Error('invalid source');
     }
     listSource = (await $.source_(source));
     switch (option.length) {
@@ -967,7 +980,7 @@
         [reg, replacement] = option;
         break;
       default:
-        throw makeError('length');
+        throw new Error('invalid argument length');
     }
     msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
     for (j = 0, len1 = listSource.length; j < len1; j++) {
@@ -1000,7 +1013,7 @@
         case 'string':
           return [text];
         default:
-          throw makeError('type');
+          throw new Error('invalid type');
       }
     })();
     for (j = 0, len1 = listMessage.length; j < len1; j++) {
@@ -1041,7 +1054,7 @@
               case 'string':
                 return cmd;
               default:
-                throw new Error(`invalid argument type <${type}>`);
+                throw new Error('invalid type');
             }
           })();
           $.info('shell', cmd);
@@ -1074,7 +1087,7 @@
             case 2:
               return arg;
             default:
-              throw makeError('length');
+              throw new Error('invalid argument length');
           }
         })();
         string = $.trim(string);
@@ -1112,6 +1125,24 @@
       return shell;
     }
     return (await shell.execute_(cmd, option));
+  };
+
+  /*
+  source_(source)
+  */
+  $.source_ = async function(source) {
+    source = formatPath(source);
+    return (await new Promise(function(resolve) {
+      var listSource;
+      listSource = [];
+      return gulp.src(source, {
+        read: false
+      }).on('data', function(item) {
+        return listSource.push(item.path);
+      }).on('end', function() {
+        return resolve(listSource);
+      });
+    }));
   };
 
   // https://github.com/mscdex/ssh2
@@ -1239,7 +1270,7 @@
                 filename: option
               };
             default:
-              throw makeError('type');
+              throw new Error('invalid type');
           }
         })();
         return conn.sftp(async(err, sftp) => {
@@ -1364,7 +1395,7 @@
         await $.download_(url, './temp/update', `${name}.json`);
       }
       if (!(data = (await $.read_(source)))) {
-        throw makeError('source');
+        throw new Error('invalid source');
       }
       // return
       return _.get(data, 'dist-tags.latest');
@@ -1381,7 +1412,7 @@
   */
   $.walk_ = async function(source, callback) {
     if (!(source && callback)) {
-      throw makeError('length');
+      throw new Error('invalid argument length');
     }
     source = normalizePath(source);
     await new Promise(function(resolve) {
@@ -1401,7 +1432,7 @@
   $.unzip_ = async function(source, target) {
     var dist, j, len1, src;
     if (!source) {
-      throw makeError('source');
+      throw new Error('invalid source');
     }
     source = (await $.source_(source));
     for (j = 0, len1 = source.length; j < len1; j++) {
@@ -1428,7 +1459,7 @@
         case 3:
           return arg;
         default:
-          throw makeError('length');
+          throw new Error('invalid argument length');
       }
     })();
     _source = source;
@@ -1453,7 +1484,7 @@
           case 'string':
             return _source;
           default:
-            throw makeError('type');
+            throw new Error('invalid type');
         }
       })();
       if (~_source.search(/\*/)) {
@@ -1536,7 +1567,7 @@
 
   $.reload = function(source) {
     if (!source) {
-      throw makeError('source');
+      throw new Error('invalid source');
     }
     source = formatPath(source);
     livereload.listen();

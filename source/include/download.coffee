@@ -9,7 +9,7 @@ $.download_ = (arg...) ->
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]
     when 3 then arg
-    else throw makeError 'length'
+    else throw new Error 'invalid argument length'
 
   target = normalizePath target
 

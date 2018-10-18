@@ -4,4 +4,11 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  await $.copy_ './source', './temp'
+  globby = require 'globby'
+
+  source = [
+    './source/**/*.coffee'
+    '!**/include/**'
+  ]
+
+  $.i await globby source

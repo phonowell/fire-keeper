@@ -11,13 +11,13 @@ do ->
     source = formatPath source
 
     extname = path.extname(source[0]).replace /\./, ''
-    if !extname.length then throw makeError 'extname'
+    if !extname.length then throw new Error 'invalid extname'
 
     method = switch extname
       when 'coffee' then 'coffee'
       when 'md' then 'markdown'
       when 'styl' then 'stylus'
-      else throw makeError 'extname'
+      else throw new Error 'invalid extname'
 
     await fn_["#{method}_"] source
 

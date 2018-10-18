@@ -9,7 +9,7 @@ $.say_ = (text) ->
   listMessage = switch $.type text
     when 'array' then text
     when 'string' then [text]
-    else throw makeError 'type'
+    else throw new Error 'invalid type'
 
   for msg in listMessage
 

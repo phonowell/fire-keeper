@@ -24,7 +24,7 @@ class Shell
       cmd = switch type
         when 'array' then cmd.join ' && '
         when 'string' then cmd
-        else throw new Error "invalid argument type <#{type}>"
+        else throw new Error 'invalid type'
 
       $.info 'shell', cmd
 
@@ -59,7 +59,7 @@ class Shell
     [type, string] = switch arg.length
       when 1 then [null, arg[0]]
       when 2 then arg
-      else throw makeError 'length'
+      else throw new Error 'invalid argument length'
 
     string = $.trim string
     if !string.length then return

@@ -121,3 +121,21 @@ describe '$.fn.normalizePath(source)', ->
       throw new Error()
 
     await clean_()
+
+describe '$.fn.read_(source)', ->
+
+  it "$.fn.read_('./test.yaml')", ->
+    await clean_()
+
+    await $.write_ './test.yaml', '- a: 1'
+    result = await $.fn.read_ './test.yaml'
+
+    data = [
+      a: 1
+    ]
+
+    unless _.isEqual result, data
+      throw new Error()
+
+    await $.remove_ './test.yaml'
+    await clean_()

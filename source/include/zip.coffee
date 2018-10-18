@@ -6,7 +6,7 @@ zip_(source, [target], [option])
 $.unzip_ = (source, target) ->
 
   if !source
-    throw makeError 'source'
+    throw new Error 'invalid source'
 
   source = await $.source_ source
 
@@ -32,7 +32,7 @@ $.zip_ = (arg...) ->
     when 1 then [arg[0], null, null]
     when 2 then [arg[0], null, arg[1]]
     when 3 then arg
-    else throw makeError 'length'
+    else throw new Error 'invalid argument length'
 
   _source = source
   source = formatPath source
@@ -53,7 +53,7 @@ $.zip_ = (arg...) ->
     _source = switch $.type _source
       when 'array' then _source[0]
       when 'string' then _source
-      else throw makeError 'type'
+      else throw new Error 'invalid type'
     if ~_source.search /\*/
       return _.trim (_source.replace /\*.*/, ''), '/'
     path.dirname _source

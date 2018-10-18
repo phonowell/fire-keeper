@@ -20,7 +20,7 @@ $.delay_ = (time = 0, callback) ->
 
 $.reload = (source) ->
 
-  if !source then throw makeError 'source'
+  if !source then throw new Error 'invalid source'
 
   source = formatPath source
 

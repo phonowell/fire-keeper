@@ -81,7 +81,7 @@ do ->
       , "#{name}.json"
 
     unless data = await $.read_ source
-      throw makeError 'source'
+      throw new Error 'invalid source'
 
     # return
     _.get data, 'dist-tags.latest'

@@ -37,4 +37,4 @@ listKey = [
   'upload'
 ]
 for key in listKey
-   $.ssh["#{key}Async"] = $.ssh["#{key}_"]
+  $.ssh["#{key}Async"] = $.ssh["#{key}_"]

@@ -117,7 +117,7 @@ class SSH
       option = switch $.type option
         when 'object' then _.clone option
         when 'string' then filename: option
-        else throw makeError 'type'
+        else throw new Error 'invalid type'
 
       conn.sftp (err, sftp) =>
 

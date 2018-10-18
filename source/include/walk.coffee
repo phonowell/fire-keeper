@@ -7,7 +7,7 @@ walk_(source, callback)
 $.walk_ = (source, callback) ->
 
   unless source and callback
-    throw makeError 'length'
+    throw new Error 'invalid argument length'
 
   source = normalizePath source
 
