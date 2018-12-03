@@ -28,14 +28,16 @@ for key in [
   name = _.camelCase key.replace /gulp-/, ''
   global[name] = $p[name] = require key
 
-walk = $p.walk = require 'klaw'
-
 gulpIf = $p.if = require 'gulp-if'
+
+jsYaml = $p.jsYaml = require 'js-yaml'
 
 uglify = $p.uglify = do ->
   uglifyEs = require 'uglify-es'
   composer = require 'gulp-uglify/composer'
   composer uglifyEs, console
+
+walk = $p.walk = require 'klaw'
 
 # return
 $.plugin = $p

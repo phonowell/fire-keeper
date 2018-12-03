@@ -16,8 +16,8 @@ data = await $.read_ './package.json'
 
 ## 备注
 
-`json`文件在读取时，会自动转为`Object`类型。
+如下格式文件在读取时，会自动转为`Object`或`Array`类型：`json`，`yaml`，`yml`。
 
-如下格式文件在读取时，会自动转为`String`类型：`coffee`，`css`，`html`，`js`，`md`，`pug`，`sh`，`styl`，`txt`，`xml`，`yaml`，`yml`。
+如下格式文件在读取时，会自动转为`String`类型：`coffee`，`css`，`html`，`js`，`md`，`pug`，`sh`，`styl`，`txt`，`xml`。
 
-其余格式文件在读取时，会转为`Biffer`类型。
+其余格式文件在读取时，会转为`Buffer`类型。

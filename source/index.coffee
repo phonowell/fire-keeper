@@ -11,6 +11,7 @@
 #= include include/compile.coffee
 #= include include/download.coffee
 #= include include/file.coffee
+#= include include/get-name.coffee
 #= include include/lint.coffee
 #= include include/replace.coffee
 #= include include/say.coffee

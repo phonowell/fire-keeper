@@ -165,9 +165,19 @@ $.read_ = (source, option = {}) ->
   if option.raw then return res
   
   res = switch path.extname(source)[1...]
-    when 'json' then $.parseJSON res
-    when 'coffee', 'css', 'html', 'js', 'md', 'pug', 'sh', 'styl', 'txt', 'xml', 'yaml', 'yml'
+    when 'coffee'
+    , 'css'
+    , 'html'
+    , 'js'
+    , 'md'
+    , 'pug'
+    , 'sh'
+    , 'styl'
+    , 'txt'
+    , 'xml'
       $.parseString res
+    when 'json' then $.parseJSON res
+    when 'yaml', 'yml' then jsYaml.safeLoad res
     else res
 
 $.remove_ = (source) ->

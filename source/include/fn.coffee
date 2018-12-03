@@ -87,42 +87,7 @@ $.fn = {
 }
 
 ###
-$.fn.read_(source)
 $.fn.require(source)
 ###
-
-$.fn.read_ = (source) ->
-
-  type = $.type source
-  unless type == 'string'
-    throw new Error 'invalid type'
-
-  extname = path.extname source
-  basename = path.basename source, extname
-  extname = _.trim extname, '.'
-  unless extname in ['yaml', 'yml']
-    throw new Error "invalid extname '#{extname}'"
-
-  extname = switch extname
-    when 'markdown' then 'md'
-    when 'yml' then 'yaml'
-    else extname
-
-  extname = switch extname
-    when 'coffee' then 'js'
-    when 'md' then 'html'
-    when 'pug' then 'html'
-    when 'styl' then 'css'
-    when 'yaml' then 'json'
-    else throw new Error "invalid extname '#{extname}'"
-
-  filename = "#{basename}.#{extname}"
-  target = "./temp/#{filename}"
-
-  await $.compile_ source, './temp'
-  result = await $.read_ target
-  await $.remove_ target
-
-  result # return
 
 $.fn.require = (source) -> require normalizePath source

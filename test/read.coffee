@@ -53,7 +53,7 @@ describe '$.read_(source, [option])', ->
     
     await clean_()
 
-  it "$.read_('#{temp}/text.txt', raw: true)", ->
+  it "$.read_('#{temp}/test.json', raw: true)", ->
     await clean_()
 
     source = "#{temp}/test.json"
@@ -71,5 +71,25 @@ describe '$.read_(source, [option])', ->
 
     if cont != string
       throw new Error()
+
+    await clean_()
+
+  it "$.read_('#{temp}/test.yaml')", ->
+    await clean_()
+
+    source = "#{temp}/test.yaml"
+    string = 'a test message'
+
+    await $.write_ source, "- value: #{string}"
+
+    cont = await $.read_ source
+    
+    type = $.type cont
+    unless type == 'array'
+      throw new Error "invalid type '#{type}'"
+
+    value = _.get cont, '[0].value'
+    unless value == string
+      throw new Error "invalid value '#{value}'"
 
     await clean_()

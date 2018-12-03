@@ -11,7 +11,7 @@
   /*
   fetchGitHub_(name)
   */
-  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, j, k, key, len, len1, len2, listKey, name, normalizePath, path, ref, string, uglify, walk, wrapList;
+  var $, $p, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, gulp, gulpIf, i, j, jsYaml, k, key, len, len1, len2, listKey, name, normalizePath, path, ref, string, uglify, walk, wrapList;
 
   path = require('path');
 
@@ -41,9 +41,9 @@
     global[name] = $p[name] = require(key);
   }
 
-  walk = $p.walk = require('klaw');
-
   gulpIf = $p.if = require('gulp-if');
+
+  jsYaml = $p.jsYaml = require('js-yaml');
 
   uglify = $p.uglify = (function() {
     var composer, uglifyEs;
@@ -51,6 +51,8 @@
     composer = require('gulp-uglify/composer');
     return composer(uglifyEs, console);
   })();
+
+  walk = $p.walk = require('klaw');
 
   // return
   $.plugin = $p;
@@ -178,55 +180,8 @@
   $.fn = {excludeInclude, formatArgument, formatPath, normalizePath, wrapList};
 
   /*
-  $.fn.read_(source)
   $.fn.require(source)
   */
-  $.fn.read_ = async function(source) {
-    var basename, extname, filename, result, target, type;
-    type = $.type(source);
-    if (type !== 'string') {
-      throw new Error('invalid type');
-    }
-    extname = path.extname(source);
-    basename = path.basename(source, extname);
-    extname = _.trim(extname, '.');
-    if (extname !== 'yaml' && extname !== 'yml') {
-      throw new Error(`invalid extname '${extname}'`);
-    }
-    extname = (function() {
-      switch (extname) {
-        case 'markdown':
-          return 'md';
-        case 'yml':
-          return 'yaml';
-        default:
-          return extname;
-      }
-    })();
-    extname = (function() {
-      switch (extname) {
-        case 'coffee':
-          return 'js';
-        case 'md':
-          return 'html';
-        case 'pug':
-          return 'html';
-        case 'styl':
-          return 'css';
-        case 'yaml':
-          return 'json';
-        default:
-          throw new Error(`invalid extname '${extname}'`);
-      }
-    })();
-    filename = `${basename}.${extname}`;
-    target = `./temp/${filename}`;
-    await $.compile_(source, './temp');
-    result = (await $.read_(target));
-    await $.remove_(target);
-    return result; // return
-  };
-
   $.fn.require = function(source) {
     return require(normalizePath(source));
   };
@@ -782,8 +737,6 @@
     }
     return res = (function() {
       switch (path.extname(source).slice(1)) {
-        case 'json':
-          return $.parseJSON(res);
         case 'coffee':
         case 'css':
         case 'html':
@@ -794,9 +747,12 @@
         case 'styl':
         case 'txt':
         case 'xml':
+          return $.parseString(res);
+        case 'json':
+          return $.parseJSON(res);
         case 'yaml':
         case 'yml':
-          return $.parseString(res);
+          return jsYaml.safeLoad(res);
         default:
           return res;
       }
@@ -872,6 +828,28 @@
     await fse.outputFile(source, data, option);
     $.info('file', `wrote ${wrapList(source)}`);
     return $; // return
+  };
+
+  /*
+  getName(source)
+  */
+  $.getName = function(source) {
+    /*
+    basename
+    dirname
+    extname
+    filename
+    */
+    var basename, dirname, extname, filename;
+    if (!((source != null ? source.length : void 0) || source > 0)) {
+      throw new Error(`invalid source '${source}'`);
+    }
+    extname = path.extname(source);
+    basename = path.basename(source, extname);
+    dirname = path.dirname(source);
+    filename = `${basename}${extname}`;
+    // return
+    return {basename, dirname, extname, filename};
   };
 
   (function() {    /*
