@@ -1,10 +1,7 @@
 ###
-argv
 os
 path
 ###
-
-$.argv = $p.yargs.argv
 
 $.os = switch
   when ~(string = process.platform).search 'darwin' then 'macos'

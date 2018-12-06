@@ -33,6 +33,9 @@ do ->
 
     new Promise (resolve) ->
 
+      # require
+      coffeelint = getPlugin 'gulp-coffeelint'
+
       (stream = gulp.src source)
       .on 'end', -> resolve()
 
@@ -45,6 +48,9 @@ do ->
   fn_.markdown_ = (source) ->
 
     new Promise (resolve) ->
+
+      # require
+      markdownlint = getPlugin 'markdownlint'
 
       option = files: await $.source_ source
 
@@ -79,6 +85,9 @@ do ->
   fn_.stylus_ = (source) ->
 
     new Promise (resolve) ->
+
+      # require
+      stylint = getPlugin 'gulp-stylint'
 
       (stream = gulp.src source)
       .on 'end', -> resolve()

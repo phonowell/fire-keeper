@@ -12,6 +12,10 @@ $.walk_ = (source, callback) ->
   source = normalizePath source
 
   await new Promise (resolve) ->
+
+    # require
+    walk = getPlugin 'klaw'
+
     walk source
     .on 'data', (item) ->
       callback item

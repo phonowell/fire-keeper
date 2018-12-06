@@ -4,6 +4,9 @@ compile_(source, [target], [option])
 
 do ->
 
+  # require
+  sourcemaps = getPlugin 'gulp-sourcemaps'
+
   # function
 
   fn_ = (arg...) ->
@@ -60,6 +63,11 @@ do ->
 
     new Promise (resolve) ->
 
+      # require
+      coffee = getPlugin 'gulp-coffee'
+      include = getPlugin 'gulp-include'
+      uglify = getPlugin 'uglify'
+
       option.harmony ?= true
       if !option.harmony
         option.transpile =
@@ -81,6 +89,9 @@ do ->
 
     new Promise (resolve) ->
 
+      # require
+      cleanCss = getPlugin 'gulp-clean-css'
+
       gulp.src source
       .pipe plumber()
       .pipe using()
@@ -94,6 +105,9 @@ do ->
 
     new Promise (resolve) ->
 
+      # require
+      uglify = getPlugin 'uglify'
+
       gulp.src source
       .pipe plumber()
       .pipe using()
@@ -106,6 +120,11 @@ do ->
   fn_.md_ = (source, target, option) ->
 
     new Promise (resolve) ->
+
+      # require
+      htmlmin = getPlugin 'gulp-htmlmin'
+      markdown = getPlugin 'gulp-markdown'
+      rename = getPlugin 'gulp-rename'
 
       option.sanitize ?= true
 
@@ -122,6 +141,9 @@ do ->
 
     new Promise (resolve) ->
 
+      # require
+      pug = getPlugin 'gulp-pug'
+
       option.pretty ?= !option.minify
 
       gulp.src source
@@ -134,6 +156,9 @@ do ->
   fn_.styl_ = (source, target, option) ->
 
     new Promise (resolve) ->
+
+      # require
+      stylus = getPlugin 'gulp-stylus'
 
       option.compress ?= option.minify
 
@@ -149,6 +174,9 @@ do ->
   fn_.yaml_ = (source, target, option) ->
 
     new Promise (resolve) ->
+
+      # require
+      yaml = getPlugin 'gulp-yaml'
 
       option.safe ?= true
 

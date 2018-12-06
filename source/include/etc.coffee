@@ -24,6 +24,9 @@ $.reload = (source) ->
 
   source = formatPath source
 
+  # require
+  livereload = getPlugin 'gulp-livereload'
+
   livereload.listen()
 
   $.watch source
@@ -31,6 +34,7 @@ $.reload = (source) ->
 
   $ # return
 
-$.watch = $p.watch
+$.watch = getPlugin 'gulp-watch'
 
-$.yargs = $p.yargs
+$.yargs = getPlugin 'yargs'
+$.argv = $.plugin.yargs.argv

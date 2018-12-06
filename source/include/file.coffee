@@ -25,6 +25,9 @@ $.copy_ = (arg...) ->
 
   await new Promise (resolve) ->
 
+    # require
+    rename = getPlugin 'gulp-rename'
+
     gulp.src source
     .pipe plumber()
     .pipe using()
@@ -177,7 +180,10 @@ $.read_ = (source, option = {}) ->
     , 'xml'
       $.parseString res
     when 'json' then $.parseJSON res
-    when 'yaml', 'yml' then jsYaml.safeLoad res
+    when 'yaml', 'yml'
+      # require
+      jsYaml = getPlugin 'js-yaml'
+      jsYaml.safeLoad res # return
     else res
 
 $.remove_ = (source) ->
@@ -202,6 +208,9 @@ $.rename_ = (source, option) ->
   listHistory = []
 
   await new Promise (resolve) ->
+
+    # require
+    rename = getPlugin 'gulp-rename'
 
     gulp.src source
     .pipe plumber()

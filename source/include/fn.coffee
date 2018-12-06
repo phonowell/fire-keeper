@@ -2,6 +2,7 @@
 excludeInclude(source)
 formatArgument(arg)
 formatPath(source)
+getPlugin(name)
 getRelativePath(source, target)
 normalizePath(source)
 wrapList(list)
@@ -24,6 +25,14 @@ formatArgument = (arg) ->
 formatPath = (source) ->
   source = formatArgument source
   (normalizePath src for src in source)
+
+getPlugin = (name) ->
+  if name == 'uglify'
+    return $.plugin.uglify or= do ->
+      uglifyEs = require 'uglify-es'
+      composer = require 'gulp-uglify/composer'
+      composer uglifyEs, console
+  $.plugin[name] or= require name
 
 normalizePath = (source) ->
 

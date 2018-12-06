@@ -1,8 +1,8 @@
 #= include include/init.coffee
 #= include include/library.coffee
+#= include include/fn.coffee
 #= include include/plugin.coffee
 #= include include/variable.coffee
-#= include include/fn.coffee
 
 #= include include/task.coffee
 

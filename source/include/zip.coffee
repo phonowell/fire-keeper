@@ -15,6 +15,10 @@ $.unzip_ = (source, target) ->
     dist = target or path.dirname src
 
     await new Promise (resolve) ->
+
+      # require
+      unzip = getPlugin 'gulp-unzip'
+
       gulp.src src
       .pipe plumber()
       .pipe using()
@@ -63,6 +67,9 @@ $.zip_ = (arg...) ->
   filename = "#{target}/#{filename}"
 
   await new Promise (resolve) ->
+
+    # require
+    archiver = getPlugin 'archiver'
 
     output = fs.createWriteStream filename
     archive = archiver 'zip',
