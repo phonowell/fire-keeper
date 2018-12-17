@@ -28,6 +28,7 @@ listKey = [
 for key in listKey
   $["#{key}Async"] = $["#{key}_"]
 
+# ssh
 listKey = [
   'connect'
   'disconnect'
@@ -35,6 +36,8 @@ listKey = [
   'remove'
   'shell'
   'upload'
+  'uploadDir'
+  'uploadFile'
 ]
 for key in listKey
   $.ssh["#{key}Async"] = $.ssh["#{key}_"]

@@ -36,18 +36,18 @@
   excludeInclude = function(source) {
     source = formatArgument(source);
     source.push('!**/include/**');
-    source = _.uniq(source);
-    return source; // return
+    return source = _.uniq(source); // return
   };
 
   formatArgument = function(arg) {
-    switch ($.type(arg)) {
+    var type;
+    switch (type = $.type(arg)) {
       case 'array':
         return _.clone(arg);
       case 'string':
         return [arg];
       default:
-        throw new Error('invalid type');
+        throw new Error(`invalid type '${type}'`);
     }
   };
 
@@ -195,19 +195,37 @@
   */
   // task
   $.task = function(...arg) {
-    switch (arg.length) {
-      case 1:
-        return gulp.tasks[arg[0]].fn;
-      case 2:
-        return gulp.task(...arg);
-      default:
-        throw new Error('invalid argument length');
+    var _fn, fn, listTask, name, type;
+    [name, fn] = arg;
+    listTask = gulp._registry._tasks;
+    // get task list
+    if (!name) {
+      return listTask;
     }
+    // get function via name
+    if (!fn) {
+      return listTask[name];
+    }
+    // set new task
+    type = $.type(fn);
+    if (type !== 'async function' && type !== 'function') {
+      $.info('warning', `invalid type of '${name}()': '${type}'`);
+    }
+    if (type !== 'async function') {
+      // generate a wrapper
+      _fn = fn;
+      fn = function() {
+        return new Promise(function(resolve) {
+          _fn();
+          return resolve();
+        });
+      };
+    }
+    return gulp.task(name, fn);
   };
 
   // added default tasks
   /*
-  check()
   default()
   gurumin()
   kokoro()
@@ -215,38 +233,12 @@
   prune()
   update()
   */
-  $.task('check', async function() {
-    var cont, ext, i, j, len, len1, listCont, listExt, listSource, results, source;
-    listSource = [];
-    listExt = ['coffee', 'md', 'pug', 'styl', 'yaml'];
-    for (i = 0, len = listExt.length; i < len; i++) {
-      ext = listExt[i];
-      listSource.push(`./*.${ext}`);
-      listSource.push(`./source/**/*.${ext}`);
-      listSource.push(`./test/**/*.${ext}`);
-    }
-    listSource = (await $.source_(listSource));
-    results = [];
-    for (j = 0, len1 = listSource.length; j < len1; j++) {
-      source = listSource[j];
-      cont = $.parseString((await $.read_(source)));
-      listCont = cont.split('\n');
-      if (!_.trim(_.last(listCont)).length) {
-        listCont.pop();
-        results.push((await $.write_(source, listCont.join('\n'))));
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  });
-
   $.task('default', function() {
     var key, list;
     list = (function() {
       var results;
       results = [];
-      for (key in gulp.tasks) {
+      for (key in gulp._registry._tasks) {
         results.push(key);
       }
       return results;
@@ -386,9 +378,7 @@
   (function() {    /*
     compile_(source, [target], [option])
     */
-    var fn_, sourcemaps;
-    // require
-    sourcemaps = getPlugin('gulp-sourcemaps');
+    var fn_;
     // function
     fn_ = async function(...arg) {
       var compile_, extname, method, option, source, target;
@@ -452,9 +442,9 @@
     styl_(source, target, option)
     yaml_(source, target, option)
     */
-    fn_.coffee_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var coffee, include, uglify;
+    fn_.coffee_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var coffee, include, sourcemaps, uglify;
         // require
         coffee = getPlugin('gulp-coffee');
         include = getPlugin('gulp-include');
@@ -468,34 +458,37 @@
           };
         }
         delete option.harmony;
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.css_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var cleanCss;
+    fn_.css_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var cleanCss, sourcemaps;
         // require
         cleanCss = getPlugin('gulp-clean-css');
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, cleanCss())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.js_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var uglify;
+    fn_.js_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var sourcemaps, uglify;
         // require
         uglify = getPlugin('uglify');
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(gulpIf(option.minify, uglify())).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.md_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var htmlmin, markdown, rename;
+    fn_.md_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var htmlmin, markdown, rename, sourcemaps;
         // require
         htmlmin = getPlugin('gulp-htmlmin');
         markdown = getPlugin('gulp-markdown');
@@ -503,53 +496,57 @@
         if (option.sanitize == null) {
           option.sanitize = true;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
           extname: '.html'
         })).pipe(gulpIf(option.minify, htmlmin({
           collapseWhitespace: true
-        }))).pipe(gulp.dest(target)).on('end', function() {
+        }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.pug_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var pug;
+    fn_.pug_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var pug, sourcemaps;
         // require
         pug = getPlugin('gulp-pug');
         if (option.pretty == null) {
           option.pretty = !option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.styl_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var stylus;
+    fn_.styl_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var sourcemaps, stylus;
         // require
         stylus = getPlugin('gulp-stylus');
         if (option.compress == null) {
           option.compress = option.minify;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(option.map, sourcemaps.init())).pipe(stylus(option)).pipe(gulpIf(option.map, sourcemaps.write(''))).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
-    fn_.yaml_ = function(source, target, option) {
-      return new Promise(function(resolve) {
-        var yaml;
+    fn_.yaml_ = async function(source, target, option) {
+      return (await new Promise(function(resolve) {
+        var sourcemaps, yaml;
         // require
         yaml = getPlugin('gulp-yaml');
         if (option.safe == null) {
           option.safe = true;
         }
-        return gulp.src(source).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
+        sourcemaps = option.map;
+        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
-      });
+      }));
     };
     // return
     return $.compile_ = fn_;
@@ -1173,16 +1170,18 @@
   };
 
   /*
-  source_(source)
+  source_(source, [option])
   */
-  $.source_ = async function(source) {
+  $.source_ = async function(source, option) {
     source = formatPath(source);
+    option = _.merge({
+      allowEmpty: true,
+      read: false
+    }, option);
     return (await new Promise(function(resolve) {
       var listSource;
       listSource = [];
-      return gulp.src(source, {
-        read: false
-      }).on('data', function(item) {
+      return gulp.src(source, option).on('data', function(item) {
         return listSource.push(item.path);
       }).on('end', function() {
         return resolve(listSource);
@@ -1203,8 +1202,8 @@
     uploadDir_(sftp, source, target)
     uploadFile_(sftp, source, target)
     */
-    connect_(option) {
-      return new Promise((resolve) => {
+    async connect_(option) {
+      return (await new Promise((resolve) => {
         var Client, conn;
         ({Client} = require('ssh2'));
         conn = new Client();
@@ -1215,18 +1214,18 @@
           return resolve();
         }).connect(option);
         return this.storage = {conn, option};
-      });
+      }));
     }
 
-    disconnect_() {
-      return new Promise((resolve) => {
+    async disconnect_() {
+      return (await new Promise((resolve) => {
         var conn, option;
         ({conn, option} = this.storage);
         return conn.on('end', function() {
           $.info('ssh', `disconnected from '${option.username}@${option.host}'`);
           return resolve();
         }).end();
-      });
+      }));
     }
 
     info(chunk) {
@@ -1274,8 +1273,8 @@
       return $.info('ssh', `removed ${wrapList(source)}`);
     }
 
-    shell_(cmd, option = {}) {
-      return new Promise((resolve) => {
+    async shell_(cmd, option = {}) {
+      return (await new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
         cmd = formatArgument(cmd);
@@ -1298,11 +1297,11 @@
             return this.info(chunk);
           });
         });
-      });
+      }));
     }
 
-    upload_(source, target, option = {}) {
-      return new Promise((resolve) => {
+    async upload_(source, target, option = {}) {
+      return (await new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
         source = formatPath(source);
@@ -1337,11 +1336,11 @@
           sftp.end();
           return resolve();
         });
-      });
+      }));
     }
 
-    uploadDir_(sftp, source, target) {
-      return new Promise(async(resolve) => {
+    async uploadDir_(sftp, source, target) {
+      return (await new Promise(async(resolve) => {
         var i, len, listSource, relativeTarget, src, stat;
         listSource = [];
         await $.walk_(source, function(item) {
@@ -1358,11 +1357,11 @@
           }
         }
         return resolve();
-      });
+      }));
     }
 
-    uploadFile_(sftp, source, target) {
-      return new Promise(function(resolve) {
+    async uploadFile_(sftp, source, target) {
+      return (await new Promise(function(resolve) {
         return sftp.fastPut(source, target, function(err) {
           if (err) {
             throw err;
@@ -1370,7 +1369,7 @@
           $.info('ssh', `uploaded '${source}' to '${target}'`);
           return resolve();
         });
-      });
+      }));
     }
 
   };
@@ -1478,21 +1477,25 @@
   zip_(source, [target], [option])
   */
   $.unzip_ = async function(source, target) {
-    var dist, i, len, src;
+    var dist, i, len, listSource, src, unzip;
     if (!source) {
       throw new Error('invalid source');
     }
-    source = (await $.source_(source));
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
-      dist = target || path.dirname(src);
+    listSource = (await $.source_(source));
+    // require
+    unzip = getPlugin('unzip');
+    for (i = 0, len = listSource.length; i < len; i++) {
+      src = listSource[i];
+      dist = target || $.getDirname(src);
       await new Promise(function(resolve) {
-        var unzip;
-        // require
-        unzip = getPlugin('gulp-unzip');
-        return gulp.src(src).pipe(plumber()).pipe(using()).pipe(unzip()).pipe(gulp.dest(dist)).on('end', function() {
+        var stream;
+        stream = fs.createReadStream(src);
+        stream.on('end', function() {
           return resolve();
         });
+        return stream.pipe(unzip.Extract({
+          path: dist
+        }));
       });
       $.info('zip', `unzipped ${src} to ${dist}`);
     }
@@ -1644,7 +1647,8 @@
     $[`${key}Async`] = $[`${key}_`];
   }
 
-  listKey = ['connect', 'disconnect', 'mkdir', 'remove', 'shell', 'upload'];
+  // ssh
+  listKey = ['connect', 'disconnect', 'mkdir', 'remove', 'shell', 'upload', 'uploadDir', 'uploadFile'];
 
   for (j = 0, len1 = listKey.length; j < len1; j++) {
     key = listKey[j];

@@ -25,15 +25,34 @@ task(name, [fn])
 
 $.task = (arg...) ->
 
-  switch arg.length
-    when 1 then gulp.tasks[arg[0]].fn
-    when 2 then gulp.task arg...
-    else throw new Error 'invalid argument length'
+  [name, fn] = arg
+
+  listTask = gulp._registry._tasks
+
+  # get task list
+  unless name
+    return listTask
+
+  # get function via name
+  unless fn
+    return listTask[name]
+
+  # set new task
+  type = $.type fn
+  unless type in ['async function', 'function']
+    $.info 'warning', "invalid type of '#{name}()': '#{type}'"
+  unless type == 'async function'
+    # generate a wrapper
+    _fn = fn
+    fn = -> new Promise (resolve) ->
+      _fn()
+      resolve()
+
+  gulp.task name, fn
 
 # added default tasks
 
 ###
-check()
 default()
 gurumin()
 kokoro()
@@ -42,35 +61,8 @@ prune()
 update()
 ###
 
-$.task 'check', ->
-
-  listSource = []
-
-  listExt = [
-    'coffee'
-    'md'
-    'pug'
-    'styl'
-    'yaml'
-  ]
-  for ext in listExt
-    listSource.push "./*.#{ext}"
-    listSource.push "./source/**/*.#{ext}"
-    listSource.push "./test/**/*.#{ext}"
-
-  listSource = await $.source_ listSource
-
-  for source in listSource
-
-    cont = $.parseString await $.read_ source
-    listCont = cont.split '\n'
-
-    if !_.trim(_.last listCont).length
-      listCont.pop()
-      await $.write_ source, listCont.join('\n')
-
 $.task 'default', ->
-  list = (key for key of gulp.tasks)
+  list = (key for key of gulp._registry._tasks)
   list.sort()
   $.info 'task', wrapList list
 

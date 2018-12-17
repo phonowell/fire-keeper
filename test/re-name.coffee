@@ -43,9 +43,12 @@ describe 'rename', ->
       'zip'
     ]
     for key in listKey
+      type = $.type $["#{key}_"]
+      unless type == 'async function'
+        throw new Error "invalid type of '$.#{key}_()': #{type}"
       type = $.type $["#{key}Async"]
-      if type != 'async function'
-        throw new Error "#{key} / #{type}"
+      unless type == 'async function'
+        throw new Error "invalid type of '$.#{key}Async()': #{type}"
 
     listKey = [
       'connect'
@@ -54,10 +57,15 @@ describe 'rename', ->
       'remove'
       'shell'
       'upload'
+      'uploadDir'
+      'uploadFile'
     ]
     for key in listKey
-      $.type $.ssh["#{key}Async"]
-      if type != 'async function'
-        throw new Error "#{key} / #{type}"
+      type = $.type $.ssh["#{key}_"]
+      unless type == 'async function'
+        throw new Error "invalid type of '$.ssh.#{key}_()': #{type}"
+      type = $.type $.ssh["#{key}Async"]
+      unless type == 'async function'
+        throw new Error "invalid type of '$.ssh.#{key}Async()': #{type}"
 
     await clean_()

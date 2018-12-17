@@ -15,7 +15,8 @@ describe '$.delay_([time], [callback])', ->
   it '$.delay_()', ->
     await clean_()
 
-    unless _.isFunction $.delay_
-      throw new Error()
+    type = $.type $.delay_
+    unless type == 'async function'
+      throw new Error "invalid type '#{type}'"
 
     await clean_()

@@ -3,12 +3,8 @@ $ = require '../index'
 
 # return
 module.exports = ->
-
-  globby = require 'globby'
-
-  source = [
-    './source/**/*.coffee'
-    '!**/include/**'
-  ]
-
-  $.i await globby source
+  
+  await $.compile_ './gulpfile.coffee', './temp',
+    harmony: true
+    map: true
+    minify: false

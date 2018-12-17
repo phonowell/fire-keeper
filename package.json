@@ -1,1 +1,62 @@
-{"name":"fire-keeper","version":"0.0.113","description":"A little helper to make gulpfile(s) simple.","main":"./index.js","scripts":{"test":"mocha --timeout 30000"},"repository":{"type":"git","url":"https://github.com/phonowell/fire-keeper.git"},"keywords":["fire-keeper"],"author":"Mimiko Phonowell <phonowell@gmail.com>","license":"MIT","url":"https://github.com/phonowell/fire-keeper","bugs":{"url":"https://github.com/phonowell/fire-keeper/issues"},"homepage":"https://github.com/phonowell/fire-keeper","devDependencies":{"mocha":"^5.2.0"},"dependencies":{"achain":"^1.1.1","archiver":"^3.0.0","babel-core":"^6.26.3","babel-preset-env":"^1.7.0","download":"^7.1.0","fs-extra":"^7.0.1","gulp":"^3.9.1","gulp-clean-css":"^4.0.0","gulp-coffee":"^3.0.3","gulp-coffeelint":"^0.6.0","gulp-htmlmin":"^5.0.1","gulp-if":"^2.0.2","gulp-include":"^2.3.1","gulp-livereload":"^4.0.1","gulp-markdown":"^3.0.0","gulp-plumber":"^1.2.1","gulp-pug":"^4.0.1","gulp-rename":"^1.4.0","gulp-sourcemaps":"^2.6.4","gulp-stylint":"^4.0.2","gulp-stylus":"^2.7.0","gulp-uglify":"^3.0.1","gulp-unzip":"^1.0.0","gulp-using":"^0.1.1","gulp-util":"^3.0.8","gulp-watch":"^5.0.1","gulp-yaml":"^2.0.2","gulp-zip":"^4.2.0","js-yaml":"^3.12.0","klaw":"^3.0.0","markdownlint":"^0.11.0","node-jquery-extend":"0.0.26","ssh2":"^0.6.1","uglify-es":"^3.3.9","yargs":"^12.0.5"}}
+{
+  "name": "fire-keeper",
+  "version": "0.0.114",
+  "description": "A little helper to make gulpfile(s) simple.",
+  "main": "./index.js",
+  "scripts": {
+    "test": "mocha --timeout 30000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phonowell/fire-keeper.git"
+  },
+  "keywords": [
+    "fire-keeper"
+  ],
+  "author": "Mimiko Phonowell <phonowell@gmail.com>",
+  "license": "MIT",
+  "url": "https://github.com/phonowell/fire-keeper",
+  "bugs": {
+    "url": "https://github.com/phonowell/fire-keeper/issues"
+  },
+  "homepage": "https://github.com/phonowell/fire-keeper",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "achain": "^1.1.1",
+    "archiver": "^3.0.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "download": "^7.1.0",
+    "fs-extra": "^7.0.1",
+    "gulp": "^4.0.0",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-coffee": "^3.0.3",
+    "gulp-coffeelint": "^0.6.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-if": "^2.0.2",
+    "gulp-include": "^2.3.1",
+    "gulp-livereload": "^4.0.1",
+    "gulp-markdown": "^3.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-pug": "^4.0.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-stylint": "^4.0.2",
+    "gulp-stylus": "^2.7.0",
+    "gulp-uglify": "^3.0.1",
+    "gulp-using": "^0.1.1",
+    "gulp-util": "^3.0.8",
+    "gulp-watch": "^5.0.1",
+    "gulp-yaml": "^2.0.2",
+    "gulp-zip": "^4.2.0",
+    "js-yaml": "^3.12.0",
+    "klaw": "^3.0.0",
+    "markdownlint": "^0.11.0",
+    "node-jquery-extend": "0.0.26",
+    "ssh2": "^0.6.1",
+    "uglify-es": "^3.3.9",
+    "unzip": "^0.1.11",
+    "yargs": "^12.0.5"
+  }
+}

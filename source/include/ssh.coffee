@@ -16,7 +16,7 @@ class SSH
 
   connect_: (option) ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       {Client} = require 'ssh2'
       conn = new Client()
@@ -36,7 +36,7 @@ class SSH
 
   disconnect_: ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       {conn, option} = @storage
 
@@ -86,7 +86,7 @@ class SSH
 
   shell_: (cmd, option = {}) ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       {conn} = @storage
 
@@ -108,7 +108,7 @@ class SSH
 
   upload_: (source, target, option = {}) ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       {conn} = @storage
 
@@ -140,7 +140,7 @@ class SSH
 
   uploadDir_: (sftp, source, target) ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       listSource = []
       await $.walk_ source, (item) -> listSource.push item.path
@@ -160,7 +160,7 @@ class SSH
 
   uploadFile_: (sftp, source, target) ->
 
-    new Promise (resolve) ->
+    await new Promise (resolve) ->
 
       sftp.fastPut source, target, (err) ->
         if err then throw err

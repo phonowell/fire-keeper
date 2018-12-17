@@ -15,26 +15,34 @@ describe '$.unzip_(source, [target])', ->
   it "$.unzip_('#{temp}/*.zip')", ->
     await clean_()
 
-    base = temp
-
+    listKey = ['a', 'b', 'c']
+    listContent = []
     listSource = []
-    for key in ['a', 'b', 'c']
+    listTarget = []
+    for key in listKey
+      listContent.push "test file #{key}"
+      listSource.push "#{temp}/[test](test)#{key}.txt"
+      listTarget.push "#{temp}/#{key}.zip"
 
-      source = "#{base}/[test](test)#{key}.txt"
-      content = "test file #{key}"
+    for key, i in listKey
 
-      await $.write_ source, content
-      await $.zip_ source, "#{key}.zip"
-      await $.remove_ source
+      await $.write_ listSource[i], listContent[i]
+      await $.zip_ listSource[i], "#{key}.zip"
+      await $.remove_ listSource[i]
 
-      listSource.push source
+    unless await $.isExisted_ listTarget
+      throw new Error 1
 
-    res = await $.unzip_ "#{base}/*.zip"
-
-    if res != $
-      throw new Error()
+    res = await $.unzip_ listTarget
+    unless res == $
+      throw new Error 0
 
     unless await $.isExisted_ listSource
-      throw new Error()
+      throw new Error 2
+
+    for key, i in listKey
+
+      unless listContent[i] == await $.read_ listSource[i]
+        throw new Error()
 
     await clean_()

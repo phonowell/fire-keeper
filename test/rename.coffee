@@ -7,21 +7,20 @@ temp = './temp'
 
 # function
 ###
-check(source, target, contSource)
-clean()
+check_(source, target, contSource)
+clean_()
 ###
 
-check = (source, target, contSource) ->
+check_ = (source, target, contSource) ->
 
   if await $.isExisted_ source
-    throw new Error 'source'
+    throw new Error 'invalid source'
 
   unless await $.isExisted_ target
-    throw new Error 'target'
+    throw new Error 'invalid target'
 
-  contTarget = await $.read_ target
-  if contTarget != contSource
-    throw new Error 'cont'
+  unless contSource == await $.read_ target
+    throw new Error 'invalid content'
 
 clean_ = -> await $.remove_ temp
 
@@ -43,7 +42,7 @@ describe '$.rename_(source, option)', ->
     if res != $
       throw new Error()
 
-    await check source, target, contSource
+    await check_ source, target, contSource
 
     await clean_()
 
@@ -63,7 +62,7 @@ describe '$.rename_(source, option)', ->
     if res != $
       throw new Error()
 
-    await check source, target, contSource
+    await check_ source, target, contSource
 
     await clean_()
 
@@ -89,6 +88,6 @@ describe '$.rename_(source, option)', ->
       target = "./temp/#{filename}.md"
       contSource = filename
       
-      await check source, target, contSource
+      await check_ source, target, contSource
 
     await clean_()

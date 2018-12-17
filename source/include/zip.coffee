@@ -5,26 +5,23 @@ zip_(source, [target], [option])
 
 $.unzip_ = (source, target) ->
 
-  if !source
+  unless source
     throw new Error 'invalid source'
 
-  source = await $.source_ source
+  listSource = await $.source_ source
 
-  for src in source
+  # require
+  unzip = getPlugin 'unzip'
 
-    dist = target or path.dirname src
+  for src in listSource
+
+    dist = target or $.getDirname src
 
     await new Promise (resolve) ->
-
-      # require
-      unzip = getPlugin 'gulp-unzip'
-
-      gulp.src src
-      .pipe plumber()
-      .pipe using()
-      .pipe unzip()
-      .pipe gulp.dest dist
-      .on 'end', -> resolve()
+      stream = fs.createReadStream src
+      stream.on 'end', -> resolve()
+      stream.pipe unzip.Extract
+        path: dist
 
     $.info 'zip', "unzipped #{src} to #{dist}"
 

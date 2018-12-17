@@ -8,4 +8,4 @@ module.exports = ->
 	gulp.src './source/index.coffee'
 	.pipe include()
 	.pipe coffee()
-	.pipe gulp.dest ''
+	.pipe gulp.dest './'

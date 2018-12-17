@@ -57,7 +57,7 @@ pkg = await $.readAsync './package.json'
 - $.replace_(source, option...)
 - [$.say_(text)](doc/say.md)
 - $.shell_(cmd, [option])
-- [$.source_(source)](doc/source.md)
+- [$.source_(source, [option])](doc/source.md)
 - $.ssh()
 - $.ssh.connect_(option)
 - $.ssh.disconnect_()

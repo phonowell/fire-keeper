@@ -12,89 +12,159 @@ clean_ = -> await $.remove_ temp
     
 describe '$.isExisted_(source)', ->
 
-  it "$.isExisted_('#{temp}/existed')", ->
-    await clean_()
+  describe 'file', ->
 
-    source = "#{temp}/existed"
+    describe 'single', ->
 
-    await $.mkdir_ source
+      it 'existed', ->
+        await clean_()
 
-    unless await $.isExisted_ source
-      throw new Error()
+        source = "#{temp}/a.txt"
+        content = 'aloha'
+        await $.write_ source, content
 
-    await clean_()
+        unless await $.isExisted_ source
+          throw new Error()
 
-  it "$.isExisted_('#{temp}/null')", ->
-    await clean_()
+        await clean_()
 
-    if await $.isExisted_ "#{temp}/null"
-      throw new Error()
+      it 'not existed', ->
+        await clean_()
 
-    await clean_()
+        source = "#{temp}/a.txt"
+        
+        if await $.isExisted_ source
+          throw new Error()
 
-  it "$.isExisted_('#{temp}/existed/existed.txt')", ->
-    await clean_()
+        await clean_()
 
-    source = "#{temp}/existed/existed.txt"
+    describe 'multi', ->
 
-    await $.write_ source, 'existed'
+      it 'existed', ->
+        await clean_()
 
-    unless await $.isExisted_ source
-      throw new Error()
+        listSource = [
+          "#{temp}/a.txt"
+          "#{temp}/b.txt"
+          "#{temp}/c.txt"
+        ]
+        content = 'aloha'
+        for source in listSource
+          await $.write_ source, content
 
-    await clean_()
+        unless await $.isExisted_ listSource
+          throw new Error()
 
-  it "$.isExisted_('#{temp}/existed/null.txt')", ->
-    await clean_()
+        await clean_()
 
-    await $.mkdir_ "#{temp}/existed"
+      it 'not existed', ->
+        await clean_()
 
-    if await $.isExisted_ "#{temp}/existed/null.txt"
-      throw new Error()
+        listSource = [
+          "#{temp}/a.txt"
+          "#{temp}/b.txt"
+          "#{temp}/c.txt"
+        ]
+        content = 'aloha'
+        for source in listSource
+          await $.write_ source, content
 
-    await clean_()
+        await $.remove_ listSource[0]
 
-  it '$.isExisted_([])', ->
-    await clean_()
+        if await $.isExisted_ listSource
+          throw new Error()
 
-    isExisted = await $.isExisted_ []
+        await clean_()
 
-    if isExisted
-      throw new Error()
+  describe 'folder', ->
 
-    await clean_()
+    describe 'single', ->
 
-  it "$.isExisted_(['#{temp}/a', '#{temp}/b', '#{temp}/c'])", ->
-    await clean_()
+      it 'existed', ->
+        await clean_()
 
-    listSource = [
-      "#{temp}/a"
-      "#{temp}/b"
-      "#{temp}/c"
-    ]
+        source = "#{temp}/a"
+        await $.mkdir_ source
 
-    await $.mkdir_ listSource
+        unless await $.isExisted_ source
+          throw new Error()
 
-    isExisted = await $.isExisted_ listSource
+        await clean_()
 
-    if !isExisted
-      throw new Error()
+      it 'not existed', ->
+        await clean_()
 
-    await clean_()
+        source = "#{temp}/a"
 
-  it "$.isExisted_(['#{temp}/existed.txt', '#{temp}/null.txt'])", ->
-    await clean_()
+        if await $.isExisted_ source
+          throw new Error()
 
-    listSource = [
-      "#{temp}/existed.txt"
-      "#{temp}/null.txt"
-    ]
+        await clean_()
 
-    await $.write_ listSource[0], 'existed'
+    describe 'multi', ->
 
-    isExisted = await $.isExisted_ listSource
+      it 'existed', ->
+        await clean_()
 
-    if isExisted
-      throw new Error()
+        listSource = [
+          "#{temp}/a"
+          "#{temp}/b"
+          "#{temp}/c"
+        ]
+        for source in listSource
+          await $.mkdir_ source
 
-    await clean_()
+        unless await $.isExisted_ listSource
+          throw new Error()
+
+        await clean_()
+
+      it 'not existed', ->
+        await clean_()
+
+        listSource = [
+          "#{temp}/a"
+          "#{temp}/b"
+          "#{temp}/c"
+        ]
+        for source in listSource
+          await $.mkdir_ source
+
+        await $.remove_ listSource[0]
+
+        if await $.isExisted_ listSource
+          throw new Error()
+
+        await clean_()
+
+  describe 'file & folder', ->
+
+    it 'existed', ->
+        await clean_()
+
+        await $.mkdir_ "#{temp}/a"
+        await $.mkdir_ "#{temp}/b"
+        await $.write_ "#{temp}/a/b.txt", 'aloha'
+
+        unless await $.isExisted_ [
+          "#{temp}/a"
+          "#{temp}/a/b.txt"
+          "#{temp}/b"
+        ]
+          throw new Error()
+
+        await clean_()
+
+      it 'not existed', ->
+        await clean_()
+
+        await $.write_ "#{temp}/a/b.txt", 'aloha'
+
+        if await $.isExisted_ [
+          "#{temp}/a"
+          "#{temp}/a/b.txt"
+          "#{temp}/b"
+        ]
+          throw new Error()
+
+        await clean_()

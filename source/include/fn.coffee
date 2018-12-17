@@ -9,18 +9,15 @@ wrapList(list)
 ###
 
 excludeInclude = (source) ->
-
   source = formatArgument source
   source.push '!**/include/**'
-  source = _.uniq source
-
-  source # return
+  source = _.uniq source # return
 
 formatArgument = (arg) ->
-  switch $.type arg
+  switch type = $.type arg
     when 'array' then _.clone arg
     when 'string' then [arg]
-    else throw new Error 'invalid type'
+    else throw new Error "invalid type '#{type}'"
 
 formatPath = (source) ->
   source = formatArgument source

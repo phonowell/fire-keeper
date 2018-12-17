@@ -1,15 +1,19 @@
 ###
-source_(source)
+source_(source, [option])
 ###
 
-$.source_ = (source) ->
+$.source_ = (source, option) ->
 
   source = formatPath source
+  option = _.merge
+    allowEmpty: true
+    read: false
+  , option
 
   await new Promise (resolve) ->
 
     listSource = []
 
-    gulp.src source, read: false
+    gulp.src source, option
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource
