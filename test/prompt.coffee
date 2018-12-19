@@ -10,12 +10,13 @@ clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.shell_(cmd, [option])', ->
+describe '$.prompt_(source, callback)', ->
 
-  it '$.shell_()', ->
+  it '$.prompt_()', ->
     await clean_()
 
-    unless _.isFunction $.shell_
+    type = $.type $.prompt
+    unless type == 'async function'
       throw new Error()
 
     await clean_()

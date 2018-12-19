@@ -5,13 +5,13 @@ class SSH
   ###
   connect_(option)
   disconnect_()
+  exec_(cmd, [option])
   info(chunk)
   mkdir_(source)
   remove_(source)
-  shell_(cmd, [option])
-  upload_(source, target, [option])
   uploadDir_(sftp, source, target)
   uploadFile_(sftp, source, target)
+  upload_(source, target, [option])
   ###
 
   connect_: (option) ->
@@ -34,6 +34,8 @@ class SSH
 
       @storage = {conn, option}
 
+    @ # return
+
   disconnect_: ->
 
     await new Promise (resolve) =>
@@ -49,42 +51,9 @@ class SSH
 
       .end()
 
-  info: (chunk) ->
+    @ # return
 
-    string = $.trim $.parseString chunk
-    if !string.length then return
-
-    string = string
-    .replace /\r/g, '\n'
-    .replace /\n{2,}/g, ''
-
-    $.i string
-
-  mkdir_: (source) ->
-
-    source = formatArgument source
-
-    cmd = ("mkdir -p #{src}" for src in source).join '; '
-
-    $.info.pause '$.ssh.mkdir_'
-    await @shell_ cmd
-    $.info.resume '$.ssh.mkdir_'
-
-    $.info 'ssh', "created #{wrapList source}"
-
-  remove_: (source) ->
-
-    source = formatArgument source
-
-    cmd = ("rm -fr #{src}" for src in source).join '; '
-
-    $.info.pause '$.ssh.remove_'
-    await @shell_ cmd
-    $.info.resume '$.ssh.remove_'
-
-    $.info 'ssh', "removed #{wrapList source}"
-
-  shell_: (cmd, option = {}) ->
+  exec_: (cmd, option = {}) ->
 
     await new Promise (resolve) =>
 
@@ -105,6 +74,47 @@ class SSH
             return @info chunk
           throw $.parseString chunk
         stream.stdout.on 'data', (chunk) => @info chunk
+
+    @ # return
+
+  info: (chunk) ->
+
+    string = $.trim $.parseString chunk
+    if !string.length then return
+
+    string = string
+    .replace /\r/g, '\n'
+    .replace /\n{2,}/g, ''
+
+    $.i string
+
+  mkdir_: (source) ->
+
+    source = formatArgument source
+
+    cmd = ("mkdir -p #{src}" for src in source).join '; '
+
+    $.info.pause '$.ssh.mkdir_'
+    await @exec_ cmd
+    $.info.resume '$.ssh.mkdir_'
+
+    $.info 'ssh', "created #{wrapList source}"
+
+    @ # return
+
+  remove_: (source) ->
+
+    source = formatArgument source
+
+    cmd = ("rm -fr #{src}" for src in source).join '; '
+
+    $.info.pause '$.ssh.remove_'
+    await @exec_ cmd
+    $.info.resume '$.ssh.remove_'
+
+    $.info 'ssh', "removed #{wrapList source}"
+
+    @ # return
 
   upload_: (source, target, option = {}) ->
 
@@ -138,6 +148,8 @@ class SSH
         sftp.end()
         resolve()
 
+    @ # return
+
   uploadDir_: (sftp, source, target) ->
 
     await new Promise (resolve) =>
@@ -158,6 +170,8 @@ class SSH
 
       resolve()
 
+    @ # return
+
   uploadFile_: (sftp, source, target) ->
 
     await new Promise (resolve) ->
@@ -166,6 +180,8 @@ class SSH
         if err then throw err
         $.info 'ssh', "uploaded '#{source}' to '#{target}'"
         resolve()
+
+    @ # return
 
 # return
 $.ssh = new SSH()

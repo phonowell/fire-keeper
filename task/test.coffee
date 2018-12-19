@@ -24,7 +24,7 @@ module.exports = ->
 		map: true
 		minify: false
 
-	unless await $.shell_ 'npm test'
+	unless await $.exec_ 'npm test'
 		throw new Error()
 
 	await clean_()

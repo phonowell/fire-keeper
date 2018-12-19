@@ -10,12 +10,13 @@
 #= include include/chain.coffee
 #= include include/compile.coffee
 #= include include/download.coffee
+#= include include/exec.coffee
 #= include include/file.coffee
 #= include include/get-name.coffee
 #= include include/lint.coffee
+#= include include/prompt.coffee
 #= include include/replace.coffee
 #= include include/say.coffee
-#= include include/shell.coffee
 #= include include/source.coffee
 #= include include/ssh.coffee
 #= include include/update.coffee

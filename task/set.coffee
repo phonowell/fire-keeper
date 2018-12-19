@@ -6,10 +6,20 @@ module.exports = ->
 
 	{ver} = $.argv
 
-	if !ver
-		throw new Error 'empty ver'
+	source = './package.json'
+	data = await $.read_ source
 
-	await $.replace_ './package.json', (cont) ->
-		data = $.parseJson cont
-		data.version = ver
-		data
+	ver or= await $.prompt
+		type: 'text'
+		message: 'input new version'
+		default: data.version
+		validate: (value) ->
+			unless ~value.search /^0\.0\.\d+$/
+				'invalid version number'
+			else true
+
+	unless ver
+		throw new Error 'empty version number'
+
+	data.version = ver
+	await $.write_ source, data

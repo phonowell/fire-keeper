@@ -12,7 +12,7 @@
   /*
   fetchGitHub_(name)
   */
-  var $, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, getPlugin, gulp, gulpIf, i, j, key, len, len1, listKey, normalizePath, path, plumber, string, using, wrapList;
+  var $, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, getPlugin, gulp, gulpIf, j, k, key, len, len1, listKey, normalizePath, path, plumber, string, using, wrapList;
 
   path = require('path');
 
@@ -22,11 +22,11 @@
 
   fse = require('fs-extra');
 
+  gulp = require('gulp');
+
   $ = require('node-jquery-extend');
 
   ({_} = $);
-
-  gulp = require('gulp');
 
   // return
   module.exports = $;
@@ -52,11 +52,11 @@
   };
 
   formatPath = function(source) {
-    var i, len, results, src;
+    var j, len, results, src;
     source = formatArgument(source);
     results = [];
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
       results.push(normalizePath(src));
     }
     return results;
@@ -133,10 +133,10 @@
       }
     })();
     return ((function() {
-      var i, len, results;
+      var j, len, results;
       results = [];
-      for (i = 0, len = list.length; i < len; i++) {
-        key = list[i];
+      for (j = 0, len = list.length; j < len; j++) {
+        key = list[j];
         results.push(`'${key}'`);
       }
       return results;
@@ -185,9 +185,9 @@
     var source;
     source = normalizePath(`./../${(name.split('/')[1])}`);
     if ((await $.isExisted_(source))) {
-      return (await $.shell_([`cd ${source}`, 'git fetch', 'git pull']));
+      return (await $.exec_([`cd ${source}`, 'git fetch', 'git pull']));
     }
-    return (await $.shell_(`git clone https://github.com/${name}.git ${source}`));
+    return (await $.exec_(`git clone https://github.com/${name}.git ${source}`));
   };
 
   /*
@@ -254,7 +254,7 @@
   });
 
   $.task('kokoro', async function() {
-    var LIST, filename, i, isSame, len, listClean, results, source, target;
+    var LIST, filename, isSame, j, len, listClean, results, source, target;
     await fetchGitHub_('phonowell/kokoro');
     // clean
     listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
@@ -264,8 +264,8 @@
     // copy
     LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
     results = [];
-    for (i = 0, len = LIST.length; i < len; i++) {
-      filename = LIST[i];
+    for (j = 0, len = LIST.length; j < len; j++) {
+      filename = LIST[j];
       source = `./../kokoro/${filename}`;
       target = `./${filename}`;
       isSame = (await $.isSame_([source, target]));
@@ -273,7 +273,7 @@
         continue;
       }
       await $.copy_(source, './');
-      results.push((await $.shell_(`git add -f ${$.path.base}/${filename}`)));
+      results.push((await $.exec_(`git add -f ${$.path.base}/${filename}`)));
     }
     return results;
   });
@@ -284,15 +284,15 @@
 
   $.task('prune', async function() {
     var base, line, listDirectory, listExtension, listFile, listSource;
-    await $.shell_('npm prune');
+    await $.exec_('npm prune');
     base = './node_modules';
     // file
     listFile = ['.DS_Store', '.appveyor.yml', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.flowconfig', '.gitattributes', '.gitlab-ci.yml', '.htmllintrc', '.jshintrc', '.lint', '.npmignore', '.stylelintrc', '.stylelintrc.js', '.stylelintrc.json', '.stylelintrc.yaml', '.stylelintrc.yml', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml', 'eslint', 'gulpfile.js', 'htmllint.js', 'jest.config.js', 'karma.conf.js', 'license', 'stylelint.config.js', 'tsconfig.json'];
     listSource = (function() {
-      var i, len, results;
+      var j, len, results;
       results = [];
-      for (i = 0, len = listFile.length; i < len; i++) {
-        line = listFile[i];
+      for (j = 0, len = listFile.length; j < len; j++) {
+        line = listFile[j];
         results.push(`${base}/**/${line}`);
       }
       return results;
@@ -301,10 +301,10 @@
     // directory
     listDirectory = ['.circleci', '.github', '.idea', '.nyc_output', '.vscode', '__tests__', 'assets', 'coverage', 'doc', 'docs', 'example', 'examples', 'images', 'powered-test', 'test', 'tests', 'website'];
     listSource = (function() {
-      var i, len, results;
+      var j, len, results;
       results = [];
-      for (i = 0, len = listDirectory.length; i < len; i++) {
-        line = listDirectory[i];
+      for (j = 0, len = listDirectory.length; j < len; j++) {
+        line = listDirectory[j];
         results.push(`${base}/**/${line}`);
       }
       return results;
@@ -313,10 +313,10 @@
     // extension
     listExtension = ['.coffee', '.jst', '.markdown', '.md', '.swp', '.tgz', '.ts'];
     listSource = (function() {
-      var i, len, results;
+      var j, len, results;
       results = [];
-      for (i = 0, len = listExtension.length; i < len; i++) {
-        line = listExtension[i];
+      for (j = 0, len = listExtension.length; j < len; j++) {
+        line = listExtension[j];
         results.push(`${base}/**/*${line}`);
       }
       return results;
@@ -328,7 +328,7 @@
     var registry;
     ({registry} = $.argv);
     await $.update_({registry});
-    return (await $.shell_('npm prune'));
+    return (await $.exec_('npm prune'));
   });
 
   /*
@@ -336,10 +336,10 @@
   recover_(source)
   */
   $.backup_ = async function(source) {
-    var extname, i, len, src, suffix;
+    var extname, j, len, src, suffix;
     source = (await $.source_(source));
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
       suffix = path.extname(src);
       extname = '.bak';
       $.info.pause('$.backup_');
@@ -351,10 +351,10 @@
   };
 
   $.recover_ = async function(source) {
-    var bak, basename, i, len, src;
+    var bak, basename, j, len, src;
     source = formatPath(source);
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
       bak = `${src}.bak`;
       if (!(await $.isExisted_(bak))) {
         continue;
@@ -373,7 +373,11 @@
   /*
   chain(fn, option)
   */
-  $.chain = require('achain');
+  $.chain = function(...arg) {
+    var base1;
+    (base1 = $.chain).fn || (base1.fn = require('achain'));
+    return $.chain.fn(...arg);
+  };
 
   (function() {    /*
     compile_(source, [target], [option])
@@ -585,6 +589,103 @@
     return $; // return
   };
 
+  Shell = (function() {
+    class Shell {
+      /*
+      close()
+      execute_(cmd, [option])
+      info([type], string)
+      */
+      close() {
+        this.process.kill();
+        return this;
+      }
+
+      async execute_(cmd, option = {}) {
+        await new Promise((resolve) => {
+          var arg, cmder, isIgnoreError, type;
+          type = $.type(cmd);
+          cmd = (function() {
+            switch (type) {
+              case 'array':
+                return cmd.join(' && ');
+              case 'string':
+                return cmd;
+              default:
+                throw new Error('invalid type');
+            }
+          })();
+          $.info('exec', cmd);
+          isIgnoreError = !!option.ignoreError;
+          delete option.ignoreError;
+          [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', `"${cmd}"`]] : ['/bin/sh', ['-c', cmd]];
+          this.process = this.spawn(cmder, arg, option);
+          // bind
+          this.process.stderr.on('data', (data) => {
+            return this.info('error', data);
+          });
+          this.process.stdout.on('data', (data) => {
+            return this.info(data);
+          });
+          return this.process.on('close', function(code) {
+            if (code === 0 || isIgnoreError) {
+              return resolve(true);
+            }
+            return resolve(false);
+          });
+        });
+        return this;
+      }
+
+      info(...arg) {
+        var type;
+        [type, string] = (function() {
+          switch (arg.length) {
+            case 1:
+              return [null, arg[0]];
+            case 2:
+              return arg;
+            default:
+              throw new Error('invalid argument length');
+          }
+        })();
+        string = $.trim(string);
+        if (!string.length) {
+          return;
+        }
+        string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
+        string = (function() {
+          switch (type) {
+            case 'error':
+              return chalk.red(string);
+            default:
+              return chalk.gray(string);
+          }
+        })();
+        return $.log(string);
+      }
+
+    };
+
+    /*
+    spawn
+    */
+    Shell.prototype.spawn = require('child_process').spawn;
+
+    return Shell;
+
+  }).call(this);
+
+  // return
+  $.exec_ = async function(cmd, option) {
+    var shell;
+    shell = new Shell();
+    if (!cmd) {
+      return shell;
+    }
+    return (await shell.execute_(cmd, option));
+  };
+
   /*
   copy_(source, target, [option])
   isExisted_(source)
@@ -634,13 +735,13 @@
   };
 
   $.isExisted_ = async function(source) {
-    var i, len, src;
+    var j, len, src;
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
       if (!(await fse.pathExists(src))) {
         return false;
       }
@@ -649,15 +750,15 @@
   };
 
   $.isSame_ = async function(source) {
-    var CONT, SIZE, cont, i, j, len, len1, size, src, stat;
+    var CONT, SIZE, cont, j, k, len, len1, size, src, stat;
     source = formatPath(source);
     if (!source.length) {
       return false;
     }
     // check size
     SIZE = null;
-    for (i = 0, len = source.length; i < len; i++) {
-      src = source[i];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
       stat = (await $.stat_(src));
       if (!stat) {
         return false;
@@ -673,8 +774,8 @@
     }
     // check cont
     CONT = null;
-    for (j = 0, len1 = source.length; j < len1; j++) {
-      src = source[j];
+    for (k = 0, len1 = source.length; k < len1; k++) {
+      src = source[k];
       $.info.pause('$.isSame_');
       cont = (await $.read_(src));
       $.info.resume('$.isSame_');
@@ -711,10 +812,10 @@
     }
     source = formatPath(source);
     listPromise = (function() {
-      var i, len, results;
+      var j, len, results;
       results = [];
-      for (i = 0, len = source.length; i < len; i++) {
-        src = source[i];
+      for (j = 0, len = source.length; j < len; j++) {
+        src = source[j];
         results.push(fse.ensureDir(src));
       }
       return results;
@@ -785,10 +886,10 @@
   };
 
   $.remove_ = async function(source) {
-    var i, len, listSource, src;
+    var j, len, listSource, src;
     listSource = (await $.source_(source));
-    for (i = 0, len = listSource.length; i < len; i++) {
-      src = listSource[i];
+    for (j = 0, len = listSource.length; j < len; j++) {
+      src = listSource[j];
       await new Promise(function(resolve) {
         return fse.remove(src, function(err) {
           if (err) {
@@ -804,7 +905,7 @@
   };
 
   $.rename_ = async function(source, option) {
-    var i, item, len, listHistory;
+    var item, j, len, listHistory;
     source = formatPath(source);
     listHistory = [];
     await new Promise(function(resolve) {
@@ -819,8 +920,8 @@
       });
     });
     $.info.pause('$.rename_');
-    for (i = 0, len = listHistory.length; i < len; i++) {
-      item = listHistory[i];
+    for (j = 0, len = listHistory.length; j < len; j++) {
+      item = listHistory[j];
       if ((await $.isExisted_(item[1]))) {
         await $.remove_(item[0]);
       }
@@ -962,7 +1063,7 @@
           files: (await $.source_(source))
         };
         return markdownlint(option, function(err, result) {
-          var filename, i, item, len, list, listMsg;
+          var filename, item, j, len, list, listMsg;
           if (err) {
             throw err;
           }
@@ -973,8 +1074,8 @@
             }
             filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
             $.i(chalk.magenta(filename));
-            for (i = 0, len = list.length; i < len; i++) {
-              item = list[i];
+            for (j = 0, len = list.length; j < len; j++) {
+              item = list[j];
               listMsg = [];
               listMsg.push(chalk.gray(`#${item.lineNumber}`));
               if (item.errorContext) {
@@ -1006,10 +1107,63 @@
   })();
 
   /*
+  prompt(option)
+  */
+  $.prompt = async function(option) {
+    var base1, i, item, j, len, ref, ref1, res, type;
+    type = $.type(option);
+    if (type !== 'object') {
+      throw new Error(`invalid type '${type}'`);
+    }
+    // default value
+    option.initial || (option.initial = option.default);
+    option.message || (option.message = $.prompt.mapMessage[option.type] || 'input');
+    option.name || (option.name = 'value');
+    if ((ref = option.type) === 'autocomplete' || ref === 'multiselect' || ref === 'select') {
+      if (!(option.choices || (option.choices = option.choice))) {
+        throw new Error('got no choice(s)');
+      }
+      ref1 = option.choices;
+      for (i = j = 0, len = ref1.length; j < len; i = ++j) {
+        item = ref1[i];
+        type = $.type(item);
+        if (type === 'object') {
+          continue;
+        }
+        option.choices[i] = {
+          title: item,
+          value: item
+        };
+      }
+    } else if (option.type === 'toggle') {
+      option.active || (option.active = 'on');
+      option.inactive || (option.inactive = 'off');
+    }
+    
+    // execute
+    (base1 = $.prompt).fn || (base1.fn = require('prompts'));
+    res = (await $.prompt.fn(option));
+    // return
+    if (option.raw) {
+      return res;
+    }
+    return res[option.name];
+  };
+
+  $.prompt.mapMessage = {
+    confirm: 'confirm',
+    multiselect: 'select',
+    number: 'input number',
+    select: 'select',
+    text: 'input text',
+    toggle: 'toggle'
+  };
+
+  /*
   replace_(source, option...)
   */
   $.replace_ = async function(source, ...option) {
-    var callback, cont, i, len, listSource, msg, reg, replacement, res, src;
+    var callback, cont, j, len, listSource, msg, reg, replacement, res, src;
     if (!source) {
       throw new Error('invalid source');
     }
@@ -1025,8 +1179,8 @@
         throw new Error('invalid argument length');
     }
     msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
-    for (i = 0, len = listSource.length; i < len; i++) {
-      src = listSource[i];
+    for (j = 0, len = listSource.length; j < len; j++) {
+      src = listSource[j];
       $.info.pause('$.replace_');
       cont = $.parseString((await $.read_(src)));
       res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
@@ -1044,129 +1198,36 @@
   say_(text)
   */
   $.say_ = async function(text) {
-    var i, len, listMessage, msg;
-    if ($.os !== 'macos') {
-      return;
-    }
+    var j, len, listMessage, msg, type;
+    type = $.type(text);
     listMessage = (function() {
-      switch ($.type(text)) {
+      switch (type) {
         case 'array':
           return text;
+        case 'boolean':
+        case 'number':
         case 'string':
           return [text];
         default:
-          throw new Error('invalid type');
+          throw new Error(`invalid type '${type}'`);
       }
     })();
-    for (i = 0, len = listMessage.length; i < len; i++) {
-      msg = listMessage[i];
+    for (j = 0, len = listMessage.length; j < len; j++) {
+      msg = listMessage[j];
       $.info('say', msg);
-      msg = msg.replace(/[#\(\)-]/g, '');
+      if ($.os !== 'macos') {
+        continue;
+      }
+      msg = $.parseString(msg).replace(/[#\(\)-]/g, '');
       msg = _.trim(msg);
       if (!msg.length) {
         continue;
       }
       $.info.pause('$.say_');
-      await $.shell_(`say ${msg}`);
+      await $.exec_(`say ${msg}`);
       $.info.resume('$.say_');
     }
     return text; // return
-  };
-
-  Shell = (function() {
-    class Shell {
-      /*
-      close()
-      execute_(cmd, [option])
-      info([type], string)
-      */
-      close() {
-        this.process.kill();
-        return this;
-      }
-
-      execute_(cmd, option = {}) {
-        return new Promise((resolve) => {
-          var arg, cmder, isIgnoreError, type;
-          type = $.type(cmd);
-          cmd = (function() {
-            switch (type) {
-              case 'array':
-                return cmd.join(' && ');
-              case 'string':
-                return cmd;
-              default:
-                throw new Error('invalid type');
-            }
-          })();
-          $.info('shell', cmd);
-          isIgnoreError = !!option.ignoreError;
-          delete option.ignoreError;
-          [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', `"${cmd}"`]] : ['/bin/sh', ['-c', cmd]];
-          this.process = this.spawn(cmder, arg, option);
-          // bind
-          this.process.stderr.on('data', (data) => {
-            return this.info('error', data);
-          });
-          this.process.stdout.on('data', (data) => {
-            return this.info(data);
-          });
-          return this.process.on('close', function(code) {
-            if (code === 0 || isIgnoreError) {
-              return resolve(true);
-            }
-            return resolve(false);
-          });
-        });
-      }
-
-      info(...arg) {
-        var type;
-        [type, string] = (function() {
-          switch (arg.length) {
-            case 1:
-              return [null, arg[0]];
-            case 2:
-              return arg;
-            default:
-              throw new Error('invalid argument length');
-          }
-        })();
-        string = $.trim(string);
-        if (!string.length) {
-          return;
-        }
-        string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
-        string = (function() {
-          switch (type) {
-            case 'error':
-              return chalk.red(string);
-            default:
-              return chalk.gray(string);
-          }
-        })();
-        return $.log(string);
-      }
-
-    };
-
-    /*
-    spawn
-    */
-    Shell.prototype.spawn = require('child_process').spawn;
-
-    return Shell;
-
-  }).call(this);
-
-  // return
-  $.shell_ = async function(cmd, option) {
-    var shell;
-    shell = new Shell();
-    if (!cmd) {
-      return shell;
-    }
-    return (await shell.execute_(cmd, option));
   };
 
   /*
@@ -1194,16 +1255,16 @@
     /*
     connect_(option)
     disconnect_()
+    exec_(cmd, [option])
     info(chunk)
     mkdir_(source)
     remove_(source)
-    shell_(cmd, [option])
-    upload_(source, target, [option])
     uploadDir_(sftp, source, target)
     uploadFile_(sftp, source, target)
+    upload_(source, target, [option])
     */
     async connect_(option) {
-      return (await new Promise((resolve) => {
+      await new Promise((resolve) => {
         var Client, conn;
         ({Client} = require('ssh2'));
         conn = new Client();
@@ -1214,67 +1275,24 @@
           return resolve();
         }).connect(option);
         return this.storage = {conn, option};
-      }));
+      });
+      return this;
     }
 
     async disconnect_() {
-      return (await new Promise((resolve) => {
+      await new Promise((resolve) => {
         var conn, option;
         ({conn, option} = this.storage);
         return conn.on('end', function() {
           $.info('ssh', `disconnected from '${option.username}@${option.host}'`);
           return resolve();
         }).end();
-      }));
+      });
+      return this;
     }
 
-    info(chunk) {
-      string = $.trim($.parseString(chunk));
-      if (!string.length) {
-        return;
-      }
-      string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
-      return $.i(string);
-    }
-
-    async mkdir_(source) {
-      var cmd, src;
-      source = formatArgument(source);
-      cmd = ((function() {
-        var i, len, results;
-        results = [];
-        for (i = 0, len = source.length; i < len; i++) {
-          src = source[i];
-          results.push(`mkdir -p ${src}`);
-        }
-        return results;
-      })()).join('; ');
-      $.info.pause('$.ssh.mkdir_');
-      await this.shell_(cmd);
-      $.info.resume('$.ssh.mkdir_');
-      return $.info('ssh', `created ${wrapList(source)}`);
-    }
-
-    async remove_(source) {
-      var cmd, src;
-      source = formatArgument(source);
-      cmd = ((function() {
-        var i, len, results;
-        results = [];
-        for (i = 0, len = source.length; i < len; i++) {
-          src = source[i];
-          results.push(`rm -fr ${src}`);
-        }
-        return results;
-      })()).join('; ');
-      $.info.pause('$.ssh.remove_');
-      await this.shell_(cmd);
-      $.info.resume('$.ssh.remove_');
-      return $.info('ssh', `removed ${wrapList(source)}`);
-    }
-
-    async shell_(cmd, option = {}) {
-      return (await new Promise((resolve) => {
+    async exec_(cmd, option = {}) {
+      await new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
         cmd = formatArgument(cmd);
@@ -1297,11 +1315,59 @@
             return this.info(chunk);
           });
         });
-      }));
+      });
+      return this;
+    }
+
+    info(chunk) {
+      string = $.trim($.parseString(chunk));
+      if (!string.length) {
+        return;
+      }
+      string = string.replace(/\r/g, '\n').replace(/\n{2,}/g, '');
+      return $.i(string);
+    }
+
+    async mkdir_(source) {
+      var cmd, src;
+      source = formatArgument(source);
+      cmd = ((function() {
+        var j, len, results;
+        results = [];
+        for (j = 0, len = source.length; j < len; j++) {
+          src = source[j];
+          results.push(`mkdir -p ${src}`);
+        }
+        return results;
+      })()).join('; ');
+      $.info.pause('$.ssh.mkdir_');
+      await this.exec_(cmd);
+      $.info.resume('$.ssh.mkdir_');
+      $.info('ssh', `created ${wrapList(source)}`);
+      return this;
+    }
+
+    async remove_(source) {
+      var cmd, src;
+      source = formatArgument(source);
+      cmd = ((function() {
+        var j, len, results;
+        results = [];
+        for (j = 0, len = source.length; j < len; j++) {
+          src = source[j];
+          results.push(`rm -fr ${src}`);
+        }
+        return results;
+      })()).join('; ');
+      $.info.pause('$.ssh.remove_');
+      await this.exec_(cmd);
+      $.info.resume('$.ssh.remove_');
+      $.info('ssh', `removed ${wrapList(source)}`);
+      return this;
     }
 
     async upload_(source, target, option = {}) {
-      return (await new Promise((resolve) => {
+      await new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
         source = formatPath(source);
@@ -1318,12 +1384,12 @@
           }
         })();
         return conn.sftp(async(err, sftp) => {
-          var filename, i, len, src, stat;
+          var filename, j, len, src, stat;
           if (err) {
             throw err;
           }
-          for (i = 0, len = source.length; i < len; i++) {
-            src = source[i];
+          for (j = 0, len = source.length; j < len; j++) {
+            src = source[j];
             stat = (await $.stat_(src));
             filename = option.filename || path.basename(src);
             if (stat.isDirectory()) {
@@ -1336,18 +1402,19 @@
           sftp.end();
           return resolve();
         });
-      }));
+      });
+      return this;
     }
 
     async uploadDir_(sftp, source, target) {
-      return (await new Promise(async(resolve) => {
-        var i, len, listSource, relativeTarget, src, stat;
+      await new Promise(async(resolve) => {
+        var j, len, listSource, relativeTarget, src, stat;
         listSource = [];
         await $.walk_(source, function(item) {
           return listSource.push(item.path);
         });
-        for (i = 0, len = listSource.length; i < len; i++) {
-          src = listSource[i];
+        for (j = 0, len = listSource.length; j < len; j++) {
+          src = listSource[j];
           stat = (await $.stat_(src));
           relativeTarget = path.normalize(`${target}/${path.relative(source, src)}`);
           if (stat.isDirectory()) {
@@ -1357,11 +1424,12 @@
           }
         }
         return resolve();
-      }));
+      });
+      return this;
     }
 
     async uploadFile_(sftp, source, target) {
-      return (await new Promise(function(resolve) {
+      await new Promise(function(resolve) {
         return sftp.fastPut(source, target, function(err) {
           if (err) {
             throw err;
@@ -1369,11 +1437,13 @@
           $.info('ssh', `uploaded '${source}' to '${target}'`);
           return resolve();
         });
-      }));
+      });
+      return this;
     }
 
   };
 
+  
   // return
   $.ssh = new SSH();
 
@@ -1426,7 +1496,7 @@
         $.info('update', 'every thing is ok');
         return;
       }
-      await $.shell_(listCmd);
+      await $.exec_(listCmd);
       return $; // return
     };
     getLatestVersion_ = async function(name, option) {
@@ -1477,15 +1547,15 @@
   zip_(source, [target], [option])
   */
   $.unzip_ = async function(source, target) {
-    var dist, i, len, listSource, src, unzip;
+    var dist, j, len, listSource, src, unzip;
     if (!source) {
       throw new Error('invalid source');
     }
     listSource = (await $.source_(source));
     // require
     unzip = getPlugin('unzip');
-    for (i = 0, len = listSource.length; i < len; i++) {
-      src = listSource[i];
+    for (j = 0, len = listSource.length; j < len; j++) {
+      src = listSource[j];
       dist = target || $.getDirname(src);
       await new Promise(function(resolve) {
         var stream;
@@ -1550,7 +1620,7 @@
     filename || (filename = `${path.basename(target)}.zip`);
     filename = `${target}/${filename}`;
     await new Promise(async function(resolve) {
-      var archive, archiver, i, len, listSource, msg, name, output, src;
+      var archive, archiver, j, len, listSource, msg, name, output, src;
       // require
       archiver = getPlugin('archiver');
       output = fs.createWriteStream(filename);
@@ -1591,8 +1661,8 @@
       });
       archive.pipe(output);
       listSource = (await $.source_(source));
-      for (i = 0, len = listSource.length; i < len; i++) {
-        src = listSource[i];
+      for (j = 0, len = listSource.length; j < len; j++) {
+        src = listSource[j];
         name = src.replace(base, '');
         archive.file(src, {name});
       }
@@ -1640,18 +1710,18 @@
 
   $.argv = $.plugin.yargs.argv;
 
-  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'shell', 'source', 'stat', 'unzip', 'update', 'walk', 'write', 'zip'];
+  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'exec', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'source', 'stat', 'unzip', 'update', 'walk', 'write', 'zip'];
 
-  for (i = 0, len = listKey.length; i < len; i++) {
-    key = listKey[i];
+  for (j = 0, len = listKey.length; j < len; j++) {
+    key = listKey[j];
     $[`${key}Async`] = $[`${key}_`];
   }
 
   // ssh
-  listKey = ['connect', 'disconnect', 'mkdir', 'remove', 'shell', 'upload', 'uploadDir', 'uploadFile'];
+  listKey = ['connect', 'disconnect', 'exec', 'mkdir', 'remove', 'upload', 'uploadDir', 'uploadFile'];
 
-  for (j = 0, len1 = listKey.length; j < len1; j++) {
-    key = listKey[j];
+  for (k = 0, len1 = listKey.length; k < len1; k++) {
+    key = listKey[k];
     $.ssh[`${key}Async`] = $.ssh[`${key}_`];
   }
 

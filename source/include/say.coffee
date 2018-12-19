@@ -4,26 +4,28 @@ say_(text)
 
 $.say_ = (text) ->
 
-  if $.os != 'macos' then return
-
-  listMessage = switch $.type text
+  type = $.type text
+  listMessage = switch type
     when 'array' then text
-    when 'string' then [text]
-    else throw new Error 'invalid type'
+    when 'boolean', 'number', 'string' then [text]
+    else throw new Error "invalid type '#{type}'"
 
   for msg in listMessage
 
     $.info 'say', msg
 
-    msg = msg
-    .replace /[#\(\)-]/g, ''
+    unless $.os == 'macos'
+      continue
 
+    msg = $.parseString msg
+    .replace /[#\(\)-]/g, ''
     msg = _.trim msg
 
-    if !msg.length then continue
+    unless msg.length
+      continue
 
     $.info.pause '$.say_'
-    await $.shell_ "say #{msg}"
+    await $.exec_ "say #{msg}"
     $.info.resume '$.say_'
 
   text # return

@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.114",
+  "version": "0.0.115",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -54,6 +54,7 @@
     "klaw": "^3.0.0",
     "markdownlint": "^0.11.0",
     "node-jquery-extend": "0.0.26",
+    "prompts": "^2.0.0",
     "ssh2": "^0.6.1",
     "uglify-es": "^3.3.9",
     "unzip": "^0.1.11",

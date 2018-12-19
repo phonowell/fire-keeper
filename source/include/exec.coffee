@@ -18,7 +18,7 @@ class Shell
 
   execute_: (cmd, option = {}) ->
 
-    new Promise (resolve) =>
+    await new Promise (resolve) =>
 
       type = $.type cmd
       cmd = switch type
@@ -26,7 +26,7 @@ class Shell
         when 'string' then cmd
         else throw new Error 'invalid type'
 
-      $.info 'shell', cmd
+      $.info 'exec', cmd
 
       isIgnoreError = !!option.ignoreError
       delete option.ignoreError
@@ -54,6 +54,8 @@ class Shell
           return resolve true
         resolve false
 
+    @ # return
+
   info: (arg...) ->
 
     [type, string] = switch arg.length
@@ -75,7 +77,7 @@ class Shell
     $.log string
 
 # return
-$.shell_ = (cmd, option) ->
+$.exec_ = (cmd, option) ->
   shell = new Shell()
   if !cmd then return shell
   await shell.execute_ cmd, option

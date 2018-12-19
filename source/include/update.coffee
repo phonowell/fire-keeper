@@ -62,7 +62,7 @@ do ->
       $.info 'update', 'every thing is ok'
       return
 
-    await $.shell_ listCmd
+    await $.exec_ listCmd
 
     $ # return
 

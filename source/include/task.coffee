@@ -7,13 +7,13 @@ fetchGitHub_ = (name) ->
   source = normalizePath "./../#{name.split('/')[1]}"
 
   if await $.isExisted_ source
-    return await $.shell_ [
+    return await $.exec_ [
       "cd #{source}"
       'git fetch'
       'git pull'
     ]
 
-  await $.shell_ "git clone
+  await $.exec_ "git clone
   https://github.com/#{name}.git
   #{source}"
 
@@ -109,13 +109,13 @@ $.task 'kokoro', ->
       continue
 
     await $.copy_ source, './'
-    await $.shell_ "git add -f #{$.path.base}/#{filename}"
+    await $.exec_ "git add -f #{$.path.base}/#{filename}"
 
 $.task 'noop', -> null
 
 $.task 'prune', ->
 
-  await $.shell_ 'npm prune'
+  await $.exec_ 'npm prune'
 
   base = './node_modules'
 
@@ -219,4 +219,4 @@ $.task 'update', ->
   {registry} = $.argv
 
   await $.update_ {registry}
-  await $.shell_ 'npm prune'
+  await $.exec_ 'npm prune'
