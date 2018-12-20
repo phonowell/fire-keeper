@@ -19,8 +19,7 @@ describe '$.copy_(source, target, [option])', ->
     target = "#{temp}/test.md"
 
     res = await $.copy_ source, temp, 'test.md'
-
-    if res != $
+    unless res == $
       throw new Error()
 
     unless await $.isExisted_ target
@@ -28,8 +27,7 @@ describe '$.copy_(source, target, [option])', ->
 
     contSource = await $.read_ source
     contTarget = await $.read_ target
-
-    if contTarget != contSource
+    unless contTarget == contSource
       throw new Error()
 
     await clean_()
@@ -41,8 +39,7 @@ describe '$.copy_(source, target, [option])', ->
     target = "#{temp}/new/license.md"
 
     res = await $.copy_ source, "#{temp}/new"
-
-    if res != $
+    unless res == $
       throw new Error()
 
     unless await $.isExisted_ target
@@ -50,8 +47,7 @@ describe '$.copy_(source, target, [option])', ->
 
     contSource = await $.read_ source
     contTarget = await $.read_ target
-
-    if contTarget != contSource
+    unless contTarget == contSource
       throw new Error()
 
     await clean_()
@@ -65,8 +61,7 @@ describe '$.copy_(source, target, [option])', ->
     target = '~/Downloads/temp/license.md'
 
     res = await $.copy_ source, '~/Downloads/temp'
-
-    if res != $
+    unless res == $
       throw new Error()
 
     unless await $.isExisted_ target
@@ -74,8 +69,7 @@ describe '$.copy_(source, target, [option])', ->
 
     contSource = await $.read_ source
     contTarget = await $.read_ target
-
-    if contTarget != contSource
+    unless contTarget == contSource
       throw new Error()
 
     await $.remove_ '~/Downloads/temp'
@@ -89,16 +83,14 @@ describe '$.copy_(source, target, [option])', ->
 
     await $.write_ source, string
     res = await $.copy_ source, null, 'b.txt'
-
-    if res != $
+    unless res == $
       throw new Error()
 
     unless await $.isExisted_ target
       throw new Error()
 
     cont = await $.read_ target
-
-    if cont != string
+    unless cont == string
       throw new Error()
 
     await clean_()

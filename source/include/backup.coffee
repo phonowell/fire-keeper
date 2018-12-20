@@ -22,7 +22,7 @@ $.backup_ = (source) ->
 
 $.recover_ = (source) ->
 
-  source = formatPath source
+  source = normalizePathToArray source
 
   for src in source
 

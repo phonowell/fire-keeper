@@ -30,7 +30,7 @@ describe '$.walk_(source, callback)', ->
     if res != $
       throw new Error()
 
-    unless _.isEqual listResult, $.fn.formatPath [
+    unless _.isEqual listResult, $.fn.normalizePathToArray [
       temp
       "#{temp}/a"
       "#{temp}/b"

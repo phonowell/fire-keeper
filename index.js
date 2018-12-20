@@ -3,16 +3,16 @@
   /*
   excludeInclude(source)
   formatArgument(arg)
-  formatPath(source)
   getPlugin(name)
   getRelativePath(source, target)
   normalizePath(source)
+  normalizePathToArray(source)
   wrapList(list)
   */
   /*
   fetchGitHub_(name)
   */
-  var $, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, path, plumber, string, using, wrapList;
+  var $, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
 
   path = require('path');
 
@@ -51,17 +51,6 @@
     }
   };
 
-  formatPath = function(source) {
-    var j, len, results, src;
-    source = formatArgument(source);
-    results = [];
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      results.push(normalizePath(src));
-    }
-    return results;
-  };
-
   getPlugin = function(name) {
     var base1, base2;
     if (name === 'uglify') {
@@ -77,7 +66,7 @@
 
   normalizePath = function(source) {
     var isIgnore;
-    if ($.type(source) !== 'string') {
+    if ('string' !== $.type(source)) {
       return null;
     }
     // check isIgnore
@@ -117,6 +106,17 @@
     return source; // return
   };
 
+  normalizePathToArray = function(source) {
+    var j, len, results, src;
+    source = formatArgument(source);
+    results = [];
+    for (j = 0, len = source.length; j < len; j++) {
+      src = source[j];
+      results.push(normalizePath(src));
+    }
+    return results;
+  };
+
   wrapList = function(list) {
     var key;
     if (!list) {
@@ -144,7 +144,7 @@
   };
 
   // return
-  $.fn = {excludeInclude, formatArgument, formatPath, normalizePath, wrapList};
+  $.fn = {excludeInclude, formatArgument, normalizePath, normalizePathToArray, wrapList};
 
   /*
   $.fn.require(source)
@@ -352,7 +352,7 @@
 
   $.recover_ = async function(source) {
     var bak, basename, j, len, src;
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     for (j = 0, len = source.length; j < len; j++) {
       src = source[j];
       bak = `${src}.bak`;
@@ -408,7 +408,7 @@
             throw new Error('invalid argument length');
         }
       })();
-      source = formatPath(source);
+      source = normalizePathToArray(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
         throw new Error(`invalid extname '${extname}'`);
@@ -710,15 +710,15 @@
           throw new Error('invalid argument length');
       }
     })();
-    source = formatPath(source);
-    if (target) {
-      target = normalizePath(target);
-    }
+    source = normalizePathToArray(source);
+    target = normalizePath(target);
     await new Promise(function(resolve) {
       var rename;
       // require
       rename = getPlugin('gulp-rename');
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(gulpIf(!!option, rename(option))).pipe(gulp.dest(function(e) {
+      return gulp.src(source, {
+        allowEmpty: true
+      }).pipe(plumber()).pipe(using()).pipe(gulpIf(!!option, rename(option))).pipe(gulp.dest(function(e) {
         return target || e.base;
       })).on('end', function() {
         return resolve();
@@ -734,7 +734,7 @@
 
   $.isExisted_ = async function(source) {
     var j, len, src;
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     if (!source.length) {
       return false;
     }
@@ -748,44 +748,45 @@
   };
 
   $.isSame_ = async function(source) {
-    var CONT, SIZE, cont, j, k, len, len1, size, src, stat;
-    source = formatPath(source);
-    if (!source.length) {
+    var cache, cont, groupSource, j, k, len, len1, size, stat;
+    groupSource = normalizePathToArray(source);
+    if (!groupSource.length) {
       return false;
     }
     // check size
-    SIZE = null;
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      stat = (await $.stat_(src));
+    cache = null;
+    for (j = 0, len = groupSource.length; j < len; j++) {
+      source = groupSource[j];
+      stat = (await $.stat_(source));
       if (!stat) {
         return false;
       }
       ({size} = stat);
-      if (!SIZE) {
-        SIZE = size;
+      if (!cache) {
+        cache = size;
         continue;
       }
-      if (size !== SIZE) {
+      if (size !== cache) {
         return false;
       }
     }
-    // check cont
-    CONT = null;
-    for (k = 0, len1 = source.length; k < len1; k++) {
-      src = source[k];
+    $.i('+1');
+    // check content
+    cache = null;
+    for (k = 0, len1 = groupSource.length; k < len1; k++) {
+      source = groupSource[k];
       $.info.pause('$.isSame_');
-      cont = (await $.read_(src));
+      cont = (await $.read_(source));
       $.info.resume('$.isSame_');
       if (!cont) {
         return false;
       }
       cont = $.parseString(cont);
-      if (!CONT) {
-        CONT = cont;
+      if (!cache) {
+        cache = cont;
         continue;
       }
-      if (cont !== CONT) {
+      if (cont !== cache) {
         return false;
       }
     }
@@ -808,7 +809,7 @@
     if (!source) {
       throw new Error('invalid argument length');
     }
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     listPromise = (function() {
       var j, len, results;
       results = [];
@@ -827,8 +828,6 @@
     if (!(source && target)) {
       throw new Error('invalid argument length');
     }
-    source = formatPath(source);
-    target = normalizePath(target);
     $.info.pause('$.move_');
     await $.copy_(source, target);
     await $.remove_(source);
@@ -904,7 +903,7 @@
 
   $.rename_ = async function(source, option) {
     var item, j, len, listHistory;
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     listHistory = [];
     await new Promise(function(resolve) {
       var rename;
@@ -1016,7 +1015,7 @@
     // function
     fn_ = async function(source) {
       var extname, method;
-      source = formatPath(source);
+      source = normalizePathToArray(source);
       extname = path.extname(source[0]).replace(/\./, '');
       if (!extname.length) {
         throw new Error('invalid extname');
@@ -1232,7 +1231,7 @@
   source_(source, [option])
   */
   $.source_ = async function(source, option) {
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     option = _.merge({
       allowEmpty: true,
       read: false
@@ -1370,7 +1369,7 @@
       await new Promise((resolve) => {
         var conn;
         ({conn} = this.storage);
-        source = formatPath(source);
+        source = normalizePathToArray(source);
         option = (function() {
           switch ($.type(option)) {
             case 'object':
@@ -1589,7 +1588,7 @@
       }
     })();
     _source = source;
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     target || (target = $.getDirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
     [base, filename, isSilent] = (function() {
@@ -1699,7 +1698,7 @@
     if (!source) {
       throw new Error('invalid source');
     }
-    source = formatPath(source);
+    source = normalizePathToArray(source);
     // require
     livereload = getPlugin('gulp-livereload');
     livereload.listen();

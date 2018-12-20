@@ -8,7 +8,7 @@ do ->
 
   fn_ = (source) ->
 
-    source = formatPath source
+    source = normalizePathToArray source
 
     extname = path.extname(source[0]).replace /\./, ''
     if !extname.length then throw new Error 'invalid extname'

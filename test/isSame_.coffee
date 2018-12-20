@@ -25,8 +25,7 @@ describe '$.isSame_(source)', ->
     await $.copy_ listSource[0], temp, 'b.md'
 
     res = await $.isSame_ listSource
-
-    if !res
+    unless res
       throw new Error()
 
     await clean_()
@@ -35,7 +34,6 @@ describe '$.isSame_(source)', ->
     await clean_()
 
     res = await $.isSame_ ["#{temp}/null/txt", './readme.md']
-
     if res
       throw new Error()
 

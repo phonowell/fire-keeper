@@ -11,7 +11,7 @@ $.zip_ = (arg...) ->
     else throw new Error 'invalid argument length'
 
   _source = source
-  source = formatPath source
+  source = normalizePathToArray source
 
   target or= $.getDirname(source[0]).replace /\*/g, ''
   target = normalizePath target

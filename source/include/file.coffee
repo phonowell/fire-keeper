@@ -20,22 +20,24 @@ $.copy_ = (arg...) ->
     when 3 then arg
     else throw new Error 'invalid argument length'
 
-  source = formatPath source
-  if target then target = normalizePath target
+  source = normalizePathToArray source
+  target = normalizePath target
 
   await new Promise (resolve) ->
 
     # require
     rename = getPlugin 'gulp-rename'
 
-    gulp.src source
+    gulp.src source,
+      allowEmpty: true
     .pipe plumber()
     .pipe using()
     .pipe gulpIf !!option, rename option
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 
-  msg = "copied #{wrapList source} to #{wrapList target}"
+  msg = "copied #{wrapList source}
+  to #{wrapList target}"
   if option then msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
@@ -43,8 +45,9 @@ $.copy_ = (arg...) ->
 
 $.isExisted_ = (source) ->
 
-  source = formatPath source
-  if !source.length then return false
+  source = normalizePathToArray source
+  unless source.length
+    return false
 
   for src in source
     unless await fse.pathExists src
@@ -54,49 +57,47 @@ $.isExisted_ = (source) ->
 
 $.isSame_ = (source) ->
 
-  source = formatPath source
-
-  if !source.length
+  groupSource = normalizePathToArray source
+  unless groupSource.length
     return false
 
   # check size
+  cache = null
+  for source in groupSource
 
-  SIZE = null
-
-  for src in source
-
-    stat = await $.stat_ src
-    if !stat
+    stat = await $.stat_ source
+    unless stat
       return false
 
     {size} = stat
 
-    if !SIZE
-      SIZE = size
+    if !cache
+      cache = size
       continue
 
-    if size != SIZE
+    unless size == cache
       return false
 
-  # check cont
+  $.i '+1'
 
-  CONT = null
-
-  for src in source
+  # check content
+  cache = null
+  for source in groupSource
 
     $.info.pause '$.isSame_'
-    cont = await $.read_ src
+    cont = await $.read_ source
     $.info.resume '$.isSame_'
-    if !cont
+    
+    unless cont
       return false
 
     cont = $.parseString cont
 
-    if !CONT
-      CONT = cont
+    if !cache
+      cache = cont
       continue
 
-    if cont != CONT
+    unless cont == cache
       return false
 
   true # return
@@ -119,7 +120,7 @@ $.mkdir_ = (source) ->
 
   if !source then throw new Error 'invalid argument length'
 
-  source = formatPath source
+  source = normalizePathToArray source
 
   listPromise = (fse.ensureDir src for src in source)
 
@@ -133,9 +134,6 @@ $.move_ = (source, target) ->
 
   unless source and target
     throw new Error 'invalid argument length'
-
-  source = formatPath source
-  target = normalizePath target
 
   $.info.pause '$.move_'
   await $.copy_ source, target
@@ -203,7 +201,7 @@ $.remove_ = (source) ->
 
 $.rename_ = (source, option) ->
 
-  source = formatPath source
+  source = normalizePathToArray source
 
   listHistory = []
 

@@ -1,10 +1,10 @@
 ###
 excludeInclude(source)
 formatArgument(arg)
-formatPath(source)
 getPlugin(name)
 getRelativePath(source, target)
 normalizePath(source)
+normalizePathToArray(source)
 wrapList(list)
 ###
 
@@ -19,10 +19,6 @@ formatArgument = (arg) ->
     when 'string' then [arg]
     else throw new Error "invalid type '#{type}'"
 
-formatPath = (source) ->
-  source = formatArgument source
-  (normalizePath src for src in source)
-
 getPlugin = (name) ->
   if name == 'uglify'
     return $.plugin.uglify or= do ->
@@ -33,7 +29,7 @@ getPlugin = (name) ->
 
 normalizePath = (source) ->
 
-  if $.type(source) != 'string'
+  unless 'string' == $.type source
     return null
 
   # check isIgnore
@@ -72,6 +68,10 @@ normalizePath = (source) ->
 
   source # return
 
+normalizePathToArray = (source) ->
+  source = formatArgument source
+  (normalizePath src for src in source)
+
 wrapList = (list) ->
 
   if !list then return ''
@@ -87,8 +87,8 @@ wrapList = (list) ->
 $.fn = {
   excludeInclude
   formatArgument
-  formatPath
   normalizePath
+  normalizePathToArray
   wrapList
 }
 

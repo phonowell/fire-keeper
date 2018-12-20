@@ -4,7 +4,7 @@ source_(source, [option])
 
 $.source_ = (source, option) ->
 
-  source = formatPath source
+  source = normalizePathToArray source
   option = _.merge
     allowEmpty: true
     read: false

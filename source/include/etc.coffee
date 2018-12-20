@@ -22,7 +22,7 @@ $.reload = (source) ->
 
   if !source then throw new Error 'invalid source'
 
-  source = formatPath source
+  source = normalizePathToArray source
 
   # require
   livereload = getPlugin 'gulp-livereload'

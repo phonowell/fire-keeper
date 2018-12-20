@@ -18,7 +18,7 @@ do ->
       when 3 then arg
       else throw new Error 'invalid argument length'
 
-    source = formatPath source
+    source = normalizePathToArray source
 
     extname = path.extname source[0]
     .replace /\./, ''

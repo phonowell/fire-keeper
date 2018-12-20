@@ -13,9 +13,9 @@ clean_ = -> await $.remove_ temp
 if $.os == 'windows'
   return
 
-describe '$.fn.formatPath(source)', ->
+describe '$.fn.normalizePathToArray(source)', ->
 
-  it "$.fn.formatPath('./source')", ->
+  it "$.fn.normalizePathToArray('./source')", ->
     await clean_()
 
     source = './source'
@@ -23,14 +23,14 @@ describe '$.fn.formatPath(source)', ->
       "#{$.path.base}/source"
     ]
 
-    res = $.fn.formatPath source
+    res = $.fn.normalizePathToArray source
 
     unless _.isEqual res, target
       throw new Error()
 
     await clean_()
 
-  it "$.fn.formatPath(['./source', '~/opt', '!**/include/**'])", ->
+  it "$.fn.normalizePathToArray(['./source', '~/opt', '!**/include/**'])", ->
     await clean_()
 
     source = [
@@ -44,14 +44,14 @@ describe '$.fn.formatPath(source)', ->
       "!#{$.path.base}/**/include/**"
     ]
 
-    res = $.fn.formatPath source
+    res = $.fn.normalizePathToArray source
 
     unless _.isEqual res, target
       throw new Error()
 
     await clean_()
 
-  it "$.fn.formatPath('/opt/a/b/../c')", ->
+  it "$.fn.normalizePathToArray('/opt/a/b/../c')", ->
     await clean_()
 
     source = '/opt/a/b/../c'
@@ -59,7 +59,7 @@ describe '$.fn.formatPath(source)', ->
       '/opt/a/c'
     ]
 
-    res = $.fn.formatPath source
+    res = $.fn.normalizePathToArray source
 
     unless _.isEqual res, target
       throw new Error()

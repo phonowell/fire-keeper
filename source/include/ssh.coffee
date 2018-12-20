@@ -115,7 +115,7 @@ class SSH
 
       {conn} = @storage
 
-      source = formatPath source
+      source = normalizePathToArray source
 
       option = switch $.type option
         when 'object' then _.clone option
