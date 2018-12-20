@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.115",
+  "version": "0.0.116",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -29,6 +29,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "download": "^7.1.0",
+    "estus-flask": "0.0.1",
     "fs-extra": "^7.0.1",
     "gulp": "^4.0.0",
     "gulp-clean-css": "^4.0.0",
@@ -53,7 +54,6 @@
     "js-yaml": "^3.12.0",
     "klaw": "^3.0.0",
     "markdownlint": "^0.11.0",
-    "node-jquery-extend": "0.0.26",
     "prompts": "^2.0.0",
     "ssh2": "^0.6.1",
     "uglify-es": "^3.3.9",

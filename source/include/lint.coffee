@@ -66,15 +66,15 @@ do ->
           .replace $.info['__reg_base__'], '.'
           .replace $.info['__reg_home__'], '~'
           
-          $.i chalk.magenta filename
+          $.i kleur.magenta filename
           
           for item in list
 
             listMsg = []
             
-            listMsg.push chalk.gray "##{item.lineNumber}"
+            listMsg.push kleur.gray "##{item.lineNumber}"
             if item.errorContext
-              listMsg.push "< #{chalk.red item.errorContext} >"
+              listMsg.push "< #{kleur.red item.errorContext} >"
             if item.ruleDescription
               listMsg.push item.ruleDescription
 

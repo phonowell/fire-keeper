@@ -27,7 +27,7 @@ do ->
         , "'#{name}': '#{current}' == '#{latest}'"
         continue
       $.info 'update'
-      , "'#{name}': '#{current}' #{chalk.green '->'} '#{latest}'"
+      , "'#{name}': '#{current}' #{kleur.green '->'} '#{latest}'"
 
       list.push [
         'npm install'

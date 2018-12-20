@@ -12,19 +12,19 @@
   /*
   fetchGitHub_(name)
   */
-  var $, SSH, Shell, _, chalk, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, getPlugin, gulp, gulpIf, j, k, key, len, len1, listKey, normalizePath, path, plumber, string, using, wrapList;
+  var $, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, formatPath, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, path, plumber, string, using, wrapList;
 
   path = require('path');
 
   fs = require('fs');
 
-  chalk = require('chalk');
-
   fse = require('fs-extra');
 
   gulp = require('gulp');
 
-  $ = require('node-jquery-extend');
+  kleur = require('kleur');
+
+  $ = require('estus-flask');
 
   ({_} = $);
 
@@ -595,6 +595,7 @@
       close()
       execute_(cmd, [option])
       info([type], string)
+      spawn
       */
       close() {
         this.process.kill();
@@ -657,9 +658,9 @@
         string = (function() {
           switch (type) {
             case 'error':
-              return chalk.red(string);
+              return kleur.red(string);
             default:
-              return chalk.gray(string);
+              return kleur.gray(string);
           }
         })();
         return $.log(string);
@@ -667,9 +668,6 @@
 
     };
 
-    /*
-    spawn
-    */
     Shell.prototype.spawn = require('child_process').spawn;
 
     return Shell;
@@ -1073,13 +1071,13 @@
               continue;
             }
             filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
-            $.i(chalk.magenta(filename));
+            $.i(kleur.magenta(filename));
             for (j = 0, len = list.length; j < len; j++) {
               item = list[j];
               listMsg = [];
-              listMsg.push(chalk.gray(`#${item.lineNumber}`));
+              listMsg.push(kleur.gray(`#${item.lineNumber}`));
               if (item.errorContext) {
-                listMsg.push(`< ${chalk.red(item.errorContext)} >`);
+                listMsg.push(`< ${kleur.red(item.errorContext)} >`);
               }
               if (item.ruleDescription) {
                 listMsg.push(item.ruleDescription);
@@ -1265,13 +1263,16 @@
     */
     async connect_(option) {
       await new Promise((resolve) => {
-        var Client, conn;
+        var Client, conn, infoServer;
         ({Client} = require('ssh2'));
         conn = new Client();
-        conn.on('error', function(err) {
+        infoServer = `${option.username}@${option.host}`;
+        conn.on('end', function() {
+          return $.info('ssh', `disconnected from '${infoServer}'`);
+        }).on('error', function(err) {
           throw err;
         }).on('ready', function() {
-          $.info('ssh', `connected to '${option.username}@${option.host}'`);
+          $.info('ssh', `connected to '${infoServer}'`);
           return resolve();
         }).connect(option);
         return this.storage = {conn, option};
@@ -1281,10 +1282,9 @@
 
     async disconnect_() {
       await new Promise((resolve) => {
-        var conn, option;
-        ({conn, option} = this.storage);
+        var conn;
+        ({conn} = this.storage);
         return conn.on('end', function() {
-          $.info('ssh', `disconnected from '${option.username}@${option.host}'`);
           return resolve();
         }).end();
       });
@@ -1297,7 +1297,7 @@
         ({conn} = this.storage);
         cmd = formatArgument(cmd);
         cmd = cmd.join(' && ');
-        $.info('ssh', chalk.blue(cmd));
+        $.info('ssh', kleur.blue(cmd));
         return conn.exec(cmd, (err, stream) => {
           if (err) {
             throw err;
@@ -1447,6 +1447,35 @@
   // return
   $.ssh = new SSH();
 
+  /*
+  unzip_(source, [target])
+  */
+  $.unzip_ = async function(source, target) {
+    var dist, j, len, listSource, src, unzip;
+    if (!source) {
+      throw new Error('invalid source');
+    }
+    listSource = (await $.source_(source));
+    // require
+    unzip = getPlugin('unzip');
+    for (j = 0, len = listSource.length; j < len; j++) {
+      src = listSource[j];
+      dist = target || $.getDirname(src);
+      await new Promise(function(resolve) {
+        var stream;
+        stream = fs.createReadStream(src);
+        stream.on('end', function() {
+          return resolve();
+        });
+        return stream.pipe(unzip.Extract({
+          path: dist
+        }));
+      });
+      $.info('zip', `unzipped ${src} to ${dist}`);
+    }
+    return $; // return
+  };
+
   (function() {
     var addCmd_, clean_, execute_, getLatestVersion_;
     // function
@@ -1470,7 +1499,7 @@
           $.info('update', `'${name}': '${current}' == '${latest}'`);
           continue;
         }
-        $.info('update', `'${name}': '${current}' ${chalk.green('->')} '${latest}'`);
+        $.info('update', `'${name}': '${current}' ${kleur.green('->')} '${latest}'`);
         results.push(list.push(['npm install', `${name}@${latest}`, isDev ? '' : '--production', registry ? `--registry ${registry}` : '', isDev ? '--save-dev' : '--save'].join(' ').replace(/\s{2,}/g, ' ')));
       }
       return results;
@@ -1543,35 +1572,8 @@
   };
 
   /*
-  unzip_(source, [target])
   zip_(source, [target], [option])
   */
-  $.unzip_ = async function(source, target) {
-    var dist, j, len, listSource, src, unzip;
-    if (!source) {
-      throw new Error('invalid source');
-    }
-    listSource = (await $.source_(source));
-    // require
-    unzip = getPlugin('unzip');
-    for (j = 0, len = listSource.length; j < len; j++) {
-      src = listSource[j];
-      dist = target || $.getDirname(src);
-      await new Promise(function(resolve) {
-        var stream;
-        stream = fs.createReadStream(src);
-        stream.on('end', function() {
-          return resolve();
-        });
-        return stream.pipe(unzip.Extract({
-          path: dist
-        }));
-      });
-      $.info('zip', `unzipped ${src} to ${dist}`);
-    }
-    return $; // return
-  };
-
   $.zip_ = async function(...arg) {
     var _source, base, filename, isSilent, option, source, target;
     [source, target, option] = (function() {
@@ -1588,7 +1590,7 @@
     })();
     _source = source;
     source = formatPath(source);
-    target || (target = path.dirname(source[0]).replace(/\*/g, ''));
+    target || (target = $.getDirname(source[0]).replace(/\*/g, ''));
     target = normalizePath(target);
     [base, filename, isSilent] = (function() {
       switch ($.type(option)) {
@@ -1617,11 +1619,12 @@
       return path.dirname(_source);
     })());
     base = normalizePath(base);
-    filename || (filename = `${path.basename(target)}.zip`);
+    filename || (filename = `${$.getBasename(target)}.zip`);
     filename = `${target}/${filename}`;
     await new Promise(async function(resolve) {
-      var archive, archiver, j, len, listSource, msg, name, output, src;
+      var ansi, archive, archiver, j, len, listSource, msg, name, output, src;
       // require
+      ansi = getPlugin('sisteransi');
       archiver = getPlugin('archiver');
       output = fs.createWriteStream(filename);
       archive = archiver('zip', {
@@ -1650,10 +1653,10 @@
         if (!msg) {
           return;
         }
-        gray = chalk.gray(`${Math.floor(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`);
-        magenta = chalk.magenta(msg);
+        gray = kleur.gray(`${Math.floor(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`);
+        magenta = kleur.magenta(msg);
         msg = `${gray} ${magenta}`;
-        $.i(msg);
+        $.i([ansi.erase.line, msg, ansi.cursor.up()].join(''));
         return msg = null;
       });
       archive.on('end', function() {

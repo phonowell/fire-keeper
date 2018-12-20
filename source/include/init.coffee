@@ -2,11 +2,11 @@
 path = require 'path'
 fs = require 'fs'
 
-chalk = require 'chalk'
 fse = require 'fs-extra'
 gulp = require 'gulp'
+kleur = require 'kleur'
 
-$ = require 'node-jquery-extend'
+$ = require 'estus-flask'
 {_} = $
 
 # return

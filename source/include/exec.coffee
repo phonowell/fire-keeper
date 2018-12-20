@@ -1,15 +1,10 @@
 class Shell
 
   ###
-  spawn
-  ###
-
-  spawn: require('child_process').spawn
-
-  ###
   close()
   execute_(cmd, [option])
   info([type], string)
+  spawn
   ###
 
   close: ->
@@ -71,10 +66,12 @@ class Shell
     .replace /\n{2,}/g, ''
 
     string = switch type
-      when 'error' then chalk.red string
-      else chalk.gray string
+      when 'error' then kleur.red string
+      else kleur.gray string
 
     $.log string
+
+  spawn: require('child_process').spawn
 
 # return
 $.exec_ = (cmd, option) ->

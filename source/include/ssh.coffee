@@ -21,13 +21,13 @@ class SSH
       {Client} = require 'ssh2'
       conn = new Client()
 
+      infoServer = "#{option.username}@#{option.host}"
+
       conn
+      .on 'end', -> $.info 'ssh', "disconnected from '#{infoServer}'"
       .on 'error', (err) -> throw err
       .on 'ready', ->
-
-        $.info 'ssh'
-        , "connected to '#{option.username}@#{option.host}'"
-
+        $.info 'ssh', "connected to '#{infoServer}'"
         resolve()
 
       .connect option
@@ -39,16 +39,9 @@ class SSH
   disconnect_: ->
 
     await new Promise (resolve) =>
-
-      {conn, option} = @storage
-
-      conn.on 'end', ->
-
-        $.info 'ssh'
-        , "disconnected from '#{option.username}@#{option.host}'"
-
-        resolve()
-
+      {conn} = @storage
+      conn
+      .on 'end', -> resolve()
       .end()
 
     @ # return
@@ -62,7 +55,7 @@ class SSH
       cmd = formatArgument cmd
       cmd = cmd.join ' && '
 
-      $.info 'ssh', chalk.blue cmd
+      $.info 'ssh', kleur.blue cmd
 
       conn.exec cmd, (err, stream) =>
         if err then throw err

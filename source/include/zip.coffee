@@ -1,31 +1,6 @@
 ###
-unzip_(source, [target])
 zip_(source, [target], [option])
 ###
-
-$.unzip_ = (source, target) ->
-
-  unless source
-    throw new Error 'invalid source'
-
-  listSource = await $.source_ source
-
-  # require
-  unzip = getPlugin 'unzip'
-
-  for src in listSource
-
-    dist = target or $.getDirname src
-
-    await new Promise (resolve) ->
-      stream = fs.createReadStream src
-      stream.on 'end', -> resolve()
-      stream.pipe unzip.Extract
-        path: dist
-
-    $.info 'zip', "unzipped #{src} to #{dist}"
-
-  $ # return
 
 $.zip_ = (arg...) ->
 
@@ -38,7 +13,7 @@ $.zip_ = (arg...) ->
   _source = source
   source = formatPath source
 
-  target or= path.dirname(source[0]).replace /\*/g, ''
+  target or= $.getDirname(source[0]).replace /\*/g, ''
   target = normalizePath target
 
   [base, filename, isSilent] = switch $.type option
@@ -60,12 +35,13 @@ $.zip_ = (arg...) ->
     path.dirname _source
   base = normalizePath base
 
-  filename or= "#{path.basename target}.zip"
+  filename or= "#{$.getBasename target}.zip"
   filename = "#{target}/#{filename}"
 
   await new Promise (resolve) ->
 
     # require
+    ansi = getPlugin 'sisteransi'
     archiver = getPlugin 'archiver'
 
     output = fs.createWriteStream filename
@@ -84,10 +60,14 @@ $.zip_ = (arg...) ->
     archive.on 'progress', (e) ->
       if isSilent then return
       if !msg then return
-      gray = chalk.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
-      magenta = chalk.magenta msg
+      gray = kleur.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
+      magenta = kleur.magenta msg
       msg = "#{gray} #{magenta}"
-      $.i msg
+      $.i [
+        ansi.erase.line
+        msg
+        ansi.cursor.up()
+      ].join ''
       msg = null
       
     archive.on 'end', -> resolve()

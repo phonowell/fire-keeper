@@ -4,6 +4,4 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  $.i await $.prompt
-    type: 'autocomplete'
-    choices: []
+  await $.zip_ '~/OneDrive/**/*'
