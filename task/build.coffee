@@ -4,5 +4,5 @@ $ = require '../index'
 # return
 module.exports = ->
 
-	await $.compile_ './source/index.coffee', './',
-		minify: false
+  await $.compile_ './source/index.coffee', './',
+    minify: false

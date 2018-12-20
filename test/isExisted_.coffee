@@ -140,31 +140,31 @@ describe '$.isExisted_(source)', ->
   describe 'file & folder', ->
 
     it 'existed', ->
-        await clean_()
+      await clean_()
 
-        await $.mkdir_ "#{temp}/a"
-        await $.mkdir_ "#{temp}/b"
-        await $.write_ "#{temp}/a/b.txt", 'aloha'
+      await $.mkdir_ "#{temp}/a"
+      await $.mkdir_ "#{temp}/b"
+      await $.write_ "#{temp}/a/b.txt", 'aloha'
 
-        unless await $.isExisted_ [
-          "#{temp}/a"
-          "#{temp}/a/b.txt"
-          "#{temp}/b"
-        ]
-          throw new Error()
+      unless await $.isExisted_ [
+        "#{temp}/a"
+        "#{temp}/a/b.txt"
+        "#{temp}/b"
+      ]
+        throw new Error()
 
-        await clean_()
+      await clean_()
 
-      it 'not existed', ->
-        await clean_()
+    it 'not existed', ->
+      await clean_()
 
-        await $.write_ "#{temp}/a/b.txt", 'aloha'
+      await $.write_ "#{temp}/a/b.txt", 'aloha'
 
-        if await $.isExisted_ [
-          "#{temp}/a"
-          "#{temp}/a/b.txt"
-          "#{temp}/b"
-        ]
-          throw new Error()
+      if await $.isExisted_ [
+        "#{temp}/a"
+        "#{temp}/a/b.txt"
+        "#{temp}/b"
+      ]
+        throw new Error()
 
-        await clean_()
+      await clean_()

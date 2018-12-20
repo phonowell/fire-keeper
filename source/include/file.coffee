@@ -21,6 +21,8 @@ $.copy_ = (arg...) ->
     else throw new Error 'invalid argument length'
 
   source = normalizePathToArray source
+  unless source.length
+    return $
   target = normalizePath target
 
   await new Promise (resolve) ->
@@ -45,12 +47,13 @@ $.copy_ = (arg...) ->
 
 $.isExisted_ = (source) ->
 
-  source = normalizePathToArray source
-  unless source.length
+  groupSource = normalizePathToArray source
+  unless groupSource.length
     return false
 
-  for src in source
-    unless await fse.pathExists src
+  for source in groupSource
+    isExisted = await fse.pathExists source
+    unless isExisted
       return false
 
   true # return
@@ -77,8 +80,6 @@ $.isSame_ = (source) ->
 
     unless size == cache
       return false
-
-  $.i '+1'
 
   # check content
   cache = null
@@ -187,15 +188,12 @@ $.read_ = (source, option = {}) ->
 $.remove_ = (source) ->
 
   listSource = await $.source_ source
+  msg = "removed #{wrapList source}"
 
-  for src in listSource
-    await new Promise (resolve) ->
-      fse.remove src, (err) ->
-        if err then throw err
-        resolve()
+  for source in listSource
+    await fse.remove source
 
-    # $.info 'remove', "removed '#{src}'"
-  $.info 'remove', "removed #{wrapList source}"
+  $.info 'remove', msg
 
   $ # return
 

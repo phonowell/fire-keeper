@@ -5,38 +5,44 @@ recover_(source)
 
 $.backup_ = (source) ->
 
-  source = await $.source_ source
+  listSource = await $.source_ source
 
-  for src in source
+  msg = "backed up #{wrapList source}"
 
-    suffix = path.extname src
+  for source in listSource
+    suffix = $.getExtname source
     extname = '.bak'
 
     $.info.pause '$.backup_'
-    await $.copy_ src, null, {suffix, extname}
+    await $.copy_ source, null, {suffix, extname}
     $.info.resume '$.backup_'
 
-  $.info 'backup', "backed up #{wrapList source}"
+  $.info 'backup', msg
 
   $ # return
 
 $.recover_ = (source) ->
 
-  source = normalizePathToArray source
+  groupSource = normalizePathToArray source
 
-  for src in source
+  msg = "recovered #{wrapList source}"
 
-    bak = "#{src}.bak"
-    unless await $.isExisted_ bak then continue
+  for source in groupSource
 
-    basename = path.basename src
+    pathBak = "#{source}.bak"
+    unless await $.isExisted_ pathBak
+      $.i "'#{pathBak}' not found"
+      continue
+
+    filename = $.getFilename source
 
     $.info.pause '$.recover_'
-    await $.remove_ src
-    await $.copy_ bak, null, basename
-    await $.remove_ bak
+    await $.chain $
+    .remove_ source
+    .copy_ pathBak, null, filename
+    .remove_ pathBak
     $.info.resume '$.recover_'
 
-  $.info 'recover', "recovered #{wrapList source}"
+  $.info 'recover', msg
 
   $ # return

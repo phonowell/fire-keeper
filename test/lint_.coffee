@@ -13,12 +13,7 @@ clean_ = -> await $.remove_ temp
 describe '$.lint_(source)', ->
 
   it '$.lint_()', ->
-    await clean_()
 
-    if !$.lint_
-      throw new Error()
-
-    unless _.isFunction $.lint_
-      throw new Error()
-
-    await clean_()
+    type = $.type $.lint_
+    unless type == 'async function'
+      throw new Error "invalid type '#{type}'"

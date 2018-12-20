@@ -35,7 +35,7 @@ pkg = await $.readAsync './package.json'
 - [$.backup_(source)](doc/backup.md)
 - [$.chain(fn)](doc/chain.md)
 - [$.copy_(source, target, [option])](doc/copy.md)
-- [$.delay_([time], [callback])](doc/delay.md)
+- [$.delay_([time])](doc/delay.md)
 - [$.isExisted_(source)](doc/isExisted.md)
 - [$.isSame_(source)](doc/isSame.md)
 - [$.link_(source, target)](doc/link.md)

@@ -69,12 +69,13 @@ normalizePath = (source) ->
   source # return
 
 normalizePathToArray = (source) ->
-  source = formatArgument source
-  (normalizePath src for src in source)
+  groupSource = formatArgument source
+  (normalizePath source for source in groupSource)
 
 wrapList = (list) ->
 
-  if !list then return ''
+  unless list
+    return ''
 
   list = switch $.type list
     when 'array' then _.clone list

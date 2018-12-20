@@ -1,3 +1,13 @@
+# gulp = require 'gulp'
+# include = require 'gulp-include'
+# coffee = require 'gulp-coffee'
+
+# return gulp.task 'default', ->
+#   gulp.src './source/index.coffee'
+#   .pipe include()
+#   .pipe coffee()
+#   .pipe gulp.dest './'
+
 # require
 $ = require './index'
 fs = require 'fs'

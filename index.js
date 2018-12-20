@@ -1,6 +1,12 @@
 (function() {
   // require
   /*
+  compile_(source, [target], [option])
+  */
+  /*
+  lint_(source)
+  */
+  /*
   excludeInclude(source)
   formatArgument(arg)
   getPlugin(name)
@@ -12,7 +18,7 @@
   /*
   fetchGitHub_(name)
   */
-  var $, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
+  var $, Compiler, Linter, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
 
   path = require('path');
 
@@ -107,12 +113,12 @@
   };
 
   normalizePathToArray = function(source) {
-    var j, len, results, src;
-    source = formatArgument(source);
+    var groupSource, j, len, results;
+    groupSource = formatArgument(source);
     results = [];
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      results.push(normalizePath(src));
+    for (j = 0, len = groupSource.length; j < len; j++) {
+      source = groupSource[j];
+      results.push(normalizePath(source));
     }
     return results;
   };
@@ -336,37 +342,38 @@
   recover_(source)
   */
   $.backup_ = async function(source) {
-    var extname, j, len, src, suffix;
-    source = (await $.source_(source));
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      suffix = path.extname(src);
+    var extname, j, len, listSource, msg, suffix;
+    listSource = (await $.source_(source));
+    msg = `backed up ${wrapList(source)}`;
+    for (j = 0, len = listSource.length; j < len; j++) {
+      source = listSource[j];
+      suffix = $.getExtname(source);
       extname = '.bak';
       $.info.pause('$.backup_');
-      await $.copy_(src, null, {suffix, extname});
+      await $.copy_(source, null, {suffix, extname});
       $.info.resume('$.backup_');
     }
-    $.info('backup', `backed up ${wrapList(source)}`);
+    $.info('backup', msg);
     return $; // return
   };
 
   $.recover_ = async function(source) {
-    var bak, basename, j, len, src;
-    source = normalizePathToArray(source);
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      bak = `${src}.bak`;
-      if (!(await $.isExisted_(bak))) {
+    var filename, groupSource, j, len, msg, pathBak;
+    groupSource = normalizePathToArray(source);
+    msg = `recovered ${wrapList(source)}`;
+    for (j = 0, len = groupSource.length; j < len; j++) {
+      source = groupSource[j];
+      pathBak = `${source}.bak`;
+      if (!(await $.isExisted_(pathBak))) {
+        $.i(`'${pathBak}' not found`);
         continue;
       }
-      basename = path.basename(src);
+      filename = $.getFilename(source);
       $.info.pause('$.recover_');
-      await $.remove_(src);
-      await $.copy_(bak, null, basename);
-      await $.remove_(bak);
+      await $.chain($).remove_(source).copy_(pathBak, null, filename).remove_(pathBak);
       $.info.resume('$.recover_');
     }
-    $.info('recover', `recovered ${wrapList(source)}`);
+    $.info('recover', msg);
     return $; // return
   };
 
@@ -379,182 +386,209 @@
     return $.chain.fn(...arg);
   };
 
-  (function() {    /*
-    compile_(source, [target], [option])
-    */
-    var fn_;
-    // function
-    fn_ = async function(...arg) {
-      var compile_, extname, method, option, source, target;
-      [source, target, option] = (function() {
-        switch (arg.length) {
-          case 1:
-            return [arg[0], null, {}];
-          case 2:
-            return (function() {
-              var type;
-              type = $.type(arg[1]);
-              if (type === 'object') {
-                return [arg[0], null, arg[1]];
-              }
-              if (type === 'string') {
-                return [arg[0], arg[1], {}];
-              }
-              throw new Error('invalid type');
-            })();
-          case 3:
-            return arg;
-          default:
-            throw new Error('invalid argument length');
-        }
-      })();
-      source = normalizePathToArray(source);
-      extname = path.extname(source[0]).replace(/\./, '');
-      if (!extname.length) {
-        throw new Error(`invalid extname '${extname}'`);
+  Compiler = (function() {
+    class Compiler {
+      /*
+      coffee_(source, target, option)
+      css_(source, target, option)
+      execute_(arg...)
+      js_(source, target, option)
+      markdown_(source, target, option)
+      pug_(source, target, option)
+      stylus_(source, target, option)
+      yaml_(source, target, option)
+      */
+      async coffee_(source, target, option) {
+        await new Promise(function(resolve) {
+          var coffee, include, sourcemaps, uglify;
+          coffee = getPlugin('gulp-coffee');
+          include = getPlugin('gulp-include');
+          uglify = getPlugin('uglify');
+          if (option.harmony == null) {
+            option.harmony = true;
+          }
+          if (!option.harmony) {
+            option.transpile = {
+              presets: ['env']
+            };
+          }
+          delete option.harmony;
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
       }
-      method = (function() {
-        switch (extname) {
-          case 'markdown':
-            return 'md';
-          case 'yml':
-            return 'yaml';
-          default:
-            return extname;
-        }
-      })();
-      target || (target = path.dirname(source[0]).replace(/\*/g, ''));
-      target = normalizePath(target);
-      option = _.extend({
-        map: false,
-        minify: true
-      }, option);
-      compile_ = fn_[`${method}_`];
-      if (!compile_) {
-        throw new Error('invalid extname');
+
+      async css_(source, target, option) {
+        await new Promise(function(resolve) {
+          var cleanCss, sourcemaps;
+          cleanCss = getPlugin('gulp-clean-css');
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
       }
-      await compile_(source, target, option);
-      $.info('compile', `compiled ${wrapList(source)} to ${wrapList(target)}`);
-      return $; // return
+
+      async execute_(...arg) {
+        var dirname, extname, j, len, listSource, method, msg, option, source, target;
+        [source, target, option] = (function() {
+          switch (arg.length) {
+            case 1:
+              return [arg[0], null, {}];
+            case 2:
+              return (function() {
+                var type;
+                type = $.type(arg[1]);
+                if (type === 'object') {
+                  return [arg[0], null, arg[1]];
+                }
+                if (type === 'string') {
+                  return [arg[0], arg[1], {}];
+                }
+                throw new Error(`invalid type '${type}'`);
+              })();
+            case 3:
+              return arg;
+            default:
+              throw new Error('invalid argument length');
+          }
+        })();
+        option = _.extend({
+          map: false,
+          minify: true
+        }, option);
+        // message
+        msg = `compiled ${wrapList(source)}`;
+        if (target) {
+          msg += ` to ${wrapList(target)}`;
+        }
+        // each & compile
+        listSource = (await $.source_(source));
+        for (j = 0, len = listSource.length; j < len; j++) {
+          source = listSource[j];
+          ({extname, dirname} = $.getName(source));
+          method = this.mapMethod[extname];
+          method || (function() {
+            throw new Error(`invalid extname '${extname}'`);
+          })();
+          target || (target = dirname);
+          target = normalizePath(target);
+          await this[method](source, target, option);
+        }
+        $.info('compile', msg);
+        return this;
+      }
+
+      async js_(source, target, option) {
+        await new Promise(function(resolve) {
+          var sourcemaps, uglify;
+          uglify = getPlugin('uglify');
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async markdown_(source, target, option) {
+        await new Promise(function(resolve) {
+          var htmlmin, markdown, rename, sourcemaps;
+          htmlmin = getPlugin('gulp-htmlmin');
+          markdown = getPlugin('gulp-markdown');
+          rename = getPlugin('gulp-rename');
+          if (option.sanitize == null) {
+            option.sanitize = true;
+          }
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+            extname: '.html'
+          })).pipe(gulpIf(option.minify, htmlmin({
+            collapseWhitespace: true
+          }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async pug_(source, target, option) {
+        await new Promise(function(resolve) {
+          var pug, sourcemaps;
+          pug = getPlugin('gulp-pug');
+          if (option.pretty == null) {
+            option.pretty = !option.minify;
+          }
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async stylus_(source, target, option) {
+        await new Promise(function(resolve) {
+          var sourcemaps, stylus;
+          stylus = getPlugin('gulp-stylus');
+          if (option.compress == null) {
+            option.compress = option.minify;
+          }
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async yaml_(source, target, option) {
+        await new Promise(function(resolve) {
+          var sourcemaps, yaml;
+          yaml = getPlugin('gulp-yaml');
+          if (option.safe == null) {
+            option.safe = true;
+          }
+          sourcemaps = option.map;
+          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
     };
+
     /*
-    coffee_(source, target, option)
-    css_(source, target, option)
-    js_(source, target, option)
-    md_(source, target, option)
-    pug_(source, target, option)
-    styl_(source, target, option)
-    yaml_(source, target, option)
+    mapMethod
     */
-    fn_.coffee_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var coffee, include, sourcemaps, uglify;
-        // require
-        coffee = getPlugin('gulp-coffee');
-        include = getPlugin('gulp-include');
-        uglify = getPlugin('uglify');
-        if (option.harmony == null) {
-          option.harmony = true;
-        }
-        if (!option.harmony) {
-          option.transpile = {
-            presets: ['env']
-          };
-        }
-        delete option.harmony;
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
+    Compiler.prototype.mapMethod = {
+      '.coffee': 'coffee_',
+      '.css': 'css_',
+      '.js': 'js_',
+      '.md': 'markdown_',
+      '.pug': 'pug_',
+      '.styl': 'stylus_',
+      '.yaml': 'yaml_',
+      '.yml': 'yaml_'
     };
-    fn_.css_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var cleanCss, sourcemaps;
-        // require
-        cleanCss = getPlugin('gulp-clean-css');
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    fn_.js_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var sourcemaps, uglify;
-        // require
-        uglify = getPlugin('uglify');
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    fn_.md_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var htmlmin, markdown, rename, sourcemaps;
-        // require
-        htmlmin = getPlugin('gulp-htmlmin');
-        markdown = getPlugin('gulp-markdown');
-        rename = getPlugin('gulp-rename');
-        if (option.sanitize == null) {
-          option.sanitize = true;
-        }
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
-          extname: '.html'
-        })).pipe(gulpIf(option.minify, htmlmin({
-          collapseWhitespace: true
-        }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    fn_.pug_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var pug, sourcemaps;
-        // require
-        pug = getPlugin('gulp-pug');
-        if (option.pretty == null) {
-          option.pretty = !option.minify;
-        }
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    fn_.styl_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var sourcemaps, stylus;
-        // require
-        stylus = getPlugin('gulp-stylus');
-        if (option.compress == null) {
-          option.compress = option.minify;
-        }
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    fn_.yaml_ = async function(source, target, option) {
-      return (await new Promise(function(resolve) {
-        var sourcemaps, yaml;
-        // require
-        yaml = getPlugin('gulp-yaml');
-        if (option.safe == null) {
-          option.safe = true;
-        }
-        sourcemaps = option.map;
-        return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-          return resolve();
-        });
-      }));
-    };
-    // return
-    return $.compile_ = fn_;
-  })();
+
+    return Compiler;
+
+  }).call(this);
+
+  
+  // return
+  $.compile_ = async function(...arg) {
+    var compiler;
+    compiler = new Compiler();
+    await compiler.execute_(...arg);
+    return $; // return
+  };
 
   // https://github.com/kevva/download
   /*
@@ -711,6 +745,9 @@
       }
     })();
     source = normalizePathToArray(source);
+    if (!source.length) {
+      return $;
+    }
     target = normalizePath(target);
     await new Promise(function(resolve) {
       var rename;
@@ -733,14 +770,15 @@
   };
 
   $.isExisted_ = async function(source) {
-    var j, len, src;
-    source = normalizePathToArray(source);
-    if (!source.length) {
+    var groupSource, isExisted, j, len;
+    groupSource = normalizePathToArray(source);
+    if (!groupSource.length) {
       return false;
     }
-    for (j = 0, len = source.length; j < len; j++) {
-      src = source[j];
-      if (!(await fse.pathExists(src))) {
+    for (j = 0, len = groupSource.length; j < len; j++) {
+      source = groupSource[j];
+      isExisted = (await fse.pathExists(source));
+      if (!isExisted) {
         return false;
       }
     }
@@ -770,7 +808,6 @@
         return false;
       }
     }
-    $.i('+1');
     // check content
     cache = null;
     for (k = 0, len1 = groupSource.length; k < len1; k++) {
@@ -883,21 +920,14 @@
   };
 
   $.remove_ = async function(source) {
-    var j, len, listSource, src;
+    var j, len, listSource, msg;
     listSource = (await $.source_(source));
+    msg = `removed ${wrapList(source)}`;
     for (j = 0, len = listSource.length; j < len; j++) {
-      src = listSource[j];
-      await new Promise(function(resolve) {
-        return fse.remove(src, function(err) {
-          if (err) {
-            throw err;
-          }
-          return resolve();
-        });
-      });
+      source = listSource[j];
+      await fse.remove(source);
     }
-    // $.info 'remove', "removed '#{src}'"
-    $.info('remove', `removed ${wrapList(source)}`);
+    $.info('remove', msg);
     return $; // return
   };
 
@@ -1008,100 +1038,119 @@
     return filename; // return
   };
 
-  (function() {    /*
-    lint_(source)
-    */
-    var fn_;
-    // function
-    fn_ = async function(source) {
-      var extname, method;
-      source = normalizePathToArray(source);
-      extname = path.extname(source[0]).replace(/\./, '');
-      if (!extname.length) {
-        throw new Error('invalid extname');
+  Linter = (function() {
+    class Linter {
+      /*
+      coffee_(source)
+      execute_(source)
+      markdown_(source)
+      stylus_(source)
+      */
+      async coffee_(source) {
+        await new Promise(function(resolve) {
+          var lint;
+          lint = getPlugin('gulp-coffeelint');
+          return gulp.src(source).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
       }
-      method = (function() {
-        switch (extname) {
-          case 'coffee':
-            return 'coffee';
-          case 'md':
-            return 'markdown';
-          case 'styl':
-            return 'stylus';
-          default:
-            throw new Error('invalid extname');
+
+      async execute_(source) {
+        var extname, j, len, listSource, method;
+        listSource = (await $.source_(source));
+        for (j = 0, len = listSource.length; j < len; j++) {
+          source = listSource[j];
+          extname = $.getExtname(source);
+          method = this.mapMethod[extname];
+          method || (function() {
+            throw new Error(`invalid extname '${extname}'`);
+          })();
+          await this[method](source);
         }
-      })();
-      await fn_[`${method}_`](source);
-      return $; // return
+        return this;
+      }
+
+      async markdown_(source) {
+        await new Promise(function(resolve) {
+          var lint, option;
+          lint = getPlugin('markdownlint');
+          option = {
+            files: source
+          };
+          lint(option, function(err, result) {
+            var filename, item, list, listMsg, results;
+            if (err) {
+              throw err;
+            }
+            results = [];
+            for (filename in result) {
+              list = result[filename];
+              if ('array' !== $.type(list)) {
+                continue;
+              }
+              filename = $.info.renderPath(filename);
+              $.i(kleur.magenta(filename));
+              results.push((function() {
+                var j, len, results1;
+                results1 = [];
+                for (j = 0, len = list.length; j < len; j++) {
+                  item = list[j];
+                  listMsg = [];
+                  listMsg.push(kleur.gray(`#${item.lineNumber}`));
+                  if (item.errorContext) {
+                    listMsg.push(`< ${kleur.red(item.errorContext)} >`);
+                  }
+                  if (item.ruleDescription) {
+                    listMsg.push(item.ruleDescription);
+                  }
+                  results1.push($.i(listMsg.join(' ')));
+                }
+                return results1;
+              })());
+            }
+            return results;
+          });
+          return resolve();
+        });
+        return this;
+      }
+
+      async stylus_(source) {
+        await new Promise(function(resolve) {
+          var lint;
+          lint = getPlugin('gulp-stylint');
+          return gulp.src(source).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
     };
+
     /*
-    coffee_(source)
-    markdown_(source)
-    stylus_(source)
+    mapMethod
     */
-    fn_.coffee_ = function(source) {
-      return new Promise(function(resolve) {
-        var coffeelint, stream;
-        // require
-        coffeelint = getPlugin('gulp-coffeelint');
-        (stream = gulp.src(source)).on('end', function() {
-          return resolve();
-        });
-        return stream.pipe(plumber()).pipe(using()).pipe(coffeelint()).pipe(coffeelint.reporter());
-      });
+    Linter.prototype.mapMethod = {
+      '.coffee': 'coffee_',
+      '.md': 'markdown_',
+      '.styl': 'stylus_'
     };
-    fn_.markdown_ = function(source) {
-      return new Promise(async function(resolve) {
-        var markdownlint, option;
-        // require
-        markdownlint = getPlugin('markdownlint');
-        option = {
-          files: (await $.source_(source))
-        };
-        return markdownlint(option, function(err, result) {
-          var filename, item, j, len, list, listMsg;
-          if (err) {
-            throw err;
-          }
-          for (filename in result) {
-            list = result[filename];
-            if ($.type(list) !== 'array') {
-              continue;
-            }
-            filename = filename.replace($.info['__reg_base__'], '.').replace($.info['__reg_home__'], '~');
-            $.i(kleur.magenta(filename));
-            for (j = 0, len = list.length; j < len; j++) {
-              item = list[j];
-              listMsg = [];
-              listMsg.push(kleur.gray(`#${item.lineNumber}`));
-              if (item.errorContext) {
-                listMsg.push(`< ${kleur.red(item.errorContext)} >`);
-              }
-              if (item.ruleDescription) {
-                listMsg.push(item.ruleDescription);
-              }
-              $.i(listMsg.join(' '));
-            }
-          }
-          return resolve();
-        });
-      });
-    };
-    fn_.stylus_ = function(source) {
-      return new Promise(function(resolve) {
-        var stream, stylint;
-        // require
-        stylint = getPlugin('gulp-stylint');
-        (stream = gulp.src(source)).on('end', function() {
-          return resolve();
-        });
-        return stream.pipe(plumber()).pipe(using()).pipe(stylint()).pipe(stylint.reporter());
-      });
-    };
-    // return
-    return $.lint_ = fn_;
-  })();
+
+    return Linter;
+
+  }).call(this);
+
+  
+  // return
+  $.lint_ = async function(...arg) {
+    var linter;
+    linter = new Linter();
+    await linter.execute_(...arg);
+    return $; // return
+  };
 
   /*
   prompt(option)
@@ -1231,7 +1280,8 @@
   source_(source, [option])
   */
   $.source_ = async function(source, option) {
-    source = normalizePathToArray(source);
+    var groupSource;
+    groupSource = normalizePathToArray(source);
     option = _.merge({
       allowEmpty: true,
       read: false
@@ -1239,7 +1289,10 @@
     return (await new Promise(function(resolve) {
       var listSource;
       listSource = [];
-      return gulp.src(source, option).on('data', function(item) {
+      if (!groupSource.length) {
+        return resolve([]);
+      }
+      return gulp.src(groupSource, option).on('data', function(item) {
         return listSource.push(item.path);
       }).on('end', function() {
         return resolve(listSource);
@@ -1675,21 +1728,18 @@
   };
 
   /*
-  delay_([time], [callback])
+  delay_([time])
   reload(source)
   watch(source)
   yargs()
   */
-  $.delay_ = async function(time = 0, callback) {
+  $.delay_ = async function(time = 0) {
     await new Promise(function(resolve) {
       return setTimeout(function() {
         return resolve();
       }, time);
     });
     $.info('delay', `delayed '${time} ms'`);
-    if (typeof callback === "function") {
-      callback();
-    }
     return $; // return
   };
 

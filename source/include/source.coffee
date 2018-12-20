@@ -4,7 +4,8 @@ source_(source, [option])
 
 $.source_ = (source, option) ->
 
-  source = normalizePathToArray source
+  groupSource = normalizePathToArray source
+  
   option = _.merge
     allowEmpty: true
     read: false
@@ -14,6 +15,8 @@ $.source_ = (source, option) ->
 
     listSource = []
 
-    gulp.src source, option
+    unless groupSource.length
+      return resolve []
+    gulp.src groupSource, option
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource

@@ -10,7 +10,7 @@ clean_ = -> await $.remove_ temp
 
 # test
 
-describe '$.delay_([time], [callback])', ->
+describe '$.delay_([time])', ->
 
   it '$.delay_()', ->
     await clean_()

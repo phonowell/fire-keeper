@@ -16,12 +16,12 @@ describe '$.compile_(source, [target], [option])', ->
     await clean_()
 
     res = await $.compile_ './readme.md', temp
+    unless res == $
+      throw new Error 0
 
-    if res != $
+    isExisted = await $.isExisted_ "#{temp}/readme.html"
+    unless isExisted
       throw new Error 1
-
-    unless await $.isExisted_ "#{temp}/readme.html"
-      throw new Error 2
 
     await clean_()
 
@@ -33,12 +33,12 @@ describe '$.compile_(source, [target], [option])', ->
     await $.write_ source, 'test: true'
 
     res = await $.compile_ source
+    unless res == $
+      throw new Error 0
 
-    if res != $
-      throw new Error()
-
-    unless await $.isExisted_ "#{temp}/test.json"
-      throw new Error()
+    isExisted = await $.isExisted_ "#{temp}/test.json"
+    unless isExisted
+      throw new Error 1
 
     await clean_()
 
@@ -48,8 +48,7 @@ describe '$.compile_(source, [target], [option])', ->
     await $.copy_ './gulpfile.coffee', temp
 
     res = await $.compile_ "#{temp}/gulpfile.coffee"
-
-    if res != $
+    unless res == $
       throw new Error()
 
     unless await $.isExisted_ "#{temp}/gulpfile.js"
@@ -63,12 +62,10 @@ describe '$.compile_(source, [target], [option])', ->
     listKey = ['a', 'b', 'c']
 
     for key in listKey
-
       await $.write_ "#{temp}/#{key}.md", "# #{key}"
 
     res = await $.compile_ "#{temp}/*.md"
-
-    if res != $
+    unless res == $
       throw new Error 1
 
     for key in listKey
@@ -102,8 +99,7 @@ describe '$.compile_(source, [target], [option])', ->
 
     res = await $.compile_ source,
       harmony: false
-
-    if res != $
+    unless res == $
       throw new Error 0
 
     unless await $.isExisted_ target

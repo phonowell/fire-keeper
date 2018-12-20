@@ -94,3 +94,6 @@ describe '$.copy_(source, target, [option])', ->
       throw new Error()
 
     await clean_()
+
+  it '[]', ->
+    await $.copy_ [], temp
