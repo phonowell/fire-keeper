@@ -12,102 +12,171 @@ clean_ = -> await $.remove_ temp
 
 describe '$.compile_(source, [target], [option])', ->
 
-  it "$.compile_('./readme.md')", ->
-    await clean_()
+  describe 'coffee', ->
 
-    res = await $.compile_ './readme.md', temp
-    unless res == $
-      throw new Error 0
+    it 'harmony', ->
+      await clean_()
 
-    isExisted = await $.isExisted_ "#{temp}/readme.html"
-    unless isExisted
-      throw new Error 1
+      source = "#{temp}/test.coffee"
+      target = "#{temp}/test.js"
 
-    await clean_()
+      cont = [
+        'class Tester'
+        'tester = new Tester()'
+        'tester.get = => @'
+        'tester.get()'
+      ].join '\n'
 
-  it "$.compile_('#{temp}/test.yaml')", ->
-    await clean_()
+      await $.chain $
+      .write_ source, cont
+      .compile_ source
 
-    source = "#{temp}/test.yaml"
+      unless await $.isExisted_ target
+       throw new Error()
 
-    await $.write_ source, 'test: true'
+      cont = await $.read_ target
+      unless ~cont.search '=>'
+        throw new Error()
 
-    res = await $.compile_ source
-    unless res == $
-      throw new Error 0
+      await clean_()
 
-    isExisted = await $.isExisted_ "#{temp}/test.json"
-    unless isExisted
-      throw new Error 1
+    it 'not harmony', ->
 
-    await clean_()
+      source = "#{temp}/test.coffee"
+      target = "#{temp}/test.js"
 
-  it "$.compile_('#{temp}/gulpfile.coffee')", ->
-    await clean_()
+      cont = [
+        'class Tester'
+        'tester = new Tester()'
+        'tester.get = => @'
+        'tester.get()'
+      ].join '\n'
 
-    await $.copy_ './gulpfile.coffee', temp
+      await $.chain $
+      .write_ source, cont
+      .compile_ source,
+        harmony: false
 
-    res = await $.compile_ "#{temp}/gulpfile.coffee"
-    unless res == $
-      throw new Error()
+      unless await $.isExisted_ target
+       throw new Error()
 
-    unless await $.isExisted_ "#{temp}/gulpfile.js"
-      throw new Error()
+      cont = await $.read_ target
+      if ~cont.search '=>'
+        throw new Error()
 
-    await clean_()
+      await clean_()
 
-  it "$.compile_('#{temp}/*.md')", ->
-    await clean_()
+    it 'sourcemaps', ->
+      await clean_()
 
-    listKey = ['a', 'b', 'c']
+      source = "#{temp}/test.coffee"
+      target = "#{temp}/test.js"
 
-    for key in listKey
-      await $.write_ "#{temp}/#{key}.md", "# #{key}"
+      cont = [
+        'class Tester'
+        'tester = new Tester()'
+        'tester.get = => @'
+        'tester.get()'
+      ].join '\n'
 
-    res = await $.compile_ "#{temp}/*.md"
-    unless res == $
-      throw new Error 1
+      await $.chain $
+      .write_ source, cont
+      .compile_ source,
+        map: true
 
-    for key in listKey
+      unless await $.isExisted_ target
+       throw new Error()
 
-      source = "#{temp}/#{key}.html"
+      cont = await $.read_ target
+      unless ~cont.search 'sourceMappingURL='
+        throw new Error()
 
-      unless await $.isExisted_ source
-        throw new Error 2
+      await clean_()
 
-      data = await $.read_ source
+    it 'not sourcemaps', ->
+      await clean_()
 
-      if data != "<h1 id=\"#{key}\">#{key}</h1>"
-        throw new Error 3
+      source = "#{temp}/test.coffee"
+      target = "#{temp}/test.js"
 
-    await clean_()
+      cont = [
+        'class Tester'
+        'tester = new Tester()'
+        'tester.get = => @'
+        'tester.get()'
+      ].join '\n'
 
-  it "$.compile_('#{temp}/test.coffee', harmony: false)", ->
-    await clean_()
+      await $.chain $
+      .write_ source, cont
+      .compile_ source
 
-    source = "#{temp}/test.coffee"
-    target = "#{temp}/test.js"
+      unless await $.isExisted_ target
+       throw new Error()
 
-    cont = [
-      'class Tester'
-      'tester = new Tester()'
-      'tester.get = => @'
-      'tester.get()'
-    ].join '\n'
+      cont = await $.read_ target
+      if ~cont.search 'sourceMappingURL='
+        throw new Error()
 
-    await $.write_ source, cont
+      await clean_()
 
-    res = await $.compile_ source,
-      harmony: false
-    unless res == $
-      throw new Error 0
+  describe 'markdown', ->
 
-    unless await $.isExisted_ target
-      throw new Error 1
+    it 'markdown', ->
+      await clean_()
 
-    cont = await $.read_ target
+      res = await $.compile_ './readme.md', temp
+      unless res == $
+        throw new Error 0
 
-    if ~cont.search '=>'
-      throw new Error 2
+      isExisted = await $.isExisted_ "#{temp}/readme.html"
+      unless isExisted
+        throw new Error 1
 
-    await clean_()
+      await clean_()
+
+  describe 'yaml', ->
+
+    it 'yaml', ->
+      await clean_()
+
+      source = "#{temp}/test.yaml"
+
+      await $.write_ source, 'test: true'
+
+      res = await $.compile_ source
+      unless res == $
+        throw new Error 0
+
+      isExisted = await $.isExisted_ "#{temp}/test.json"
+      unless isExisted
+        throw new Error 1
+
+      await clean_()
+
+  describe 'mutli', ->
+
+    it 'mutil', ->
+      await clean_()
+
+      listSource = [
+        "#{temp}/source/a.md"
+        "#{temp}/source/b/b.md"
+        "#{temp}/source/b/c/c.md"
+      ]
+
+      listTarget = [
+        "#{temp}/build/a.html"
+        "#{temp}/build/b/b.html"
+        "#{temp}/build/b/c/c.html"
+      ]
+
+      for source in listSource
+        await $.write_ source, '# test'
+
+      await $.compile_ "#{temp}/source/**/*.md", "#{temp}/build"
+
+      isExisted = await $.isExisted_ listTarget
+      unless isExisted
+        throw new Error()
+
+      # await clean_()

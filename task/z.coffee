@@ -4,4 +4,4 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  await $.read_ []
+  await $.compile_ './test/compile_.coffee'

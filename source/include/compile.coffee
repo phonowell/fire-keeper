@@ -44,9 +44,10 @@ class Compiler
           presets: ['env']
       delete option.harmony
 
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe include()
@@ -63,9 +64,10 @@ class Compiler
 
       cleanCss = getPlugin 'gulp-clean-css'
 
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe gulpIf option.minify, cleanCss()
@@ -98,6 +100,12 @@ class Compiler
     if target
       msg += " to #{wrapList target}"
 
+    # base
+    type = $.type source
+    if type == 'string' and ~source.search /\/\*/
+      option.base or= normalizePath source
+      .replace /\/\*.*/, ''
+
     # each & compile
     listSource = await $.source_ source
     for source in listSource
@@ -121,9 +129,10 @@ class Compiler
 
       uglify = getPlugin 'uglify'
 
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe gulpIf option.minify, uglify()
@@ -141,9 +150,10 @@ class Compiler
       rename = getPlugin 'gulp-rename'
 
       option.sanitize ?= true
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe markdown option
@@ -161,9 +171,10 @@ class Compiler
       pug = getPlugin 'gulp-pug'
 
       option.pretty ?= !option.minify
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe pug option
@@ -179,9 +190,10 @@ class Compiler
       stylus = getPlugin 'gulp-stylus'
 
       option.compress ?= option.minify
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe stylus option
@@ -197,9 +209,10 @@ class Compiler
       yaml = getPlugin 'gulp-yaml'
 
       option.safe ?= true
+      base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {sourcemaps}
+      gulp.src source, {base, sourcemaps}
       .pipe plumber()
       .pipe using()
       .pipe yaml option

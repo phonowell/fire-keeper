@@ -400,7 +400,7 @@
       */
       async coffee_(source, target, option) {
         await new Promise(function(resolve) {
-          var coffee, include, sourcemaps, uglify;
+          var base, coffee, include, sourcemaps, uglify;
           coffee = getPlugin('gulp-coffee');
           include = getPlugin('gulp-include');
           uglify = getPlugin('uglify');
@@ -413,8 +413,9 @@
             };
           }
           delete option.harmony;
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -423,10 +424,11 @@
 
       async css_(source, target, option) {
         await new Promise(function(resolve) {
-          var cleanCss, sourcemaps;
+          var base, cleanCss, sourcemaps;
           cleanCss = getPlugin('gulp-clean-css');
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -434,7 +436,7 @@
       }
 
       async execute_(...arg) {
-        var dirname, extname, j, len, listSource, method, msg, option, source, target;
+        var dirname, extname, j, len, listSource, method, msg, option, source, target, type;
         [source, target, option] = (function() {
           switch (arg.length) {
             case 1:
@@ -466,6 +468,11 @@
         if (target) {
           msg += ` to ${wrapList(target)}`;
         }
+        // base
+        type = $.type(source);
+        if (type === 'string' && ~source.search(/\/\*/)) {
+          option.base || (option.base = normalizePath(source).replace(/\/\*.*/, ''));
+        }
         // each & compile
         listSource = (await $.source_(source));
         for (j = 0, len = listSource.length; j < len; j++) {
@@ -485,10 +492,11 @@
 
       async js_(source, target, option) {
         await new Promise(function(resolve) {
-          var sourcemaps, uglify;
+          var base, sourcemaps, uglify;
           uglify = getPlugin('uglify');
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -497,15 +505,16 @@
 
       async markdown_(source, target, option) {
         await new Promise(function(resolve) {
-          var htmlmin, markdown, rename, sourcemaps;
+          var base, htmlmin, markdown, rename, sourcemaps;
           htmlmin = getPlugin('gulp-htmlmin');
           markdown = getPlugin('gulp-markdown');
           rename = getPlugin('gulp-rename');
           if (option.sanitize == null) {
             option.sanitize = true;
           }
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
             extname: '.html'
           })).pipe(gulpIf(option.minify, htmlmin({
             collapseWhitespace: true
@@ -518,13 +527,14 @@
 
       async pug_(source, target, option) {
         await new Promise(function(resolve) {
-          var pug, sourcemaps;
+          var base, pug, sourcemaps;
           pug = getPlugin('gulp-pug');
           if (option.pretty == null) {
             option.pretty = !option.minify;
           }
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -533,13 +543,14 @@
 
       async stylus_(source, target, option) {
         await new Promise(function(resolve) {
-          var sourcemaps, stylus;
+          var base, sourcemaps, stylus;
           stylus = getPlugin('gulp-stylus');
           if (option.compress == null) {
             option.compress = option.minify;
           }
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -548,13 +559,14 @@
 
       async yaml_(source, target, option) {
         await new Promise(function(resolve) {
-          var sourcemaps, yaml;
+          var base, sourcemaps, yaml;
           yaml = getPlugin('gulp-yaml');
           if (option.safe == null) {
             option.safe = true;
           }
+          base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
