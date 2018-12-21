@@ -21,9 +21,10 @@ $.copy_ = (arg...) ->
     else throw new Error 'invalid argument length'
 
   source = normalizePathToArray source
+  target = normalizePath target
+  
   unless source.length
     return $
-  target = normalizePath target
 
   await new Promise (resolve) ->
 
@@ -136,9 +137,13 @@ $.move_ = (source, target) ->
   unless source and target
     throw new Error 'invalid argument length'
 
+  listSource = await $.source_ source
+  unless listSource.length
+    return $
+
   $.info.pause '$.move_'
-  await $.copy_ source, target
-  await $.remove_ source
+  await $.copy_ listSource, target
+  await $.remove_ listSource
   $.info.resume '$.move_'
 
   $.info 'move'
@@ -148,46 +153,54 @@ $.move_ = (source, target) ->
 
 $.read_ = (source, option = {}) ->
 
-  source = normalizePath source
-
-  unless await $.isExisted_ source
-    $.info 'file', "#{wrapList source} not existed"
+  [source] = await $.source_ source
+  unless source
+    $.i 'file', "'#{source}' not existed"
     return null
 
   res = await new Promise (resolve) ->
-
     fs.readFile source, (err, data) ->
       if err then throw err
       resolve data
 
-  $.info 'file', "read #{wrapList source}"
+  $.info 'file', "read '#{source}'"
 
   # return
 
-  if option.raw then return res
-  
-  res = switch path.extname(source)[1...]
-    when 'coffee'
-    , 'css'
-    , 'html'
-    , 'js'
-    , 'md'
-    , 'pug'
-    , 'sh'
-    , 'styl'
-    , 'txt'
-    , 'xml'
-      $.parseString res
-    when 'json' then $.parseJSON res
-    when 'yaml', 'yml'
-      # require
-      jsYaml = getPlugin 'js-yaml'
-      jsYaml.safeLoad res # return
-    else res
+  if option.raw
+    return res
+
+  extname = $.getExtname source
+
+  if extname in [
+    '.coffee'
+    '.css'
+    '.html'
+    '.js'
+    '.md'
+    '.pug'
+    '.sh'
+    '.styl'
+    '.txt'
+    '.xml'
+  ]
+    return $.parseString res
+
+  if extname == '.json'
+    return $.parseJSON res
+
+  if extname in ['.yaml', '.yml']
+    jsYaml = getPlugin 'js-yaml'
+    return jsYaml.safeLoad res
+
+  res # return
 
 $.remove_ = (source) ->
 
   listSource = await $.source_ source
+  unless listSource.length
+    return $
+  
   msg = "removed #{wrapList source}"
 
   for source in listSource

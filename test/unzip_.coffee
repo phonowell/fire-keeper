@@ -21,24 +21,22 @@ describe '$.unzip_(source, [target])', ->
     listTarget = []
     for key in listKey
       listContent.push "test file #{key}"
-      listSource.push "#{temp}/[test](test)#{key}.txt"
+      listSource.push "#{temp}/#{key}.txt"
       listTarget.push "#{temp}/#{key}.zip"
 
     for key, i in listKey
 
-      await $.write_ listSource[i], listContent[i]
-      await $.zip_ listSource[i], "#{key}.zip"
-      await $.remove_ listSource[i]
-
-    unless await $.isExisted_ listTarget
-      throw new Error 1
+      await $.chain $
+      .write_ listSource[i], listContent[i]
+      .zip_ listSource[i], "#{key}.zip"
+      .remove_ listSource[i]
 
     res = await $.unzip_ listTarget
     unless res == $
       throw new Error 0
 
     unless await $.isExisted_ listSource
-      throw new Error 2
+      throw new Error 1
 
     for key, i in listKey
 

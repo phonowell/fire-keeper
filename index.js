@@ -365,7 +365,7 @@
       source = groupSource[j];
       pathBak = `${source}.bak`;
       if (!(await $.isExisted_(pathBak))) {
-        $.i(`'${pathBak}' not found`);
+        $.info('recover', `'${pathBak}' not found`);
         continue;
       }
       filename = $.getFilename(source);
@@ -745,10 +745,10 @@
       }
     })();
     source = normalizePathToArray(source);
+    target = normalizePath(target);
     if (!source.length) {
       return $;
     }
-    target = normalizePath(target);
     await new Promise(function(resolve) {
       var rename;
       // require
@@ -862,22 +862,27 @@
   };
 
   $.move_ = async function(source, target) {
+    var listSource;
     if (!(source && target)) {
       throw new Error('invalid argument length');
     }
+    listSource = (await $.source_(source));
+    if (!listSource.length) {
+      return $;
+    }
     $.info.pause('$.move_');
-    await $.copy_(source, target);
-    await $.remove_(source);
+    await $.copy_(listSource, target);
+    await $.remove_(listSource);
     $.info.resume('$.move_');
     $.info('move', `moved ${wrapList(source)} to '${target}'`);
     return $; // return
   };
 
   $.read_ = async function(source, option = {}) {
-    var jsYaml, res;
-    source = normalizePath(source);
-    if (!(await $.isExisted_(source))) {
-      $.info('file', `${wrapList(source)} not existed`);
+    var extname, jsYaml, res;
+    [source] = (await $.source_(source));
+    if (!source) {
+      $.i('file', `'${source}' not existed`);
       return null;
     }
     res = (await new Promise(function(resolve) {
@@ -888,40 +893,31 @@
         return resolve(data);
       });
     }));
-    $.info('file', `read ${wrapList(source)}`);
+    $.info('file', `read '${source}'`);
     // return
     if (option.raw) {
       return res;
     }
-    return res = (function() {
-      switch (path.extname(source).slice(1)) {
-        case 'coffee':
-        case 'css':
-        case 'html':
-        case 'js':
-        case 'md':
-        case 'pug':
-        case 'sh':
-        case 'styl':
-        case 'txt':
-        case 'xml':
-          return $.parseString(res);
-        case 'json':
-          return $.parseJSON(res);
-        case 'yaml':
-        case 'yml':
-          // require
-          jsYaml = getPlugin('js-yaml');
-          return jsYaml.safeLoad(res); // return
-        default:
-          return res;
-      }
-    })();
+    extname = $.getExtname(source);
+    if (extname === '.coffee' || extname === '.css' || extname === '.html' || extname === '.js' || extname === '.md' || extname === '.pug' || extname === '.sh' || extname === '.styl' || extname === '.txt' || extname === '.xml') {
+      return $.parseString(res);
+    }
+    if (extname === '.json') {
+      return $.parseJSON(res);
+    }
+    if (extname === '.yaml' || extname === '.yml') {
+      jsYaml = getPlugin('js-yaml');
+      return jsYaml.safeLoad(res);
+    }
+    return res; // return
   };
 
   $.remove_ = async function(source) {
     var j, len, listSource, msg;
     listSource = (await $.source_(source));
+    if (!listSource.length) {
+      return $;
+    }
     msg = `removed ${wrapList(source)}`;
     for (j = 0, len = listSource.length; j < len; j++) {
       source = listSource[j];
@@ -1503,27 +1499,25 @@
   unzip_(source, [target])
   */
   $.unzip_ = async function(source, target) {
-    var dist, j, len, listSource, src, unzip;
-    if (!source) {
-      throw new Error('invalid source');
-    }
+    var dist, j, len, listSource, unzip;
     listSource = (await $.source_(source));
+    if (!listSource.length) {
+      return $;
+    }
     // require
     unzip = getPlugin('unzip');
     for (j = 0, len = listSource.length; j < len; j++) {
-      src = listSource[j];
-      dist = target || $.getDirname(src);
+      source = listSource[j];
+      dist = target || $.getDirname(source);
       await new Promise(function(resolve) {
-        var stream;
-        stream = fs.createReadStream(src);
-        stream.on('end', function() {
+        return fs.createReadStream(source).pipe(unzip.Extract({
+          path: dist
+        // must be 'close' here!
+        })).on('close', function() {
           return resolve();
         });
-        return stream.pipe(unzip.Extract({
-          path: dist
-        }));
       });
-      $.info('zip', `unzipped ${src} to ${dist}`);
+      $.info('zip', `unzipped '${source}' to '${dist}'`);
     }
     return $; // return
   };

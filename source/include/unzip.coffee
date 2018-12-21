@@ -4,24 +4,23 @@ unzip_(source, [target])
 
 $.unzip_ = (source, target) ->
 
-  unless source
-    throw new Error 'invalid source'
-
   listSource = await $.source_ source
+  unless listSource.length
+    return $
 
   # require
   unzip = getPlugin 'unzip'
 
-  for src in listSource
+  for source in listSource
 
-    dist = target or $.getDirname src
+    dist = target or $.getDirname source
 
     await new Promise (resolve) ->
-      stream = fs.createReadStream src
-      stream.on 'end', -> resolve()
-      stream.pipe unzip.Extract
-        path: dist
+      fs.createReadStream source
+      .pipe unzip.Extract path: dist
+      # must be 'close' here!
+      .on 'close', -> resolve()
 
-    $.info 'zip', "unzipped #{src} to #{dist}"
+    $.info 'zip', "unzipped '#{source}' to '#{dist}'"
 
   $ # return

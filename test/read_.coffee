@@ -22,7 +22,7 @@ describe '$.read_(source, [option])', ->
 
     cont = await $.read_ source
 
-    if cont != string
+    unless cont == string
       throw new Error()
 
     await clean_()

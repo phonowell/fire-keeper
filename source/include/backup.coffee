@@ -31,7 +31,7 @@ $.recover_ = (source) ->
 
     pathBak = "#{source}.bak"
     unless await $.isExisted_ pathBak
-      $.i "'#{pathBak}' not found"
+      $.info 'recover', "'#{pathBak}' not found"
       continue
 
     filename = $.getFilename source
