@@ -18,7 +18,7 @@
   /*
   fetchGitHub_(name)
   */
-  var $, Compiler, Linter, SSH, Shell, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
+  var $, Compiler, Linter, SSH, Shell, Updater, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
 
   path = require('path');
 
@@ -288,12 +288,13 @@
     return null;
   });
 
+  // https://github.com/tj/node-prune
   $.task('prune', async function() {
     var base, line, listDirectory, listExtension, listFile, listSource;
     await $.exec_('npm prune');
     base = './node_modules';
     // file
-    listFile = ['.DS_Store', '.appveyor.yml', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.flowconfig', '.gitattributes', '.gitlab-ci.yml', '.htmllintrc', '.jshintrc', '.lint', '.npmignore', '.stylelintrc', '.stylelintrc.js', '.stylelintrc.json', '.stylelintrc.yaml', '.stylelintrc.yml', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENSE', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'circle.yml', 'eslint', 'gulpfile.js', 'htmllint.js', 'jest.config.js', 'karma.conf.js', 'license', 'stylelint.config.js', 'tsconfig.json'];
+    listFile = ['.DS_Store', '.appveyor.yml', '.babelrc', '.coveralls.yml', '.documentup.json', '.editorconfig', '.eslintignore', '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', '.flowconfig', '.gitattributes', '.gitlab-ci.yml', '.htmllintrc', '.jshintrc', '.lint', '.npmignore', '.stylelintrc', '.stylelintrc.js', '.stylelintrc.json', '.stylelintrc.yaml', '.stylelintrc.yml', '.tern-project', '.travis.yml', '.yarn-integrity', '.yarn-metadata.json', '.yarnclean', '.yo-rc.json', 'AUTHORS', 'CHANGES', 'CONTRIBUTORS', 'Gruntfile.js', 'Gulpfile.js', 'LICENCE', 'LICENCE-MIT', 'LICENCE.BSD', 'LICENCE.txt', 'LICENSE', 'LICENSE-MIT', 'LICENSE.BSD', 'LICENSE.txt', 'Makefile', '_config.yml', 'appveyor.yml', 'changelog', 'circle.yml', 'eslint', 'gulpfile.js', 'htmllint.js', 'jest.config.js', 'karma.conf.js', 'licence', 'license', 'stylelint.config.js', 'tsconfig.json'];
     listSource = (function() {
       var j, len, results;
       results = [];
@@ -317,7 +318,7 @@
     })();
     await $.remove_(listSource);
     // extension
-    listExtension = ['.coffee', '.jst', '.markdown', '.md', '.swp', '.tgz', '.ts'];
+    listExtension = ['.coffee', '.jst', '.markdown', '.md', '.mkd', '.swp', '.tgz', '.ts'];
     listSource = (function() {
       var j, len, results;
       results = [];
@@ -1534,78 +1535,75 @@
     return $; // return
   };
 
-  (function() {
-    var addCmd_, clean_, execute_, getLatestVersion_;
-    // function
-    /*
-    addCmd_(list, data, isDev, option)
-    clean_()
-    execute_(option)
-    getLatestVersion_(name, option)
-    */
-    addCmd_ = async function(list, data, isDev, option) {
-      var current, latest, name, registry, results, version;
-      ({registry} = option);
-      results = [];
-      for (name in data) {
-        version = data[name];
-        current = version.replace(/[~^]/, '');
-        $.info.pause('$.update_');
-        latest = (await getLatestVersion_(name, option));
-        $.info.resume('$.update_');
-        if (current === latest) {
-          $.info('update', `'${name}': '${current}' == '${latest}'`);
-          continue;
+  Updater = (function() {
+    class Updater {
+      /*
+      execute_(arg...)
+      getLatestVersion_(name)
+      listPkg_(list, isDev)
+      */
+      async execute_(...arg) {
+        var data;
+        data = (await $.read_('./package.json'));
+        await this.listPkg_(data.dependencies, false);
+        await this.listPkg_(data.devDependencies, true);
+        if (!this.listCmd.length) {
+          $.info('update', 'every ting is ok');
+          return this;
         }
-        $.info('update', `'${name}': '${current}' ${kleur.green('->')} '${latest}'`);
-        results.push(list.push(['npm install', `${name}@${latest}`, isDev ? '' : '--production', registry ? `--registry ${registry}` : '', isDev ? '--save-dev' : '--save'].join(' ').replace(/\s{2,}/g, ' ')));
+        await $.exec_(this.listCmd);
+        return this;
       }
-      return results;
-    };
-    clean_ = async function() {
-      var listFile;
-      await $.remove_('./temp/update');
-      listFile = (await $.source_('./temp/**/*.*'));
-      if (!listFile.length) {
-        return (await $.remove_('./temp'));
+
+      async getLatestVersion_(name) {
+        var url, version;
+        url = ['http://registry.npmjs.org', `/${name}/latest`].join('');
+        ({version} = (await $.get_(url)));
+        return version; // return
       }
-    };
-    execute_ = async function(option) {
-      var listCmd, pkg;
-      pkg = (await $.read_('./package.json'));
-      listCmd = [];
-      await addCmd_(listCmd, pkg.dependencies, false, option);
-      await addCmd_(listCmd, pkg.devDependencies, true, option);
-      $.info.pause('$.update_');
-      await clean_();
-      $.info.resume('$.update_');
-      if (!listCmd.length) {
-        $.info('update', 'every thing is ok');
-        return;
+
+      async listPkg_(list, isDev) {
+        var lineCmd, name, version, versionCurrent, versionLatest;
+        for (name in list) {
+          version = list[name];
+          versionCurrent = version.replace(/[~^]/, '');
+          $.info.pause(this.namespace);
+          versionLatest = (await this.getLatestVersion_(name));
+          $.info.resume(this.namespace);
+          if (versionCurrent === versionLatest) {
+            $.info('update', `'${name}': '${versionCurrent}' == '${versionLatest}'`);
+            continue;
+          }
+          $.info('update', `'${name}': '${versionCurrent}' ${kleur.green('->')} '${versionLatest}'`);
+          lineCmd = ['npm install', `${name}@${versionLatest}`, isDev ? '' : '--production', isDev ? '--save-dev' : '--save'].join(' ');
+          lineCmd = lineCmd.replace(/\s{2,}/g, ' ');
+          this.listCmd.push(lineCmd);
+        }
+        return this;
       }
-      await $.exec_(listCmd);
-      return $; // return
+
     };
-    getLatestVersion_ = async function(name, option) {
-      var data, registry, source, url;
-      ({registry} = option);
-      registry || (registry = 'http://registry.npmjs.org');
-      source = `./temp/update/${name}.json`;
-      if (!(await $.isExisted_(source))) {
-        url = `${registry}/${name}?salt=${_.now()}`;
-        await $.download_(url, './temp/update', `${name}.json`);
-      }
-      if (!(data = (await $.read_(source)))) {
-        throw new Error('invalid source');
-      }
-      // return
-      return _.get(data, 'dist-tags.latest');
-    };
-    // return
-    return $.update_ = async function(...arg) {
-      return (await execute_(...arg));
-    };
-  })();
+
+    /*
+    listCmd
+    namespace
+    */
+    Updater.prototype.listCmd = [];
+
+    Updater.prototype.namespace = '$.update_';
+
+    return Updater;
+
+  }).call(this);
+
+  
+  // return
+  $.update_ = async function(...arg) {
+    var m;
+    m = new Updater();
+    await m.execute_(...arg);
+    return $; // return
+  };
 
   // https://github.com/jprichardson/node-klaw
   /*

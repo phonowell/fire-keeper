@@ -1,90 +1,85 @@
-do ->
-
-  # function
+class Updater
 
   ###
-  addCmd_(list, data, isDev, option)
-  clean_()
-  execute_(option)
-  getLatestVersion_(name, option)
+  listCmd
+  namespace
   ###
 
-  addCmd_ = (list, data, isDev, option) ->
+  listCmd: []
+  namespace: '$.update_'
 
-    {registry} = option
+  ###
+  execute_(arg...)
+  getLatestVersion_(name)
+  listPkg_(list, isDev)
+  ###
 
-    for name, version of data
+  execute_: (arg...) ->
 
-      current = version
+    data = await $.read_ './package.json'
+
+    await @listPkg_ data.dependencies, false
+    await @listPkg_ data.devDependencies, true
+
+    unless @listCmd.length
+      $.info 'update'
+      , 'every ting is ok'
+      return @
+    
+    await $.exec_ @listCmd
+
+    @ # return
+
+  getLatestVersion_: (name) ->
+
+    url = [
+      'http://registry.npmjs.org'
+      "/#{name}/latest"
+    ].join ''
+
+    {version} = await $.get_ url
+    version # return
+
+  listPkg_: (list, isDev) ->
+
+    for name, version of list
+
+      versionCurrent = version
       .replace /[~^]/, ''
 
-      $.info.pause '$.update_'
-      latest = await getLatestVersion_ name, option
-      $.info.resume '$.update_'
+      $.info.pause @namespace
+      versionLatest = await @getLatestVersion_ name
+      $.info.resume @namespace
 
-      if current == latest
+      if versionCurrent == versionLatest
         $.info 'update'
-        , "'#{name}': '#{current}' == '#{latest}'"
+        , "'#{name}':
+        '#{versionCurrent}'
+        ==
+        '#{versionLatest}'"
         continue
+
       $.info 'update'
-      , "'#{name}': '#{current}' #{kleur.green '->'} '#{latest}'"
+      , "'#{name}':
+      '#{versionCurrent}'
+      #{kleur.green '->'}
+      '#{versionLatest}'"
 
-      list.push [
+      lineCmd = [
         'npm install'
-        "#{name}@#{latest}"
+        "#{name}@#{versionLatest}"
         if isDev then '' else '--production'
-        if registry then "--registry #{registry}" else ''
         if isDev then '--save-dev' else '--save'
-      ].join(' ').replace /\s{2,}/g, ' '
+      ].join ' '
+      lineCmd = lineCmd
+      .replace /\s{2,}/g, ' '
 
-  clean_ = ->
+      @listCmd.push lineCmd
 
-    await $.remove_ './temp/update'
+    @ # return
 
-    listFile = await $.source_ './temp/**/*.*'
-
-    if !listFile.length
-      await $.remove_ './temp'
-
-  execute_ = (option) ->
-
-    pkg = await $.read_ './package.json'
-
-    listCmd = []
-    await addCmd_ listCmd, pkg.dependencies, false, option
-    await addCmd_ listCmd, pkg.devDependencies, true, option
-    
-    $.info.pause '$.update_'
-    await clean_()
-    $.info.resume '$.update_'
-
-    if !listCmd.length
-      $.info 'update', 'every thing is ok'
-      return
-
-    await $.exec_ listCmd
-
-    $ # return
-
-  getLatestVersion_ = (name, option) ->
-
-    {registry} = option
-    registry or= 'http://registry.npmjs.org'
-
-    source = "./temp/update/#{name}.json"
-
-    unless await $.isExisted_ source
-      
-      url = "#{registry}/#{name}?salt=#{_.now()}"
-      await $.download_ url
-      , './temp/update'
-      , "#{name}.json"
-
-    unless data = await $.read_ source
-      throw new Error 'invalid source'
-
-    # return
-    _.get data, 'dist-tags.latest'
-
-  # return
-  $.update_ = (arg...) -> await execute_ arg...
+# return
+$.update_ = (arg...) ->
+  m = new Updater()
+  await m.execute_ arg...
+  $ # return

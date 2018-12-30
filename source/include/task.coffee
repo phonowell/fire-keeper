@@ -113,6 +113,7 @@ $.task 'kokoro', ->
 
 $.task 'noop', -> null
 
+# https://github.com/tj/node-prune
 $.task 'prune', ->
 
   await $.exec_ 'npm prune'
@@ -132,6 +133,7 @@ $.task 'prune', ->
     '.eslintrc'
     '.eslintrc.js'
     '.eslintrc.json'
+    '.eslintrc.yml'
     '.flowconfig'
     '.gitattributes'
     '.gitlab-ci.yml'
@@ -155,17 +157,25 @@ $.task 'prune', ->
     'CONTRIBUTORS'
     'Gruntfile.js'
     'Gulpfile.js'
+    'LICENCE'
+    'LICENCE-MIT'
+    'LICENCE.BSD'
+    'LICENCE.txt'
     'LICENSE'
+    'LICENSE-MIT'
+    'LICENSE.BSD'
     'LICENSE.txt'
     'Makefile'
     '_config.yml'
     'appveyor.yml'
+    'changelog'
     'circle.yml'
     'eslint'
     'gulpfile.js'
     'htmllint.js'
     'jest.config.js'
     'karma.conf.js'
+    'licence'
     'license'
     'stylelint.config.js'
     'tsconfig.json'
@@ -206,6 +216,7 @@ $.task 'prune', ->
     '.jst'
     '.markdown'
     '.md'
+    '.mkd'
     '.swp'
     '.tgz'
     '.ts'
