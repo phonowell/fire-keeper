@@ -11,7 +11,7 @@
   formatArgument(arg)
   getPlugin(name)
   getRelativePath(source, target)
-  normalizePath(source)
+  normalizePath(string)
   normalizePathToArray(source)
   wrapList(list)
   */
@@ -70,46 +70,44 @@
     return (base2 = $.plugin)[name] || (base2[name] = require(name));
   };
 
-  normalizePath = function(source) {
+  normalizePath = function(string) {
     var isIgnore;
-    if ('string' !== $.type(source)) {
+    if ('string' !== $.type(string)) {
       return null;
     }
     // check isIgnore
-    if (source[0] === '!') {
+    if (string[0] === '!') {
       isIgnore = true;
-      source = source.slice(1);
+      string = string.slice(1);
     }
-    // replace \ to /
-    source = source.replace(/\\/g, '/');
     // replace . & ~
-    source = source.replace(/\.{2}/g, '__parent_directory__');
-    source = (function() {
-      switch (source[0]) {
+    string = string.replace(/\.{2}/g, '__parent_directory__');
+    string = (function() {
+      switch (string[0]) {
         case '.':
-          return source.replace(/\./, $.path.base);
+          return string.replace(/\./, $.path.base);
         case '~':
-          return source.replace(/~/, $.path.home);
+          return string.replace(/~/, $.path.home);
         default:
-          return source;
+          return string;
       }
     })();
-    source = source.replace(/__parent_directory__/g, '..');
+    string = string.replace(/__parent_directory__/g, '..');
     // replace ../ to ./../ at start
-    if (source[0] === '.' && source[1] === '.') {
-      source = `${$.path.base}/${source}`;
+    if (string[0] === '.' && string[1] === '.') {
+      string = `${$.path.base}/${string}`;
     }
     // normalize
-    source = path.normalize(source);
+    string = path.normalize(string).replace(/\\/g, '/');
     // absolute
-    if (!path.isAbsolute(source)) {
-      source = `${$.path.base}${path.sep}${source}`;
+    if (!path.isAbsolute(string)) {
+      string = `${$.path.base}/${string}`;
     }
     // ignore
     if (isIgnore) {
-      source = `!${source}`;
+      string = `!${string}`;
     }
-    return source; // return
+    return string; // return
   };
 
   normalizePathToArray = function(source) {
@@ -666,7 +664,7 @@
           $.info('exec', cmd);
           isIgnoreError = !!option.ignoreError;
           delete option.ignoreError;
-          [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', `"${cmd}"`]] : ['/bin/sh', ['-c', cmd]];
+          [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', cmd]] : ['/bin/sh', ['-c', cmd]];
           this.process = this.spawn(cmder, arg, option);
           // bind
           this.process.stderr.on('data', (data) => {
@@ -1511,33 +1509,6 @@
   // return
   $.ssh = new SSH();
 
-  /*
-  unzip_(source, [target])
-  */
-  $.unzip_ = async function(source, target) {
-    var dist, j, len, listSource, unzip;
-    listSource = (await $.source_(source));
-    if (!listSource.length) {
-      return $;
-    }
-    // require
-    unzip = getPlugin('unzip');
-    for (j = 0, len = listSource.length; j < len; j++) {
-      source = listSource[j];
-      dist = target || $.getDirname(source);
-      await new Promise(function(resolve) {
-        return fs.createReadStream(source).pipe(unzip.Extract({
-          path: dist
-        // must be 'close' here!
-        })).on('close', function() {
-          return resolve();
-        });
-      });
-      $.info('zip', `unzipped '${source}' to '${dist}'`);
-    }
-    return $; // return
-  };
-
   Updater = (function() {
     class Updater {
       /*
@@ -1622,7 +1593,9 @@
       // require
       walk = getPlugin('klaw');
       return walk(source).on('data', function(item) {
-        return callback(item);
+        return callback(_.merge(item, {
+          path: normalizePath(item.path)
+        }));
       }).on('end', function() {
         return resolve();
       });
@@ -1769,7 +1742,7 @@
 
   $.argv = $.plugin.yargs.argv;
 
-  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'exec', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'source', 'stat', 'unzip', 'update', 'walk', 'write', 'zip'];
+  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'exec', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'source', 'stat', 'update', 'walk', 'write', 'zip'];
 
   for (j = 0, len = listKey.length; j < len; j++) {
     key = listKey[j];

@@ -3,7 +3,7 @@ excludeInclude(source)
 formatArgument(arg)
 getPlugin(name)
 getRelativePath(source, target)
-normalizePath(source)
+normalizePath(string)
 normalizePathToArray(source)
 wrapList(list)
 ###
@@ -27,46 +27,44 @@ getPlugin = (name) ->
       composer uglifyEs, console
   $.plugin[name] or= require name
 
-normalizePath = (source) ->
+normalizePath = (string) ->
 
-  unless 'string' == $.type source
+  unless 'string' == $.type string
     return null
 
   # check isIgnore
-  if source[0] == '!'
+  if string[0] == '!'
     isIgnore = true
-    source = source[1...]
-
-  # replace \ to /
-  source = source.replace /\\/g, '/'
+    string = string[1...]
 
   # replace . & ~
 
-  source = source.replace /\.{2}/g, '__parent_directory__'
+  string = string.replace /\.{2}/g, '__parent_directory__'
 
-  source = switch source[0]
-    when '.' then source.replace /\./, $.path.base
-    when '~' then source.replace /~/, $.path.home
-    else source
+  string = switch string[0]
+    when '.' then string.replace /\./, $.path.base
+    when '~' then string.replace /~/, $.path.home
+    else string
 
-  source = source.replace /__parent_directory__/g, '..'
+  string = string.replace /__parent_directory__/g, '..'
 
   # replace ../ to ./../ at start
-  if source[0] == '.' and source[1] == '.'
-    source = "#{$.path.base}/#{source}"
+  if string[0] == '.' and string[1] == '.'
+    string = "#{$.path.base}/#{string}"
 
   # normalize
-  source = path.normalize source
+  string = path.normalize string
+  .replace /\\/g, '/'
 
   # absolute
-  unless path.isAbsolute source
-    source = "#{$.path.base}#{path.sep}#{source}"
+  unless path.isAbsolute string
+    string = "#{$.path.base}/#{string}"
 
   # ignore
   if isIgnore
-    source = "!#{source}"
+    string = "!#{string}"
 
-  source # return
+  string # return
 
 normalizePathToArray = (source) ->
   groupSource = formatArgument source

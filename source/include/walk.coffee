@@ -18,7 +18,8 @@ $.walk_ = (source, callback) ->
 
     walk source
     .on 'data', (item) ->
-      callback item
+      callback _.merge item,
+        path: normalizePath item.path
     .on 'end', -> resolve()
 
   $ # return

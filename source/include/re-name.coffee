@@ -19,7 +19,6 @@ listKey = [
   'say'
   'source'
   'stat'
-  'unzip'
   'update'
   'walk'
   'write'

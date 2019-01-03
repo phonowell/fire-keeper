@@ -29,7 +29,7 @@ class Shell
       [cmder, arg] = if $.os == 'windows'
         [
           'cmd.exe'
-          ['/s', '/c', "\"#{cmd}\""]
+          ['/s', '/c', cmd]
         ]
       else
         [

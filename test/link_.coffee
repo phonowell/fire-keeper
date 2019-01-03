@@ -12,19 +12,19 @@ clean_ = -> await $.remove_ temp
 
 describe '$.link_(source, target)', ->
 
-  it "$.link_('./../gurumin/source', '#{temp}/gurumin')", ->
+  it "$.link_('./source', '#{temp}/source')", ->
     await clean_()
 
-    res = await $.link_ './../gurumin/source'
-    , "#{temp}/gurumin"
+    res = await $.link_ './source'
+    , "#{temp}/source"
 
-    if res != $
+    unless res == $
       throw new Error 0
 
-    unless await $.isExisted_ "#{temp}/gurumin"
+    unless await $.isExisted_ "#{temp}/source"
       throw new Error 1
 
-    unless await $.isExisted_ "#{temp}/gurumin/script/include/core/$.ago.coffee"
+    unless await $.isExisted_ "#{temp}/source/include/file.coffee"
       throw new Error 2
 
     await clean_()

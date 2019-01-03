@@ -19,7 +19,6 @@
 #= include include/say.coffee
 #= include include/source.coffee
 #= include include/ssh.coffee
-#= include include/unzip.coffee
 #= include include/update.coffee
 #= include include/walk.coffee
 #= include include/zip.coffee

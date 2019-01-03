@@ -71,7 +71,6 @@ pkg = await $.readAsync './package.json'
 - $.ssh.upload_(source, target, [option])
 - $.stat_(source)
 - $.task(name, [fn])
-- $.unzip_(source, [target])
 - $.update_()
 - $.walk_(source, callback)
 - $.watch(source)
