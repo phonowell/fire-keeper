@@ -9,31 +9,16 @@ class Linter
   ###
 
   mapMethod:
-    '.coffee': 'coffee_'
-    '.md': 'markdown_'
-    '.styl': 'stylus_'
+    '.coffee': 'lintCoffee_'
+    '.md': 'lintMarkdown_'
+    '.styl': 'lintStylus_'
 
   ###
-  coffee_(source)
   execute_(source)
-  markdown_(source)
-  stylus_(source)
+  lintCoffee_(source)
+  lintMarkdown_(source)
+  lintStylus_(source)
   ###
-
-  coffee_: (source) ->
-
-    await new Promise (resolve) ->
-
-      lint = getPlugin 'gulp-coffeelint'
-
-      gulp.src source
-      .pipe plumber()
-      .pipe using()
-      .pipe lint()
-      .pipe lint.reporter()
-      .on 'end', -> resolve()
-
-    @ # return
 
   execute_: (source) ->
 
@@ -49,7 +34,25 @@ class Linter
 
     @ # return
 
-  markdown_: (source) ->
+  lintCoffee_: (source) ->
+
+    await new Promise (resolve) ->
+
+      lint = getPlugin 'gulp-coffeelint'
+
+      # does not know why
+      # have to put 'on()' before 'pipe()'
+      # strange
+      gulp.src source
+      .on 'end', -> resolve()
+      .pipe plumber()
+      .pipe using()
+      .pipe lint()
+      .pipe lint.reporter()
+
+    @ # return
+
+  lintMarkdown_: (source) ->
 
     await new Promise (resolve) ->
 
@@ -83,7 +86,7 @@ class Linter
 
     @ # return
 
-  stylus_: (source) ->
+  lintStylus_: (source) ->
 
     await new Promise (resolve) ->
 

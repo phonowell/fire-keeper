@@ -1050,22 +1050,11 @@
   Linter = (function() {
     class Linter {
       /*
-      coffee_(source)
       execute_(source)
-      markdown_(source)
-      stylus_(source)
+      lintCoffee_(source)
+      lintMarkdown_(source)
+      lintStylus_(source)
       */
-      async coffee_(source) {
-        await new Promise(function(resolve) {
-          var lint;
-          lint = getPlugin('gulp-coffeelint');
-          return gulp.src(source).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
       async execute_(source) {
         var extname, j, len, listSource, method;
         listSource = (await $.source_(source));
@@ -1081,7 +1070,21 @@
         return this;
       }
 
-      async markdown_(source) {
+      async lintCoffee_(source) {
+        await new Promise(function(resolve) {
+          var lint;
+          lint = getPlugin('gulp-coffeelint');
+          // does not know why
+          // have to put 'on()' before 'pipe()'
+          // strange
+          return gulp.src(source).on('end', function() {
+            return resolve();
+          }).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter());
+        });
+        return this;
+      }
+
+      async lintMarkdown_(source) {
         await new Promise(function(resolve) {
           var lint, option;
           lint = getPlugin('markdownlint');
@@ -1126,7 +1129,7 @@
         return this;
       }
 
-      async stylus_(source) {
+      async lintStylus_(source) {
         await new Promise(function(resolve) {
           var lint;
           lint = getPlugin('gulp-stylint');
@@ -1143,9 +1146,9 @@
     mapMethod
     */
     Linter.prototype.mapMethod = {
-      '.coffee': 'coffee_',
-      '.md': 'markdown_',
-      '.styl': 'stylus_'
+      '.coffee': 'lintCoffee_',
+      '.md': 'lintMarkdown_',
+      '.styl': 'lintStylus_'
     };
 
     return Linter;

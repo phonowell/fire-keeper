@@ -32,7 +32,7 @@ describe '$.compile_(source, [target], [option])', ->
       .compile_ source
 
       unless await $.isExisted_ target
-       throw new Error()
+        throw new Error()
 
       cont = await $.read_ target
       unless ~cont.search '=>'
@@ -58,7 +58,7 @@ describe '$.compile_(source, [target], [option])', ->
         harmony: false
 
       unless await $.isExisted_ target
-       throw new Error()
+        throw new Error()
 
       cont = await $.read_ target
       if ~cont.search '=>'
@@ -85,7 +85,7 @@ describe '$.compile_(source, [target], [option])', ->
         map: true
 
       unless await $.isExisted_ target
-       throw new Error()
+        throw new Error()
 
       cont = await $.read_ target
       unless ~cont.search 'sourceMappingURL='
@@ -111,7 +111,7 @@ describe '$.compile_(source, [target], [option])', ->
       .compile_ source
 
       unless await $.isExisted_ target
-       throw new Error()
+        throw new Error()
 
       cont = await $.read_ target
       if ~cont.search 'sourceMappingURL='

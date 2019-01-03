@@ -4,4 +4,8 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  $.i await $.get_ 'http://registry.npmjs.org/fire-keeper/latest'
+  listSource = await $.source_ [
+    './temp/**/*.styl'
+  ]
+
+  await $.lint_ listSource
