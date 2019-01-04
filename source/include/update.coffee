@@ -1,25 +1,35 @@
 class Updater
 
   ###
+  cache
   listCmd
   namespace
+  pathCache
   ###
 
+  cache: null
   listCmd: []
   namespace: '$.update_'
+  pathCache: './temp/update-cache.json'
 
   ###
+  clean_()
   execute_(arg...)
   getLatestVersion_(name)
   listPkg_(list, isDev)
   ###
 
+  clean_: ->
+    await $.clean_ @pathCache
+
   execute_: (arg...) ->
 
     data = await $.read_ './package.json'
 
-    await @listPkg_ data.dependencies, false
-    await @listPkg_ data.devDependencies, true
+    await $.chain @
+    .listPkg_ data.dependencies, false
+    .listPkg_ data.devDependencies, true
+    .clean_()
 
     unless @listCmd.length
       $.info 'update'
@@ -32,12 +42,23 @@ class Updater
 
   getLatestVersion_: (name) ->
 
+    @cache or= await $.read_ @pathCache
+    @cache or= {}
+
+    version = @cache[name]
+    if version
+      return version
+
     url = [
       'http://registry.npmjs.org'
       "/#{name}/latest"
     ].join ''
 
     {version} = await $.get_ url
+
+    @cache[name] = version
+    await $.write_ @pathCache, @cache
+
     version # return
 
   listPkg_: (list, isDev) ->

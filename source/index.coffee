@@ -8,6 +8,7 @@
 
 #= include include/backup.coffee
 #= include include/chain.coffee
+#= include include/clean.coffee
 #= include include/compile.coffee
 #= include include/download.coffee
 #= include include/exec.coffee

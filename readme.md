@@ -47,6 +47,7 @@ pkg = await $.readAsync './package.json'
 - [$.write_(source, data, [option])](doc/write.md)
 - [$.zip_(source, [target], [option])](doc/zip.md)
 
+- $.clean_(source)
 - $.compile_(source, [target], [option])
 - $.download_(source, target, [option])
 - $.exec_(cmd, [option])

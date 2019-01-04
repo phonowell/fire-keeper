@@ -4,8 +4,4 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  listSource = await $.source_ [
-    './temp/**/*.styl'
-  ]
-
-  await $.lint_ listSource
+  await $.clean_ './temp/update-cache.json'

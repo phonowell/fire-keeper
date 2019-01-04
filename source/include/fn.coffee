@@ -2,7 +2,6 @@
 excludeInclude(source)
 formatArgument(arg)
 getPlugin(name)
-getRelativePath(source, target)
 normalizePath(string)
 normalizePathToArray(source)
 wrapList(list)
@@ -86,6 +85,7 @@ wrapList = (list) ->
 $.fn = {
   excludeInclude
   formatArgument
+  getPlugin
   normalizePath
   normalizePathToArray
   wrapList

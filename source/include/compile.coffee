@@ -9,28 +9,28 @@ class Compiler
   ###
 
   mapMethod:
-    '.coffee': 'coffee_'
-    '.css': 'css_'
-    '.js': 'js_'
-    '.md': 'markdown_'
-    '.pug': 'pug_'
-    '.styl': 'stylus_'
-    '.yaml': 'yaml_'
-    '.yml': 'yaml_'
+    '.coffee': 'compileCoffee_'
+    '.css': 'compileCss_'
+    '.js': 'compileJs_'
+    '.md': 'compileMd_'
+    '.pug': 'compilePug_'
+    '.styl': 'compileStyl_'
+    '.yaml': 'compileYaml_'
+    '.yml': 'compileYaml_'
 
 
   ###
-  coffee_(source, target, option)
-  css_(source, target, option)
+  compileCoffee_(source, target, option)
+  compileCss_(source, target, option)
+  compileJs_(source, target, option)
+  compileMd_(source, target, option)
+  compilePug_(source, target, option)
+  compileStyl_(source, target, option)
+  compileYaml_(source, target, option)
   execute_(arg...)
-  js_(source, target, option)
-  markdown_(source, target, option)
-  pug_(source, target, option)
-  stylus_(source, target, option)
-  yaml_(source, target, option)
   ###
 
-  coffee_: (source, target, option) ->
+  compileCoffee_: (source, target, option) ->
     
     await new Promise (resolve) ->
 
@@ -58,7 +58,7 @@ class Compiler
     
     @ # return
 
-  css_: (source, target, option) ->
+  compileCss_: (source, target, option) ->
 
     await new Promise (resolve) ->
 
@@ -71,6 +71,104 @@ class Compiler
       .pipe plumber()
       .pipe using()
       .pipe gulpIf option.minify, cleanCss()
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compileJs_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      uglify = getPlugin 'uglify'
+
+      base = option.base
+      sourcemaps = option.map
+
+      gulp.src source, {base, sourcemaps}
+      .pipe plumber()
+      .pipe using()
+      .pipe gulpIf option.minify, uglify()
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compileMd_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      htmlmin = getPlugin 'gulp-htmlmin'
+      markdown = getPlugin 'gulp-markdown'
+      rename = getPlugin 'gulp-rename'
+
+      option.sanitize ?= true
+      base = option.base
+      sourcemaps = option.map
+
+      gulp.src source, {base, sourcemaps}
+      .pipe plumber()
+      .pipe using()
+      .pipe markdown option
+      .pipe rename extname: '.html'
+      .pipe gulpIf option.minify, htmlmin collapseWhitespace: true
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compilePug_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      pug = getPlugin 'gulp-pug'
+
+      option.pretty ?= !option.minify
+      base = option.base
+      sourcemaps = option.map
+
+      gulp.src source, {base, sourcemaps}
+      .pipe plumber()
+      .pipe using()
+      .pipe pug option
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compileStyl_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      stylus = getPlugin 'gulp-stylus'
+
+      option.compress ?= option.minify
+      base = option.base
+      sourcemaps = option.map
+
+      gulp.src source, {base, sourcemaps}
+      .pipe plumber()
+      .pipe using()
+      .pipe stylus option
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compileYaml_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      yaml = getPlugin 'gulp-yaml'
+
+      option.safe ?= true
+      base = option.base
+      sourcemaps = option.map
+
+      gulp.src source, {base, sourcemaps}
+      .pipe plumber()
+      .pipe using()
+      .pipe yaml option
       .pipe gulp.dest target, {sourcemaps}
       .on 'end', -> resolve()
 
@@ -120,104 +218,6 @@ class Compiler
       await @[method] source, target, option
 
     $.info 'compile', msg
-
-    @ # return
-
-  js_: (source, target, option) ->
-
-    await new Promise (resolve) ->
-
-      uglify = getPlugin 'uglify'
-
-      base = option.base
-      sourcemaps = option.map
-
-      gulp.src source, {base, sourcemaps}
-      .pipe plumber()
-      .pipe using()
-      .pipe gulpIf option.minify, uglify()
-      .pipe gulp.dest target, {sourcemaps}
-      .on 'end', -> resolve()
-
-    @ # return
-
-  markdown_: (source, target, option) ->
-
-    await new Promise (resolve) ->
-
-      htmlmin = getPlugin 'gulp-htmlmin'
-      markdown = getPlugin 'gulp-markdown'
-      rename = getPlugin 'gulp-rename'
-
-      option.sanitize ?= true
-      base = option.base
-      sourcemaps = option.map
-
-      gulp.src source, {base, sourcemaps}
-      .pipe plumber()
-      .pipe using()
-      .pipe markdown option
-      .pipe rename extname: '.html'
-      .pipe gulpIf option.minify, htmlmin collapseWhitespace: true
-      .pipe gulp.dest target, {sourcemaps}
-      .on 'end', -> resolve()
-
-    @ # return
-
-  pug_: (source, target, option) ->
-
-    await new Promise (resolve) ->
-
-      pug = getPlugin 'gulp-pug'
-
-      option.pretty ?= !option.minify
-      base = option.base
-      sourcemaps = option.map
-
-      gulp.src source, {base, sourcemaps}
-      .pipe plumber()
-      .pipe using()
-      .pipe pug option
-      .pipe gulp.dest target, {sourcemaps}
-      .on 'end', -> resolve()
-
-    @ # return
-
-  stylus_: (source, target, option) ->
-
-    await new Promise (resolve) ->
-
-      stylus = getPlugin 'gulp-stylus'
-
-      option.compress ?= option.minify
-      base = option.base
-      sourcemaps = option.map
-
-      gulp.src source, {base, sourcemaps}
-      .pipe plumber()
-      .pipe using()
-      .pipe stylus option
-      .pipe gulp.dest target, {sourcemaps}
-      .on 'end', -> resolve()
-
-    @ # return
-
-  yaml_: (source, target, option) ->
-
-    await new Promise (resolve) ->
-
-      yaml = getPlugin 'gulp-yaml'
-
-      option.safe ?= true
-      base = option.base
-      sourcemaps = option.map
-
-      gulp.src source, {base, sourcemaps}
-      .pipe plumber()
-      .pipe using()
-      .pipe yaml option
-      .pipe gulp.dest target, {sourcemaps}
-      .on 'end', -> resolve()
 
     @ # return
 

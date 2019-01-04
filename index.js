@@ -10,7 +10,6 @@
   excludeInclude(source)
   formatArgument(arg)
   getPlugin(name)
-  getRelativePath(source, target)
   normalizePath(string)
   normalizePathToArray(source)
   wrapList(list)
@@ -148,7 +147,7 @@
   };
 
   // return
-  $.fn = {excludeInclude, formatArgument, normalizePath, normalizePathToArray, wrapList};
+  $.fn = {excludeInclude, formatArgument, getPlugin, normalizePath, normalizePathToArray, wrapList};
 
   /*
   $.fn.require(source)
@@ -385,19 +384,38 @@
     return $.chain.fn(...arg);
   };
 
+  /*
+  clean_(source)
+  */
+  $.clean_ = async function(source) {
+    var listSource, pathDir, type;
+    type = $.type(source);
+    if (type !== 'string') {
+      throw new Error(`invalid type '${type}'`);
+    }
+    await $.remove_(source);
+    pathDir = $.getDirname(source);
+    listSource = (await $.source_(`${pathDir}/**/*`));
+    if (listSource.length) {
+      return $;
+    }
+    await $.remove_(pathDir);
+    return $; // return
+  };
+
   Compiler = (function() {
     class Compiler {
       /*
-      coffee_(source, target, option)
-      css_(source, target, option)
+      compileCoffee_(source, target, option)
+      compileCss_(source, target, option)
+      compileJs_(source, target, option)
+      compileMd_(source, target, option)
+      compilePug_(source, target, option)
+      compileStyl_(source, target, option)
+      compileYaml_(source, target, option)
       execute_(arg...)
-      js_(source, target, option)
-      markdown_(source, target, option)
-      pug_(source, target, option)
-      stylus_(source, target, option)
-      yaml_(source, target, option)
       */
-      async coffee_(source, target, option) {
+      async compileCoffee_(source, target, option) {
         await new Promise(function(resolve) {
           var base, coffee, include, sourcemaps, uglify;
           coffee = getPlugin('gulp-coffee');
@@ -421,13 +439,96 @@
         return this;
       }
 
-      async css_(source, target, option) {
+      async compileCss_(source, target, option) {
         await new Promise(function(resolve) {
           var base, cleanCss, sourcemaps;
           cleanCss = getPlugin('gulp-clean-css');
           base = option.base;
           sourcemaps = option.map;
           return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async compileJs_(source, target, option) {
+        await new Promise(function(resolve) {
+          var base, sourcemaps, uglify;
+          uglify = getPlugin('uglify');
+          base = option.base;
+          sourcemaps = option.map;
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async compileMd_(source, target, option) {
+        await new Promise(function(resolve) {
+          var base, htmlmin, markdown, rename, sourcemaps;
+          htmlmin = getPlugin('gulp-htmlmin');
+          markdown = getPlugin('gulp-markdown');
+          rename = getPlugin('gulp-rename');
+          if (option.sanitize == null) {
+            option.sanitize = true;
+          }
+          base = option.base;
+          sourcemaps = option.map;
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+            extname: '.html'
+          })).pipe(gulpIf(option.minify, htmlmin({
+            collapseWhitespace: true
+          }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async compilePug_(source, target, option) {
+        await new Promise(function(resolve) {
+          var base, pug, sourcemaps;
+          pug = getPlugin('gulp-pug');
+          if (option.pretty == null) {
+            option.pretty = !option.minify;
+          }
+          base = option.base;
+          sourcemaps = option.map;
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async compileStyl_(source, target, option) {
+        await new Promise(function(resolve) {
+          var base, sourcemaps, stylus;
+          stylus = getPlugin('gulp-stylus');
+          if (option.compress == null) {
+            option.compress = option.minify;
+          }
+          base = option.base;
+          sourcemaps = option.map;
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return resolve();
+          });
+        });
+        return this;
+      }
+
+      async compileYaml_(source, target, option) {
+        await new Promise(function(resolve) {
+          var base, sourcemaps, yaml;
+          yaml = getPlugin('gulp-yaml');
+          if (option.safe == null) {
+            option.safe = true;
+          }
+          base = option.base;
+          sourcemaps = option.map;
+          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -489,103 +590,20 @@
         return this;
       }
 
-      async js_(source, target, option) {
-        await new Promise(function(resolve) {
-          var base, sourcemaps, uglify;
-          uglify = getPlugin('uglify');
-          base = option.base;
-          sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
-      async markdown_(source, target, option) {
-        await new Promise(function(resolve) {
-          var base, htmlmin, markdown, rename, sourcemaps;
-          htmlmin = getPlugin('gulp-htmlmin');
-          markdown = getPlugin('gulp-markdown');
-          rename = getPlugin('gulp-rename');
-          if (option.sanitize == null) {
-            option.sanitize = true;
-          }
-          base = option.base;
-          sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
-            extname: '.html'
-          })).pipe(gulpIf(option.minify, htmlmin({
-            collapseWhitespace: true
-          }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
-      async pug_(source, target, option) {
-        await new Promise(function(resolve) {
-          var base, pug, sourcemaps;
-          pug = getPlugin('gulp-pug');
-          if (option.pretty == null) {
-            option.pretty = !option.minify;
-          }
-          base = option.base;
-          sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
-      async stylus_(source, target, option) {
-        await new Promise(function(resolve) {
-          var base, sourcemaps, stylus;
-          stylus = getPlugin('gulp-stylus');
-          if (option.compress == null) {
-            option.compress = option.minify;
-          }
-          base = option.base;
-          sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
-      async yaml_(source, target, option) {
-        await new Promise(function(resolve) {
-          var base, sourcemaps, yaml;
-          yaml = getPlugin('gulp-yaml');
-          if (option.safe == null) {
-            option.safe = true;
-          }
-          base = option.base;
-          sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
-            return resolve();
-          });
-        });
-        return this;
-      }
-
     };
 
     /*
     mapMethod
     */
     Compiler.prototype.mapMethod = {
-      '.coffee': 'coffee_',
-      '.css': 'css_',
-      '.js': 'js_',
-      '.md': 'markdown_',
-      '.pug': 'pug_',
-      '.styl': 'stylus_',
-      '.yaml': 'yaml_',
-      '.yml': 'yaml_'
+      '.coffee': 'compileCoffee_',
+      '.css': 'compileCss_',
+      '.js': 'compileJs_',
+      '.md': 'compileMd_',
+      '.pug': 'compilePug_',
+      '.styl': 'compileStyl_',
+      '.yaml': 'compileYaml_',
+      '.yml': 'compileYaml_'
     };
 
     return Compiler;
@@ -893,7 +911,7 @@
     var extname, jsYaml, res;
     [source] = (await $.source_(source));
     if (!source) {
-      $.i('file', `'${source}' not existed`);
+      $.info('file', `'${source}' not existed`);
       return null;
     }
     res = (await new Promise(function(resolve) {
@@ -1050,8 +1068,8 @@
       /*
       execute_(source)
       lintCoffee_(source)
-      lintMarkdown_(source)
-      lintStylus_(source)
+      lintMd_(source)
+      lintStyl_(source)
       */
       async execute_(source) {
         var extname, j, len, listSource, method;
@@ -1082,7 +1100,7 @@
         return this;
       }
 
-      async lintMarkdown_(source) {
+      async lintMd_(source) {
         await new Promise(function(resolve) {
           var lint, option;
           lint = getPlugin('markdownlint');
@@ -1127,7 +1145,7 @@
         return this;
       }
 
-      async lintStylus_(source) {
+      async lintStyl_(source) {
         await new Promise(function(resolve) {
           var lint;
           lint = getPlugin('gulp-stylint');
@@ -1145,8 +1163,8 @@
     */
     Linter.prototype.mapMethod = {
       '.coffee': 'lintCoffee_',
-      '.md': 'lintMarkdown_',
-      '.styl': 'lintStylus_'
+      '.md': 'lintMd_',
+      '.styl': 'lintStyl_'
     };
 
     return Linter;
@@ -1512,15 +1530,19 @@
   Updater = (function() {
     class Updater {
       /*
+      clean_()
       execute_(arg...)
       getLatestVersion_(name)
       listPkg_(list, isDev)
       */
+      async clean_() {
+        return (await $.clean_(this.pathCache));
+      }
+
       async execute_(...arg) {
         var data;
         data = (await $.read_('./package.json'));
-        await this.listPkg_(data.dependencies, false);
-        await this.listPkg_(data.devDependencies, true);
+        await $.chain(this).listPkg_(data.dependencies, false).listPkg_(data.devDependencies, true).clean_();
         if (!this.listCmd.length) {
           $.info('update', 'every ting is ok');
           return this;
@@ -1531,8 +1553,16 @@
 
       async getLatestVersion_(name) {
         var url, version;
+        this.cache || (this.cache = (await $.read_(this.pathCache)));
+        this.cache || (this.cache = {});
+        version = this.cache[name];
+        if (version) {
+          return version;
+        }
         url = ['http://registry.npmjs.org', `/${name}/latest`].join('');
         ({version} = (await $.get_(url)));
+        this.cache[name] = version;
+        await $.write_(this.pathCache, this.cache);
         return version; // return
       }
 
@@ -1559,12 +1589,18 @@
     };
 
     /*
+    cache
     listCmd
     namespace
+    pathCache
     */
+    Updater.prototype.cache = null;
+
     Updater.prototype.listCmd = [];
 
     Updater.prototype.namespace = '$.update_';
+
+    Updater.prototype.pathCache = './temp/update-cache.json';
 
     return Updater;
 

@@ -10,14 +10,14 @@ class Linter
 
   mapMethod:
     '.coffee': 'lintCoffee_'
-    '.md': 'lintMarkdown_'
-    '.styl': 'lintStylus_'
+    '.md': 'lintMd_'
+    '.styl': 'lintStyl_'
 
   ###
   execute_(source)
   lintCoffee_(source)
-  lintMarkdown_(source)
-  lintStylus_(source)
+  lintMd_(source)
+  lintStyl_(source)
   ###
 
   execute_: (source) ->
@@ -52,7 +52,7 @@ class Linter
 
     @ # return
 
-  lintMarkdown_: (source) ->
+  lintMd_: (source) ->
 
     await new Promise (resolve) ->
 
@@ -86,7 +86,7 @@ class Linter
 
     @ # return
 
-  lintStylus_: (source) ->
+  lintStyl_: (source) ->
 
     await new Promise (resolve) ->
 

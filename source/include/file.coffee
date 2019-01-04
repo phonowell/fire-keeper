@@ -155,7 +155,7 @@ $.read_ = (source, option = {}) ->
 
   [source] = await $.source_ source
   unless source
-    $.i 'file', "'#{source}' not existed"
+    $.info 'file', "'#{source}' not existed"
     return null
 
   res = await new Promise (resolve) ->
