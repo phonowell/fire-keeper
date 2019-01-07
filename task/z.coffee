@@ -4,4 +4,4 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  await $.clean_ './temp/update-cache.json'
+  await $.say_ 'aloha'

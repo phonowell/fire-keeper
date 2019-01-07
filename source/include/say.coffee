@@ -24,8 +24,7 @@ $.say_ = (text) ->
     unless msg.length
       continue
 
-    $.info.pause '$.say_'
-    await $.exec_ "say #{msg}"
-    $.info.resume '$.say_'
+    await $.exec_ "say #{msg}",
+      silent: true
 
-  text # return
+  $ # return

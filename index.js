@@ -658,7 +658,7 @@
       close()
       execute_(cmd, [option])
       info([type], string)
-      spawn
+      parseMessage(buffer)
       */
       close() {
         this.process.kill();
@@ -666,39 +666,54 @@
       }
 
       async execute_(cmd, option = {}) {
-        await new Promise((resolve) => {
-          var arg, cmder, isIgnoreError, type;
-          type = $.type(cmd);
-          cmd = (function() {
-            switch (type) {
-              case 'array':
-                return cmd.join(' && ');
-              case 'string':
-                return cmd;
-              default:
-                throw new Error('invalid type');
-            }
-          })();
+        var arg, cmder, isIgnoreError, isSilent, result, status, type;
+        type = $.type(cmd);
+        cmd = (function() {
+          switch (type) {
+            case 'array':
+              return cmd.join(' && ');
+            case 'string':
+              return cmd;
+            default:
+              throw new Error(`invalid type '${type}'`);
+          }
+        })();
+        isIgnoreError = !!option.ignoreError;
+        delete option.ignoreError;
+        isSilent = !!option.silent;
+        delete option.silent;
+        [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', cmd]] : ['/bin/sh', ['-c', cmd]];
+        if (!isSilent) {
           $.info('exec', cmd);
-          isIgnoreError = !!option.ignoreError;
-          delete option.ignoreError;
-          [cmder, arg] = $.os === 'windows' ? ['cmd.exe', ['/s', '/c', cmd]] : ['/bin/sh', ['-c', cmd]];
+        }
+        [status, result] = (await new Promise((resolve) => {
+          var res;
+          res = null;
           this.process = this.spawn(cmder, arg, option);
           // bind
           this.process.stderr.on('data', (data) => {
-            return this.info('error', data);
+            res = this.parseMessage(data);
+            if (!isSilent) {
+              return this.info('error', data);
+            }
           });
           this.process.stdout.on('data', (data) => {
-            return this.info(data);
+            res = this.parseMessage(data);
+            if (!isSilent) {
+              return this.info(data);
+            }
           });
           return this.process.on('close', function(code) {
             if (code === 0 || isIgnoreError) {
-              return resolve(true);
+              return resolve([true, res]);
             }
-            return resolve(false);
+            return resolve([false, res]);
           });
-        });
-        return this;
+        }));
+        return [
+          status,
+          result // return
+        ];
       }
 
       info(...arg) {
@@ -729,8 +744,15 @@
         return $.log(string);
       }
 
+      parseMessage(buffer) {
+        return _.trimEnd($.parseString(buffer), '\n');
+      }
+
     };
 
+    /*
+    spawn
+    */
     Shell.prototype.spawn = require('child_process').spawn;
 
     return Shell;
@@ -740,10 +762,10 @@
   // return
   $.exec_ = async function(cmd, option) {
     var shell;
-    shell = new Shell();
     if (!cmd) {
-      return shell;
+      return false;
     }
+    shell = new Shell();
     return (await shell.execute_(cmd, option));
   };
 
@@ -1297,11 +1319,11 @@
       if (!msg.length) {
         continue;
       }
-      $.info.pause('$.say_');
-      await $.exec_(`say ${msg}`);
-      $.info.resume('$.say_');
+      await $.exec_(`say ${msg}`, {
+        silent: true
+      });
     }
-    return text; // return
+    return $; // return
   };
 
   /*
@@ -1544,7 +1566,7 @@
         data = (await $.read_('./package.json'));
         await $.chain(this).listPkg_(data.dependencies, false).listPkg_(data.devDependencies, true).clean_();
         if (!this.listCmd.length) {
-          $.info('update', 'every ting is ok');
+          $.info('update', 'everything is ok');
           return this;
         }
         await $.exec_(this.listCmd);
@@ -1552,15 +1574,19 @@
       }
 
       async getLatestVersion_(name) {
-        var url, version;
+        var status, version;
         this.cache || (this.cache = (await $.read_(this.pathCache)));
         this.cache || (this.cache = {});
         version = this.cache[name];
         if (version) {
           return version;
         }
-        url = ['http://registry.npmjs.org', `/${name}/latest`].join('');
-        ({version} = (await $.get_(url)));
+        [status, version] = (await $.exec_(`npm view ${name} version`, {
+          silent: true
+        }));
+        if (!status) {
+          throw new Error(version);
+        }
         this.cache[name] = version;
         await $.write_(this.pathCache, this.cache);
         return version; // return

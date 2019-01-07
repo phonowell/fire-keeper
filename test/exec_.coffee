@@ -12,11 +12,31 @@ clean_ = -> await $.remove_ temp
 
 describe '$.exec_(cmd, [option])', ->
 
-  it '$.exec_()', ->
-    await clean_()
+  ###
+  async function
+  console.log('Aloha')
+  error
+  ###
+
+  it 'async function', ->
 
     type = $.type $.exec_
     unless type == 'async function'
       throw new Error()
 
-    await clean_()
+  it 'npm version', ->
+
+    [status, result] = await $.exec_ 'npm -v'
+    
+    unless status
+      throw new Error()
+
+    unless ~result.search /\d+\.\d+\.\d+/
+      throw new Error()
+
+  it 'error', ->
+
+    [status, result] = await $.exec_ 'fire-keeper-error'
+
+    if status
+      throw new Error()

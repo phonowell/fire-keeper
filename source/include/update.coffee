@@ -33,7 +33,7 @@ class Updater
 
     unless @listCmd.length
       $.info 'update'
-      , 'every ting is ok'
+      , 'everything is ok'
       return @
     
     await $.exec_ @listCmd
@@ -49,12 +49,10 @@ class Updater
     if version
       return version
 
-    url = [
-      'http://registry.npmjs.org'
-      "/#{name}/latest"
-    ].join ''
-
-    {version} = await $.get_ url
+    [status, version] = await $.exec_ "npm view #{name} version",
+      silent: true
+    unless status
+      throw new Error version
 
     @cache[name] = version
     await $.write_ @pathCache, @cache

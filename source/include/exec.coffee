@@ -1,10 +1,16 @@
 class Shell
 
   ###
+  spawn
+  ###
+
+  spawn: require('child_process').spawn
+
+  ###
   close()
   execute_(cmd, [option])
   info([type], string)
-  spawn
+  parseMessage(buffer)
   ###
 
   close: ->
@@ -13,43 +19,54 @@ class Shell
 
   execute_: (cmd, option = {}) ->
 
-    await new Promise (resolve) =>
+    type = $.type cmd
+    cmd = switch type
+      when 'array' then cmd.join ' && '
+      when 'string' then cmd
+      else throw new Error "invalid type '#{type}'"
 
-      type = $.type cmd
-      cmd = switch type
-        when 'array' then cmd.join ' && '
-        when 'string' then cmd
-        else throw new Error 'invalid type'
+    isIgnoreError = !!option.ignoreError
+    delete option.ignoreError
+    isSilent = !!option.silent
+    delete option.silent
 
+    [cmder, arg] = if $.os == 'windows'
+      [
+        'cmd.exe'
+        ['/s', '/c', cmd]
+      ]
+    else
+      [
+        '/bin/sh'
+        ['-c', cmd]
+      ]
+
+    unless isSilent
       $.info 'exec', cmd
 
-      isIgnoreError = !!option.ignoreError
-      delete option.ignoreError
-
-      [cmder, arg] = if $.os == 'windows'
-        [
-          'cmd.exe'
-          ['/s', '/c', cmd]
-        ]
-      else
-        [
-          '/bin/sh'
-          ['-c', cmd]
-        ]
+    [status, result] = await new Promise (resolve) =>
+      res = null
 
       @process = @spawn cmder, arg, option
 
       # bind
+
+      @process.stderr.on 'data', (data) =>
+        res = @parseMessage data
+        unless isSilent
+          @info 'error', data
       
-      @process.stderr.on 'data', (data) => @info 'error', data
-      @process.stdout.on 'data', (data) => @info data
+      @process.stdout.on 'data', (data) =>
+        res = @parseMessage data
+        unless isSilent
+          @info data
 
       @process.on 'close', (code) ->
         if code == 0 or isIgnoreError
-          return resolve true
-        resolve false
+          return resolve [true, res]
+        resolve [false, res]
 
-    @ # return
+    [status, result] # return
 
   info: (arg...) ->
 
@@ -59,7 +76,8 @@ class Shell
       else throw new Error 'invalid argument length'
 
     string = $.trim string
-    if !string.length then return
+    unless string.length
+      return
 
     string = string
     .replace /\r/g, '\n'
@@ -71,10 +89,14 @@ class Shell
 
     $.log string
 
-  spawn: require('child_process').spawn
+  parseMessage: (buffer) ->
+    _.trimEnd ($.parseString buffer), '\n'
 
 # return
 $.exec_ = (cmd, option) ->
+  
+  unless cmd
+    return false
+  
   shell = new Shell()
-  if !cmd then return shell
   await shell.execute_ cmd, option

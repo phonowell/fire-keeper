@@ -13,12 +13,11 @@ clean_ = -> await $.remove_ temp
 describe '$.say_(text)', ->
 
   it '$.say_()', ->
-    await clean_()
 
-    if !$.say_
+    type = $.type $.say_
+    unless type == 'async function'
+      throw new Error "invalid type '#{type}'"
+
+    res = await $.say_ 'a test message'
+    unless res == $
       throw new Error()
-
-    unless _.isFunction $.say_
-      throw new Error()
-
-    await clean_()
