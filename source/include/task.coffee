@@ -45,9 +45,8 @@ $.task = (arg...) ->
     # generate a wrapper
     _fn = fn
     fn = ->
-      await new Promise (resolve) ->
-        _fn()
-        resolve()
+      await new Promise (resolve) -> resolve()
+      _fn()
 
   gulp.task name, fn
 

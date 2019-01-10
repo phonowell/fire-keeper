@@ -218,10 +218,10 @@
       // generate a wrapper
       _fn = fn;
       fn = async function() {
-        return (await new Promise(function(resolve) {
-          _fn();
+        await new Promise(function(resolve) {
           return resolve();
-        }));
+        });
+        return _fn();
       };
     }
     return gulp.task(name, fn);
