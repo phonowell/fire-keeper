@@ -4,5 +4,10 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  fn_ = $.task 'lint'
-  $.i $.type fn_
+  await $.lint_ [
+    './*.coffee'
+    './*.md'
+    './source/**/*.coffee'
+    './task/**/*.coffee'
+    './test/**/*.coffee'
+  ]

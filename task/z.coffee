@@ -4,8 +4,7 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  fn_ = $.task 'y'
-
-  $.i 'start'
-  await fn_()
-  $.i 'end'
+  await $.chain $
+  .write_ './temp/text.yaml', '- a: 1'
+  .compile_ './temp/text.yaml',
+    map: true

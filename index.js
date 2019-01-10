@@ -528,7 +528,7 @@
           }
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
             return resolve();
           });
         });

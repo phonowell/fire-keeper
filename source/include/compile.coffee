@@ -165,11 +165,11 @@ class Compiler
       base = option.base
       sourcemaps = option.map
 
-      gulp.src source, {base, sourcemaps}
+      gulp.src source, {base}
       .pipe plumber()
       .pipe using()
       .pipe yaml option
-      .pipe gulp.dest target, {sourcemaps}
+      .pipe gulp.dest target
       .on 'end', -> resolve()
 
     @ # return
