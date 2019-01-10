@@ -35,7 +35,7 @@ $.task = (arg...) ->
 
   # get function via name
   unless fn
-    return listTask[name]
+    return listTask[name].unwrap()
 
   # set new task
   type = $.type fn
@@ -44,9 +44,10 @@ $.task = (arg...) ->
   unless type == 'async function'
     # generate a wrapper
     _fn = fn
-    fn = -> new Promise (resolve) ->
-      _fn()
-      resolve()
+    fn = ->
+      await new Promise (resolve) ->
+        _fn()
+        resolve()
 
   gulp.task name, fn
 

@@ -207,7 +207,7 @@
     }
     // get function via name
     if (!fn) {
-      return listTask[name];
+      return listTask[name].unwrap();
     }
     // set new task
     type = $.type(fn);
@@ -217,11 +217,11 @@
     if (type !== 'async function') {
       // generate a wrapper
       _fn = fn;
-      fn = function() {
-        return new Promise(function(resolve) {
+      fn = async function() {
+        return (await new Promise(function(resolve) {
           _fn();
           return resolve();
-        });
+        }));
       };
     }
     return gulp.task(name, fn);

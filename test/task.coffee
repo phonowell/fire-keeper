@@ -12,13 +12,15 @@ clean_ = -> await $.remove_ temp
 
 describe '$.task(source)', ->
 
-  it '$.task()', ->
-    await clean_()
+  it '$.task', ->
 
-    if !$.task
-      throw new Error()
+    type = $.type $.task
+    unless type == 'function'
+      throw new Error "invalid type '#{type}'"
 
-    unless _.isFunction $.task
-      throw new Error()
+  it "$.task('name')", ->
 
-    await clean_()
+    fn_ = $.task 'default'
+    type = $.type fn_
+    unless type == 'async function'
+      throw new Error "invalid type '#{type}'"

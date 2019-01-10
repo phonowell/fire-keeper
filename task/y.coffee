@@ -4,10 +4,5 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  listSource = await $.source_ './test/*.coffee'
-
-  for source in listSource
-
-    await $.replace_ source
-    , /# function\n/g
-    , '# function'
+  await $.delay_ 5e3
+  $.i 'y'

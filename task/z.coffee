@@ -4,4 +4,6 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  await $.say_ 'aloha'
+  fn_ = $.task 'default'
+  await fn_()
+  $.i 'wow'
