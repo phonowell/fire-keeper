@@ -425,6 +425,7 @@
             option.harmony = true;
           }
           if (!option.harmony) {
+            option.map = false;
             option.transpile = {
               presets: ['env']
             };

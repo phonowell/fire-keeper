@@ -40,6 +40,7 @@ class Compiler
 
       option.harmony ?= true
       unless option.harmony
+        option.map = false
         option.transpile =
           presets: ['env']
       delete option.harmony
