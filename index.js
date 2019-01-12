@@ -421,16 +421,6 @@
           coffee = getPlugin('gulp-coffee');
           include = getPlugin('gulp-include');
           uglify = getPlugin('uglify');
-          if (option.harmony == null) {
-            option.harmony = true;
-          }
-          if (!option.harmony) {
-            option.map = false;
-            option.transpile = {
-              presets: ['env']
-            };
-          }
-          delete option.harmony;
           base = option.base;
           sourcemaps = option.map;
           return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {

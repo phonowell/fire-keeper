@@ -4,17 +4,10 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  # return await $.compile_ './temp/main.coffee'
-
-  content = [
-    '#=include a.coffee'
-    '#=include b.coffee'
-  ].join '\n'
-
-  await $.chain $
-  .write_ './temp/main.coffee', content
-  .write_ './temp/a.coffee', 'console.log 1'
-  .write_ './temp/b.coffee', 'console.log 2'
-  .compile_ './temp/main.coffee',
-    harmony: false
-    map: true
+  try
+    # your lines here
+    a.b = 1
+  catch e
+    keyword = (e.message or e.name or e.toString())
+    .replace /\s+/g, '+'
+    await $.exec_ "open https://stackoverflow.com/search?q=#{keyword}"

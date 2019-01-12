@@ -1,6 +1,6 @@
 {
   "name": "fire-keeper",
-  "version": "0.0.129",
+  "version": "0.0.130",
   "description": "A little helper to make gulpfile(s) simple.",
   "main": "./index.js",
   "scripts": {
@@ -26,8 +26,6 @@
   "dependencies": {
     "achain": "^1.1.1",
     "archiver": "^3.0.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
     "download": "^7.1.0",
     "estus-flask": "0.0.2",
     "fs-extra": "^7.0.1",

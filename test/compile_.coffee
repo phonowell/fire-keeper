@@ -14,58 +14,6 @@ describe '$.compile_(source, [target], [option])', ->
 
   describe 'coffee', ->
 
-    it 'harmony', ->
-      await clean_()
-
-      source = "#{temp}/test.coffee"
-      target = "#{temp}/test.js"
-
-      cont = [
-        'class Tester'
-        'tester = new Tester()'
-        'tester.get = => @'
-        'tester.get()'
-      ].join '\n'
-
-      await $.chain $
-      .write_ source, cont
-      .compile_ source
-
-      unless await $.isExisted_ target
-        throw new Error()
-
-      cont = await $.read_ target
-      unless ~cont.search '=>'
-        throw new Error()
-
-      await clean_()
-
-    it 'not harmony', ->
-
-      source = "#{temp}/test.coffee"
-      target = "#{temp}/test.js"
-
-      cont = [
-        'class Tester'
-        'tester = new Tester()'
-        'tester.get = => @'
-        'tester.get()'
-      ].join '\n'
-
-      await $.chain $
-      .write_ source, cont
-      .compile_ source,
-        harmony: false
-
-      unless await $.isExisted_ target
-        throw new Error()
-
-      cont = await $.read_ target
-      if ~cont.search '=>'
-        throw new Error()
-
-      await clean_()
-
     it 'sourcemaps', ->
       await clean_()
 

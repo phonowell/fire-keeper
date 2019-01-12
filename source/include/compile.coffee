@@ -38,13 +38,6 @@ class Compiler
       include = getPlugin 'gulp-include'
       uglify = getPlugin 'uglify'
 
-      option.harmony ?= true
-      unless option.harmony
-        option.map = false
-        option.transpile =
-          presets: ['env']
-      delete option.harmony
-
       base = option.base
       sourcemaps = option.map
 
