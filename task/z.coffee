@@ -4,10 +4,28 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  try
-    # your lines here
-    a.b = 1
-  catch e
-    keyword = (e.message or e.name or e.toString())
-    .replace /\s+/g, '+'
-    await $.exec_ "open https://stackoverflow.com/search?q=#{keyword}"
+  # confirm
+  await $.prompt
+    id: 'confirm'
+    type: 'confirm'
+
+  # number
+  await $.prompt
+    id: 'number'
+    type: 'number'
+
+  # text
+  await $.prompt
+    id: 'text'
+    type: 'text'
+
+  # select
+  await $.prompt
+    id: 'select'
+    type: 'select'
+    list: ['a', 'b', 'c']
+
+  # toggle
+  await $.prompt
+    id: 'toggle'
+    type: 'toggle'

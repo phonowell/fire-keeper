@@ -10,7 +10,7 @@ class Updater
   cache: null
   listCmd: []
   namespace: '$.update_'
-  pathCache: './temp/update-cache.json'
+  pathCache: './temp/cache-update.json'
 
   ###
   clean_()

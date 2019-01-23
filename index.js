@@ -17,7 +17,8 @@
   /*
   fetchGitHub_(name)
   */
-  var $, Compiler, Linter, SSH, Shell, Updater, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, plumber, string, using, wrapList;
+  var $, Compiler, Linter, Prompt, SSH, Shell, Updater, _, excludeInclude, fetchGitHub_, formatArgument, fs, fse, getPlugin, gulp, gulpIf, j, k, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, string, using, wrapList,
+    indexOf = [].indexOf;
 
   path = require('path');
 
@@ -159,8 +160,6 @@
   $.plugin = {};
 
   gulpIf = getPlugin('gulp-if');
-
-  plumber = getPlugin('gulp-plumber');
 
   using = getPlugin('gulp-using');
 
@@ -423,7 +422,7 @@
           uglify = getPlugin('uglify');
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -436,7 +435,7 @@
           cleanCss = getPlugin('gulp-clean-css');
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(gulpIf(option.minify, cleanCss())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -449,7 +448,7 @@
           uglify = getPlugin('uglify');
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -467,7 +466,7 @@
           }
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(markdown(option)).pipe(rename({
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(markdown(option)).pipe(rename({
             extname: '.html'
           })).pipe(gulpIf(option.minify, htmlmin({
             collapseWhitespace: true
@@ -487,7 +486,7 @@
           }
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -503,7 +502,7 @@
           }
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base, sourcemaps}).pipe(plumber()).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+          return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(stylus(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
             return resolve();
           });
         });
@@ -519,7 +518,7 @@
           }
           base = option.base;
           sourcemaps = option.map;
-          return gulp.src(source, {base}).pipe(plumber()).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
+          return gulp.src(source, {base}).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
             return resolve();
           });
         });
@@ -797,7 +796,7 @@
       rename = getPlugin('gulp-rename');
       return gulp.src(source, {
         allowEmpty: true
-      }).pipe(plumber()).pipe(using()).pipe(gulpIf(!!option, rename(option))).pipe(gulp.dest(function(e) {
+      }).pipe(using()).pipe(gulpIf(!!option, rename(option))).pipe(gulp.dest(function(e) {
         return target || e.base;
       })).on('end', function() {
         return resolve();
@@ -921,12 +920,14 @@
   };
 
   $.read_ = async function(source, option = {}) {
-    var extname, jsYaml, res;
-    [source] = (await $.source_(source));
-    if (!source) {
-      $.info('file', `'${source}' not existed`);
+    var extname, jsYaml, listSource, pathSource, res;
+    pathSource = source;
+    listSource = (await $.source_(pathSource));
+    if (!(listSource != null ? listSource.length : void 0)) {
+      $.info('file', `'${pathSource}' not existed`);
       return null;
     }
+    source = listSource[0];
     res = (await new Promise(function(resolve) {
       return fs.readFile(source, function(err, data) {
         if (err) {
@@ -977,7 +978,7 @@
       var rename;
       // require
       rename = getPlugin('gulp-rename');
-      return gulp.src(source).pipe(plumber()).pipe(using()).pipe(rename(option)).pipe(gulp.dest(function(e) {
+      return gulp.src(source).pipe(using()).pipe(rename(option)).pipe(gulp.dest(function(e) {
         listHistory.push(e.history);
         return e.base;
       })).on('end', function() {
@@ -1108,7 +1109,7 @@
           // strange
           return gulp.src(source).on('end', function() {
             return resolve();
-          }).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter());
+          }).pipe(using()).pipe(lint()).pipe(lint.reporter());
         });
         return this;
       }
@@ -1162,7 +1163,7 @@
         await new Promise(function(resolve) {
           var lint;
           lint = getPlugin('gulp-stylint');
-          return gulp.src(source).pipe(plumber()).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
+          return gulp.src(source).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
             return resolve();
           });
         });
@@ -1193,57 +1194,138 @@
     return $; // return
   };
 
-  /*
-  prompt(option)
-  */
-  $.prompt = async function(option) {
-    var base1, i, item, j, len, ref, ref1, res, type;
-    type = $.type(option);
-    if (type !== 'object') {
-      throw new Error(`invalid type '${type}'`);
-    }
-    // default value
-    option.initial || (option.initial = option.default);
-    option.message || (option.message = $.prompt.mapMessage[option.type] || 'input');
-    option.name || (option.name = 'value');
-    if ((ref = option.type) === 'autocomplete' || ref === 'multiselect' || ref === 'select') {
-      if (!(option.choices || (option.choices = option.choice))) {
-        throw new Error('got no choice(s)');
-      }
-      ref1 = option.choices;
-      for (i = j = 0, len = ref1.length; j < len; i = ++j) {
-        item = ref1[i];
-        type = $.type(item);
-        if (type === 'object') {
-          continue;
+  Prompt = (function() {
+    class Prompt {
+      /*
+      execute_(option)
+      getCache_(option)
+      listType
+      mapMessage
+      namespace
+      pathCache
+      setCache_(option, value)
+      setOption_(option)
+      */
+      async execute_(option) {
+        var res, resRaw, type;
+        type = $.type(option);
+        if (type !== 'object') {
+          throw new Error(`invalid type '${type}'`);
         }
-        option.choices[i] = {
-          title: item,
-          value: item
-        };
+        $.info.pause(this.namespace);
+        option = (await this.setOption_(option));
+        
+        // execute
+        this.fn_ || (this.fn_ = require('prompts'));
+        resRaw = (await this.fn_(option));
+        res = resRaw[option.name];
+        await this.setCache_(option, res);
+        $.info.resume(this.namespace);
+        // return
+        if (option.raw) {
+          return resRaw;
+        }
+        return res;
       }
-    } else if (option.type === 'toggle') {
-      option.active || (option.active = 'on');
-      option.inactive || (option.inactive = 'off');
-    }
-    
-    // execute
-    (base1 = $.prompt).fn || (base1.fn = require('prompts'));
-    res = (await $.prompt.fn(option));
-    // return
-    if (option.raw) {
-      return res;
-    }
-    return res[option.name];
-  };
 
-  $.prompt.mapMessage = {
-    confirm: 'confirm',
-    multiselect: 'select',
-    number: 'input number',
-    select: 'select',
-    text: 'input text',
-    toggle: 'toggle'
+      async getCache_(option) {
+        var cache, index, item, ref, type, value;
+        if (!option.id) {
+          return void 0;
+        }
+        if (ref = option.type, indexOf.call(this.listType, ref) < 0) {
+          return void 0;
+        }
+        cache = (await $.read_(this.pathCache));
+        if (!(item = _.get(cache, option.id))) {
+          return void 0;
+        }
+        ({type, value} = item);
+        if (type !== option.type) {
+          return void 0;
+        }
+        // return
+        if (type === 'select') {
+          index = _.findIndex(option.choices, {value});
+          if (!(index > -1)) {
+            return void 0;
+          }
+          return index;
+        }
+        return value;
+      }
+
+      async setCache_(option, value) {
+        var cache, id, type;
+        ({id, type} = option);
+        if (!(id && (value != null) && indexOf.call(this.listType, type) >= 0)) {
+          return this;
+        }
+        cache = (await $.read_(this.pathCache));
+        cache || (cache = {});
+        cache[option.id] = {type, value};
+        await $.write_(this.pathCache, cache);
+        return this;
+      }
+
+      async setOption_(option) {
+        var i, item, j, len, ref, ref1, type;
+        // default value
+        option.message || (option.message = this.mapMessage[option.type] || 'input');
+        option.name || (option.name = 'value');
+        if ((ref = option.type) === 'autocomplete' || ref === 'multiselect' || ref === 'select') {
+          if (!(option.choices || (option.choices = option.choice || option.list))) {
+            throw new Error('got no choice(s)');
+          }
+          ref1 = option.choices;
+          for (i = j = 0, len = ref1.length; j < len; i = ++j) {
+            item = ref1[i];
+            type = $.type(item);
+            if (type === 'object') {
+              continue;
+            }
+            option.choices[i] = {
+              title: item,
+              value: item
+            };
+          }
+        } else if (option.type === 'toggle') {
+          option.active || (option.active = 'on');
+          option.inactive || (option.inactive = 'off');
+        }
+        // have to be here
+        // behind option.choices
+        option.initial || (option.initial = option.default || (await this.getCache_(option)));
+        return option; // return
+      }
+
+    };
+
+    Prompt.prototype.listType = ['confirm', 'number', 'select', 'text', 'toggle'];
+
+    Prompt.prototype.mapMessage = {
+      confirm: 'confirm',
+      multiselect: 'select',
+      number: 'input number',
+      select: 'select',
+      text: 'input text',
+      toggle: 'toggle'
+    };
+
+    Prompt.prototype.namespace = '$.prompt';
+
+    Prompt.prototype.pathCache = './temp/cache-prompt.json';
+
+    return Prompt;
+
+  }).call(this);
+
+  
+  // return
+  $.prompt = async function(...arg) {
+    var base1, prompt;
+    prompt = (base1 = $.prompt).fn || (base1.fn = new Prompt());
+    return (await prompt.execute_(...arg));
   };
 
   /*
@@ -1617,7 +1699,7 @@
 
     Updater.prototype.namespace = '$.update_';
 
-    Updater.prototype.pathCache = './temp/update-cache.json';
+    Updater.prototype.pathCache = './temp/cache-update.json';
 
     return Updater;
 

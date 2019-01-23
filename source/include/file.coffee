@@ -33,7 +33,6 @@ $.copy_ = (arg...) ->
 
     gulp.src source,
       allowEmpty: true
-    .pipe plumber()
     .pipe using()
     .pipe gulpIf !!option, rename option
     .pipe gulp.dest (e) -> target or e.base
@@ -153,10 +152,13 @@ $.move_ = (source, target) ->
 
 $.read_ = (source, option = {}) ->
 
-  [source] = await $.source_ source
-  unless source
-    $.info 'file', "'#{source}' not existed"
+  pathSource = source
+  listSource = await $.source_ pathSource
+
+  unless listSource?.length
+    $.info 'file', "'#{pathSource}' not existed"
     return null
+  source = listSource[0]
 
   res = await new Promise (resolve) ->
     fs.readFile source, (err, data) ->
@@ -222,7 +224,6 @@ $.rename_ = (source, option) ->
     rename = getPlugin 'gulp-rename'
 
     gulp.src source
-    .pipe plumber()
     .pipe using()
     .pipe rename option
     .pipe gulp.dest (e) ->

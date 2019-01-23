@@ -42,7 +42,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe include()
       .pipe coffee option
@@ -62,7 +61,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe gulpIf option.minify, cleanCss()
       .pipe gulp.dest target, {sourcemaps}
@@ -80,7 +78,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe gulpIf option.minify, uglify()
       .pipe gulp.dest target, {sourcemaps}
@@ -101,7 +98,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe markdown option
       .pipe rename extname: '.html'
@@ -122,7 +118,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe pug option
       .pipe gulp.dest target, {sourcemaps}
@@ -141,7 +136,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base, sourcemaps}
-      .pipe plumber()
       .pipe using()
       .pipe stylus option
       .pipe gulp.dest target, {sourcemaps}
@@ -160,7 +154,6 @@ class Compiler
       sourcemaps = option.map
 
       gulp.src source, {base}
-      .pipe plumber()
       .pipe using()
       .pipe yaml option
       .pipe gulp.dest target

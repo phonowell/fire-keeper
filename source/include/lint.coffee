@@ -45,7 +45,6 @@ class Linter
       # strange
       gulp.src source
       .on 'end', -> resolve()
-      .pipe plumber()
       .pipe using()
       .pipe lint()
       .pipe lint.reporter()
@@ -93,7 +92,6 @@ class Linter
       lint = getPlugin 'gulp-stylint'
 
       gulp.src source
-      .pipe plumber()
       .pipe using()
       .pipe lint()
       .pipe lint.reporter()
