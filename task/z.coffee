@@ -4,6 +4,8 @@ $ = require '../index'
 # return
 module.exports = ->
 
+  return $.i $.task()
+
   # confirm
   await $.prompt
     id: 'confirm'

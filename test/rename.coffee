@@ -32,7 +32,6 @@ describe 'rename', ->
       'recover'
       'remove'
       'rename'
-      'replace'
       'say'
       'source'
       'stat'

@@ -27,15 +27,18 @@ $.task = (arg...) ->
 
   [name, fn] = arg
 
-  listTask = gulp._registry._tasks
+  mapTask = gulp._registry._tasks
 
   # get task list
   unless name
-    return listTask
+    mapResult = {}
+    for name of mapTask
+      mapResult[name] = mapTask[name].unwrap()
+    return mapResult
 
   # get function via name
   unless fn
-    return listTask[name].unwrap()
+    return mapTask[name].unwrap()
 
   # set new task
   type = $.type fn

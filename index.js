@@ -197,16 +197,20 @@
   */
   // task
   $.task = function(...arg) {
-    var _fn, fn, listTask, name, type;
+    var _fn, fn, mapResult, mapTask, name, type;
     [name, fn] = arg;
-    listTask = gulp._registry._tasks;
+    mapTask = gulp._registry._tasks;
     // get task list
     if (!name) {
-      return listTask;
+      mapResult = {};
+      for (name in mapTask) {
+        mapResult[name] = mapTask[name].unwrap();
+      }
+      return mapResult;
     }
     // get function via name
     if (!fn) {
-      return listTask[name].unwrap();
+      return mapTask[name].unwrap();
     }
     // set new task
     type = $.type(fn);
@@ -1329,41 +1333,6 @@
   };
 
   /*
-  replace_(source, option...)
-  */
-  $.replace_ = async function(source, ...option) {
-    var callback, cont, j, len, listSource, msg, reg, replacement, res, src;
-    if (!source) {
-      throw new Error('invalid source');
-    }
-    listSource = (await $.source_(source));
-    switch (option.length) {
-      case 1:
-        callback = option[0];
-        break;
-      case 2:
-        [reg, replacement] = option;
-        break;
-      default:
-        throw new Error('invalid argument length');
-    }
-    msg = callback ? 'replaced with function' : `replaced '${reg}' to '${replacement}'`;
-    for (j = 0, len = listSource.length; j < len; j++) {
-      src = listSource[j];
-      $.info.pause('$.replace_');
-      cont = $.parseString((await $.read_(src)));
-      res = callback ? $.parseString(callback(cont)) : cont.replace(reg, replacement);
-      if (res === cont) {
-        continue;
-      }
-      await $.write_(src, res);
-      $.info.resume('$.replace_');
-      $.info('replace', `${msg}, in '${src}'`);
-    }
-    return $; // return
-  };
-
-  /*
   say_(text)
   */
   $.say_ = async function(text) {
@@ -1877,7 +1846,7 @@
 
   $.argv = $.plugin.yargs.argv;
 
-  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'exec', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'replace', 'say', 'source', 'stat', 'update', 'walk', 'write', 'zip'];
+  listKey = ['backup', 'compile', 'copy', 'delay', 'download', 'exec', 'isExisted', 'isSame', 'link', 'lint', 'mkdir', 'move', 'read', 'recover', 'remove', 'rename', 'say', 'source', 'stat', 'update', 'walk', 'write', 'zip'];
 
   for (j = 0, len = listKey.length; j < len; j++) {
     key = listKey[j];

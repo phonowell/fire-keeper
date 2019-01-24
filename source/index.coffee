@@ -16,7 +16,6 @@
 #=include include/get-name.coffee
 #=include include/lint.coffee
 #=include include/prompt.coffee
-#=include include/replace.coffee
 #=include include/say.coffee
 #=include include/source.coffee
 #=include include/ssh.coffee
