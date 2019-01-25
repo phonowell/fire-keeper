@@ -1609,6 +1609,7 @@
         await $.chain(this).listPkg_(data.dependencies, false).listPkg_(data.devDependencies, true);
         if (!this.listCmd.length) {
           $.info('update', 'everything is ok');
+          await this.clean_();
           return this;
         }
         await $.exec_(this.listCmd);

@@ -84,8 +84,8 @@ gurumin
 secret
 
 # lint config files
-coffeelint.yaml
-stylint.yaml
+.stylintsrc
+coffeelint.json
 
 # temp
 .temp

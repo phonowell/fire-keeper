@@ -33,6 +33,7 @@ class Updater
     unless @listCmd.length
       $.info 'update'
       , 'everything is ok'
+      await @clean_()
       return @
     
     await $.exec_ @listCmd
