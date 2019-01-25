@@ -1606,12 +1606,13 @@
       async execute_(...arg) {
         var data;
         data = (await $.read_('./package.json'));
-        await $.chain(this).listPkg_(data.dependencies, false).listPkg_(data.devDependencies, true).clean_();
+        await $.chain(this).listPkg_(data.dependencies, false).listPkg_(data.devDependencies, true);
         if (!this.listCmd.length) {
           $.info('update', 'everything is ok');
           return this;
         }
         await $.exec_(this.listCmd);
+        await this.clean_();
         return this;
       }
 

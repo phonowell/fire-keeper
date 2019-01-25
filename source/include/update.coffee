@@ -29,7 +29,6 @@ class Updater
     await $.chain @
     .listPkg_ data.dependencies, false
     .listPkg_ data.devDependencies, true
-    .clean_()
 
     unless @listCmd.length
       $.info 'update'
@@ -37,6 +36,7 @@ class Updater
       return @
     
     await $.exec_ @listCmd
+    await @clean_()
 
     @ # return
 
