@@ -15,7 +15,7 @@ describe '$.reload(source)', ->
   it '$.reload()', ->
     await clean_()
 
-    if !$.reload
+    unless $.reload
       throw new Error()
 
     unless _.isFunction $.reload

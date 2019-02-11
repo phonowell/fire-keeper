@@ -40,7 +40,8 @@ $.copy_ = (arg...) ->
 
   msg = "copied #{wrapList source}
   to #{wrapList target}"
-  if option then msg += ", as '#{$.parseString option}'"
+  if option
+    msg += ", as '#{$.parseString option}'"
   $.info 'copy', msg
 
   $ # return
@@ -74,7 +75,7 @@ $.isSame_ = (source) ->
 
     {size} = stat
 
-    if !cache
+    unless cache
       cache = size
       continue
 
@@ -94,7 +95,7 @@ $.isSame_ = (source) ->
 
     cont = $.parseString cont
 
-    if !cache
+    unless cache
       cache = cont
       continue
 
@@ -119,7 +120,8 @@ $.link_ = (source, target) ->
 
 $.mkdir_ = (source) ->
 
-  if !source then throw new Error 'invalid argument length'
+  unless source
+    throw new Error 'invalid source'
 
   source = normalizePathToArray source
 
@@ -162,7 +164,10 @@ $.read_ = (source, option = {}) ->
 
   res = await new Promise (resolve) ->
     fs.readFile source, (err, data) ->
-      if err then throw err
+      
+      if err
+        throw err
+      
       resolve data
 
   $.info 'file', "read '#{source}'"
@@ -254,7 +259,10 @@ $.stat_ = (source) ->
   new Promise (resolve) ->
 
     fs.stat source, (err, stat) ->
-      if err then throw err
+      
+      if err
+        throw err
+      
       resolve stat
 
 $.write_ = (source, data, option) ->

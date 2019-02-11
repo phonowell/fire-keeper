@@ -55,7 +55,8 @@ describe '$.copy_(source, target, [option])', ->
   it "$.copy_('./license.md', '~/Downloads/temp')", ->
     await clean_()
 
-    if $.os != 'macos' then return
+    if $.os != 'macos'
+      return
 
     source = './license.md'
     target = '~/Downloads/temp/license.md'

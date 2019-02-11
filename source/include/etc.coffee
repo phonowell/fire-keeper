@@ -18,7 +18,8 @@ $.delay_ = (time = 0) ->
 
 $.reload = (source) ->
 
-  if !source then throw new Error 'invalid source'
+  unless source
+    throw new Error 'invalid source'
 
   source = normalizePathToArray source
 

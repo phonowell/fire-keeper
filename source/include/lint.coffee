@@ -60,7 +60,10 @@ class Linter
       option = files: source
       
       lint option, (err, result) ->
-        if err then throw err
+        
+        if err
+          throw err
+        
         for filename, list of result
 
           unless 'array' == $.type list

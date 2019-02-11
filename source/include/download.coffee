@@ -21,7 +21,8 @@ $.download_ = (arg...) ->
   await download source, target, option
 
   msg = "downloaded #{wrapList source} to #{wrapList target}"
-  if option then msg += ", as '#{$.parseString option}'"
+  if option
+    msg += ", as '#{$.parseString option}'"
   $.info 'download', msg
 
   $ # return

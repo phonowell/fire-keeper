@@ -58,7 +58,9 @@ class SSH
       $.info 'ssh', kleur.blue cmd
 
       conn.exec cmd, (err, stream) =>
-        if err then throw err
+        
+        if err
+          throw err
 
         stream.on 'end', -> resolve()
 
@@ -73,7 +75,8 @@ class SSH
   info: (chunk) ->
 
     string = $.trim $.parseString chunk
-    if !string.length then return
+    unless string.length
+      return
 
     string = string
     .replace /\r/g, '\n'
@@ -124,7 +127,8 @@ class SSH
 
       conn.sftp (err, sftp) =>
 
-        if err then throw err
+        if err
+          throw err
 
         for src in source
 
@@ -170,7 +174,10 @@ class SSH
     await new Promise (resolve) ->
 
       sftp.fastPut source, target, (err) ->
-        if err then throw err
+        
+        if err
+          throw err
+        
         $.info 'ssh', "uploaded '#{source}' to '#{target}'"
         resolve()
 

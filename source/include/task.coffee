@@ -233,4 +233,3 @@ $.task 'update', ->
   {registry} = $.argv
 
   await $.update_ {registry}
-  await $.exec_ 'npm prune'

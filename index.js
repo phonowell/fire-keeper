@@ -334,8 +334,7 @@
   $.task('update', async function() {
     var registry;
     ({registry} = $.argv);
-    await $.update_({registry});
-    return (await $.exec_('npm prune'));
+    return (await $.update_({registry}));
   });
 
   /*
@@ -889,7 +888,7 @@
   $.mkdir_ = async function(source) {
     var listPromise, src;
     if (!source) {
-      throw new Error('invalid argument length');
+      throw new Error('invalid source');
     }
     source = normalizePathToArray(source);
     listPromise = (function() {
@@ -1649,7 +1648,7 @@
             continue;
           }
           $.info('update', `'${name}': '${versionCurrent}' ${kleur.green('->')} '${versionLatest}'`);
-          lineCmd = ['npm install', `${name}@${versionLatest}`, isDev ? '' : '--production', isDev ? '--save-dev' : '--save'].join(' ');
+          lineCmd = ['cnpm install', `${name}@${versionLatest}`, isDev ? '' : '--production', isDev ? '--save-dev' : '--save'].join(' ');
           lineCmd = lineCmd.replace(/\s{2,}/g, ' ');
           this.listCmd.push(lineCmd);
         }

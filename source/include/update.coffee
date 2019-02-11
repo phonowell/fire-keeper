@@ -86,7 +86,7 @@ class Updater
       '#{versionLatest}'"
 
       lineCmd = [
-        'npm install'
+        'cnpm install'
         "#{name}@#{versionLatest}"
         if isDev then '' else '--production'
         if isDev then '--save-dev' else '--save'

@@ -54,12 +54,18 @@ $.zip_ = (arg...) ->
     
     msg = null
     archive.on 'entry', (e) ->
-      if isSilent then return
+      if isSilent
+        return
       msg = $.info.renderPath e.sourcePath
       
     archive.on 'progress', (e) ->
-      if isSilent then return
-      if !msg then return
+      
+      if isSilent
+        return
+      
+      unless msg
+        return
+      
       gray = kleur.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
       magenta = kleur.magenta msg
       msg = "#{gray} #{magenta}"

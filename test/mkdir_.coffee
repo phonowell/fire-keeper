@@ -45,7 +45,7 @@ describe '$.mkdir_(source)', ->
       "#{temp}/c"
     ]
 
-    if !isExisted
+    unless isExisted
       throw new Error()
 
     await clean_()

@@ -15,7 +15,7 @@ describe '$.update_()', ->
   it '$.update_()', ->
     await clean_()
 
-    if !$.update_
+    unless $.update_
       throw new Error()
 
     unless _.isFunction $.update_
