@@ -19,6 +19,7 @@ class Prompt
 
     $.info.pause @namespace
 
+    option = _.cloneDeep option
     option = await @setOption_ option
     
     # execute

@@ -1216,6 +1216,7 @@
           throw new Error(`invalid type '${type}'`);
         }
         $.info.pause(this.namespace);
+        option = _.cloneDeep(option);
         option = (await this.setOption_(option));
         
         // execute
