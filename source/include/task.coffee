@@ -73,8 +73,9 @@ $.task 'gurumin', ->
 
   await fetchGitHub_ 'phonowell/gurumin'
 
-  await $.remove_ './source/gurumin'
-  await $.link_ './../gurumin/source', './source/gurumin'
+  await $.chain $
+  .remove_ './gurumin'
+  .copy_ './../gurumin/source/**/*', './gurumin'
 
 $.task 'kokoro', ->
 
@@ -119,7 +120,7 @@ $.task 'noop', -> null
 # https://github.com/tj/node-prune
 $.task 'prune', ->
 
-  await $.exec_ 'npm prune'
+  # await $.exec_ 'npm prune'
 
   base = './node_modules'
 
