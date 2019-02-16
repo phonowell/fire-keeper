@@ -107,7 +107,8 @@
     if (isIgnore) {
       string = `!${string}`;
     }
-    return string; // return
+    // return
+    return _.trimEnd(string, '/');
   };
 
   normalizePathToArray = function(source) {
@@ -1625,7 +1626,7 @@
         if (version) {
           return version;
         }
-        [status, version] = (await $.exec_(`npm view ${name} version`, {
+        [status, version] = (await $.exec_(`cnpm view ${name} version`, {
           silent: true
         }));
         if (!status) {
@@ -1714,18 +1715,7 @@
   */
   $.zip_ = async function(...arg) {
     var _source, base, filename, isSilent, option, source, target;
-    [source, target, option] = (function() {
-      switch (arg.length) {
-        case 1:
-          return [arg[0], null, null];
-        case 2:
-          return [arg[0], null, arg[1]];
-        case 3:
-          return arg;
-        default:
-          throw new Error('invalid argument length');
-      }
-    })();
+    [source, target, option] = arg;
     _source = source;
     source = normalizePathToArray(source);
     target || (target = $.getDirname(source[0]).replace(/\*/g, ''));
@@ -1758,13 +1748,12 @@
     })());
     base = normalizePath(base);
     filename || (filename = `${$.getBasename(target)}.zip`);
-    filename = `${target}/${filename}`;
     await new Promise(async function(resolve) {
       var ansi, archive, archiver, j, len, listSource, msg, name, output, src;
       // require
       ansi = getPlugin('sisteransi');
       archiver = getPlugin('archiver');
-      output = fs.createWriteStream(filename);
+      output = fs.createWriteStream(`${target}/${filename}`);
       archive = archiver('zip', {
         zlib: {
           level: 9
@@ -1809,7 +1798,7 @@
       }
       return archive.finalize();
     });
-    $.info('zip', `zipped ${wrapList(source)} to ${wrapList(target)}, named as '${filename}'`);
+    $.info('zip', `zipped ${wrapList(source)} to '${target}', named as '${filename}'`);
     return $; // return
   };
 

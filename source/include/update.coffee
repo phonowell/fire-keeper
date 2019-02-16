@@ -50,7 +50,7 @@ class Updater
     if version
       return version
 
-    [status, version] = await $.exec_ "npm view #{name} version",
+    [status, version] = await $.exec_ "cnpm view #{name} version",
       silent: true
     unless status
       throw new Error version

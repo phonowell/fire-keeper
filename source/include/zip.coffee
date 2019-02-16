@@ -4,11 +4,7 @@ zip_(source, [target], [option])
 
 $.zip_ = (arg...) ->
 
-  [source, target, option] = switch arg.length
-    when 1 then [arg[0], null, null]
-    when 2 then [arg[0], null, arg[1]]
-    when 3 then arg
-    else throw new Error 'invalid argument length'
+  [source, target, option] = arg
 
   _source = source
   source = normalizePathToArray source
@@ -36,7 +32,6 @@ $.zip_ = (arg...) ->
   base = normalizePath base
 
   filename or= "#{$.getBasename target}.zip"
-  filename = "#{target}/#{filename}"
 
   await new Promise (resolve) ->
 
@@ -44,7 +39,7 @@ $.zip_ = (arg...) ->
     ansi = getPlugin 'sisteransi'
     archiver = getPlugin 'archiver'
 
-    output = fs.createWriteStream filename
+    output = fs.createWriteStream "#{target}/#{filename}"
     archive = archiver 'zip',
       zlib:
         level: 9
@@ -89,7 +84,7 @@ $.zip_ = (arg...) ->
 
   $.info 'zip'
   , "zipped #{wrapList source}
-  to #{wrapList target},
+  to '#{target}',
   named as '#{filename}'"
 
   $ # return

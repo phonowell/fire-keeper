@@ -4,12 +4,18 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  list = ['a', 'b', 'c']
+  $.info 'z'
 
-  value = await $.prompt
-    id: 'select'
-    type: 'select'
-    list: list
+  # base = '~/Downloads/fire-keeper'
 
-  $.i value
-  $.i list
+  # await $.chain $
+  # .remove_ base
+  # .write_ "#{base}/a.txt"
+  # .write_ "#{base}/b.txt"
+  # .write_ "#{base}/c.txt"
+  # .write_ "#{base}/d.txt"
+  # .zip_ "#{base}/**/*", base
+
+  # await $.zip_ '~/OneDrive/**/*.txt'
+  # , '~'
+  # , 'test.zip'

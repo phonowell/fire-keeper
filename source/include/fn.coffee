@@ -63,7 +63,8 @@ normalizePath = (string) ->
   if isIgnore
     string = "!#{string}"
 
-  string # return
+  # return
+  _.trimEnd string, '/'
 
 normalizePathToArray = (source) ->
   groupSource = formatArgument source
