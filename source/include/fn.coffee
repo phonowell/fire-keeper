@@ -93,7 +93,7 @@ $.fn = {
 }
 
 ###
-$.fn.require(source)
+fn.require(source)
 ###
 
 $.fn.require = (source) -> require normalizePath source

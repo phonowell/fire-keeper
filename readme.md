@@ -45,7 +45,7 @@ pkg = await $.readAsync './package.json'
 - [$.read_(source, [option])](doc/read.md)
 - [$.recover_(source)](doc/recover.md)
 - [$.remove_(source)](doc/remove.md)
-- [$.say_(text)](doc/say.md)
+- [$.say_(text, [option])](doc/say.md)
 - [$.source_(source, [option])](doc/source.md)
 - [$.task(name, [fn])](doc/task.md)
 - [$.update_()](doc/update.md)

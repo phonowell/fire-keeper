@@ -1,8 +1,8 @@
 ###
-say_(text)
+say_(text, [option])
 ###
 
-$.say_ = (text) ->
+$.say_ = (text, option = {}) ->
 
   type = $.type text
   listMessage = switch type
@@ -24,7 +24,29 @@ $.say_ = (text) ->
     unless msg.length
       continue
 
-    await $.exec_ "say #{msg}",
+    listCmd = ['say']
+
+    if option.lang
+      lang = option.lang.toLowerCase()
+      if name = $.say_.mapLang[lang]
+        lang = name
+      listCmd.push "--voice=#{lang}"
+
+    if option.voice
+      voice = option.voice.toLowerCase()
+      listCmd.push "--voice=#{voice}"
+
+    listCmd.push msg
+
+    await $.exec_ (listCmd.join ' '),
       silent: true
 
   $ # return
+
+$.say_.mapLang =
+  'ja': 'kyoko'
+  'ja-jp': 'kyoko'
+  'zh': 'ting-ting'
+  'zh-cn': 'ting-ting'
+  'zh-hk': 'sin-ji'
+  'zh-tw': 'mei-jia'

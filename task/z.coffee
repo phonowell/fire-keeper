@@ -4,18 +4,12 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  $.info 'z'
-
-  # base = '~/Downloads/fire-keeper'
-
-  # await $.chain $
-  # .remove_ base
-  # .write_ "#{base}/a.txt"
-  # .write_ "#{base}/b.txt"
-  # .write_ "#{base}/c.txt"
-  # .write_ "#{base}/d.txt"
-  # .zip_ "#{base}/**/*", base
-
-  # await $.zip_ '~/OneDrive/**/*.txt'
-  # , '~'
-  # , 'test.zip'
+  msg = '月下美人'
+  listLang = [
+    'ja'
+    'zh'
+    'zh-hk'
+    'zh-tw'
+  ]
+  for lang in listLang
+    await $.say_ msg, {lang}

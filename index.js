@@ -152,7 +152,7 @@
   $.fn = {excludeInclude, formatArgument, getPlugin, normalizePath, normalizePathToArray, wrapList};
 
   /*
-  $.fn.require(source)
+  fn.require(source)
   */
   $.fn.require = function(source) {
     return require(normalizePath(source));
@@ -1333,10 +1333,10 @@
   };
 
   /*
-  say_(text)
+  say_(text, [option])
   */
-  $.say_ = async function(text) {
-    var j, len, listMessage, msg, type;
+  $.say_ = async function(text, option = {}) {
+    var j, lang, len, listCmd, listMessage, msg, name, type, voice;
     type = $.type(text);
     listMessage = (function() {
       switch (type) {
@@ -1361,11 +1361,33 @@
       if (!msg.length) {
         continue;
       }
-      await $.exec_(`say ${msg}`, {
+      listCmd = ['say'];
+      if (option.lang) {
+        lang = option.lang.toLowerCase();
+        if (name = $.say_.mapLang[lang]) {
+          lang = name;
+        }
+        listCmd.push(`--voice=${lang}`);
+      }
+      if (option.voice) {
+        voice = option.voice.toLowerCase();
+        listCmd.push(`--voice=${voice}`);
+      }
+      listCmd.push(msg);
+      await $.exec_(listCmd.join(' '), {
         silent: true
       });
     }
     return $; // return
+  };
+
+  $.say_.mapLang = {
+    'ja': 'kyoko',
+    'ja-jp': 'kyoko',
+    'zh': 'ting-ting',
+    'zh-cn': 'ting-ting',
+    'zh-hk': 'sin-ji',
+    'zh-tw': 'mei-jia'
   };
 
   /*
