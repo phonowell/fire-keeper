@@ -1,4 +1,6 @@
-class Shell
+kleur = require 'kleur'
+
+class M
 
   ###
   spawn
@@ -98,5 +100,5 @@ $.exec_ = (cmd, option) ->
   unless cmd
     return false
   
-  shell = new Shell()
-  await shell.execute_ cmd, option
+  m = new M()
+  await m.execute_ cmd, option

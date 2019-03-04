@@ -17,7 +17,7 @@ $.download_ = (arg...) ->
     option = filename: option
 
   # this function download was from plugin
-  download = getPlugin 'download'
+  download = require 'download'
   await download source, target, option
 
   msg = "downloaded #{wrapList source} to #{wrapList target}"

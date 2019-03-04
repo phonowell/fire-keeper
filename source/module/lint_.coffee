@@ -1,8 +1,8 @@
-###
-lint_(source)
-###
+gulp = require 'gulp'
+kleur = require 'kleur'
+using = require 'gulp-using'
 
-class Linter
+class M
 
   ###
   mapMethod
@@ -38,7 +38,7 @@ class Linter
 
     await new Promise (resolve) ->
 
-      lint = getPlugin 'gulp-coffeelint'
+      lint = require 'gulp-coffeelint'
 
       # does not know why
       # have to put 'on()' before 'pipe()'
@@ -55,7 +55,7 @@ class Linter
 
     await new Promise (resolve) ->
 
-      lint = getPlugin 'markdownlint'
+      lint = require 'markdownlint'
 
       option = files: source
       
@@ -92,7 +92,7 @@ class Linter
 
     await new Promise (resolve) ->
 
-      lint = getPlugin 'gulp-stylint'
+      lint = require 'gulp-stylint'
 
       gulp.src source
       .pipe using()
@@ -104,6 +104,6 @@ class Linter
 
 # return
 $.lint_ = (arg...) ->
-  linter = new Linter()
-  await linter.execute_ arg...
+  m = new M()
+  await m.execute_ arg...
   $ # return

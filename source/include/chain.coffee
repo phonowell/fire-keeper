@@ -1,7 +1,3 @@
-###
-chain(fn, option)
-###
-
 $.chain = (arg...) ->
-  $.chain.fn or= require 'achain'
-  $.chain.fn arg...
+  fn = require 'achain'
+  fn arg...

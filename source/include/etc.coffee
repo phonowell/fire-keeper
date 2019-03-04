@@ -1,20 +1,8 @@
 ###
-delay_([time])
 reload(source)
 watch(source)
 yargs()
 ###
-
-$.delay_ = (time = 0) ->
-  
-  await new Promise (resolve) ->
-    setTimeout ->
-      resolve()
-    , time
-    
-  $.info 'delay', "delayed '#{time} ms'"
-
-  $ # return
 
 $.reload = (source) ->
 
@@ -24,7 +12,7 @@ $.reload = (source) ->
   source = normalizePathToArray source
 
   # require
-  livereload = getPlugin 'gulp-livereload'
+  livereload = require 'gulp-livereload'
 
   livereload.listen()
 
@@ -33,7 +21,7 @@ $.reload = (source) ->
 
   $ # return
 
-$.watch = getPlugin 'gulp-watch'
+$.watch = require 'gulp-watch'
 
-$.yargs = getPlugin 'yargs'
-$.argv = $.plugin.yargs.argv
+$.yargs = require 'yargs'
+$.argv = $.yargs.argv

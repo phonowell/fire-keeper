@@ -1,3 +1,5 @@
+kleur = require 'kleur'
+
 class Updater
 
   ###

@@ -1,9 +1,8 @@
 # https://github.com/jprichardson/node-klaw
 
-###
-walk_(source, callback)
-###
+# path = require 'path'
 
+# return
 $.walk_ = (source, callback) ->
 
   unless source and callback
@@ -14,7 +13,7 @@ $.walk_ = (source, callback) ->
   await new Promise (resolve) ->
 
     # require
-    walk = getPlugin 'klaw'
+    walk = require 'klaw'
 
     walk source
     .on 'data', (item) ->

@@ -1,5 +1,4 @@
 $ = require '../index'
-{_} = $
 
 # return
 module.exports = ->
@@ -9,7 +8,7 @@ module.exports = ->
   source = './package.json'
   data = await $.read_ source
 
-  ver or= await $.prompt
+  ver or= await $.prompt_
     type: 'text'
     message: 'input new version'
     default: data.version

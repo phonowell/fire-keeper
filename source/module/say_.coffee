@@ -1,7 +1,3 @@
-###
-say_(text, [option])
-###
-
 $.say_ = (text, option = {}) ->
 
   type = $.type text
@@ -50,3 +46,5 @@ $.say_.mapLang =
   'zh-cn': 'ting-ting'
   'zh-hk': 'sin-ji'
   'zh-tw': 'mei-jia'
+
+$.say_ # return

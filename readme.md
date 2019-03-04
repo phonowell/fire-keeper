@@ -61,7 +61,7 @@ pkg = await $.readAsync './package.json'
 - $.getFilename(source)
 - $.getName(source)
 - $.lint_(source)
-- $.prompt(option)
+- $.prompt_(option)
 - $.reload(source)
 - $.rename_(source, option)
 - $.ssh()
@@ -100,4 +100,4 @@ gulp test
 
 ## 注意
 
-该项目**并不特别稳定**。
+该项目**可能并不稳定**。

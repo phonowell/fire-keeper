@@ -1,7 +1,8 @@
-###
-source_(source, [option])
-###
+gulp = require 'gulp'
 
+# path = require 'path'
+
+# return
 $.source_ = (source, option) ->
 
   groupSource = normalizePathToArray source

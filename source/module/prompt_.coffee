@@ -1,15 +1,36 @@
 class Prompt
 
   ###
-  execute_(option)
-  getCache_(option)
   listType
   mapMessage
   namespace
   pathCache
+  ---
+  execute_(option)
+  getCache_(option)
   setCache_(option, value)
   setOption_(option)
   ###
+
+  listType: [
+    'confirm'
+    'number'
+    'select'
+    'text'
+    'toggle'
+  ]
+
+  mapMessage:
+    confirm: 'confirm'
+    multiselect: 'select'
+    number: 'input number'
+    select: 'select'
+    text: 'input text'
+    toggle: 'toggle'
+
+  namespace: '$.prompt'
+
+  pathCache: './temp/cache-prompt.json'
 
   execute_: (option) ->
 
@@ -62,26 +83,6 @@ class Prompt
 
     value
 
-  listType: [
-    'confirm'
-    'number'
-    'select'
-    'text'
-    'toggle'
-  ]
-
-  mapMessage:
-    confirm: 'confirm'
-    multiselect: 'select'
-    number: 'input number'
-    select: 'select'
-    text: 'input text'
-    toggle: 'toggle'
-
-  namespace: '$.prompt'
-
-  pathCache: './temp/cache-prompt.json'
-
   setCache_: (option, value) ->
 
     {id, type} = option
@@ -124,6 +125,6 @@ class Prompt
     option # return
 
 # return
-$.prompt = (arg...) ->
-  prompt = $.prompt.fn or= new Prompt()
-  await prompt.execute_ arg...
+$.prompt_ = (arg...) ->
+  prompt_ = $.prompt_.fn_ or= new Prompt()
+  await prompt_.execute_ arg...

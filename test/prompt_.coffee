@@ -15,7 +15,7 @@ describe '$.prompt_(source, callback)', ->
   it '$.prompt_()', ->
     await clean_()
 
-    type = $.type $.prompt
+    type = $.type $.prompt_
     unless type == 'async function'
       throw new Error()
 

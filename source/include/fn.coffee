@@ -24,7 +24,7 @@ getPlugin = (name) ->
       uglifyEs = require 'uglify-es'
       composer = require 'gulp-uglify/composer'
       composer uglifyEs, console
-  $.plugin[name] or= require name
+  throw new Error "invalid plugin '#{name}'"
 
 normalizePath = (string) ->
 

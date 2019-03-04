@@ -28,6 +28,7 @@ describe 'rename', ->
       'lint'
       'mkdir'
       'move'
+      'prompt'
       'read'
       'recover'
       'remove'

@@ -15,10 +15,8 @@ describe '$.watch()', ->
   it '$.watch()', ->
     await clean_()
 
-    if $.watch != $.plugin['gulp-watch']
-      throw new Error()
-
-    unless _.isFunction $.watch
+    type = $.type $.watch
+    unless type == 'function'
       throw new Error()
 
     await clean_()

@@ -1,7 +1,8 @@
-###
-zip_(source, [target], [option])
-###
+fs = require 'fs'
+kleur = require 'kleur'
+path = require 'path'
 
+# return
 $.zip_ = (arg...) ->
 
   [source, target, option] = arg
@@ -36,8 +37,8 @@ $.zip_ = (arg...) ->
   await new Promise (resolve) ->
 
     # require
-    ansi = getPlugin 'sisteransi'
-    archiver = getPlugin 'archiver'
+    ansi = require 'sisteransi'
+    archiver = require 'archiver'
 
     output = fs.createWriteStream "#{target}/#{filename}"
     archive = archiver 'zip',

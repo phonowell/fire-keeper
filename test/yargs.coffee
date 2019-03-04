@@ -15,10 +15,8 @@ describe '$.yargs()', ->
   it '$.yargs()', ->
     await clean_()
 
-    if $.yargs != $.plugin.yargs
-      throw new Error()
-
-    unless _.isFunction $.yargs
-      throw new Error()
+    type = $.type $.yargs
+    unless type == 'function'
+      throw new Error "invalid type '#{type}'"
 
     await clean_()

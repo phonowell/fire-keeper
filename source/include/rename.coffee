@@ -11,6 +11,7 @@ listKey = [
   'lint'
   'mkdir'
   'move'
+  'prompt'
   'read'
   'recover'
   'remove'

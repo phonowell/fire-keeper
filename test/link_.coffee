@@ -24,7 +24,7 @@ describe '$.link_(source, target)', ->
     unless await $.isExisted_ "#{temp}/source"
       throw new Error 1
 
-    unless await $.isExisted_ "#{temp}/source/include/file.coffee"
+    unless await $.isExisted_ "#{temp}/source/include/fn.coffee"
       throw new Error 2
 
     await clean_()

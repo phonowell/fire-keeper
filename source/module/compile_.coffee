@@ -1,8 +1,8 @@
-###
-compile_(source, [target], [option])
-###
+gulp = require 'gulp'
+gulpIf = require 'gulp-if'
+using = require 'gulp-using'
 
-class Compiler
+class M
 
   ###
   mapMethod
@@ -34,8 +34,8 @@ class Compiler
     
     await new Promise (resolve) ->
 
-      coffee = getPlugin 'gulp-coffee'
-      include = getPlugin 'gulp-include'
+      coffee = require 'gulp-coffee'
+      include = require 'gulp-include'
       uglify = getPlugin 'uglify'
 
       base = option.base
@@ -55,7 +55,7 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      cleanCss = getPlugin 'gulp-clean-css'
+      cleanCss = require 'gulp-clean-css'
 
       base = option.base
       sourcemaps = option.map
@@ -72,7 +72,7 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      uglify = getPlugin 'uglify'
+      uglify = require 'uglify'
 
       base = option.base
       sourcemaps = option.map
@@ -89,9 +89,9 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      htmlmin = getPlugin 'gulp-htmlmin'
-      markdown = getPlugin 'gulp-markdown'
-      rename = getPlugin 'gulp-rename'
+      htmlmin = require 'gulp-htmlmin'
+      markdown = require 'gulp-markdown'
+      rename = require 'gulp-rename'
 
       option.sanitize ?= true
       base = option.base
@@ -111,7 +111,7 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      pug = getPlugin 'gulp-pug'
+      pug = require 'gulp-pug'
 
       option.pretty ?= !option.minify
       base = option.base
@@ -129,7 +129,7 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      stylus = getPlugin 'gulp-stylus'
+      stylus = require 'gulp-stylus'
 
       option.compress ?= option.minify
       base = option.base
@@ -147,7 +147,7 @@ class Compiler
 
     await new Promise (resolve) ->
 
-      yaml = getPlugin 'gulp-yaml'
+      yaml = require 'gulp-yaml'
 
       option.safe ?= true
       base = option.base
@@ -210,6 +210,6 @@ class Compiler
 
 # return
 $.compile_ = (arg...) ->
-  compiler = new Compiler()
-  await compiler.execute_ arg...
+  m = new M()
+  await m.execute_ arg...
   $ # return
