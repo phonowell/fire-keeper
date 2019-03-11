@@ -3,8 +3,6 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  # original build
-  await $.task('build')()
-
-  # test
-  await $.task('test')()
+  await $.chain $
+  .copy_ './index.js', './temp'
+  .compile_ './temp/index.js'

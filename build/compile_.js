@@ -49,7 +49,7 @@
         async compileJs_(source, target, option) {
           await new Promise(function(resolve) {
             var base, sourcemaps, uglify;
-            uglify = require('uglify');
+            uglify = getPlugin('uglify');
             base = option.base;
             sourcemaps = option.map;
             return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {

@@ -72,7 +72,7 @@ class M
 
     await new Promise (resolve) ->
 
-      uglify = require 'uglify'
+      uglify = getPlugin 'uglify'
 
       base = option.base
       sourcemaps = option.map
