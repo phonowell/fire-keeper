@@ -15,6 +15,7 @@ class M
     '.md': 'compileMd_'
     '.pug': 'compilePug_'
     '.styl': 'compileStyl_'
+    '.ts': 'compileTs_'
     '.yaml': 'compileYaml_'
     '.yml': 'compileYaml_'
 
@@ -26,6 +27,7 @@ class M
   compileMd_(source, target, option)
   compilePug_(source, target, option)
   compileStyl_(source, target, option)
+  compileTs_(source, target, option)
   compileYaml_(source, target, option)
   execute_(arg...)
   ###
@@ -138,6 +140,30 @@ class M
       gulp.src source, {base, sourcemaps}
       .pipe using()
       .pipe stylus option
+      .pipe gulp.dest target, {sourcemaps}
+      .on 'end', -> resolve()
+
+    @ # return
+
+  compileTs_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      ts = require 'gulp-typescript'
+      uglify = getPlugin 'uglify'
+
+      base = option.base
+      isMinify = option.minify
+      sourcemaps = option.map
+
+      # have to delete these unknown options
+      delete option.map
+      delete option.minify
+
+      gulp.src source, {base, sourcemaps}
+      .pipe using()
+      .pipe ts option
+      .pipe gulpIf isMinify, uglify()
       .pipe gulp.dest target, {sourcemaps}
       .on 'end', -> resolve()
 

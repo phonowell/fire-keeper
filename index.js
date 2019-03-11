@@ -272,7 +272,7 @@
     await $.remove_(listClean);
     $.info.resume('kokoro');
     // copy
-    LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
+    LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md', 'tslint.json'];
     results = [];
     for (i = 0, len = LIST.length; i < len; i++) {
       filename = LIST[i];

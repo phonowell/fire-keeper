@@ -101,6 +101,7 @@ $.task 'kokoro', ->
     '.stylintrc'
     'coffeelint.json'
     'license.md'
+    'tslint.json'
   ]
 
   for filename in LIST

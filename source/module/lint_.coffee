@@ -6,19 +6,19 @@ class M
 
   ###
   mapMethod
+
+  execute_(source)
+  lintCoffee_(source)
+  lintMd_(source)
+  lintStyl_(source)
+  lintTs_(source)
   ###
 
   mapMethod:
     '.coffee': 'lintCoffee_'
     '.md': 'lintMd_'
     '.styl': 'lintStyl_'
-
-  ###
-  execute_(source)
-  lintCoffee_(source)
-  lintMd_(source)
-  lintStyl_(source)
-  ###
+    '.ts': 'lintTs_'
 
   execute_: (source) ->
 
@@ -100,6 +100,20 @@ class M
       .pipe lint.reporter()
       .on 'end', -> resolve()
       
+    @ # return
+
+  lintTs_: (source) ->
+
+    await new Promise (resolve) ->
+
+      lint = require 'gulp-tslint'
+
+      gulp.src source
+      .pipe using()
+      .pipe lint()
+      .pipe lint.report()
+      .on 'end', -> resolve()
+
     @ # return
 
 # return

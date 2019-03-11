@@ -6,12 +6,6 @@
     using = require('gulp-using');
     M = (function() {
       class M {
-        /*
-        execute_(source)
-        lintCoffee_(source)
-        lintMd_(source)
-        lintStyl_(source)
-        */
         async execute_(source) {
           var extname, i, len, listSource, method;
           listSource = (await $.source_(source));
@@ -98,15 +92,33 @@
           return this;
         }
 
+        async lintTs_(source) {
+          await new Promise(function(resolve) {
+            var lint;
+            lint = require('gulp-tslint');
+            return gulp.src(source).pipe(using()).pipe(lint()).pipe(lint.report()).on('end', function() {
+              return resolve();
+            });
+          });
+          return this;
+        }
+
       };
 
       /*
       mapMethod
+
+      execute_(source)
+      lintCoffee_(source)
+      lintMd_(source)
+      lintStyl_(source)
+      lintTs_(source)
       */
       M.prototype.mapMethod = {
         '.coffee': 'lintCoffee_',
         '.md': 'lintMd_',
-        '.styl': 'lintStyl_'
+        '.styl': 'lintStyl_',
+        '.ts': 'lintTs_'
       };
 
       return M;

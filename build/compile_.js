@@ -15,6 +15,7 @@
         compileMd_(source, target, option)
         compilePug_(source, target, option)
         compileStyl_(source, target, option)
+        compileTs_(source, target, option)
         compileYaml_(source, target, option)
         execute_(arg...)
         */
@@ -113,6 +114,25 @@
           return this;
         }
 
+        async compileTs_(source, target, option) {
+          await new Promise(function(resolve) {
+            var base, isMinify, sourcemaps, ts, uglify;
+            ts = require('gulp-typescript');
+            uglify = getPlugin('uglify');
+            base = option.base;
+            isMinify = option.minify;
+            sourcemaps = option.map;
+            
+            // have to delete these unknown options
+            delete option.map;
+            delete option.minify;
+            return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(ts(option)).pipe(gulpIf(isMinify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+              return resolve();
+            });
+          });
+          return this;
+        }
+
         async compileYaml_(source, target, option) {
           await new Promise(function(resolve) {
             var base, sourcemaps, yaml;
@@ -199,6 +219,7 @@
         '.md': 'compileMd_',
         '.pug': 'compilePug_',
         '.styl': 'compileStyl_',
+        '.ts': 'compileTs_',
         '.yaml': 'compileYaml_',
         '.yml': 'compileYaml_'
       };
