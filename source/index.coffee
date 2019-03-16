@@ -8,7 +8,5 @@
 #=include include/chain.coffee
 #=include include/get-name.coffee
 
-#=include include/ssh.coffee
-
 #=include include/lazy.coffee
 #=include include/rename.coffee

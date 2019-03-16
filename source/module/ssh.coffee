@@ -1,5 +1,8 @@
 # https://github.com/mscdex/ssh2
 
+kleur = require 'kleur'
+path = require 'path'
+
 class SSH
 
   ###
@@ -184,4 +187,22 @@ class SSH
     @ # return
 
 # return
-$.ssh = new SSH()
+$.ssh = ->
+  
+  ssh = new SSH()
+
+  # rename
+  listKey = [
+    'connect'
+    'disconnect'
+    'exec'
+    'mkdir'
+    'remove'
+    'upload'
+    'uploadDir'
+    'uploadFile'
+  ]
+  for key in listKey
+    ssh["#{key}Async"] = ssh["#{key}_"]
+
+  ssh # return

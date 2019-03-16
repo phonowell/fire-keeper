@@ -1,5 +1,6 @@
 $ = require '../index'
+{_} = $
 
 # return
 module.exports = ->
-  $.info 'z'
+  $.i $.ssh().connectAsync

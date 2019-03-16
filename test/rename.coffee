@@ -13,7 +13,6 @@ clean_ = -> await $.remove_ temp
 describe 'rename', ->
 
   it 'rename', ->
-    await clean_()
 
     listKey = [
       'backup'
@@ -49,6 +48,10 @@ describe 'rename', ->
       unless type == 'async function'
         throw new Error "invalid type of '$.#{key}Async()': #{type}"
 
+  it 'ssh.rename', ->
+
+    ssh = $.ssh()
+
     listKey = [
       'connect'
       'disconnect'
@@ -60,11 +63,9 @@ describe 'rename', ->
       'uploadFile'
     ]
     for key in listKey
-      type = $.type $.ssh["#{key}_"]
+      type = $.type ssh["#{key}_"]
       unless type == 'async function'
-        throw new Error "invalid type of '$.ssh.#{key}_()': #{type}"
-      type = $.type $.ssh["#{key}Async"]
+        throw new Error "invalid type of '$.ssh().#{key}_()': #{type}"
+      type = $.type ssh["#{key}Async"]
       unless type == 'async function'
-        throw new Error "invalid type of '$.ssh.#{key}Async()': #{type}"
-
-    await clean_()
+        throw new Error "invalid type of '$.ssh().#{key}Async()': #{type}"
