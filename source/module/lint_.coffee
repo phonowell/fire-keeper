@@ -94,11 +94,13 @@ class M
 
       lint = require 'gulp-stylint'
 
+      # just like coffee
+      # also have to put 'on()' before 'pipe()'
       gulp.src source
+      .on 'end', -> resolve()
       .pipe using()
       .pipe lint()
       .pipe lint.reporter()
-      .on 'end', -> resolve()
       
     @ # return
 

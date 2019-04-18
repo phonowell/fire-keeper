@@ -85,9 +85,12 @@
           await new Promise(function(resolve) {
             var lint;
             lint = require('gulp-stylint');
-            return gulp.src(source).pipe(using()).pipe(lint()).pipe(lint.reporter()).on('end', function() {
+            
+            // just like coffee
+            // also have to put 'on()' before 'pipe()'
+            return gulp.src(source).on('end', function() {
               return resolve();
-            });
+            }).pipe(using()).pipe(lint()).pipe(lint.reporter());
           });
           return this;
         }

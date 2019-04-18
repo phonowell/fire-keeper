@@ -3,4 +3,5 @@ $ = require '../index'
 
 # return
 module.exports = ->
-  $.i $.ssh().connectAsync
+  
+  await $.lint_ './temp/test.styl'
