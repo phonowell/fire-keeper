@@ -65,9 +65,21 @@ update()
 ###
 
 $.task 'default', ->
-  list = (key for key of gulp._registry._tasks)
+  
+  list = _.keys gulp._registry._tasks
   list.sort()
   $.info 'task', wrapList list
+
+  name = await $.prompt_
+    id: 'default-gulp'
+    type: 'autocomplete'
+    list: list
+    message: 'task'
+
+  unless name in list
+    throw new Error "invalid task '#{name}'"
+
+  await $.task(name)()
 
 $.task 'gurumin', ->
 

@@ -3,5 +3,4 @@ $ = require '../index'
 
 # return
 module.exports = ->
-  
-  await $.lint_ './temp/test.styl'
+  $.info 'z'

@@ -11,7 +11,8 @@
   /*
   fetchGitHub_(name)
   */
-  var $, _, excludeInclude, fetchGitHub_, formatArgument, getPlugin, gulp, i, j, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, string, wrapList;
+  var $, _, excludeInclude, fetchGitHub_, formatArgument, getPlugin, gulp, i, j, key, kleur, len, len1, listKey, normalizePath, normalizePathToArray, path, string, wrapList,
+    indexOf = [].indexOf;
 
   path = require('path');
 
@@ -244,18 +245,21 @@
   prune()
   update()
   */
-  $.task('default', function() {
-    var key, list;
-    list = (function() {
-      var results;
-      results = [];
-      for (key in gulp._registry._tasks) {
-        results.push(key);
-      }
-      return results;
-    })();
+  $.task('default', async function() {
+    var list, name;
+    list = _.keys(gulp._registry._tasks);
     list.sort();
-    return $.info('task', wrapList(list));
+    $.info('task', wrapList(list));
+    name = (await $.prompt_({
+      id: 'default-gulp',
+      type: 'autocomplete',
+      list: list,
+      message: 'task'
+    }));
+    if (indexOf.call(list, name) < 0) {
+      throw new Error(`invalid task '${name}'`);
+    }
+    return (await $.task(name)());
   });
 
   $.task('gurumin', async function() {

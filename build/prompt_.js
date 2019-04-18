@@ -35,7 +35,7 @@
           if (!option.id) {
             return void 0;
           }
-          if (ref = option.type, indexOf.call(this.listType, ref) < 0) {
+          if (ref = option.type, indexOf.call(this.listTypeCache, ref) < 0) {
             return void 0;
           }
           cache = (await $.read_(this.pathCache));
@@ -61,7 +61,7 @@
         async setCache_(option, value) {
           var cache, id, type;
           ({id, type} = option);
-          if (!(id && (value != null) && indexOf.call(this.listType, type) >= 0)) {
+          if (!(id && (value != null) && indexOf.call(this.listTypeCache, type) >= 0)) {
             return this;
           }
           cache = (await $.read_(this.pathCache));
@@ -72,20 +72,22 @@
         }
 
         async setOption_(option) {
-          var i, item, j, len, ref, ref1, type;
+          var i, item, j, len, ref, ref1, ref2;
+          if (ref = option.type, indexOf.call(this.listType, ref) < 0) {
+            throw new Error(`invalid type '${option.type}'`);
+          }
           
           // default value
           option.message || (option.message = this.mapMessage[option.type] || 'input');
           option.name || (option.name = 'value');
-          if ((ref = option.type) === 'autocomplete' || ref === 'multiselect' || ref === 'select') {
+          if ((ref1 = option.type) === 'autocomplete' || ref1 === 'multiselect' || ref1 === 'select') {
             if (!(option.choices || (option.choices = option.choice || option.list))) {
               throw new Error('got no choice(s)');
             }
-            ref1 = option.choices;
-            for (i = j = 0, len = ref1.length; j < len; i = ++j) {
-              item = ref1[i];
-              type = $.type(item);
-              if (type === 'object') {
+            ref2 = option.choices;
+            for (i = j = 0, len = ref2.length; j < len; i = ++j) {
+              item = ref2[i];
+              if ('object' === $.type(item)) {
                 continue;
               }
               option.choices[i] = {
@@ -108,6 +110,7 @@
 
       /*
       listType
+      listTypeCache
       mapMessage
       namespace
       pathCache
@@ -117,7 +120,9 @@
       setCache_(option, value)
       setOption_(option)
       */
-      Prompt.prototype.listType = ['confirm', 'number', 'select', 'text', 'toggle'];
+      Prompt.prototype.listType = ['autocomplete', 'confirm', 'multiselect', 'number', 'select', 'text', 'toggle'];
+
+      Prompt.prototype.listTypeCache = ['autocomplete', 'confirm', 'number', 'select', 'text', 'toggle'];
 
       Prompt.prototype.mapMessage = {
         confirm: 'confirm',
@@ -128,7 +133,7 @@
         toggle: 'toggle'
       };
 
-      Prompt.prototype.namespace = '$.prompt';
+      Prompt.prototype.namespace = '$.prompt_';
 
       Prompt.prototype.pathCache = './temp/cache-prompt.json';
 

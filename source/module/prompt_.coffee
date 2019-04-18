@@ -2,6 +2,7 @@ class Prompt
 
   ###
   listType
+  listTypeCache
   mapMessage
   namespace
   pathCache
@@ -13,6 +14,17 @@ class Prompt
   ###
 
   listType: [
+    'autocomplete'
+    'confirm'
+    'multiselect'
+    'number'
+    'select'
+    'text'
+    'toggle'
+  ]
+
+  listTypeCache: [
+    'autocomplete'
     'confirm'
     'number'
     'select'
@@ -28,7 +40,7 @@ class Prompt
     text: 'input text'
     toggle: 'toggle'
 
-  namespace: '$.prompt'
+  namespace: '$.prompt_'
 
   pathCache: './temp/cache-prompt.json'
 
@@ -62,7 +74,7 @@ class Prompt
     unless option.id
       return undefined
 
-    unless option.type in @listType
+    unless option.type in @listTypeCache
       return undefined
 
     cache = await $.read_ @pathCache
@@ -86,7 +98,7 @@ class Prompt
   setCache_: (option, value) ->
 
     {id, type} = option
-    unless id and value? and type in @listType
+    unless id and value? and type in @listTypeCache
       return @
 
     cache = await $.read_ @pathCache
@@ -99,22 +111,29 @@ class Prompt
 
   setOption_: (option) ->
 
+    unless option.type in @listType
+      throw new Error "invalid type '#{option.type}'"
+
     # default value
     option.message or= @mapMessage[option.type] or 'input'
     option.name or= 'value'
 
     if option.type in ['autocomplete', 'multiselect', 'select']
+      
       unless option.choices or= option.choice or option.list
         throw new Error 'got no choice(s)'
+      
       for item, i in option.choices
-        type = $.type item
-        if type == 'object'
+        
+        if 'object' == $.type item
           continue
+
         option.choices[i] =
           title: item
           value: item
 
     else if option.type == 'toggle'
+
       option.active or= 'on'
       option.inactive or= 'off'
 
