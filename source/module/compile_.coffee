@@ -97,14 +97,13 @@ class M
 
       option.sanitize ?= true
       base = option.base
-      sourcemaps = option.map
 
-      gulp.src source, {base, sourcemaps}
+      gulp.src source, {base}
       .pipe using()
       .pipe markdown option
       .pipe rename extname: '.html'
       .pipe gulpIf option.minify, htmlmin collapseWhitespace: true
-      .pipe gulp.dest target, {sourcemaps}
+      .pipe gulp.dest target
       .on 'end', -> resolve()
 
     @ # return
@@ -117,12 +116,11 @@ class M
 
       option.pretty ?= !option.minify
       base = option.base
-      sourcemaps = option.map
 
-      gulp.src source, {base, sourcemaps}
+      gulp.src source, {base}
       .pipe using()
       .pipe pug option
-      .pipe gulp.dest target, {sourcemaps}
+      .pipe gulp.dest target
       .on 'end', -> resolve()
 
     @ # return
@@ -177,7 +175,6 @@ class M
 
       option.safe ?= true
       base = option.base
-      sourcemaps = option.map
 
       gulp.src source, {base}
       .pipe using()

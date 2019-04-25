@@ -62,7 +62,7 @@
 
         async compileMd_(source, target, option) {
           await new Promise(function(resolve) {
-            var base, htmlmin, markdown, rename, sourcemaps;
+            var base, htmlmin, markdown, rename;
             htmlmin = require('gulp-htmlmin');
             markdown = require('gulp-markdown');
             rename = require('gulp-rename');
@@ -70,12 +70,11 @@
               option.sanitize = true;
             }
             base = option.base;
-            sourcemaps = option.map;
-            return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(markdown(option)).pipe(rename({
+            return gulp.src(source, {base}).pipe(using()).pipe(markdown(option)).pipe(rename({
               extname: '.html'
             })).pipe(gulpIf(option.minify, htmlmin({
               collapseWhitespace: true
-            }))).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            }))).pipe(gulp.dest(target)).on('end', function() {
               return resolve();
             });
           });
@@ -84,14 +83,13 @@
 
         async compilePug_(source, target, option) {
           await new Promise(function(resolve) {
-            var base, pug, sourcemaps;
+            var base, pug;
             pug = require('gulp-pug');
             if (option.pretty == null) {
               option.pretty = !option.minify;
             }
             base = option.base;
-            sourcemaps = option.map;
-            return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+            return gulp.src(source, {base}).pipe(using()).pipe(pug(option)).pipe(gulp.dest(target)).on('end', function() {
               return resolve();
             });
           });
@@ -135,13 +133,12 @@
 
         async compileYaml_(source, target, option) {
           await new Promise(function(resolve) {
-            var base, sourcemaps, yaml;
+            var base, yaml;
             yaml = require('gulp-yaml');
             if (option.safe == null) {
               option.safe = true;
             }
             base = option.base;
-            sourcemaps = option.map;
             return gulp.src(source, {base}).pipe(using()).pipe(yaml(option)).pipe(gulp.dest(target)).on('end', function() {
               return resolve();
             });
