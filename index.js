@@ -259,16 +259,18 @@
     if (indexOf.call(list, name) < 0) {
       throw new Error(`invalid task '${name}'`);
     }
-    return (await $.task(name)());
+    await $.task(name)();
+    return $; // return
   });
 
   $.task('gurumin', async function() {
     await fetchGitHub_('phonowell/gurumin');
-    return (await $.chain($).remove_('./gurumin').copy_('./../gurumin/source/**/*', './gurumin'));
+    await $.chain($).remove_('./gurumin').copy_('./../gurumin/source/**/*', './gurumin');
+    return $; // return
   });
 
   $.task('kokoro', async function() {
-    var LIST, filename, i, isSame, len, listClean, results, source, target;
+    var LIST, filename, i, isSame, len, listClean, source, target;
     await fetchGitHub_('phonowell/kokoro');
     // clean
     listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
@@ -277,7 +279,6 @@
     $.info.resume('kokoro');
     // copy
     LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md', 'tslint.json'];
-    results = [];
     for (i = 0, len = LIST.length; i < len; i++) {
       filename = LIST[i];
       source = `./../kokoro/${filename}`;
@@ -287,9 +288,9 @@
         continue;
       }
       await $.copy_(source, './');
-      results.push((await $.exec_(`git add -f ${$.path.base}/${filename}`)));
+      await $.exec_(`git add -f ${$.path.base}/${filename}`);
     }
-    return results;
+    return $; // return
   });
 
   $.task('noop', function() {
@@ -336,13 +337,15 @@
       }
       return results;
     })();
-    return (await $.remove_(listSource));
+    await $.remove_(listSource);
+    return $; // return
   });
 
   $.task('update', async function() {
     var registry;
     ({registry} = $.argv);
-    return (await $.update_({registry}));
+    await $.update_({registry});
+    return $; // return
   });
 
   $.chain = function(...arg) {
@@ -365,6 +368,7 @@
     if (!((source != null ? source.length : void 0) || source > 0)) {
       throw new Error(`invalid source '${source}'`);
     }
+    source = source.replace(/\\/g, '/');
     extname = path.extname(source);
     basename = path.basename(source, extname);
     dirname = path.dirname(source);

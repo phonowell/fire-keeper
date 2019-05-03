@@ -3,4 +3,10 @@ $ = require '../index'
 
 # return
 module.exports = ->
-  $.info 'z'
+
+  path = require 'path'
+
+  src = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
+  .replace /\\/g, '/'
+  
+  $.i path.dirname src

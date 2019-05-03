@@ -28,3 +28,20 @@ describe '$.getName(source)', ->
 
     unless filename == 'test.txt'
       throw new Error 4
+
+  it 'for windows', ->
+
+    source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
+    {basename, dirname, extname, filename} = $.getName source
+
+    unless basename == 'readme'
+      throw new Error basename
+
+    unless dirname == 'C:/Users/mimiko/Project/fire-keeper'
+      throw new Error dirname
+
+    unless extname == '.md'
+      throw new Error extname
+
+    unless filename == 'readme.md'
+      throw new Error filename

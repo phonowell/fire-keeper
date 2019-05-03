@@ -7,6 +7,9 @@ $.getName = (source) ->
   unless source?.length or source > 0
     throw new Error "invalid source '#{source}'"
 
+  source = source
+  .replace /\\/g, '/'
+
   ###
   basename
   dirname

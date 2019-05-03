@@ -81,6 +81,8 @@ $.task 'default', ->
 
   await $.task(name)()
 
+  $ # return
+
 $.task 'gurumin', ->
 
   await fetchGitHub_ 'phonowell/gurumin'
@@ -88,6 +90,8 @@ $.task 'gurumin', ->
   await $.chain $
   .remove_ './gurumin'
   .copy_ './../gurumin/source/**/*', './gurumin'
+
+  $ # return
 
 $.task 'kokoro', ->
 
@@ -127,6 +131,8 @@ $.task 'kokoro', ->
 
     await $.copy_ source, './'
     await $.exec_ "git add -f #{$.path.base}/#{filename}"
+
+  $ # return
 
 $.task 'noop', -> null
 
@@ -242,8 +248,12 @@ $.task 'prune', ->
   listSource = ("#{base}/**/*#{line}" for line in listExtension)
   await $.remove_ listSource
 
+  $ # return
+
 $.task 'update', ->
 
   {registry} = $.argv
 
   await $.update_ {registry}
+
+  $ # return
