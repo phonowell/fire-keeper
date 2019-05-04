@@ -36,7 +36,7 @@
           if (version) {
             return version;
           }
-          [status, version] = (await $.exec_(`cnpm view ${name} version`, {
+          [status, version] = (await $.exec_(`npm view ${name} version`, {
             silent: true
           }));
           if (!status) {
@@ -60,7 +60,7 @@
               continue;
             }
             $.info('update', `'${name}': '${versionCurrent}' ${kleur.green('->')} '${versionLatest}'`);
-            lineCmd = ['cnpm install', `${name}@${versionLatest}`, isDev ? '' : '--production', isDev ? '--save-dev' : '--save'].join(' ');
+            lineCmd = ['npm install', `${name}@${versionLatest}`, isDev ? '' : '--production', isDev ? '--save-dev' : '--save'].join(' ');
             lineCmd = lineCmd.replace(/\s{2,}/g, ' ');
             this.listCmd.push(lineCmd);
           }
