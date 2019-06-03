@@ -238,6 +238,7 @@
 
   // added default tasks
   /*
+  add-blank-line()
   default()
   gurumin()
   kokoro()
@@ -245,6 +246,33 @@
   prune()
   update()
   */
+  $.task('add-blank-line', async function() {
+    var cont, i, len, listCont, listSource, results, source;
+    listSource = (await $.source_([
+      './**/*.coffee',
+      // './**/*.json'
+      './**/*.md',
+      './**/*.pug',
+      './**/*.styl',
+      './**/*.txt',
+      './**/*.yaml',
+      '!**/node_modules/**'
+    ]));
+    results = [];
+    for (i = 0, len = listSource.length; i < len; i++) {
+      source = listSource[i];
+      cont = $.parseString((await $.read_(source)));
+      listCont = cont.split('\n');
+      if (!_.trim(listCont[listCont.length - 1]).length) {
+        continue;
+      }
+      listCont.push('');
+      cont = listCont.join('\n');
+      results.push((await $.write_(source, cont)));
+    }
+    return results;
+  });
+
   $.task('default', async function() {
     var list, name;
     list = _.keys(gulp._registry._tasks);

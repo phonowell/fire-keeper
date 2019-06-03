@@ -56,6 +56,7 @@ $.task = (arg...) ->
 # added default tasks
 
 ###
+add-blank-line()
 default()
 gurumin()
 kokoro()
@@ -63,6 +64,31 @@ noop()
 prune()
 update()
 ###
+
+$.task 'add-blank-line', ->
+
+  listSource = await $.source_ [
+    './**/*.coffee'
+    # './**/*.json'
+    './**/*.md'
+    './**/*.pug'
+    './**/*.styl'
+    './**/*.txt'
+    './**/*.yaml'
+    '!**/node_modules/**'
+  ]
+
+  for source in listSource
+
+    cont = $.parseString await $.read_ source
+    listCont = cont.split '\n'
+
+    unless _.trim(listCont[listCont.length - 1]).length
+      continue
+
+    listCont.push ''
+    cont = listCont.join '\n'
+    await $.write_ source, cont
 
 $.task 'default', ->
   
