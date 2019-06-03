@@ -4,9 +4,6 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  path = require 'path'
+  await $.task('_build')()
 
-  src = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
-  .replace /\\/g, '/'
-  
-  $.i path.dirname src
+  $._watch()

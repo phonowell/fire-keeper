@@ -239,15 +239,19 @@
   // added default tasks
   /*
   add-blank-line()
+  build()
   default()
   gurumin()
   kokoro()
+  lint()
   noop()
   prune()
+  publish()
   update()
+  watch()
   */
   $.task('add-blank-line', async function() {
-    var cont, i, len, listCont, listSource, results, source;
+    var cont, i, len, listCont, listSource, source;
     listSource = (await $.source_([
       './**/*.coffee',
       // './**/*.json'
@@ -258,7 +262,6 @@
       './**/*.yaml',
       '!**/node_modules/**'
     ]));
-    results = [];
     for (i = 0, len = listSource.length; i < len; i++) {
       source = listSource[i];
       cont = $.parseString((await $.read_(source)));
@@ -268,9 +271,14 @@
       }
       listCont.push('');
       cont = listCont.join('\n');
-      results.push((await $.write_(source, cont)));
+      await $.write_(source, cont);
     }
-    return results;
+    return $; // return
+  });
+
+  $.task('build', async function() {
+    await $.build_();
+    return $; // return
   });
 
   $.task('default', async function() {
@@ -321,6 +329,10 @@
     return $; // return
   });
 
+  $.task('lint', async function() {
+    return (await $.lint_(['./**/*.coffee', './**/*.md', './**/*.pug', './**/*.styl', './**/*.ts', '!**/node_modules/**', '!**/gurumin/**', '!**/nib/**']));
+  });
+
   $.task('noop', function() {
     return null;
   });
@@ -369,10 +381,20 @@
     return $; // return
   });
 
+  $.task('publish', async function() {
+    await $.exec_(['nrm use npm', 'npm publish', 'nrm use taobao']);
+    return $; // return
+  });
+
   $.task('update', async function() {
     var registry;
     ({registry} = $.argv);
     await $.update_({registry});
+    return $; // return
+  });
+
+  $.task('watch', function() {
+    $._watch();
     return $; // return
   });
 
@@ -437,7 +459,7 @@
 
   
   // important, never change
-  listKey = ['backup_', 'clean_', 'compile_', 'copy_', 'delay_', 'download_', 'exec_', 'isExisted_', 'isSame_', 'link_', 'lint_', 'mkdir_', 'move_', 'prompt_', 'read_', 'recover_', 'remove_', 'rename_', 'say_', 'source_', 'ssh', 'stat_', 'update_', 'walk_', 'write_', 'zip_'];
+  listKey = ['_watch', 'backup_', 'build_', 'clean_', 'compile_', 'copy_', 'delay_', 'download_', 'exec_', 'isExisted_', 'isSame_', 'link_', 'lint_', 'mkdir_', 'move_', 'prompt_', 'read_', 'recover_', 'remove_', 'rename_', 'say_', 'source_', 'ssh', 'stat_', 'update_', 'walk_', 'write_', 'zip_'];
 
   for (i = 0, len = listKey.length; i < len; i++) {
     key = listKey[i];

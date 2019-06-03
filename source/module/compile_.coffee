@@ -11,6 +11,8 @@ class M
   mapMethod:
     '.coffee': 'compileCoffee_'
     '.css': 'compileCss_'
+    '.htm': 'compileHtml_'
+    '.html': 'compileHtml_'
     '.js': 'compileJs_'
     '.md': 'compileMd_'
     '.pug': 'compilePug_'
@@ -19,10 +21,10 @@ class M
     '.yaml': 'compileYaml_'
     '.yml': 'compileYaml_'
 
-
   ###
   compileCoffee_(source, target, option)
   compileCss_(source, target, option)
+  compileHtml_(source, target, option)
   compileJs_(source, target, option)
   compileMd_(source, target, option)
   compilePug_(source, target, option)
@@ -51,6 +53,24 @@ class M
       .pipe gulp.dest target, {sourcemaps}
       .on 'end', -> resolve()
     
+    @ # return
+
+  compileHtml_: (source, target, option) ->
+
+    await new Promise (resolve) ->
+
+      htmlmin = require 'gulp-htmlmin'
+      rename = require 'gulp-rename'
+
+      base = option.base
+
+      gulp.src source, {base}
+      .pipe using()
+      .pipe rename extname: '.html'
+      .pipe gulpIf option.minify, htmlmin collapseWhitespace: true
+      .pipe gulp.dest target
+      .on 'end', -> resolve()
+
     @ # return
 
   compileCss_: (source, target, option) ->

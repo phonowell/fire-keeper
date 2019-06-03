@@ -43,12 +43,11 @@
             option = {
               files: source
             };
-            lint(option, function(err, result) {
-              var filename, item, list, listMsg, results;
+            return lint(option, function(err, result) {
+              var filename, i, item, len, list, listMsg;
               if (err) {
                 throw err;
               }
-              results = [];
               for (filename in result) {
                 list = result[filename];
                 if ('array' !== $.type(list)) {
@@ -56,27 +55,21 @@
                 }
                 filename = $.info.renderPath(filename);
                 $.i(kleur.magenta(filename));
-                results.push((function() {
-                  var i, len, results1;
-                  results1 = [];
-                  for (i = 0, len = list.length; i < len; i++) {
-                    item = list[i];
-                    listMsg = [];
-                    listMsg.push(kleur.gray(`#${item.lineNumber}`));
-                    if (item.errorContext) {
-                      listMsg.push(`< ${kleur.red(item.errorContext)} >`);
-                    }
-                    if (item.ruleDescription) {
-                      listMsg.push(item.ruleDescription);
-                    }
-                    results1.push($.i(listMsg.join(' ')));
+                for (i = 0, len = list.length; i < len; i++) {
+                  item = list[i];
+                  listMsg = [];
+                  listMsg.push(kleur.gray(`#${item.lineNumber}`));
+                  if (item.errorContext) {
+                    listMsg.push(`< ${kleur.red(item.errorContext)} >`);
                   }
-                  return results1;
-                })());
+                  if (item.ruleDescription) {
+                    listMsg.push(item.ruleDescription);
+                  }
+                  $.i(listMsg.join(' '));
+                }
               }
-              return results;
+              return resolve();
             });
-            return resolve();
           });
           return this;
         }

@@ -84,7 +84,7 @@ class M
 
             $.i listMsg.join ' '
 
-      resolve()
+        resolve()
 
     @ # return
 

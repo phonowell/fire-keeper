@@ -11,6 +11,7 @@
         /*
         compileCoffee_(source, target, option)
         compileCss_(source, target, option)
+        compileHtml_(source, target, option)
         compileJs_(source, target, option)
         compileMd_(source, target, option)
         compilePug_(source, target, option)
@@ -28,6 +29,23 @@
             base = option.base;
             sourcemaps = option.map;
             return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+              return resolve();
+            });
+          });
+          return this;
+        }
+
+        async compileHtml_(source, target, option) {
+          await new Promise(function(resolve) {
+            var base, htmlmin, rename;
+            htmlmin = require('gulp-htmlmin');
+            rename = require('gulp-rename');
+            base = option.base;
+            return gulp.src(source, {base}).pipe(using()).pipe(rename({
+              extname: '.html'
+            })).pipe(gulpIf(option.minify, htmlmin({
+              collapseWhitespace: true
+            }))).pipe(gulp.dest(target)).on('end', function() {
               return resolve();
             });
           });
@@ -212,6 +230,8 @@
       M.prototype.mapMethod = {
         '.coffee': 'compileCoffee_',
         '.css': 'compileCss_',
+        '.htm': 'compileHtml_',
+        '.html': 'compileHtml_',
         '.js': 'compileJs_',
         '.md': 'compileMd_',
         '.pug': 'compilePug_',

@@ -57,12 +57,16 @@ $.task = (arg...) ->
 
 ###
 add-blank-line()
+build()
 default()
 gurumin()
 kokoro()
+lint()
 noop()
 prune()
+publish()
 update()
+watch()
 ###
 
 $.task 'add-blank-line', ->
@@ -89,6 +93,12 @@ $.task 'add-blank-line', ->
     listCont.push ''
     cont = listCont.join '\n'
     await $.write_ source, cont
+
+  $ # return
+
+$.task 'build', ->
+  await $.build_()
+  $ # return
 
 $.task 'default', ->
   
@@ -159,6 +169,19 @@ $.task 'kokoro', ->
     await $.exec_ "git add -f #{$.path.base}/#{filename}"
 
   $ # return
+
+$.task 'lint', ->
+
+  await $.lint_ [
+    './**/*.coffee'
+    './**/*.md'
+    './**/*.pug'
+    './**/*.styl'
+    './**/*.ts'
+    '!**/node_modules/**'
+    '!**/gurumin/**'
+    '!**/nib/**'
+  ]
 
 $.task 'noop', -> null
 
@@ -276,10 +299,24 @@ $.task 'prune', ->
 
   $ # return
 
+$.task 'publish', ->
+
+  await $.exec_ [
+    'nrm use npm'
+    'npm publish'
+    'nrm use taobao'
+  ]
+
+  $ # return
+
 $.task 'update', ->
 
   {registry} = $.argv
 
   await $.update_ {registry}
 
+  $ # return
+
+$.task 'watch', ->
+  $._watch()
   $ # return
