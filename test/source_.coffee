@@ -17,7 +17,7 @@ describe '$.source_(source)', ->
 
     listSource = await $.source_ './*.md'
 
-    if listSource.length != 2
+    if listSource.length != 3
       throw new Error()
 
     await clean_()

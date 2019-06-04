@@ -26,7 +26,7 @@ class M
           '.md'
           '.pug'
           '.styl'
-          '.ts'
+          # '.ts'
           '.yaml'
         ]
       path:
@@ -112,6 +112,7 @@ class M
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
       '!**/include/**'
+      '!**/component/**'
       '!**/*.min.*'
     ]
     $.watch listSource, (e) =>
@@ -128,6 +129,7 @@ class M
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
       '!**/include/**'
+      '!**/component/**'
     ]
     $.watch listSource, (e) =>
       await @copy_ e.path

@@ -26,7 +26,7 @@ class M
           '.md'
           '.pug'
           '.styl'
-          '.ts'
+          # '.ts'
           '.yaml'
         ]
       path:
