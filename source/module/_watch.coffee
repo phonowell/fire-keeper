@@ -3,22 +3,28 @@
 class M
 
   constructor: (option) ->
+
+    ###
+    data
+      compile
+        extend
+        extname
+      copy
+        extend
+        extname
+      option
+      path
+        source
+        target
+    ###
     
     data =
-      list:
-        copy: [
-          '.css'
-          '.gif'
-          '.html'
-          '.jpg'
-          '.js'
-          '.json'
-          '.png'
-          '.ttf'
-          '.txt'
-          '.xml'
+      compile:
+        extend: [
+          '!**/include/**'
+          '!**/*.min.*'
         ]
-        compile: [
+        extname: [
           '.coffee'
           '.css'
           '.html'
@@ -29,12 +35,29 @@ class M
           # '.ts'
           '.yaml'
         ]
+      copy:
+        extend: [
+          '!**/include/**'
+        ]
+        extname: [
+          '.css'
+          '.gif'
+          '.html'
+          '.jpg'
+          '.js'
+          '.json'
+          '.png'
+          '.ttf'
+          '.txt'
+          '.vue'
+          '.xml'
+        ]
       option: {}
       path:
         source: './source'
         target: './dist'
 
-    @option = _.merge data, option
+    @data = _.merge data, option
 
     @ # return
 
@@ -97,7 +120,7 @@ class M
 
     @ # return
 
-  get: (key) -> _.get @option, key
+  get: (key) -> _.get @data, key
 
   reloadCss: ->
     pathTarget = @get 'path.target'
@@ -106,31 +129,28 @@ class M
 
   watchCompile: ->
 
-    listExt = @get 'list.compile'
+    listExt = @get 'compile.extname'
     pathSource = @get 'path.source'
     pathBuild = @get 'path.build'
 
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
-      '!**/include/**'
-      '!**/component/**'
-      '!**/*.min.*'
+      (@get 'compile.extend')...
     ]
     $.watch listSource, (e) =>
-      await @compile_ e.path, @option.option
+      await @compile_ e.path, @data.option
 
     @ # return
 
   watchCopy: ->
 
-    listExt = @get 'list.copy'
+    listExt = @get 'copy.extname'
     pathSource = @get 'path.source'
     pathBuild = @get 'path.build'
 
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
-      '!**/include/**'
-      '!**/component/**'
+      (@get 'copy.extend')...
     ]
     $.watch listSource, (e) =>
       await @copy_ e.path

@@ -5,20 +5,12 @@ class M
   constructor: (option) ->
     
     data =
-      list:
-        copy: [
-          '.css'
-          '.gif'
-          '.html'
-          '.jpg'
-          '.js'
-          '.json'
-          '.png'
-          '.ttf'
-          '.txt'
-          '.xml'
+      compile:
+        extend: [
+          '!**/include/**'
+          '!**/*.min.*'
         ]
-        compile: [
+        extname: [
           '.coffee'
           '.css'
           '.html'
@@ -29,11 +21,29 @@ class M
           # '.ts'
           '.yaml'
         ]
+      copy:
+        extend: [
+          '!**/include/**'
+        ]
+        extname: [
+          '.css'
+          '.gif'
+          '.html'
+          '.jpg'
+          '.js'
+          '.json'
+          '.png'
+          '.ttf'
+          '.txt'
+          '.vue'
+          '.xml'
+        ]
+      option: {}
       path:
         source: './source'
         target: './build'
 
-    @option = _.merge data, option
+    @data = _.merge data, option
 
     @ # return
 
@@ -51,29 +61,29 @@ class M
 
   compile_: ->
 
-    listExt = @get 'list.compile'
+    listExt = @get 'compile.extname'
     pathSource = @get 'path.source'
     pathTarget = @get 'path.target'
 
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
-      '!**/include/**'
-      '!**/*.min.*'
+      (@get 'compile.extend')...
     ]
-    await $.compile_ listSource, pathTarget,
-      base: pathSource
+    option = _.clone @data.option
+    option.base = pathSource
+    await $.compile_ listSource, pathTarget, option
 
     @ # return
 
   copy_: ->
 
-    listExt = @get 'list.copy'
+    listExt = @get 'copy.extname'
     pathSource = @get 'path.source'
     pathTarget = @get 'path.target'
 
     listSource = [
       ("#{pathSource}/**/*#{ext}" for ext in listExt)...
-      '!**/include/**'
+      (@get 'copy.extend')...
     ]
     await $.copy_ listSource, pathTarget
 
@@ -88,7 +98,7 @@ class M
     
     @ # return
 
-  get: (key) -> _.get @option, key
+  get: (key) -> _.get @data, key
 
 # return
 $.target_ = (option = {}) ->
