@@ -4,6 +4,4 @@ $ = require '../index'
 # return
 module.exports = ->
 
-  await $.task('_build')()
-
-  $._watch()
+  $.info 'z'

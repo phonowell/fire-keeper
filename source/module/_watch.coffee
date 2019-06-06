@@ -29,6 +29,7 @@ class M
           # '.ts'
           '.yaml'
         ]
+      option: {}
       path:
         source: './source'
         target: './dist'
@@ -116,7 +117,7 @@ class M
       '!**/*.min.*'
     ]
     $.watch listSource, (e) =>
-      await @compile_ e.path
+      await @compile_ e.path, @option.option
 
     @ # return
 

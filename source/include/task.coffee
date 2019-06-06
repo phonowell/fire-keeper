@@ -64,7 +64,6 @@ kokoro()
 lint()
 noop()
 prune()
-publish()
 update()
 watch()
 ###
@@ -296,16 +295,6 @@ $.task 'prune', ->
 
   listSource = ("#{base}/**/*#{line}" for line in listExtension)
   await $.remove_ listSource
-
-  $ # return
-
-$.task 'publish', ->
-
-  await $.exec_ [
-    'nrm use npm'
-    'npm publish'
-    'nrm use taobao'
-  ]
 
   $ # return
 

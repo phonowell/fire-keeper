@@ -246,7 +246,6 @@
   lint()
   noop()
   prune()
-  publish()
   update()
   watch()
   */
@@ -378,11 +377,6 @@
       return results;
     })();
     await $.remove_(listSource);
-    return $; // return
-  });
-
-  $.task('publish', async function() {
-    await $.exec_(['nrm use npm', 'npm publish', 'nrm use taobao']);
     return $; // return
   });
 
