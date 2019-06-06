@@ -1,1 +1,58 @@
-{"author":"Mimiko Phonowell <phonowell@gmail.com>","bugs":{"url":"https://github.com/phonowell/fire-keeper/issues"},"dependencies":{"achain":"^1.1.3","archiver":"^3.0.0","download":"^7.1.0","estus-flask":"0.0.7","fs-extra":"^8.0.1","gulp":"^4.0.2","gulp-clean-css":"^4.2.0","gulp-coffee":"^3.0.3","gulp-coffeelint":"^0.6.0","gulp-htmlmin":"^5.0.1","gulp-if":"^2.0.2","gulp-include":"^2.4.1","gulp-livereload":"^4.0.1","gulp-markdown":"^4.0.0","gulp-pug":"^4.0.1","gulp-rename":"^1.4.0","gulp-stylint":"^4.0.2","gulp-stylus":"^2.7.0","gulp-uglify":"^3.0.2","gulp-using":"^0.1.1","gulp-watch":"^5.0.1","gulp-yaml":"^2.0.4","gulp-zip":"^5.0.0","js-yaml":"^3.13.1","klaw":"^3.0.0","markdownlint":"^0.14.2","prompts":"^2.1.0","ssh2":"^0.8.4","uglify-es":"^3.3.9","yargs":"^13.2.4"},"description":"A little helper to make gulpfile(s) simple.","devDependencies":{"mocha":"^6.1.4"},"homepage":"https://github.com/phonowell/fire-keeper","keywords":["fire-keeper"],"license":"MIT","main":"./index.js","name":"fire-keeper","repository":{"type":"git","url":"https://github.com/phonowell/fire-keeper.git"},"scripts":{"test":"mocha --timeout 30000"},"url":"https://github.com/phonowell/fire-keeper","version":"0.0.154"}
+{
+  "author": "Mimiko Phonowell <phonowell@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/phonowell/fire-keeper/issues"
+  },
+  "dependencies": {
+    "achain": "^1.1.3",
+    "archiver": "^3.0.0",
+    "download": "^7.1.0",
+    "estus-flask": "0.0.7",
+    "fs-extra": "^8.0.1",
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-coffee": "^3.0.3",
+    "gulp-coffeelint": "^0.6.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-if": "^2.0.2",
+    "gulp-include": "^2.4.1",
+    "gulp-livereload": "^4.0.1",
+    "gulp-markdown": "^4.0.0",
+    "gulp-pug": "^4.0.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-stylint": "^4.0.2",
+    "gulp-stylus": "^2.7.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-using": "^0.1.1",
+    "gulp-watch": "^5.0.1",
+    "gulp-yaml": "^2.0.4",
+    "gulp-zip": "^5.0.0",
+    "js-yaml": "^3.13.1",
+    "klaw": "^3.0.0",
+    "markdownlint": "^0.14.2",
+    "prompts": "^2.1.0",
+    "ssh2": "^0.8.4",
+    "uglify-es": "^3.3.9",
+    "yargs": "^13.2.4"
+  },
+  "description": "A little helper to make gulpfile(s) simple.",
+  "devDependencies": {
+    "mocha": "^6.1.4"
+  },
+  "homepage": "https://github.com/phonowell/fire-keeper",
+  "keywords": [
+    "fire-keeper"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "name": "fire-keeper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phonowell/fire-keeper.git"
+  },
+  "scripts": {
+    "test": "mocha --timeout 30000"
+  },
+  "url": "https://github.com/phonowell/fire-keeper",
+  "version": "0.0.155"
+}

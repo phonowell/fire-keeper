@@ -174,9 +174,9 @@ $.task 'lint', ->
   await $.lint_ [
     './**/*.coffee'
     './**/*.md'
-    './**/*.pug'
+    # './**/*.pug'
     './**/*.styl'
-    './**/*.ts'
+    # './**/*.ts'
     '!**/node_modules/**'
     '!**/gurumin/**'
     '!**/nib/**'
