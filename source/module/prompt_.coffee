@@ -1,10 +1,9 @@
-class Prompt
+class M
 
   ###
   listType
   listTypeCache
   mapMessage
-  namespace
   pathCache
   ---
   execute_(option)
@@ -40,29 +39,28 @@ class Prompt
     text: 'input text'
     toggle: 'toggle'
 
-  namespace: '$.prompt_'
-
   pathCache: './temp/cache-prompt.json'
 
   execute_: (option) ->
 
     type = $.type option
     unless type == 'object'
-      throw new Error "invalid type '#{type}'"
+      throw "prompt_/error: invalid type '#{type}'"
 
-    $.info.pause @namespace
-
-    option = _.cloneDeep option
-    option = await @setOption_ option
+    res = null
+    resRaw = null
     
-    # execute
-    @fn_ or= require 'prompts'
-    resRaw = await @fn_ option
-    res = resRaw[option.name]
+    await $.info().silence_ =>
 
-    await @setCache_ option, res
+      option = _.cloneDeep option
+      option = await @setOption_ option
+      
+      # execute
+      @fn_ or= require 'prompts'
+      resRaw = await @fn_ option
+      res = resRaw[option.name]
 
-    $.info.resume @namespace
+      await @setCache_ option, res
 
     # return
     if option.raw
@@ -112,7 +110,7 @@ class Prompt
   setOption_: (option) ->
 
     unless option.type in @listType
-      throw new Error "invalid type '#{option.type}'"
+      throw "prompt_/error: invalid type '#{option.type}'"
 
     # default value
     option.message or= @mapMessage[option.type] or 'input'
@@ -121,7 +119,7 @@ class Prompt
     if option.type in ['autocomplete', 'multiselect', 'select']
       
       unless option.choices or= option.choice or option.list
-        throw new Error 'got no choice(s)'
+        throw 'prompt_/error: got no choice(s)'
       
       for item, i in option.choices
         
@@ -143,7 +141,6 @@ class Prompt
 
     option # return
 
-# return
-$.prompt_ = (arg...) ->
-  prompt_ = $.prompt_.fn_ or= new Prompt()
-  await prompt_.execute_ arg...
+m = new M()
+export default (arg...) ->
+  await m.execute_ arg...

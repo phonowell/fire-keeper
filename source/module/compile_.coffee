@@ -40,7 +40,9 @@ class M
 
       coffee = require 'gulp-coffee'
       include = require 'gulp-include'
-      uglify = getPlugin 'uglify'
+      uglifyEs = require 'uglify-es'
+      composer = require 'gulp-uglify/composer'
+      uglify = composer uglifyEs, console
 
       base = option.base
       sourcemaps = option.map
@@ -94,7 +96,9 @@ class M
 
     await new Promise (resolve) ->
 
-      uglify = getPlugin 'uglify'
+      uglifyEs = require 'uglify-es'
+      composer = require 'gulp-uglify/composer'
+      uglify = composer uglifyEs, console
 
       base = option.base
       sourcemaps = option.map
@@ -168,7 +172,9 @@ class M
   #   await new Promise (resolve) ->
 
   #     ts = require 'gulp-typescript'
-  #     uglify = getPlugin 'uglify'
+  #     uglifyEs = require 'uglify-es'
+  #     composer = require 'gulp-uglify/composer'
+  #     uglify = composer uglifyEs, console
 
   #     base = option.base
   #     isMinify = option.minify
@@ -214,9 +220,9 @@ class M
           return [arg[0], null, arg[1]]
         if type == 'string'
           return [arg[0], arg[1], {}]
-        throw new Error "invalid type '#{type}'"
+        throw "invalid type '#{type}'"
       when 3 then arg
-      else throw new Error 'invalid argument length'
+      else throw 'invalid argument length'
 
     option = _.extend
       map: false
@@ -224,14 +230,14 @@ class M
     , option
 
     # message
-    msg = "compiled #{wrapList source}"
+    msg = "compiled #{$.wrapList source}"
     if target
-      msg += " to #{wrapList target}"
+      msg += " to #{$.wrapList target}"
 
     # base
     type = $.type source
     if type == 'string' and ~source.search /\/\*/
-      option.base or= normalizePath source
+      option.base or= $.normalizePath source
       .replace /\/\*.*/, ''
 
     # each & compile
@@ -240,10 +246,10 @@ class M
       {extname, dirname} = $.getName source
 
       method = @mapMethod[extname]
-      method or throw new Error "invalid extname '#{extname}'"
+      method or throw "invalid extname '#{extname}'"
 
       target or= dirname
-      target = normalizePath target
+      target = $.normalizePath target
 
       await @[method] source, target, option
 
@@ -251,8 +257,7 @@ class M
 
     @ # return
 
-# return
-$.compile_ = (arg...) ->
+export default (arg...) ->
   m = new M()
   await m.execute_ arg...
-  $ # return
+  @ # return

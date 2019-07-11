@@ -4,16 +4,14 @@ class M
 
   ###
   spawn
-  ###
 
-  spawn: require('child_process').spawn
-
-  ###
   close()
   execute_(cmd, [option])
   info([type], string)
   parseMessage(buffer)
   ###
+
+  spawn: require('child_process').spawn
 
   close: ->
     @process.kill()
@@ -25,14 +23,14 @@ class M
     cmd = switch type
       when 'array' then cmd.join ' && '
       when 'string' then cmd
-      else throw new Error "invalid type '#{type}'"
+      else throw "exec_/error: invalid type '#{type}'"
 
     isIgnoreError = !!option.ignoreError
     delete option.ignoreError
     isSilent = !!option.silent
     delete option.silent
 
-    [cmder, arg] = if $.os == 'windows'
+    [cmder, arg] = if $.os() == 'windows'
       [
         'cmd.exe'
         ['/s', '/c', cmd]
@@ -75,9 +73,9 @@ class M
     [type, string] = switch arg.length
       when 1 then [null, arg[0]]
       when 2 then arg
-      else throw new Error 'invalid argument length'
+      else throw 'exec_/error: invalid argument length'
 
-    string = $.trim string
+    string = _.trim string
     unless string.length
       return
 
@@ -89,16 +87,17 @@ class M
       when 'error' then kleur.red string
       else kleur.gray string
 
-    $.log string
+    console.log string
 
   parseMessage: (buffer) ->
     _.trimEnd ($.parseString buffer), '\n'
 
 # return
-$.exec_ = (cmd, option) ->
+m = new M()
+
+export default (cmd, option) ->
   
   unless cmd
-    return false
-  
-  m = new M()
+    throw 'exec_/error: cmd undefined'
+    
   await m.execute_ cmd, option

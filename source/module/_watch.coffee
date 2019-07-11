@@ -1,5 +1,3 @@
-# path = require 'path'
-
 class M
 
   constructor: (option) ->
@@ -157,8 +155,7 @@ class M
 
     @ # return
 
-# return
-$._watch = (option = {}) ->
+export default (option = {}) ->
   m = new M option
   m.execute()
-  $ # return
+  @ # return

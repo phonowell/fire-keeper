@@ -1,21 +1,17 @@
-###
-clean_(source)
-###
-
-$.clean_ = (source) ->
+export default (source) ->
 
   type = $.type source
   unless type == 'string'
-    throw new Error "invalid type '#{type}'"
+    throw "clean_/error: invalid type '#{type}'"
 
   await $.remove_ source
 
-  pathDir = $.getDirname source
+  dirname = $.getDirname source
   
-  listSource = await $.source_ "#{pathDir}/**/*"
+  listSource = await $.source_ "#{dirname}/**/*"
   if listSource.length
-    return $
+    return @
   
-  await $.remove_ pathDir
+  await $.remove_ dirname
 
-  $ # return
+  @ # return

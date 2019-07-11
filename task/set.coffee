@@ -1,9 +1,8 @@
 $ = require '../index'
 
-# return
 module.exports = ->
 
-  {ver} = $.argv
+  {ver} = $.argv()
 
   source = './package.json'
   data = await $.read_ source

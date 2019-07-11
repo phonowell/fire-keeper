@@ -1,42 +1,22 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  type = $.type $.exec_
+  unless type == 'asyncfunction'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
+it 'npm version', ->
 
-# test
+  [status, result] = await $.exec_ 'npm -v'
+  
+  unless status
+    throw 0
 
-describe '$.exec_(cmd, [option])', ->
+  unless ~result.search /\d+\.\d+\.\d+/
+    throw 1
 
-  ###
-  async function
-  console.log('Aloha')
-  error
-  ###
+it 'error', ->
 
-  it 'async function', ->
+  [status, result] = await $.exec_ 'fire-keeper-error'
 
-    type = $.type $.exec_
-    unless type == 'async function'
-      throw new Error()
-
-  it 'npm version', ->
-
-    [status, result] = await $.exec_ 'npm -v'
-    
-    unless status
-      throw new Error()
-
-    unless ~result.search /\d+\.\d+\.\d+/
-      throw new Error()
-
-  it 'error', ->
-
-    [status, result] = await $.exec_ 'fire-keeper-error'
-
-    if status
-      throw new Error()
+  if status
+    throw 0

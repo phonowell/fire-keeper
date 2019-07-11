@@ -1,22 +1,5 @@
-# require
-$ = require './../index'
-{_} = $
+it '$.prompt_()', ->
 
-# variable
-temp = './temp'
-
-# function
-clean_ = -> await $.remove_ temp
-
-# test
-
-describe '$.prompt_(source, callback)', ->
-
-  it '$.prompt_()', ->
-    await clean_()
-
-    type = $.type $.prompt_
-    unless type == 'async function'
-      throw new Error()
-
-    await clean_()
+  type = $.type $.prompt_
+  unless type == 'asyncfunction'
+    throw 0

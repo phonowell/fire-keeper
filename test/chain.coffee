@@ -1,21 +1,5 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
-
-# function
-clean_ = -> await $.remove_ temp
-
-# test
-
-describe '$.chain(fn, option)', ->
-
-  it '$.chain()', ->
-    await clean_()
-
-    if $.type($.chain) != 'function'
-      throw new Error()
-
-    await clean_()
+  type = $.type $.chain
+  unless type == 'function'
+    throw 0

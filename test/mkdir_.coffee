@@ -1,51 +1,37 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.mkdir_('#{temp}/m/k/d/i/r')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  res = await $.mkdir_ "#{temp}/m/k/d/i/r"
 
-# function
-clean_ = -> await $.remove_ temp
+  if res != $
+    throw 0
 
-# test
+  unless await $.isExisted_ "#{temp}/m/k/d/i/r"
+    throw 0
 
-describe '$.mkdir_(source)', ->
+  await clean_()
 
-  it "$.mkdir_('#{temp}/m/k/d/i/r')", ->
-    await clean_()
+it "$.mkdir_(['#{temp}/a', '#{temp}/b', '#{temp}/c'])", ->
+  await clean_()
 
-    res = await $.mkdir_ "#{temp}/m/k/d/i/r"
+  listSource = [
+    "#{temp}/a"
+    "#{temp}/b"
+    "#{temp}/c"
+  ]
 
-    if res != $
-      throw new Error()
+  res = await $.mkdir_ listSource
 
-    unless await $.isExisted_ "#{temp}/m/k/d/i/r"
-      throw new Error()
+  if res != $
+    throw 0
 
-    await clean_()
+  isExisted = await $.isExisted_ [
+    "#{temp}/a"
+    "#{temp}/b"
+    "#{temp}/c"
+  ]
 
-  it "$.mkdir_(['#{temp}/a', '#{temp}/b', '#{temp}/c'])", ->
-    await clean_()
+  unless isExisted
+    throw 0
 
-    listSource = [
-      "#{temp}/a"
-      "#{temp}/b"
-      "#{temp}/c"
-    ]
-
-    res = await $.mkdir_ listSource
-
-    if res != $
-      throw new Error()
-
-    isExisted = await $.isExisted_ [
-      "#{temp}/a"
-      "#{temp}/b"
-      "#{temp}/c"
-    ]
-
-    unless isExisted
-      throw new Error()
-
-    await clean_()
+  await clean_()

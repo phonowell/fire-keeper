@@ -1,45 +1,26 @@
-# require
-$ = require './../index'
-{_} = $
+it './*.md', ->
 
-# variable
-temp = './temp'
+  listSource = await $.source_ './*.md'
 
-# function
-clean_ = -> await $.remove_ temp
+  unless listSource.length == 3
+    throw 0
 
-# test
+it '~/Desktop/*.md', ->
 
-describe '$.source_(source)', ->
+  content = 'test text'
+  listTarget = [
+    '~/Desktop/a.md'
+    '~/Desktop/b.md'
+    '~/Desktop/c.md'
+  ]
 
-  it "$.source_('./*.md')", ->
-    await clean_()
+  for target in listTarget
+    await $.write_ target, content
 
-    listSource = await $.source_ './*.md'
+  listSource = await $.source_ '~/Desktop/*.md'
 
-    if listSource.length != 3
-      throw new Error()
+  unless listSource.length == 3
+    throw 0
 
-    await clean_()
-
-  it "$.source_('~/Desktop/*.md')", ->
-    await clean_()
-
-    content = 'test text'
-    listTarget = [
-      '~/Desktop/a.md'
-      '~/Desktop/b.md'
-      '~/Desktop/c.md'
-    ]
-
-    for target in listTarget
-      await $.write_ target, content
-
-    listSource = await $.source_ '~/Desktop/*.md'
-
-    if listSource.length != 3
-      throw new Error()
-
-    # clean
-    await $.remove_ listTarget
-    await clean_()
+  # clean
+  await $.remove_ listTarget

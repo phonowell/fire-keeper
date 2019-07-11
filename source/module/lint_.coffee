@@ -28,7 +28,7 @@ class M
       extname = $.getExtname source
       
       method = @mapMethod[extname]
-      method or throw new Error "invalid extname '#{extname}'"
+      method or throw "lint_/error: invalid extname '#{extname}'"
 
       await @[method] source
 
@@ -69,7 +69,7 @@ class M
           unless 'array' == $.type list
             continue
 
-          filename = $.info.renderPath filename
+          filename = $.info().renderPath filename
           $.i kleur.magenta filename
 
           for item in list
@@ -119,7 +119,7 @@ class M
   #   @ # return
 
 # return
-$.lint_ = (arg...) ->
+export default (arg...) ->
   m = new M()
   await m.execute_ arg...
-  $ # return
+  @ # return

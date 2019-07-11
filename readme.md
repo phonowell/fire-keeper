@@ -24,74 +24,14 @@ $.task 'build', -> await $.compile_ './source/index.coffee', './'
 
 ## 方法
 
-以`_`结尾的方法均为`async function`，需要加`await`调用。
-在调用方法时，`_`亦可视作`async`的缩写。
+注意，以`_`结尾的方法均为`async function`，需要加`await`调用。
 
-```coffeescript
-pkg = await $.readAsync './package.json'
-# 等同于 $.read_()
-```
+详情请查阅[文档](./doc/index.md)。
 
-- [$.backup_(source)](doc/backup.md)
-- [$.chain(fn)](doc/chain.md)
-- [$.clean_(source)](doc/clean.md)
-- [$.copy_(source, target, [option])](doc/copy.md)
-- [$.delay_([time])](doc/delay.md)
-- [$.isExisted_(source)](doc/isExisted.md)
-- [$.isSame_(source)](doc/isSame.md)
-- [$.link_(source, target)](doc/link.md)
-- [$.mkdir_(source)](doc/mkdir.md)
-- [$.move_(source, target)](doc/move.md)
-- [$.read_(source, [option])](doc/read.md)
-- [$.recover_(source)](doc/recover.md)
-- [$.remove_(source)](doc/remove.md)
-- [$.say_(text, [option])](doc/say.md)
-- [$.source_(source, [option])](doc/source.md)
-- [$.task(name, [fn])](doc/task.md)
-- [$.update_()](doc/update.md)
-- [$.write_(source, data, [option])](doc/write.md)
-- [$.zip_(source, [target], [option])](doc/zip.md)
+## 编译
 
-- $._watch([option])
-- $.build_([option])
-- $.compile_(source, [target], [option])
-- $.download_(source, target, [option])
-- $.exec_(cmd, [option])
-- $.getBaseame(source)
-- $.getDirname(source)
-- $.getExtname(source)
-- $.getFilename(source)
-- $.getName(source)
-- $.lint_(source)
-- $.prompt_(option)
-- $.reload(source)
-- $.rename_(source, option)
-- $.ssh()
-- $.ssh().connect_(option)
-- $.ssh().disconnect_()
-- $.ssh().exec_(cmd, [option])
-- $.ssh().mkdir_(source)
-- $.ssh().remove_(source)
-- $.ssh().upload_(source, target, [option])
-- $.stat_(source)
-- $.walk_(source, callback)
-- $.watch(source)
-- $.yargs()
-
-## 变量
-
-```coffeescript
-$.argv # 命令行的传入参数
-$.os # 系统信息
-$.path # 路径信息
-```
-
-## 库
-
-```coffeescript
-$.library._ # lodash
-$.library.fse # fs-extra
-$.library.gulp # gulp
+```shell
+gulp build
 ```
 
 ## 测试
@@ -103,3 +43,5 @@ gulp test
 ## 注意
 
 该项目**可能并不稳定**。
+
+**最后更新于`2019/7/30`。**

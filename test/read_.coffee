@@ -1,95 +1,82 @@
-# require
-$ = require './../index'
-{_} = $
+it './temp/test.txt', ->
+  await clean_()
 
-# variable
-temp = './temp'
+  source = "#{temp}/test.txt"
+  string = 'a test message'
 
-# function
-clean_ = -> await $.remove_ temp
+  await $.write_ source, string
 
-# test
+  cont = await $.read_ source
 
-describe '$.read_(source, [option])', ->
+  unless cont == string
+    throw 0
 
-  it "$.read_('#{temp}/test.txt')", ->
-    await clean_()
+  await clean_()
 
-    source = "#{temp}/test.txt"
-    string = 'a test message'
+it './temp/test.json', ->
+  await clean_()
 
-    await $.write_ source, string
+  source = "#{temp}/test.json"
+  string = 'a test message'
+  object =
+    message: string
 
-    cont = await $.read_ source
+  await $.write_ source, object
 
-    unless cont == string
-      throw new Error()
+  cont = await $.read_ source
 
-    await clean_()
+  unless cont.message == string
+    throw 0
 
-  it "$.read_('#{temp}/test.json')", ->
-    await clean_()
+  await clean_()
 
-    source = "#{temp}/test.json"
-    string = 'a test message'
-    object = message: string
+it './temp/null.txt', ->
+  await clean_()
 
-    await $.write_ source, object
+  cont = await $.read_ "#{temp}/null.txt"
 
-    cont = await $.read_ source
+  if cont?
+    throw 0
+  
+  await clean_()
 
-    if cont.message != string
-      throw new Error()
+it './temp/raw.json', ->
+  await clean_()
 
-    await clean_()
+  source = "#{temp}/raw.json"
+  string = 'a test message'
 
-  it "$.read_('#{temp}/null.txt')", ->
-    await clean_()
+  await $.write_ source, string
 
-    cont = await $.read_ "#{temp}/null.txt"
+  cont = await $.read_ source,
+    raw: true
 
-    if cont?
-      throw new Error()
-    
-    await clean_()
+  unless ($.type cont) == 'uint8array'
+    throw 0
 
-  it "$.read_('#{temp}/test.json', raw: true)", ->
-    await clean_()
+  cont = $.parseString cont
 
-    source = "#{temp}/test.json"
-    string = 'a test message'
+  unless cont == string
+    throw 1
 
-    await $.write_ source, string
+  await clean_()
 
-    cont = await $.read_ source,
-      raw: true
+it './temp/test.yaml', ->
+  await clean_()
 
-    if $.type(cont) != 'buffer'
-      throw new Error()
+  source = "#{temp}/test.yaml"
+  string = 'a test message'
 
-    cont = $.parseString cont
+  await $.write_ source, "- value: #{string}"
 
-    if cont != string
-      throw new Error()
+  cont = await $.read_ source
+  
+  type = $.type cont
+  unless type == 'array'
+    throw "invalid type '#{type}'"
 
-    await clean_()
+  value = _.get cont, '[0].value'
+  unless value == string
+    throw "invalid value '#{value}'"
 
-  it "$.read_('#{temp}/test.yaml')", ->
-    await clean_()
-
-    source = "#{temp}/test.yaml"
-    string = 'a test message'
-
-    await $.write_ source, "- value: #{string}"
-
-    cont = await $.read_ source
-    
-    type = $.type cont
-    unless type == 'array'
-      throw new Error "invalid type '#{type}'"
-
-    value = _.get cont, '[0].value'
-    unless value == string
-      throw new Error "invalid value '#{value}'"
-
-    await clean_()
+  await clean_()

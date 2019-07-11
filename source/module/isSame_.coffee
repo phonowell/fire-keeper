@@ -1,12 +1,14 @@
-$.isSame_ = (source) ->
+export default (source) ->
 
-  groupSource = normalizePathToArray source
-  unless groupSource.length
+  # why $.normailizePathToArray, but not $.source_?
+  # because source may be not existed
+  listSource = $.normalizePathToArray source
+  unless listSource.length
     return false
 
-  # check size
+  # size
   cache = null
-  for source in groupSource
+  for source in listSource
 
     stat = await $.stat_ source
     unless stat
@@ -21,13 +23,12 @@ $.isSame_ = (source) ->
     unless size == cache
       return false
 
-  # check content
+  # content
   cache = null
-  for source in groupSource
+  for source in listSource
 
-    $.info.pause '$.isSame_'
-    cont = await $.read_ source
-    $.info.resume '$.isSame_'
+    cont = await $.info().silence_ ->
+      await $.read_ source
     
     unless cont
       return false

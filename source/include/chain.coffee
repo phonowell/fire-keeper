@@ -1,3 +1,0 @@
-$.chain = (arg...) ->
-  fn = require 'achain'
-  fn arg...

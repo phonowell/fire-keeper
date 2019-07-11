@@ -1,56 +1,42 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.write_('#{temp}/wr/ite.txt', 'a test message')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  source = "#{temp}/wr/ite.txt"
+  string = 'a test message'
 
-# function
-clean_ = -> await $.remove_ temp
+  result = await $.write_ source, string
 
-# test
+  unless result == $
+    throw 0
 
-describe '$.write_(source, data, [option])', ->
+  unless await $.isExisted_ source
+    throw 1
 
-  it "$.write_('#{temp}/wr/ite.txt', 'a test message')", ->
-    await clean_()
+  cont = await $.read_ source
 
-    source = "#{temp}/wr/ite.txt"
-    string = 'a test message'
+  if cont != string
+    throw 2
 
-    res = await $.write_ source, string
+  await clean_()
 
-    if res != $
-      throw new Error()
+it "$.write_('#{temp}/wr/ite.json', {message: 'a test message'})", ->
+  await clean_()
 
-    unless await $.isExisted_ source
-      throw new Error()
+  source = "#{temp}/wr/ite.json"
+  string = 'a test message'
+  object = message: string
 
-    cont = await $.read_ source
+  result = await $.write_ source, object
 
-    if cont != string
-      throw new Error()
+  unless result == $
+    throw 0
 
-    await clean_()
+  unless await $.isExisted_ source
+    throw 1
 
-  it "$.write_('#{temp}/wr/ite.json', {message: 'a test message'})", ->
-    await clean_()
+  cont = await $.read_ source
 
-    source = "#{temp}/wr/ite.json"
-    string = 'a test message'
-    object = message: string
+  if cont.message != string
+    throw 2
 
-    res = await $.write_ source, object
-
-    if res != $
-      throw new Error()
-
-    unless await $.isExisted_ source
-      throw new Error()
-
-    cont = await $.read_ source
-
-    if cont.message != string
-      throw new Error()
-
-    await clean_()
+  await clean_()

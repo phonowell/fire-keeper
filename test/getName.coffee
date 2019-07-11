@@ -1,47 +1,33 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  source = '~/Downloads/test.txt'
+  {basename, dirname, extname, filename} = $.getName source
 
-# function
-clean_ = -> await $.remove_ temp
+  unless basename == 'test'
+    throw 1
 
-# test
+  unless dirname == '~/Downloads'
+    throw 2
+  
+  unless extname == '.txt'
+    throw 3
 
-describe '$.getName(source)', ->
+  unless filename == 'test.txt'
+    throw 4
 
-  it '$.getName(source)', ->
+it 'windows', ->
 
-    source = '~/Downloads/test.txt'
-    {basename, dirname, extname, filename} = $.getName source
+  source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
+  {basename, dirname, extname, filename} = $.getName source
 
-    unless basename == 'test'
-      throw new Error 1
+  unless basename == 'readme'
+    throw basename
 
-    unless dirname == '~/Downloads'
-      throw new Error 2
-    
-    unless extname == '.txt'
-      throw new Error 3
+  unless dirname == 'C:/Users/mimiko/Project/fire-keeper'
+    throw dirname
 
-    unless filename == 'test.txt'
-      throw new Error 4
+  unless extname == '.md'
+    throw extname
 
-  it 'for windows', ->
-
-    source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
-    {basename, dirname, extname, filename} = $.getName source
-
-    unless basename == 'readme'
-      throw new Error basename
-
-    unless dirname == 'C:/Users/mimiko/Project/fire-keeper'
-      throw new Error dirname
-
-    unless extname == '.md'
-      throw new Error extname
-
-    unless filename == 'readme.md'
-      throw new Error filename
+  unless filename == 'readme.md'
+    throw filename

@@ -1,41 +1,27 @@
-# require
-$ = require './../index'
-{_} = $
+it '$.stat_("./temp/package.json")', ->
+  await clean_()
 
-# variable
-temp = './temp'
+  await $.copy_ './package.json', temp
 
-# function
-clean_ = -> await $.remove_ temp
+  stat = await $.stat_ './package.json'
 
-# test
+  if ($.type stat) != 'object'
+    throw 0
 
-describe '$.stat_(source)', ->
+  if ($.type stat.atime) != 'date'
+    throw 1
 
-  it '$.stat_("./temp/package.json")', ->
-    await clean_()
+  if $.type(stat.size) != 'number'
+    throw 2
 
-    await $.copy_ './package.json', temp
+  await clean_()
 
-    stat = await $.stat_ './package.json'
+it '$.stat_("./temp/null.txt")', ->
+  await clean_()
 
-    if $.type(stat) != 'object'
-      throw new Error()
+  stat = await $.stat_ "#{temp}/null.txt"
 
-    if $.type(stat.atime) != 'date'
-      throw new Error()
+  if stat?
+    throw 0
 
-    if $.type(stat.size) != 'number'
-      throw new Error()
-
-    await clean_()
-
-  it '$.stat_("./temp/null.txt")', ->
-    await clean_()
-
-    stat = await $.stat_ "#{temp}/null.txt"
-
-    if stat?
-      throw new Error()
-
-    await clean_()
+  await clean_()

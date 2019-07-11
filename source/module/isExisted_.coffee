@@ -1,9 +1,8 @@
 fse = require 'fs-extra'
 
-# return
-$.isExisted_ = (source) ->
+export default (source) ->
 
-  groupSource = normalizePathToArray source
+  groupSource = $.normalizePathToArray source
   unless groupSource.length
     return false
 

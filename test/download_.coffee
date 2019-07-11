@@ -1,46 +1,32 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.download_('https://www.baidu.com/', '#{temp}', 'baidu.html')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  result = await $.download_ 'https://www.baidu.com/'
+  , temp
+  , 'baidu.html'
 
-# function
-clean_ = -> await $.remove_ temp
+  unless result == $
+    throw 0
 
-# test
+  unless await $.isExisted_ "#{temp}/baidu.html"
+    throw 1
 
-describe '$.download_(source, target, [option])', ->
+  await clean_()
 
-  it "$.download_('https://www.baidu.com/', '#{temp}', 'baidu.html')", ->
-    await clean_()
+it "$.download_('https://www.baidu.com/', '#{temp}', {filename: 'baidu.html', timeout: 1e4})", ->
+  await clean_()
 
-    res = await $.download_ 'https://www.baidu.com/'
-    , temp
-    , 'baidu.html'
+  filename = 'baidu.html'
+  timeout = 1e4
 
-    if res != $
-      throw new Error()
+  result = await $.download_ 'https://www.baidu.com/'
+  , temp
+  , {filename, timeout}
 
-    unless await $.isExisted_ "#{temp}/baidu.html"
-      throw new Error()
+  unless result == $
+    throw 0
 
-    await clean_()
+  unless await $.isExisted_ "./temp/#{filename}"
+    throw 1
 
-  it "$.download_('https://www.baidu.com/', '#{temp}', {filename: 'baidu.html', timeout: 1e4})", ->
-    await clean_()
-
-    filename = 'baidu.html'
-    timeout = 1e4
-
-    res = await $.download_ 'https://www.baidu.com/'
-    , temp
-    , {filename, timeout}
-
-    if res != $
-      throw new Error()
-
-    unless await $.isExisted_ "./temp/#{filename}"
-      throw new Error()
-
-    await clean_()
+  await clean_()

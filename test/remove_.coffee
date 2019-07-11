@@ -1,79 +1,65 @@
-# require
-$ = require './../index'
-{_} = $
+it './temp/re', ->
+  await clean_()
 
-# variable
-temp = './temp'
+  await $.write_ "#{temp}/re/move.txt", 'to be removed'
 
-# function
-clean_ = -> await $.remove_ temp
+  result = await $.remove_ "#{temp}/re"
 
-# test
+  unless result == $
+    throw 0
 
-describe '$.remove_(source)', ->
+  if await $.isExisted_ "#{temp}/re"
+    throw 1
 
-  it "$.remove_('#{temp}/re')", ->
-    await clean_()
+  await clean_()
 
-    await $.write_ "#{temp}/re/move.txt", 'to be removed'
+it "['./temp/a', './temp/b', './temp/c.txt'])", ->
+  await clean_()
 
-    res = await $.remove_ "#{temp}/re"
+  await $.mkdir_ [
+    "#{temp}/a"
+    "#{temp}/b"
+  ]
 
-    if res != $
-      throw new Error()
+  await $.write_ "#{temp}/c.txt", 'empty'
 
-    if await $.isExisted_ "#{temp}/re"
-      throw new Error()
+  listSource = [
+    "#{temp}/a"
+    "#{temp}/b"
+    "#{temp}/c.txt"
+  ]
 
-    await clean_()
+  result = await $.remove_ listSource
 
-  it "$.remove_(['#{temp}/a', '#{temp}/b', '#{temp}/c.txt'])", ->
-    await clean_()
+  unless result == $
+    throw 0
 
-    await $.mkdir_ [
-      "#{temp}/a"
-      "#{temp}/b"
-    ]
+  if await $.isExisted_ listSource
+    throw 1
 
-    await $.write_ "#{temp}/c.txt", 'empty'
+  await clean_()
+  
+it './temp/**/*.txt', ->
+  await clean_()
+  
+  listSource = [
+    "#{temp}/a.txt"
+    "#{temp}/b/c.txt"
+  ]
+  string = 'empty'
 
-    listSource = [
-      "#{temp}/a"
-      "#{temp}/b"
-      "#{temp}/c.txt"
-    ]
-
-    res = await $.remove_ listSource
-
-    if res != $
-      throw new Error()
-
-    if await $.isExisted_ listSource
-      throw new Error()
-
-    await clean_()
+  for source in listSource
+    await $.write_ source, string
+  
+  result = await $.remove_ "#{temp}/**/*.txt"
+  
+  unless result == $
+    throw 0
     
-  it "$.remove_('#{temp}/**/*.txt')", ->
-    await clean_()
-    
-    listSource = [
-      "#{temp}/a.txt"
-      "#{temp}/b/c.txt"
-    ]
-    string = 'empty'
+  if await $.isExisted_ listSource
+    throw 1
 
-    for source in listSource
-      await $.write_ source, string
-    
-    res = await $.remove_ "#{temp}/**/*.txt"
-    
-    if res != $
-      throw new Error()
-      
-    if await $.isExisted_ listSource
-      throw new Error()
+  unless await $.isExisted_ "#{temp}/b"
+    throw 2
 
-    unless await $.isExisted_ "#{temp}/b"
-      throw new Error()
-
-    await clean_()
+  await clean_()

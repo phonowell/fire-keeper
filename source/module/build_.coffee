@@ -1,5 +1,3 @@
-# path = require 'path'
-
 class M
 
   constructor: (option) ->
@@ -101,8 +99,7 @@ class M
   get: (key) -> _.get @data, key
 
 # return
-$.target_ = (option = {}) ->
+export default (option = {}) ->
   m = new M option
   await m.execute_()
-  $ # return
-  
+  @ # return

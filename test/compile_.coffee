@@ -1,130 +1,120 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  type = $.type $.compile_
+  unless type == 'asyncfunction'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
+describe 'coffee', ->
 
-# test
+  it 'sourcemaps', ->
+    await clean_()
 
-describe '$.compile_(source, [target], [option])', ->
+    source = "#{temp}/test.coffee"
+    target = "#{temp}/test.js"
 
-  describe 'coffee', ->
+    cont = [
+      'class Tester'
+      'tester = new Tester()'
+      'tester.get = => @'
+      'tester.get()'
+    ].join '\n'
 
-    it 'sourcemaps', ->
-      await clean_()
+    await $.chain $
+    .write_ source, cont
+    .compile_ source,
+      map: true
 
-      source = "#{temp}/test.coffee"
-      target = "#{temp}/test.js"
+    unless await $.isExisted_ target
+      throw new Error()
 
-      cont = [
-        'class Tester'
-        'tester = new Tester()'
-        'tester.get = => @'
-        'tester.get()'
-      ].join '\n'
+    cont = await $.read_ target
+    unless ~cont.search 'sourceMappingURL='
+      throw new Error()
 
-      await $.chain $
-      .write_ source, cont
-      .compile_ source,
-        map: true
+    await clean_()
 
-      unless await $.isExisted_ target
-        throw new Error()
+  it 'not sourcemaps', ->
+    await clean_()
 
-      cont = await $.read_ target
-      unless ~cont.search 'sourceMappingURL='
-        throw new Error()
+    source = "#{temp}/test.coffee"
+    target = "#{temp}/test.js"
 
-      await clean_()
+    cont = [
+      'class Tester'
+      'tester = new Tester()'
+      'tester.get = => @'
+      'tester.get()'
+    ].join '\n'
 
-    it 'not sourcemaps', ->
-      await clean_()
+    await $.chain $
+    .write_ source, cont
+    .compile_ source
 
-      source = "#{temp}/test.coffee"
-      target = "#{temp}/test.js"
+    unless await $.isExisted_ target
+      throw new Error()
 
-      cont = [
-        'class Tester'
-        'tester = new Tester()'
-        'tester.get = => @'
-        'tester.get()'
-      ].join '\n'
+    cont = await $.read_ target
+    if ~cont.search 'sourceMappingURL='
+      throw new Error()
 
-      await $.chain $
-      .write_ source, cont
-      .compile_ source
+    await clean_()
 
-      unless await $.isExisted_ target
-        throw new Error()
+describe 'markdown', ->
 
-      cont = await $.read_ target
-      if ~cont.search 'sourceMappingURL='
-        throw new Error()
+  it 'markdown', ->
+    await clean_()
 
-      await clean_()
+    res = await $.compile_ './readme.md', temp
+    unless res == $
+      throw 0
 
-  describe 'markdown', ->
+    isExisted = await $.isExisted_ "#{temp}/readme.html"
+    unless isExisted
+      throw 1
 
-    it 'markdown', ->
-      await clean_()
+    await clean_()
 
-      res = await $.compile_ './readme.md', temp
-      unless res == $
-        throw new Error 0
+describe 'yaml', ->
 
-      isExisted = await $.isExisted_ "#{temp}/readme.html"
-      unless isExisted
-        throw new Error 1
+  it 'yaml', ->
+    await clean_()
 
-      await clean_()
+    source = "#{temp}/test.yaml"
 
-  describe 'yaml', ->
+    await $.write_ source, 'test: true'
 
-    it 'yaml', ->
-      await clean_()
+    res = await $.compile_ source
+    unless res == $
+      throw 0
 
-      source = "#{temp}/test.yaml"
+    isExisted = await $.isExisted_ "#{temp}/test.json"
+    unless isExisted
+      throw 1
 
-      await $.write_ source, 'test: true'
+    await clean_()
 
-      res = await $.compile_ source
-      unless res == $
-        throw new Error 0
+describe 'mutli', ->
 
-      isExisted = await $.isExisted_ "#{temp}/test.json"
-      unless isExisted
-        throw new Error 1
+  it 'mutil', ->
+    await clean_()
 
-      await clean_()
+    listSource = [
+      "#{temp}/source/a.md"
+      "#{temp}/source/b/b.md"
+      "#{temp}/source/b/c/c.md"
+    ]
 
-  describe 'mutli', ->
+    listTarget = [
+      "#{temp}/build/a.html"
+      "#{temp}/build/b/b.html"
+      "#{temp}/build/b/c/c.html"
+    ]
 
-    it 'mutil', ->
-      await clean_()
+    for source in listSource
+      await $.write_ source, '# test'
 
-      listSource = [
-        "#{temp}/source/a.md"
-        "#{temp}/source/b/b.md"
-        "#{temp}/source/b/c/c.md"
-      ]
+    await $.compile_ "#{temp}/source/**/*.md", "#{temp}/build"
 
-      listTarget = [
-        "#{temp}/build/a.html"
-        "#{temp}/build/b/b.html"
-        "#{temp}/build/b/c/c.html"
-      ]
-
-      for source in listSource
-        await $.write_ source, '# test'
-
-      await $.compile_ "#{temp}/source/**/*.md", "#{temp}/build"
-
-      isExisted = await $.isExisted_ listTarget
-      unless isExisted
-        throw new Error()
-
-      # await clean_()
+    isExisted = await $.isExisted_ listTarget
+    unless isExisted
+      throw new Error()

@@ -1,11 +1,8 @@
-# return
-$.recover_ = (source) ->
+export default (source) ->
 
-  groupSource = normalizePathToArray source
+  msg = "recovered #{$.wrapList source}"
 
-  msg = "recovered #{wrapList source}"
-
-  for source in groupSource
+  for source in $.normalizePathToArray source
 
     pathBak = "#{source}.bak"
     unless await $.isExisted_ pathBak
@@ -14,13 +11,11 @@ $.recover_ = (source) ->
 
     filename = $.getFilename source
 
-    $.info.pause '$.recover_'
-    await $.chain $
-    .remove_ source
-    .copy_ pathBak, null, filename
-    .remove_ pathBak
-    $.info.resume '$.recover_'
+    await $.info().silence_ ->
+      await $.remove_ source
+      await $.copy_ pathBak, null, filename
+      await $.remove_ pathBak
 
   $.info 'recover', msg
 
-  $ # return
+  @ # return

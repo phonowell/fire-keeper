@@ -1,19 +1,5 @@
-# require
-$ = require './../index'
-{_} = $
+it '$.lint_()', ->
 
-# variable
-temp = './temp'
-
-# function
-clean_ = -> await $.remove_ temp
-
-# test
-
-describe '$.lint_(source)', ->
-
-  it '$.lint_()', ->
-
-    type = $.type $.lint_
-    unless type == 'async function'
-      throw new Error "invalid type '#{type}'"
+  type = $.type $.lint_
+  unless type == 'asyncfunction'
+    throw "invalid type '#{type}'"

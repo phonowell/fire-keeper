@@ -1,42 +1,28 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.walk_('#{temp}')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  await $.mkdir_ "#{temp}/a"
 
-# function
-clean_ = -> await $.remove_ temp
+  string = 'empty'
 
-# test
+  await $.write_ "#{temp}/b/c.txt", string
+  await $.write_ "#{temp}/d.txt", string
 
-describe '$.walk_(source, callback)', ->
+  listResult = []
 
-  it "$.walk_('#{temp}')", ->
-    await clean_()
+  result = await $.walk_ temp, (item) ->
+    listResult.push item.path
 
-    await $.mkdir_ "#{temp}/a"
+  unless result == $
+    throw 0
 
-    string = 'empty'
+  unless _.isEqual listResult, $.normalizePathToArray [
+    temp
+    "#{temp}/a"
+    "#{temp}/b"
+    "#{temp}/d.txt"
+    "#{temp}/b/c.txt"
+  ]
+    throw 1
 
-    await $.write_ "#{temp}/b/c.txt", string
-    await $.write_ "#{temp}/d.txt", string
-
-    listResult = []
-
-    res = await $.walk_ temp, (item) ->
-      listResult.push item.path
-
-    if res != $
-      throw new Error()
-
-    unless _.isEqual listResult, $.fn.normalizePathToArray [
-      temp
-      "#{temp}/a"
-      "#{temp}/b"
-      "#{temp}/d.txt"
-      "#{temp}/b/c.txt"
-    ]
-      throw new Error()
-
-    await clean_()
+  await clean_()

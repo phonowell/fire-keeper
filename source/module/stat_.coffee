@@ -1,12 +1,11 @@
 fs = require 'fs'
 
-# return
-$.stat_ = (source) ->
+export default (source) ->
 
-  source = normalizePath source
+  source = $.normalizePath source
 
   unless await $.isExisted_ source
-    $.info 'file', "#{wrapList source} not existed"
+    $.info 'file', "#{$.wrapList source} not existed"
     return null
 
   # return

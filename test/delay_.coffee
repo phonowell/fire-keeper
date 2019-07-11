@@ -1,22 +1,14 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  type = $.type $.delay_
+  unless type == 'asyncfunction'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
+it 'delay', ->
 
-# test
+  ts = _.now()
 
-describe '$.delay_([time])', ->
+  await $.delay_ 1e3
 
-  it '$.delay_()', ->
-    await clean_()
-
-    type = $.type $.delay_
-    unless type == 'async function'
-      throw new Error "invalid type '#{type}'"
-
-    await clean_()
+  unless 900 <= _.now() - ts <= 1100
+    throw 0

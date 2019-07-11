@@ -1,16 +1,18 @@
-$.say_ = (text, option = {}) ->
+Lang =
+  'ja': 'kyoko'
+  'ja-jp': 'kyoko'
+  'zh': 'ting-ting'
+  'zh-cn': 'ting-ting'
+  'zh-hk': 'sin-ji'
+  'zh-tw': 'mei-jia'
 
-  type = $.type text
-  listMessage = switch type
-    when 'array' then text
-    when 'boolean', 'number', 'string' then [text]
-    else throw new Error "invalid type '#{type}'"
+export default (text, option = {}) ->
 
-  for msg in listMessage
+  for msg in $.formatArgument text
 
     $.info 'say', msg
 
-    unless $.os == 'macos'
+    unless $.os 'macos'
       continue
 
     msg = $.parseString msg
@@ -24,7 +26,7 @@ $.say_ = (text, option = {}) ->
 
     if option.lang
       lang = option.lang.toLowerCase()
-      if name = $.say_.mapLang[lang]
+      if name = Lang[lang]
         lang = name
       listCmd.push "--voice=#{lang}"
 
@@ -37,14 +39,4 @@ $.say_ = (text, option = {}) ->
     await $.exec_ (listCmd.join ' '),
       silent: true
 
-  $ # return
-
-$.say_.mapLang =
-  'ja': 'kyoko'
-  'ja-jp': 'kyoko'
-  'zh': 'ting-ting'
-  'zh-cn': 'ting-ting'
-  'zh-hk': 'sin-ji'
-  'zh-tw': 'mei-jia'
-
-$.say_ # return
+  @ # return

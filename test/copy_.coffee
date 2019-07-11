@@ -1,100 +1,86 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.copy_('./license.md', '#{temp}', 'test.md')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  source = './license.md'
+  target = "#{temp}/test.md"
 
-# function
-clean_ = -> await $.remove_ temp
+  result = await $.copy_ source, temp, 'test.md'
+  unless result == $
+    throw 0
 
-# test
+  unless await $.isExisted_ target
+    throw 0
 
-describe '$.copy_(source, target, [option])', ->
+  contSource = await $.read_ source
+  contTarget = await $.read_ target
+  unless contTarget == contSource
+    throw 0
 
-  it "$.copy_('./license.md', '#{temp}', 'test.md')", ->
-    await clean_()
+  await clean_()
 
-    source = './license.md'
-    target = "#{temp}/test.md"
+it "$.copy_('./license.md', '#{temp}/new')", ->
+  await clean_()
 
-    res = await $.copy_ source, temp, 'test.md'
-    unless res == $
-      throw new Error()
+  source = './license.md'
+  target = "#{temp}/new/license.md"
 
-    unless await $.isExisted_ target
-      throw new Error()
+  result = await $.copy_ source, "#{temp}/new"
+  unless result == $
+    throw 0
 
-    contSource = await $.read_ source
-    contTarget = await $.read_ target
-    unless contTarget == contSource
-      throw new Error()
+  unless await $.isExisted_ target
+    throw 0
 
-    await clean_()
+  contSource = await $.read_ source
+  contTarget = await $.read_ target
+  unless contTarget == contSource
+    throw 0
 
-  it "$.copy_('./license.md', '#{temp}/new')", ->
-    await clean_()
+  await clean_()
 
-    source = './license.md'
-    target = "#{temp}/new/license.md"
+it "$.copy_('./license.md', '~/Downloads/temp')", ->
+  await clean_()
 
-    res = await $.copy_ source, "#{temp}/new"
-    unless res == $
-      throw new Error()
+  if $.os != 'macos'
+    return
 
-    unless await $.isExisted_ target
-      throw new Error()
+  source = './license.md'
+  target = '~/Downloads/temp/license.md'
 
-    contSource = await $.read_ source
-    contTarget = await $.read_ target
-    unless contTarget == contSource
-      throw new Error()
+  result = await $.copy_ source, '~/Downloads/temp'
+  unless result == $
+    throw 0
 
-    await clean_()
+  unless await $.isExisted_ target
+    throw 0
 
-  it "$.copy_('./license.md', '~/Downloads/temp')", ->
-    await clean_()
+  contSource = await $.read_ source
+  contTarget = await $.read_ target
+  unless contTarget == contSource
+    throw 0
 
-    if $.os != 'macos'
-      return
+  await $.remove_ '~/Downloads/temp'
 
-    source = './license.md'
-    target = '~/Downloads/temp/license.md'
+it "$.copy_('#{temp}/a.txt', null, 'b.txt')", ->
+  await clean_()
 
-    res = await $.copy_ source, '~/Downloads/temp'
-    unless res == $
-      throw new Error()
+  source = "#{temp}/a.txt"
+  target = "#{temp}/b.txt"
+  string = 'a string to be copied'
 
-    unless await $.isExisted_ target
-      throw new Error()
+  await $.write_ source, string
+  result = await $.copy_ source, null, 'b.txt'
+  unless result == $
+    throw 0
 
-    contSource = await $.read_ source
-    contTarget = await $.read_ target
-    unless contTarget == contSource
-      throw new Error()
+  unless await $.isExisted_ target
+    throw 0
 
-    await $.remove_ '~/Downloads/temp'
+  cont = await $.read_ target
+  unless cont == string
+    throw 0
 
-  it "$.copy_('#{temp}/a.txt', null, 'b.txt')", ->
-    await clean_()
+  await clean_()
 
-    source = "#{temp}/a.txt"
-    target = "#{temp}/b.txt"
-    string = 'a string to be copied'
-
-    await $.write_ source, string
-    res = await $.copy_ source, null, 'b.txt'
-    unless res == $
-      throw new Error()
-
-    unless await $.isExisted_ target
-      throw new Error()
-
-    cont = await $.read_ target
-    unless cont == string
-      throw new Error()
-
-    await clean_()
-
-  it '[]', ->
-    await $.copy_ [], temp
+it '[]', ->
+  await $.copy_ [], temp

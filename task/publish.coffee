@@ -1,7 +1,5 @@
 $ = require '../index'
-{_} = $
 
-# return
 module.exports = ->
 
   # clean

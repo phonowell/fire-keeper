@@ -1,11 +1,8 @@
 gulp = require 'gulp'
 
-# path = require 'path'
+export default (source, option) ->
 
-# return
-$.source_ = (source, option) ->
-
-  groupSource = normalizePathToArray source
+  groupSource = $.normalizePathToArray source
   
   option = _.merge
     allowEmpty: true
@@ -18,6 +15,7 @@ $.source_ = (source, option) ->
 
     unless groupSource.length
       return resolve []
+      
     gulp.src groupSource, option
     .on 'data', (item) -> listSource.push item.path
     .on 'end', -> resolve listSource

@@ -1,84 +1,64 @@
-# require
-$ = require './../index'
-{_} = $
+it 'normal', ->
+  await clean_()
 
-# variable
-temp = './temp'
+  pathTest = './temp/test.txt'
 
-# function
-clean_ = -> await $.remove_ temp
+  await $.write_ pathTest, 'text'
+  
+  res = await $.clean_ pathTest
+  unless res == $
+    throw 0
 
-# test
+  isExisted = await $.isExisted_ pathTest
+  if isExisted
+    throw 1
 
-describe '$.clean_(source)', ->
+  isExisted = await $.isExisted_ $.getDirname pathTest
+  if isExisted
+    throw 2
 
-  ###
-  normal
-  file left
-  folder left
-  ###
+  await clean_()
 
-  it 'normal', ->
-    await clean_()
+it 'file left', ->
+  await clean_()
 
-    pathTest = './temp/test.txt'
+  pathTest = './temp/test.txt'
 
-    await $.write_ pathTest, 'text'
-    
-    res = await $.clean_ pathTest
-    unless res == $
-      throw new Error()
+  await $.write_ pathTest, 'text'
+  await $.write_ './temp/another.txt', 'text'
+  
+  res = await $.clean_ pathTest
+  unless res == $
+    throw new Error 0
 
-    isExisted = await $.isExisted_ pathTest
-    if isExisted
-      throw new Error()
+  isExisted = await $.isExisted_ pathTest
+  if isExisted
+    throw new Error 1
 
-    isExisted = await $.isExisted_ $.getDirname pathTest
-    if isExisted
-      throw new Error()
+  isExisted = await $.isExisted_ $.getDirname pathTest
+  unless isExisted
+    throw new Error 2
 
-    await clean_()
+  await clean_()
 
-  it 'file left', ->
-    await clean_()
+it 'folder left', ->
+  await clean_()
 
-    pathTest = './temp/test.txt'
+  pathTest = './temp/test.txt'
 
-    await $.write_ pathTest, 'text'
-    await $.write_ './temp/another.txt', 'text'
-    
-    res = await $.clean_ pathTest
-    unless res == $
-      throw new Error 0
+  await $.write_ pathTest, 'text'
+  await $.write_ './temp/deep/another.txt', 'text'
+  
+  res = await $.clean_ pathTest
+  unless res == $
+    throw 0
 
-    isExisted = await $.isExisted_ pathTest
-    if isExisted
-      throw new Error 1
+  isExisted = await $.isExisted_ pathTest
+  if isExisted
+    throw 1
 
-    isExisted = await $.isExisted_ $.getDirname pathTest
-    unless isExisted
-      throw new Error 2
+  isExisted = await $.isExisted_ $.getDirname pathTest
+  unless isExisted
+    throw 2
 
-    await clean_()
-
-  it 'folder left', ->
-    await clean_()
-
-    pathTest = './temp/test.txt'
-
-    await $.write_ pathTest, 'text'
-    await $.write_ './temp/deep/another.txt', 'text'
-    
-    res = await $.clean_ pathTest
-    unless res == $
-      throw new Error()
-
-    isExisted = await $.isExisted_ pathTest
-    if isExisted
-      throw new Error()
-
-    isExisted = await $.isExisted_ $.getDirname pathTest
-    unless isExisted
-      throw new Error()
-
-    await clean_()
+  await clean_()

@@ -1,40 +1,27 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.isSame_(['./readme.md', '#{temp}/a.md', '#{temp}/b.md'])", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  listSource = [
+    './readme.md'
+    "#{temp}/a.md"
+    "#{temp}/b.md"
+  ]
 
-# function
-clean_ = -> await $.remove_ temp
+  await $.chain $
+  .copy_ listSource[0], temp, 'a.md'
+  .copy_ listSource[0], temp, 'b.md'
 
-# test
+  result = await $.isSame_ listSource
+  unless result
+    throw 0
 
-describe '$.isSame_(source)', ->
+  await clean_()
 
-  it "$.isSame_(['./readme.md', '#{temp}/a.md', '#{temp}/b.md'])", ->
-    await clean_()
+it "$.isSame_(['#{temp}/null.txt', './readme.md'])", ->
+  await clean_()
 
-    listSource = [
-      './readme.md'
-      "#{temp}/a.md"
-      "#{temp}/b.md"
-    ]
+  result = await $.isSame_ ["#{temp}/null/txt", './readme.md']
+  if result
+    throw 0
 
-    await $.copy_ listSource[0], temp, 'a.md'
-    await $.copy_ listSource[0], temp, 'b.md'
-
-    res = await $.isSame_ listSource
-    unless res
-      throw new Error()
-
-    await clean_()
-
-  it "$.isSame_(['#{temp}/null.txt', './readme.md'])", ->
-    await clean_()
-
-    res = await $.isSame_ ["#{temp}/null/txt", './readme.md']
-    if res
-      throw new Error()
-
-    await clean_()
+  await clean_()

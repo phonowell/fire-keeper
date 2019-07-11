@@ -1,30 +1,26 @@
 fs = require 'fs'
 
-# return
-$.read_ = (source, option = {}) ->
+export default (source, option = {}) ->
 
-  pathSource = source
-  listSource = await $.source_ pathSource
+  _source = source
+  listSource = await $.source_ source
 
-  unless listSource?.length
-    $.info 'file', "'#{pathSource}' not existed"
+  unless listSource.length
+    $.info 'file', "'#{source}' not existed"
     return null
   source = listSource[0]
 
-  res = await new Promise (resolve) ->
+  result = await new Promise (resolve) ->
     fs.readFile source, (err, data) ->
-      
-      if err
-        throw err
-      
+      if err then throw err
       resolve data
 
-  $.info 'file', "read '#{source}'"
+  $.info 'file', "read '#{_source}'"
 
   # return
 
   if option.raw
-    return res
+    return result
 
   extname = $.getExtname source
 
@@ -40,13 +36,13 @@ $.read_ = (source, option = {}) ->
     '.txt'
     '.xml'
   ]
-    return $.parseString res
+    return $.parseString result
 
   if extname == '.json'
-    return $.parseJSON res
+    return $.parseJson result
 
   if extname in ['.yaml', '.yml']
     jsYaml = require 'js-yaml'
-    return jsYaml.safeLoad res
+    return jsYaml.safeLoad result
 
-  res # return
+  result # return

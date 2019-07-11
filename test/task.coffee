@@ -1,26 +1,38 @@
-# require
-$ = require './../index'
-{_} = $
+it '$.task', ->
 
-# variable
-temp = './temp'
+  type = $.type $.task
+  unless type == 'function'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
+it '$.task()', ->
 
-# test
+  type = $.type result = $.task()
+  unless type == 'object'
+    throw 0
 
-describe '$.task(source)', ->
+  unless result.default
+    throw 1
 
-  it '$.task', ->
+it "$.task('default')", ->
 
-    type = $.type $.task
-    unless type == 'function'
-      throw new Error "invalid type '#{type}'"
+  type = $.type $.task 'default'
+  unless type == 'asyncfunction'
+    throw 0
 
-  it "$.task('name')", ->
+it "$.task('_test', fn)", ->
 
-    fn_ = $.task 'default'
-    type = $.type fn_
-    unless type == 'async function'
-      throw new Error "invalid type '#{type}'"
+  fn = -> null
+  
+  result = $.task '_test', fn
+  unless result == $
+    throw 0
+
+  # notice: fn should be wrapped into an async function
+  if ($.task '_test') == fn
+    throw 1
+
+  fn_ = -> await $.delay_()
+  $.task '_test', fn_
+
+  unless ($.task '_test') == fn_
+    throw 2

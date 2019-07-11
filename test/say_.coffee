@@ -1,23 +1,9 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  type = $.type $.say_
+  unless type == 'asyncfunction'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
-
-# test
-
-describe '$.say_(text)', ->
-
-  it '$.say_()', ->
-
-    type = $.type $.say_
-    unless type == 'async function'
-      throw new Error "invalid type '#{type}'"
-
-    res = await $.say_ 'a test message'
-    unless res == $
-      throw new Error()
+  result = await $.say_ 'a test message'
+  unless result == $
+    throw 1

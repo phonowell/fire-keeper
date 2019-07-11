@@ -2,16 +2,15 @@ fs = require 'fs'
 kleur = require 'kleur'
 path = require 'path'
 
-# return
-$.zip_ = (arg...) ->
+export default (arg...) ->
 
   [source, target, option] = arg
 
   _source = source
-  source = normalizePathToArray source
+  source = $.normalizePathToArray source
 
   target or= $.getDirname(source[0]).replace /\*/g, ''
-  target = normalizePath target
+  target = $.normalizePath target
 
   [base, filename, isSilent] = switch $.type option
     when 'object' then [
@@ -30,7 +29,7 @@ $.zip_ = (arg...) ->
     if ~_source.search /\*/
       return _.trim (_source.replace /\*.*/, ''), '/'
     path.dirname _source
-  base = normalizePath base
+  base = $.normalizePath base
 
   filename or= "#{$.getBasename target}.zip"
 
@@ -52,7 +51,7 @@ $.zip_ = (arg...) ->
     archive.on 'entry', (e) ->
       if isSilent
         return
-      msg = $.info.renderPath e.sourcePath
+      msg = $.info().renderPath e.sourcePath
       
     archive.on 'progress', (e) ->
       
@@ -84,8 +83,8 @@ $.zip_ = (arg...) ->
     archive.finalize()
 
   $.info 'zip'
-  , "zipped #{wrapList source}
+  , "zipped #{$.wrapList source}
   to '#{target}',
   named as '#{filename}'"
 
-  $ # return
+  @ # return

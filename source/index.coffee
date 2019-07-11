@@ -1,12 +1,34 @@
-#=include include/init.coffee
+$ = {}
 
-#=include include/fn.coffee
-#=include include/etc.coffee
+# inject module
+listLazyModule = []
 
-#=include include/task.coffee
+for key in listLazyModule
+  do (key) ->
 
-#=include include/chain.coffee
-#=include include/getName.coffee
+    $[key] = unless key.endsWith '_'
 
-#=include include/lazy.coffee
-#=include include/rename.coffee
+      # function
+      (arg...) ->
+        $[key] = require "./dist/#{key}.js"
+        $[key] arg...
+
+    else
+
+      # async function
+      (arg...) ->
+        $[key] = require "./dist/#{key}.js"
+        await $[key] arg...
+
+# inject task
+listLazyTask = []
+
+for key in listLazyTask
+  do (key) ->
+
+    $.task key, (arg...) ->
+      fn_ = require "./dist/task/#{key}"
+      await fn_ arg...
+
+# return
+module.exports = $

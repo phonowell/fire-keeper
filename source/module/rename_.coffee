@@ -1,10 +1,9 @@
 gulp = require 'gulp'
 using = require 'gulp-using'
 
-# return
-$.rename_ = (source, option) ->
+export default (source, option) ->
 
-  source = normalizePathToArray source
+  source = $.normalizePathToArray source
 
   listHistory = []
 
@@ -21,13 +20,12 @@ $.rename_ = (source, option) ->
       e.base
     .on 'end', -> resolve()
 
-  $.info.pause '$.rename_'
-  for item in listHistory
-    if await $.isExisted_ item[1]
-      await $.remove_ item[0]
-  $.info.resume '$.rename_'
+  await $.info().silence_ ->
+    for item in listHistory
+      if await $.isExisted_ item[1]
+        await $.remove_ item[0]
 
   $.info 'file'
-  , "renamed #{wrapList source} as '#{$.parseString option}'"
+  , "renamed #{$.wrapList source} as '#{$.parseString option}'"
 
-  $ # return
+  @ # return

@@ -1,48 +1,42 @@
-# require
-$ = require './../index'
-{_} = $
+it 'default', ->
 
-# variable
-temp = './temp'
+  type = $.type $.backup_
+  unless type == 'asyncfunction'
+    throw 0
 
-# function
-clean_ = -> await $.remove_ temp
+it 'detail', ->
 
-# test
+  await clean_()
 
-describe '$.backup_(source)', ->
+  listSource =
+  await $.copy_ [
+    './license.md'
+    './readme.md'
+  ], temp
 
-  it "$.backup_(['#{temp}/license.md', '#{temp}/readme.md'])", ->
-    await clean_()
+  listSource = [
+    "#{temp}/license.md"
+    "#{temp}/readme.md"
+  ]
 
-    listSource = [
-      "#{temp}/license.md"
-      "#{temp}/readme.md"
-    ]
+  listTarget = [
+    "#{temp}/license.md.bak"
+    "#{temp}/readme.md.bak"
+  ]
 
-    listTarget = [
-      "#{temp}/license.md.bak"
-      "#{temp}/readme.md.bak"
-    ]
+  result = await $.backup_ listSource
+  unless result == $
+    throw 0
 
-    await $.copy_ [
-      './license.md'
-      './readme.md'
-    ], temp
+  unless await $.isExisted_ listTarget
+    throw 1
 
-    res = await $.backup_ listSource
+  listDataSource = (
+    await $.read_ source, raw: true for source in listSource
+  )
+  listDataTarget = (await $.read_ source for source in listTarget)
 
-    if res != $
-      throw new Error 0
+  unless _.isEqual listDataSource, listDataTarget
+    throw 2
 
-    unless await $.isExisted_ listTarget
-      throw new Error 1
-
-    option = raw: true
-    listSourceData = (await $.read_ source, option for source in listSource)
-    listTargetData = (await $.read_ target, option for target in listTarget)
-
-    unless _.isEqual listSourceData, listTargetData
-      throw new Error 2
-
-    await clean_()
+  await clean_()

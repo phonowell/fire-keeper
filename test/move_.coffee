@@ -1,104 +1,90 @@
-# require
-$ = require './../index'
-{_} = $
+describe 'file', ->
 
-# variable
-temp = './temp'
+  it 'existed', ->
+    await clean_()
 
-# function
-clean_ = -> await $.remove_ temp
+    source = "#{temp}/source/test.txt"
 
-# test
+    await $.chain $
+    .write_ source, 'test message'
+    .move_ source, "#{temp}/target"
 
-describe '$.move_(source, target)', ->
+    isExisted = await $.isExisted_ "#{temp}/target/test.txt"
+    unless isExisted
+      throw 0
 
-  describe 'file', ->
+    await clean_()
 
-    it 'existed', ->
-      await clean_()
+  it 'not existed', ->
+    await clean_()
 
-      source = "#{temp}/source/test.txt"
+    await $.move_ "#{temp}/source/test.txt", "#{temp}/target"
 
-      await $.chain $
-      .write_ source, 'test message'
-      .move_ source, "#{temp}/target"
+    isExisted = await $.isExisted_ "#{temp}/target/test.txt"
+    if isExisted
+      throw 0
 
-      isExisted = await $.isExisted_ "#{temp}/target/test.txt"
-      unless isExisted
-        throw new Error()
+    await clean_()
 
-      await clean_()
+describe 'folder', ->
 
-    it 'not existed', ->
-      await clean_()
+  it 'existed', ->
+    await clean_()
 
-      await $.move_ "#{temp}/source/test.txt", "#{temp}/target"
+    await $.chain $
+    .write_ "#{temp}/source/test.txt", 'test message'
+    .move_ "#{temp}/source/**/*", "#{temp}/target"
 
-      isExisted = await $.isExisted_ "#{temp}/target/test.txt"
-      if isExisted
-        throw new Error()
+    isExisted = await $.isExisted_ "#{temp}/target/test.txt"
+    unless isExisted
+      throw 0
 
-      await clean_()
+    await clean_()
 
-  describe 'folder', ->
+  it 'not existed', ->
+    await clean_()
 
-    it 'existed', ->
-      await clean_()
+    await $.move_ "#{temp}/source/**/*", "#{temp}/target"
 
-      await $.chain $
-      .write_ "#{temp}/source/test.txt", 'test message'
-      .move_ "#{temp}/source/**/*", "#{temp}/target"
+    isExisted = await $.isExisted_ "#{temp}/target/test.txt"
+    if isExisted
+      throw 0
 
-      isExisted = await $.isExisted_ "#{temp}/target/test.txt"
-      unless isExisted
-        throw new Error()
+    await clean_()
 
-      await clean_()
+describe 'outer', ->
 
-    it 'not existed', ->
-      await clean_()
+  it 'existed', ->
 
-      await $.move_ "#{temp}/source/**/*", "#{temp}/target"
+    base = '~/Downloads'
 
-      isExisted = await $.isExisted_ "#{temp}/target/test.txt"
-      if isExisted
-        throw new Error()
+    await $.chain $
+    .write_ "#{base}/source/test.txt", 'test message'
+    .move_ "#{base}/source/test.txt", "#{base}/target"
 
-      await clean_()
+    isExisted = await $.isExisted_ "#{base}/target/test.txt"
+    unless isExisted
+      throw 0
 
-  describe 'outer', ->
+    await $.remove_ [
+      "#{base}/source"
+      "#{base}/target"
+    ]
 
-    it 'existed', ->
+  it 'not existed', ->
 
-      base = '~/Downloads'
+    base = '~/Downloads'
 
-      await $.chain $
-      .write_ "#{base}/source/test.txt", 'test message'
-      .move_ "#{base}/source/test.txt", "#{base}/target"
+    await $.move_ "#{base}/source/test.txt", "#{base}/target"
 
-      isExisted = await $.isExisted_ "#{base}/target/test.txt"
-      unless isExisted
-        throw new Error()
+    isExisted = await $.isExisted_ "#{base}/target/test.txt"
+    if isExisted
+      throw 0
 
-      await $.remove_ [
-        "#{base}/source"
-        "#{base}/target"
-      ]
+    await $.remove_ [
+      "#{base}/source"
+      "#{base}/target"
+    ]
 
-    it 'not existed', ->
-
-      base = '~/Downloads'
-
-      await $.move_ "#{base}/source/test.txt", "#{base}/target"
-
-      isExisted = await $.isExisted_ "#{base}/target/test.txt"
-      if isExisted
-        throw new Error()
-
-      await $.remove_ [
-        "#{base}/source"
-        "#{base}/target"
-      ]
-
-  describe 'other', ->
-    it '[]', -> await $.move_ [], temp
+describe 'other', ->
+  it '[]', -> await $.move_ [], temp

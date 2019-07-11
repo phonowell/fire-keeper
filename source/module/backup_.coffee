@@ -1,18 +1,15 @@
-# return
-$.backup_ = (source) ->
+export default (source) ->
 
-  listSource = await $.source_ source
+  msg = "backed up #{$.wrapList source}"
 
-  msg = "backed up #{wrapList source}"
+  for source in await $.source_ source
 
-  for source in listSource
     suffix = $.getExtname source
     extname = '.bak'
 
-    $.info.pause '$.backup_'
-    await $.copy_ source, null, {suffix, extname}
-    $.info.resume '$.backup_'
+    await $.info().silence_ ->
+      await $.copy_ source, null, {extname, suffix}
 
   $.info 'backup', msg
 
-  $ # return
+  @ # return

@@ -1,10 +1,11 @@
-$.delay_ = (time = 0) ->
+export default (time = 0) ->
   
   await new Promise (resolve) ->
     setTimeout ->
       resolve()
     , time
     
-  $.info 'delay', "delayed '#{time} ms'"
+  if time
+    $.info 'delay', "delayed '#{time} ms'"
 
-  $ # return
+  @ # return

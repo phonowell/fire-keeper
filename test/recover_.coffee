@@ -1,33 +1,19 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.recover_('#{temp}/readme.md')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  source = "#{temp}/readme.md"
+  target = "#{temp}/readme.md.bak"
 
-# function
-clean_ = -> await $.remove_ temp
+  await $.chain $
+  .copy_ './readme.md', temp
+  .backup_ source
+  .remove_ source
 
-# test
+  result = await $.recover_ source
+  unless result == $
+    throw 0
 
-describe '$.recover_(source)', ->
+  unless await $.isExisted_ source
+    throw 1
 
-  it "$.recover_('#{temp}/readme.md')", ->
-    await clean_()
-
-    source = "#{temp}/readme.md"
-    target = "#{temp}/readme.md.bak"
-
-    await $.chain $
-    .copy_ './readme.md', temp
-    .backup_ source
-    .remove_ source
-
-    res = await $.recover_ source
-    unless res == $
-      throw new Error 0
-
-    unless await $.isExisted_ source
-      throw new Error 1
-
-    await clean_()
+  await clean_()

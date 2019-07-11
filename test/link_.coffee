@@ -1,30 +1,16 @@
-# require
-$ = require './../index'
-{_} = $
+it "$.link_('./source', '#{temp}/source')", ->
+  await clean_()
 
-# variable
-temp = './temp'
+  result = await $.link_ './source'
+  , "#{temp}/source"
 
-# function
-clean_ = -> await $.remove_ temp
+  unless result == $
+    throw 0
 
-# test
+  unless await $.isExisted_ "#{temp}/source"
+    throw 1
 
-describe '$.link_(source, target)', ->
+  unless await $.isExisted_ "#{temp}/source/index.coffee"
+    throw 2
 
-  it "$.link_('./source', '#{temp}/source')", ->
-    await clean_()
-
-    res = await $.link_ './source'
-    , "#{temp}/source"
-
-    unless res == $
-      throw new Error 0
-
-    unless await $.isExisted_ "#{temp}/source"
-      throw new Error 1
-
-    unless await $.isExisted_ "#{temp}/source/include/fn.coffee"
-      throw new Error 2
-
-    await clean_()
+  await clean_()
