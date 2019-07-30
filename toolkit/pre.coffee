@@ -84,7 +84,9 @@ class M
     cont.replace /export default/g, 'module.exports ='
 
   replaceThrow: (cont) ->
-    cont.replace /throw/g, 'throw new Error'
+    cont
+    .replace /throw/g, 'throw new Error'
+    .replace /new Error new Error/g, 'new Error'
 
 module.exports = (arg...) ->
   m = new M()

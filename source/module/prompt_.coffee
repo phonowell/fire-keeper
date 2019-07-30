@@ -1,3 +1,5 @@
+prompts = require 'prompts'
+
 class M
 
   ###
@@ -41,26 +43,25 @@ class M
 
   pathCache: './temp/cache-prompt.json'
 
+  # ---
+
   execute_: (option) ->
 
     type = $.type option
     unless type == 'object'
       throw "prompt_/error: invalid type '#{type}'"
-
-    res = null
-    resRaw = null
     
-    await $.info().silence_ =>
+    [res, resRaw] = await $.info().silence_ =>
 
-      option = _.cloneDeep option
-      option = await @setOption_ option
+      option = await @setOption_ _.cloneDeep option
       
       # execute
-      @fn_ or= require 'prompts'
-      resRaw = await @fn_ option
+      resRaw = await prompts option
       res = resRaw[option.name]
 
       await @setCache_ option, res
+
+      [res, resRaw]
 
     # return
     if option.raw
@@ -109,6 +110,11 @@ class M
 
   setOption_: (option) ->
 
+    # alias
+    if option.type == 'auto'
+      option.type = 'autocomplete'
+
+    # check type
     unless option.type in @listType
       throw "prompt_/error: invalid type '#{option.type}'"
 
@@ -118,12 +124,12 @@ class M
 
     if option.type in ['autocomplete', 'multiselect', 'select']
       
-      unless option.choices or= option.choice or option.list
-        throw 'prompt_/error: got no choice(s)'
+      unless option.choices or= option.list
+        throw 'prompt_/error: empty list'
       
       for item, i in option.choices
         
-        if 'object' == $.type item
+        if ($.type item) == 'object'
           continue
 
         option.choices[i] =

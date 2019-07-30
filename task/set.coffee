@@ -17,7 +17,7 @@ module.exports = ->
       else true
 
   unless ver
-    throw new Error 'empty version number'
+    throw new Error 'task/set/error: empty version number'
 
   data.version = ver
   await $.write_ source, data

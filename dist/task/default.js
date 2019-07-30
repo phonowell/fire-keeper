@@ -22,7 +22,7 @@ module.exports = async function() {
   $.info('task', $.wrapList(list));
   name = (await $.prompt_({
     id: 'default-gulp',
-    type: 'autocomplete',
+    type: 'auto',
     list: list,
     message: 'task'
   }));

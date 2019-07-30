@@ -70,4 +70,4 @@
 - update: [源码](../source/task/update.coffee)
 - watch: [源码](../source/task/watch.coffee)
 
-**最后更新于`2019/7/30`。**
+**最后更新于`2019/7/31`。**

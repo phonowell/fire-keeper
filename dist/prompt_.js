@@ -1,4 +1,4 @@
-var $, M, _, m,
+var $, M, _, m, prompts,
   indexOf = [].indexOf;
 
 $ = {};
@@ -19,26 +19,26 @@ _.get = require('lodash/get');
 
 _.findIndex = require('lodash/findIndex');
 
+prompts = require('prompts');
+
 M = (function() {
   class M {
+    // ---
     async execute_(option) {
       var res, resRaw, type;
       type = $.type(option);
       if (type !== 'object') {
         throw new Error(`prompt_/error: invalid type '${type}'`);
       }
-      res = null;
-      resRaw = null;
-      await $.info().silence_(async() => {
-        option = _.cloneDeep(option);
-        option = (await this.setOption_(option));
+      [res, resRaw] = (await $.info().silence_(async() => {
+        option = (await this.setOption_(_.cloneDeep(option)));
         
         // execute
-        this.fn_ || (this.fn_ = require('prompts'));
-        resRaw = (await this.fn_(option));
+        resRaw = (await prompts(option));
         res = resRaw[option.name];
-        return (await this.setCache_(option, res));
-      });
+        await this.setCache_(option, res);
+        return [res, resRaw];
+      }));
       // return
       if (option.raw) {
         return resRaw;
@@ -88,6 +88,11 @@ M = (function() {
 
     async setOption_(option) {
       var i, item, j, len, ref, ref1, ref2;
+      // alias
+      if (option.type === 'auto') {
+        option.type = 'autocomplete';
+      }
+      // check type
       if (ref = option.type, indexOf.call(this.listType, ref) < 0) {
         throw new Error(`prompt_/error: invalid type '${option.type}'`);
       }
@@ -95,13 +100,13 @@ M = (function() {
       option.message || (option.message = this.mapMessage[option.type] || 'input');
       option.name || (option.name = 'value');
       if ((ref1 = option.type) === 'autocomplete' || ref1 === 'multiselect' || ref1 === 'select') {
-        if (!(option.choices || (option.choices = option.choice || option.list))) {
-          throw new Error('prompt_/error: got no choice(s)');
+        if (!(option.choices || (option.choices = option.list))) {
+          throw new Error('prompt_/error: empty list');
         }
         ref2 = option.choices;
         for (i = j = 0, len = ref2.length; j < len; i = ++j) {
           item = ref2[i];
-          if ('object' === $.type(item)) {
+          if (($.type(item)) === 'object') {
             continue;
           }
           option.choices[i] = {

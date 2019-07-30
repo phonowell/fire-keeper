@@ -29,6 +29,7 @@
     "js-yaml": "^3.13.1",
     "klaw": "^3.0.0",
     "markdownlint": "^0.15.0",
+    "ora": "^3.4.0",
     "prompts": "^2.1.0",
     "ssh2": "^0.8.5",
     "uglify-es": "^3.3.9",
@@ -56,5 +57,5 @@
     "test": "mocha --timeout 30000"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.159"
+  "version": "0.0.160"
 }

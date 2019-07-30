@@ -1,1 +1,1 @@
-export default (source) -> require $.normalizePath "#{source}.coffee"
+export default (source) -> require $.normalizePath "#{source}"

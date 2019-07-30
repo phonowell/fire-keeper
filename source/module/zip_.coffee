@@ -1,90 +1,126 @@
+archiver = require 'archiver'
 fs = require 'fs'
 kleur = require 'kleur'
-path = require 'path'
+ora = require 'ora'
+
+class M
+
+  ###
+  ---
+  archive_(option)
+  execute_(arg...)
+  getBase(source)
+  getOption(option)
+  ###
+
+  archive_: (option) ->
+
+    {base, filename, source, target} = option
+
+    spinner = ora().start()
+
+    await new Promise (resolve) ->
+
+      output = fs.createWriteStream "#{target}/#{filename}"
+      archive = archiver 'zip',
+        zlib:
+          level: 9
+      msg = null
+
+      ###
+      end
+      entry
+      error
+      progress
+      warning
+      ###
+
+      archive.on 'end', ->
+        spinner.succeed()
+        resolve()
+
+      archive.on 'entry', (e) ->
+        msg = $.info().renderPath e.sourcePath
+
+      archive.on 'error', (e) ->
+        spinner.fail e.message
+        throw e.message
+
+      archive.on 'progress', (e) ->
+
+        unless msg
+          return
+
+        gray = kleur.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
+        magenta = kleur.magenta msg
+        msg = "#{gray} #{magenta}"
+
+        spinner.text = msg
+        msg = null
+
+      archive.on 'warning', (e) ->
+        spinner.warn e.message
+        throw e.message
+
+      # execute
+      archive.pipe output
+
+      for source in await $.source_ source
+        name = source.replace base, ''
+        archive.file source, {name}
+
+      archive.finalize()
+
+    @ # return
+
+  execute_: (source, target, option) ->
+
+    _source = source
+    source = $.normalizePathToArray source
+
+    target or= $.getDirname(source[0]).replace /\*/g, ''
+    target = $.normalizePath target
+
+    [base, filename] = @getOption option
+    base = $.normalizePath base or @getBase _source
+    filename or= "#{$.getBasename target}.zip"
+
+    await @archive_ {base, filename, source, target}
+
+    $.info 'zip'
+    , "zipped #{$.wrapList source}
+    to '#{target}',
+    named as '#{filename}'"
+
+    @ # return
+
+  getBase: (source) ->
+
+    type = $.type source
+    source = switch type
+      when 'array' then source[0]
+      when 'string' then source
+      else throw "zip_/error: invalid type '#{type}'"
+
+    if ~source.search /\*/
+      return _.trim (source.replace /\*.*/, ''), '/'
+
+    $.getDirname source # return
+
+  getOption: (option) ->
+
+    type = $.type option
+    switch type
+      
+      when 'object'
+        [option.base, option.filename]
+
+      when 'string'
+        [null, option]
+
+      else [null, null]
 
 export default (arg...) ->
-
-  [source, target, option] = arg
-
-  _source = source
-  source = $.normalizePathToArray source
-
-  target or= $.getDirname(source[0]).replace /\*/g, ''
-  target = $.normalizePath target
-
-  [base, filename, isSilent] = switch $.type option
-    when 'object' then [
-      option.base
-      option.filename
-      option.silent or option.isSilent
-    ]
-    when 'string' then [null, option, false]
-    else [null, null, false]
-    
-  base or= do ->
-    _source = switch $.type _source
-      when 'array' then _source[0]
-      when 'string' then _source
-      else throw new Error 'invalid type'
-    if ~_source.search /\*/
-      return _.trim (_source.replace /\*.*/, ''), '/'
-    path.dirname _source
-  base = $.normalizePath base
-
-  filename or= "#{$.getBasename target}.zip"
-
-  await new Promise (resolve) ->
-
-    # require
-    ansi = require 'sisteransi'
-    archiver = require 'archiver'
-
-    output = fs.createWriteStream "#{target}/#{filename}"
-    archive = archiver 'zip',
-      zlib:
-        level: 9
-
-    archive.on 'warning', (err) -> throw err
-    archive.on 'error', (err) -> throw err
-    
-    msg = null
-    archive.on 'entry', (e) ->
-      if isSilent
-        return
-      msg = $.info().renderPath e.sourcePath
-      
-    archive.on 'progress', (e) ->
-      
-      if isSilent
-        return
-      
-      unless msg
-        return
-      
-      gray = kleur.gray "#{e.fs.processedBytes * 100 // e.fs.totalBytes}%"
-      magenta = kleur.magenta msg
-      msg = "#{gray} #{magenta}"
-      $.i [
-        ansi.erase.line
-        msg
-        ansi.cursor.up()
-      ].join ''
-      msg = null
-      
-    archive.on 'end', -> resolve()
-
-    archive.pipe output
-
-    listSource = await $.source_ source
-    for src in listSource
-      name = src.replace base, ''
-      archive.file src, {name}
-
-    archive.finalize()
-
-  $.info 'zip'
-  , "zipped #{$.wrapList source}
-  to '#{target}',
-  named as '#{filename}'"
-
+  m = new M()
+  await m.execute_ arg...
   @ # return

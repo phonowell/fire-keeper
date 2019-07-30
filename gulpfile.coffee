@@ -1,8 +1,5 @@
-# return (require 'gulp').task 'default', require './task/build.coffee'
-
 $ = require './index'
 fs = require 'fs'
-path = require 'path'
 
 # task
 for filename in fs.readdirSync './task'

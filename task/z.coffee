@@ -2,4 +2,6 @@ $ = require '../index'
 
 module.exports = ->
   
-  $.i $.require './toolkit/pre'
+  await $.zip_ '~/OneDrive/**/*.txt'
+  , '~/OneDrive/..'
+  , 'OneDriveX.zip'
