@@ -56,5 +56,5 @@
     "test": "mocha --timeout 30000"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.158"
+  "version": "0.0.159"
 }

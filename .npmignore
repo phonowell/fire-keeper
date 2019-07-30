@@ -8,7 +8,6 @@ lint
 secret
 source
 storage
-task
 temp
 # file
 *.coffee
