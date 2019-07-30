@@ -15,4 +15,4 @@ await $.backup_ './package.json'
 
 ## 备注
 
-- 可以通过 [`$.recover_()`](recover.md) 方法恢复备份。
+- 可以通过 [`$.recover_()`](recover_.md) 方法恢复备份。

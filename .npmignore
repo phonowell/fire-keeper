@@ -3,7 +3,6 @@
 .idea
 .temp
 .vscode
-dist
 gurumin
 lint
 secret

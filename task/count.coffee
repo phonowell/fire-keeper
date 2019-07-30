@@ -3,13 +3,35 @@ $ = require '../index'
 class M
 
   ###
+  check_()
   execute_()
   makeEnd(cont)
   makeFunction_(cont)
   makeTask_(cont)
   ###
 
+  check_: ->
+
+    for source in await $.source_ './source/module/*.coffee'
+
+      basename = $.getBasename source
+      target = "./doc/#{basename}.md"
+
+      isExisted = await $.isExisted_ target
+      unless isExisted
+
+        cont = [
+          "# $.#{basename}()"
+          ''
+          '暂未就绪。'
+          ''
+        ].join '\n'
+
+        await $.write_ target, cont
+
   execute_: ->
+
+    await @check_()
 
     cont = [
       '# 目录'
