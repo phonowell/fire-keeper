@@ -1,4 +1,5 @@
 $ = require '../index'
 
 module.exports = ->
-  $.info 'z'
+  
+  $.i $.require './toolkit/pre'

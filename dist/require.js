@@ -5,5 +5,5 @@ $ = {};
 $.normalizePath = require('../dist/normalizePath');
 
 module.exports = function(source) {
-  return require($.normalizePath(source));
+  return require($.normalizePath(`${source}.coffee`));
 };

@@ -1,4 +1,6 @@
-var $, i, j, key, len, len1, listLazyModule, listLazyTask;
+var $, i, j, key, len, len1, listLazyModule, listLazyTask, path;
+
+path = require('path');
 
 $ = {};
 
@@ -10,11 +12,11 @@ for (i = 0, len = listLazyModule.length; i < len; i++) {
   (function(key) {
     // function
     return $[key] = !key.endsWith('_') ? function(...arg) {
-      $[key] = require(`./dist/${key}.js`);
+      $[key] = require(path.resolve(__dirname, `./dist/${key}.js`));
       return $[key](...arg);
     // async function
     } : async function(...arg) {
-      $[key] = require(`./dist/${key}.js`);
+      $[key] = require(path.resolve(__dirname, `./dist/${key}.js`));
       return (await $[key](...arg));
     };
   })(key);
@@ -28,7 +30,7 @@ for (j = 0, len1 = listLazyTask.length; j < len1; j++) {
   (function(key) {
     return $.task(key, async function(...arg) {
       var fn_;
-      fn_ = require(`./dist/task/${key}`);
+      fn_ = require(path.resolve(__dirname, `./dist/task/${key}`));
       return (await fn_(...arg));
     });
   })(key);

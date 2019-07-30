@@ -2,7 +2,7 @@ it './*.md', ->
 
   listSource = await $.source_ './*.md'
 
-  unless listSource.length == 3
+  unless listSource.length == 2
     throw 0
 
 it '~/Desktop/*.md', ->
