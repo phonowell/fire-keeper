@@ -17,17 +17,17 @@ $.exec_ = require('../../dist/exec_');
 $.root = require('../../dist/root');
 
 module.exports = async function() {
-  var LIST, filename, i, isSame, len, listClean, source, target;
+  var filename, i, isSame, len, listClean, listCopy, source, target;
   await $.fetchGitHub_('phonowell/kokoro');
   // clean
-  listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml'];
+  listClean = ['./coffeelint.yaml', './coffeelint.yml', './stylint.yaml', './stylintrc.yml', './tslint.json'];
   await $.info().silence_(async function() {
     return (await $.remove_(listClean));
   });
   // copy
-  LIST = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md', 'tslint.json'];
-  for (i = 0, len = LIST.length; i < len; i++) {
-    filename = LIST[i];
+  listCopy = ['.gitignore', '.npmignore', '.stylintrc', 'coffeelint.json', 'license.md'];
+  for (i = 0, len = listCopy.length; i < len; i++) {
+    filename = listCopy[i];
     source = `./../kokoro/${filename}`;
     target = `./${filename}`;
     isSame = (await $.isSame_([source, target]));

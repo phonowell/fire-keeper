@@ -12,11 +12,13 @@ class M
   ---
   execute(arg...)
   getStringTime()
+  pause()
   render(type, string)
   renderContent(string)
   renderPath(string)
   renderTime()
   renderType(type)
+  resume()
   silence_(fn_)
   ###
 
@@ -59,6 +61,8 @@ class M
 
     # return
     (_.padStart item, 2, 0 for item in listTime).join ':'
+
+  pause: -> @$isSilent = true
 
   render: (type, string) ->
 
@@ -116,6 +120,8 @@ class M
       stringPad = _.repeat ' ', 10 - type.length
 
       "#{stringContent}#{stringPad} " # return
+
+  resume: -> @$isSilent = false
 
   silence_: (fn_) ->
     @$isSilent = true

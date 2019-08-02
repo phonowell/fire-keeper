@@ -9,6 +9,7 @@ export default ->
     './coffeelint.yml'
     './stylint.yaml'
     './stylintrc.yml'
+    './tslint.json'
   ]
   
   await $.info().silence_ ->
@@ -16,16 +17,15 @@ export default ->
 
   # copy
 
-  LIST = [
+  listCopy = [
     '.gitignore'
     '.npmignore'
     '.stylintrc'
     'coffeelint.json'
     'license.md'
-    'tslint.json'
   ]
 
-  for filename in LIST
+  for filename in listCopy
 
     source = "./../kokoro/#{filename}"
     target = "./#{filename}"

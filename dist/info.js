@@ -68,6 +68,10 @@ M = (function() {
       })()).join(':');
     }
 
+    pause() {
+      return this.$isSilent = true;
+    }
+
     render(type, string) {
       return [this.renderTime(), this['$separator'], this.renderType(type), this.renderContent(string)].join('');
     }
@@ -119,6 +123,10 @@ M = (function() {
       })());
     }
 
+    resume() {
+      return this.$isSilent = false;
+    }
+
     async silence_(fn_) {
       var result;
       this.$isSilent = true;
@@ -139,11 +147,13 @@ M = (function() {
   ---
   execute(arg...)
   getStringTime()
+  pause()
   render(type, string)
   renderContent(string)
   renderPath(string)
   renderTime()
   renderType(type)
+  resume()
   silence_(fn_)
   */
   M.prototype['$cache-time'] = [];

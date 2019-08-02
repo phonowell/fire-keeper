@@ -25,7 +25,6 @@
     "gulp-using": "^0.1.1",
     "gulp-watch": "^5.0.1",
     "gulp-yaml": "^2.0.4",
-    "gulp-zip": "^5.0.0",
     "js-yaml": "^3.13.1",
     "klaw": "^3.0.0",
     "markdownlint": "^0.15.0",
@@ -57,5 +56,5 @@
     "test": "mocha --timeout 30000"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.160"
+  "version": "0.0.161"
 }
