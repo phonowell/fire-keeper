@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "achain": "^1.1.4",
-    "archiver": "^3.0.3",
+    "archiver": "^3.1.1",
     "download": "^7.1.0",
     "fs-extra": "^8.1.0",
     "gulp": "^4.0.2",
@@ -14,9 +14,8 @@
     "gulp-coffeelint": "^0.6.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-if": "^3.0.0",
-    "gulp-include": "^2.4.1",
     "gulp-livereload": "^4.0.1",
-    "gulp-markdown": "^4.0.0",
+    "gulp-markdown": "^5.0.0",
     "gulp-pug": "^4.0.1",
     "gulp-rename": "^1.4.0",
     "gulp-stylint": "^4.0.2",
@@ -27,12 +26,12 @@
     "gulp-yaml": "^2.0.4",
     "js-yaml": "^3.13.1",
     "klaw": "^3.0.0",
-    "markdownlint": "^0.15.0",
+    "markdownlint": "^0.16.0",
     "ora": "^3.4.0",
-    "prompts": "^2.1.0",
+    "prompts": "^2.2.1",
     "ssh2": "^0.8.5",
     "uglify-es": "^3.3.9",
-    "yargs": "^13.3.0"
+    "yargs": "^14.0.0"
   },
   "description": "A little helper to make gulpfile(s) simple.",
   "devDependencies": {
@@ -56,5 +55,5 @@
     "test": "mocha --timeout 30000"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.161"
+  "version": "0.0.162"
 }

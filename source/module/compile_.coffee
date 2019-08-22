@@ -39,7 +39,6 @@ class M
     await new Promise (resolve) ->
 
       coffee = require 'gulp-coffee'
-      include = require 'gulp-include'
       uglifyEs = require 'uglify-es'
       composer = require 'gulp-uglify/composer'
       uglify = composer uglifyEs, console
@@ -49,7 +48,6 @@ class M
 
       gulp.src source, {base, sourcemaps}
       .pipe using()
-      .pipe include()
       .pipe coffee option
       .pipe gulpIf option.minify, uglify()
       .pipe gulp.dest target, {sourcemaps}

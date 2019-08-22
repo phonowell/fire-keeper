@@ -12,7 +12,6 @@
 - clean_: [文档](../doc/clean_.md) / [源码](../source/module/clean_.coffee) / [测试](../test/clean_.coffee)
 - compile_: [文档](../doc/compile_.md) / [源码](../source/module/compile_.coffee) / [测试](../test/compile_.coffee)
 - copy_: [文档](../doc/copy_.md) / [源码](../source/module/copy_.coffee) / [测试](../test/copy_.coffee)
-- delay_: [文档](../doc/delay_.md) / [源码](../source/module/delay_.coffee) / [测试](../test/delay_.coffee)
 - download_: [文档](../doc/download_.md) / [源码](../source/module/download_.coffee) / [测试](../test/download_.coffee)
 - exec_: [文档](../doc/exec_.md) / [源码](../source/module/exec_.coffee) / [测试](../test/exec_.coffee)
 - fetchGithub_: [文档](../doc/fetchGithub_.md) / [源码](../source/module/fetchGithub_.coffee) / [测试](../test/fetchGithub_.coffee)
@@ -45,6 +44,7 @@
 - require: [文档](../doc/require.md) / [源码](../source/module/require.coffee) / [测试](../test/require.coffee)
 - root: [文档](../doc/root.md) / [源码](../source/module/root.coffee) / [测试](../test/root.coffee)
 - say_: [文档](../doc/say_.md) / [源码](../source/module/say_.coffee) / [测试](../test/say_.coffee)
+- sleep_: [文档](../doc/sleep_.md) / [源码](../source/module/sleep_.coffee) / [测试](../test/sleep_.coffee)
 - source_: [文档](../doc/source_.md) / [源码](../source/module/source_.coffee) / [测试](../test/source_.coffee)
 - ssh: [文档](../doc/ssh.md) / [源码](../source/module/ssh.coffee) / [测试](../test/ssh.coffee)
 - stat_: [文档](../doc/stat_.md) / [源码](../source/module/stat_.coffee) / [测试](../test/stat_.coffee)
@@ -70,4 +70,4 @@
 - update: [源码](../source/task/update.coffee)
 - watch: [源码](../source/task/watch.coffee)
 
-**最后更新于`2019/8/2`。**
+**最后更新于`2019/8/22`。**

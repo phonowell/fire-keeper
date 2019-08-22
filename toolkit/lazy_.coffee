@@ -18,17 +18,15 @@ class M
     listTask = await $.source_ './source/task/*.coffee'
     stringTask = (
       "'#{$.getBasename name}'" for name in listTask
-    ).join ','
+    ).join ', '
 
-    cont = await $.read_ source
-    result = cont
+    # replace
+    result = (await $.read_ source)
 
-    # module
-    .replace /listLazyModule\s=\s\[.*\];/
+    .replace /listLazyModule\s=\s\[.*\];/ # module
     , "listLazyModule = [#{stringModule}];"
 
-    # task
-    .replace /listLazyTask\s=\s\[.*\];/
+    .replace /listLazyTask\s=\s\[.*\];/ # task
     , "listLazyTask = [#{stringTask}];"
     
     await $.write_ source, result

@@ -51,17 +51,17 @@ class M
     unless type == 'object'
       throw "prompt_/error: invalid type '#{type}'"
     
-    [res, resRaw] = await $.info().silence_ =>
+    $.info().pause()
 
-      option = await @setOption_ _.cloneDeep option
-      
-      # execute
-      resRaw = await prompts option
-      res = resRaw[option.name]
+    option = await @setOption_ _.cloneDeep option
+    
+    # execute
+    resRaw = await prompts option
+    res = resRaw[option.name]
 
-      await @setCache_ option, res
+    await @setCache_ option, res
 
-      [res, resRaw]
+    $.info().resume()
 
     # return
     if option.raw

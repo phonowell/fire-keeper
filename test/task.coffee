@@ -31,7 +31,7 @@ it "$.task('_test', fn)", ->
   if ($.task '_test') == fn
     throw 1
 
-  fn_ = -> await $.delay_()
+  fn_ = -> await $.sleep_()
   $.task '_test', fn_
 
   unless ($.task '_test') == fn_

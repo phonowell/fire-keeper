@@ -40,15 +40,14 @@ M = (function() {
     */
     async compileCoffee_(source, target, option) {
       await new Promise(function(resolve) {
-        var base, coffee, composer, include, sourcemaps, uglify, uglifyEs;
+        var base, coffee, composer, sourcemaps, uglify, uglifyEs;
         coffee = require('gulp-coffee');
-        include = require('gulp-include');
         uglifyEs = require('uglify-es');
         composer = require('gulp-uglify/composer');
         uglify = composer(uglifyEs, console);
         base = option.base;
         sourcemaps = option.map;
-        return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(include()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
+        return gulp.src(source, {base, sourcemaps}).pipe(using()).pipe(coffee(option)).pipe(gulpIf(option.minify, uglify())).pipe(gulp.dest(target, {sourcemaps})).on('end', function() {
           return resolve();
         });
       });

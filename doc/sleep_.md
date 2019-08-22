@@ -1,4 +1,4 @@
-# $.delay_([time])
+# $.sleep_([time])
 
 等待一段时间。
 
@@ -9,5 +9,5 @@
 ## 示例
 
 ```coffeescript
-await $.delay_ 500
+await $.sleep_ 500
 ```

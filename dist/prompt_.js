@@ -30,15 +30,14 @@ M = (function() {
       if (type !== 'object') {
         throw new Error(`prompt_/error: invalid type '${type}'`);
       }
-      [res, resRaw] = (await $.info().silence_(async() => {
-        option = (await this.setOption_(_.cloneDeep(option)));
-        
-        // execute
-        resRaw = (await prompts(option));
-        res = resRaw[option.name];
-        await this.setCache_(option, res);
-        return [res, resRaw];
-      }));
+      $.info().pause();
+      option = (await this.setOption_(_.cloneDeep(option)));
+      
+      // execute
+      resRaw = (await prompts(option));
+      res = resRaw[option.name];
+      await this.setCache_(option, res);
+      $.info().resume();
       // return
       if (option.raw) {
         return resRaw;

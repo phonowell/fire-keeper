@@ -6,6 +6,6 @@ export default (time = 0) ->
     , time
     
   if time
-    $.info 'delay', "delayed '#{time} ms'"
+    $.info 'sleep', "slept '#{time} ms'"
 
   @ # return
