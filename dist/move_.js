@@ -12,8 +12,10 @@ $.remove_ = require('../dist/remove_');
 
 $.wrapList = require('../dist/wrapList');
 
-module.exports = async function(source, target) {
-  var listSource;
+$.parseString = require('../dist/parseString');
+
+module.exports = async function(source, target, option) {
+  var listSource, msg;
   if (!(source && target)) {
     throw new Error('move_/error: invalid argument length');
   }
@@ -22,9 +24,14 @@ module.exports = async function(source, target) {
     return this;
   }
   await $.info().silence_(async function() {
-    await $.copy_(listSource, target);
+    await $.copy_(listSource, target, option);
     return (await $.remove_(listSource));
   });
-  $.info('move', `moved ${$.wrapList(source)} to '${target}'`);
+  // info
+  msg = `moved ${$.wrapList(source)} to '${target}'`;
+  if (option) {
+    msg += `, as '${$.parseString(option)}'`;
+  }
+  $.info('move', msg);
   return this;
 };

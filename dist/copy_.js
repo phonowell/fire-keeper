@@ -48,6 +48,7 @@ module.exports = async function(...arg) {
       return resolve();
     });
   });
+  // info
   msg = `copied ${$.wrapList(source)} to ${$.wrapList(target)}`;
   if (option) {
     msg += `, as '${$.parseString(option)}'`;

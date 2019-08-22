@@ -1,4 +1,4 @@
-export default (source, target) ->
+export default (source, target, option) ->
 
   unless source and target
     throw 'move_/error: invalid argument length'
@@ -8,10 +8,13 @@ export default (source, target) ->
     return @
 
   await $.info().silence_ ->
-    await $.copy_ listSource, target
+    await $.copy_ listSource, target, option
     await $.remove_ listSource
 
-  $.info 'move'
-  , "moved #{$.wrapList source} to '#{target}'"
+  # info
+  msg = "moved #{$.wrapList source} to '#{target}'"
+  if option
+    msg += ", as '#{$.parseString option}'"
+  $.info 'move', msg
 
   @ # return

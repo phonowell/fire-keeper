@@ -28,6 +28,7 @@ export default (arg...) ->
     .pipe gulp.dest (e) -> target or e.base
     .on 'end', -> resolve()
 
+  # info
   msg = "copied #{$.wrapList source}
   to #{$.wrapList target}"
   if option
