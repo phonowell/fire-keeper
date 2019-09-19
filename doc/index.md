@@ -2,7 +2,7 @@
 
 ## 方法
 
-共计52个方法。
+共计50个方法。
 
 - _watch: [文档](../doc/_watch.md) / [源码](../source/module/_watch.coffee) / [测试](../test/_watch.coffee)
 - argv: [文档](../doc/argv.md) / [源码](../source/module/argv.coffee) / [测试](../test/argv.coffee)
@@ -38,8 +38,6 @@
 - prompt_: [文档](../doc/prompt_.md) / [源码](../source/module/prompt_.coffee) / [测试](../test/prompt_.coffee)
 - read_: [文档](../doc/read_.md) / [源码](../source/module/read_.coffee) / [测试](../test/read_.coffee)
 - recover_: [文档](../doc/recover_.md) / [源码](../source/module/recover_.coffee) / [测试](../test/recover_.coffee)
-- relativePath: [文档](../doc/relativePath.md) / [源码](../source/module/relativePath.coffee) / [测试](../test/relativePath.coffee)
-- reload: [文档](../doc/reload.md) / [源码](../source/module/reload.coffee) / [测试](../test/reload.coffee)
 - remove_: [文档](../doc/remove_.md) / [源码](../source/module/remove_.coffee) / [测试](../test/remove_.coffee)
 - rename_: [文档](../doc/rename_.md) / [源码](../source/module/rename_.coffee) / [测试](../test/rename_.coffee)
 - require: [文档](../doc/require.md) / [源码](../source/module/require.coffee) / [测试](../test/require.coffee)
