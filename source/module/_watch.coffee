@@ -65,7 +65,6 @@ class M
   copy_()
   execute()
   get(key)
-  reloadCss()
   watchCompile()
   watchCopy()
   ###
@@ -114,16 +113,10 @@ class M
     .bind()
     .watchCompile()
     .watchCopy()
-    .reloadCss()
 
     @ # return
 
   get: (key) -> _.get @data, key
-
-  reloadCss: ->
-    pathTarget = @get 'path.target'
-    $.reload "#{pathTarget}/**/*.css"
-    @ # return
 
   watchCompile: ->
 

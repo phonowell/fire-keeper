@@ -12,8 +12,6 @@ $.compile_ = require('../dist/compile_');
 
 $.copy_ = require('../dist/copy_');
 
-$.reload = require('../dist/reload');
-
 $.watch = require('../dist/watch');
 
 _ = {};
@@ -73,7 +71,6 @@ M = class M {
   copy_()
   execute()
   get(key)
-  reloadCss()
   watchCompile()
   watchCopy()
   */
@@ -111,19 +108,12 @@ M = class M {
   }
 
   execute() {
-    this.bind().watchCompile().watchCopy().reloadCss();
+    this.bind().watchCompile().watchCopy();
     return this;
   }
 
   get(key) {
     return _.get(this.data, key);
-  }
-
-  reloadCss() {
-    var pathTarget;
-    pathTarget = this.get('path.target');
-    $.reload(`${pathTarget}/**/*.css`);
-    return this;
   }
 
   watchCompile() {
