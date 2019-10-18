@@ -5,10 +5,10 @@ os = null;
 fn = function() {
   var string;
   string = process.platform;
-  if (~string.search('darwin')) {
+  if (string.includes('darwin')) {
     return 'macos';
   }
-  if (~string.search('win')) {
+  if (string.includes('win')) {
     return 'windows';
   }
   return 'linux';

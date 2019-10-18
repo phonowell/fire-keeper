@@ -5,7 +5,7 @@ fs = require 'fs'
 for filename in fs.readdirSync './task'
   do (filename) ->
 
-    unless ~filename.search /\.coffee/
+    unless filename.includes '.coffee'
       return
 
     name = filename.replace /\.coffee/, ''

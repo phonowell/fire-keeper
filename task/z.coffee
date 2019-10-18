@@ -1,4 +1,7 @@
 $ = require '../index'
 
 module.exports = ->
-  $.info 'z'
+  
+  string = '%s is not good'
+
+  $.i string.replace /%s/g, 'haha'

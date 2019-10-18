@@ -1,5 +1,7 @@
 $ = require '../index'
 
+# function
+
 class M
 
   ###
@@ -33,6 +35,7 @@ class M
 
     @ # return
 
+# return
 module.exports = ->
   m = new M()
   await m.execute_()

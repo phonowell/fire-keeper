@@ -3,6 +3,8 @@ path = require 'path'
 
 $ = require '../index'
 
+# function
+
 class M
 
   ###
@@ -15,7 +17,7 @@ class M
   ###
 
   check: (cont) ->
-    if ~cont.search /\$\.chain \$/
+    if cont.includes '$.chain $'
       throw new Error "invalid '$.chain($)' found"
     @ # return
 
@@ -88,6 +90,7 @@ class M
     .replace /throw/g, 'throw new Error'
     .replace /new Error new Error/g, 'new Error'
 
+# return
 module.exports = (arg...) ->
   m = new M()
   m.execute arg...

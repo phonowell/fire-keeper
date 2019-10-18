@@ -3,10 +3,10 @@ os = null
 fn = ->
   string = process.platform
   
-  if ~string.search 'darwin'
+  if string.includes 'darwin'
     return 'macos'
 
-  if ~string.search 'win'
+  if string.includes 'win'
     return 'windows'
 
   'linux'

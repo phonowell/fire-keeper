@@ -28,7 +28,7 @@ describe 'coffee', ->
       throw new Error()
 
     cont = await $.read_ target
-    unless ~cont.search 'sourceMappingURL='
+    unless cont.includes 'sourceMappingURL='
       throw new Error()
 
     await clean_()
@@ -54,7 +54,7 @@ describe 'coffee', ->
       throw new Error()
 
     cont = await $.read_ target
-    if ~cont.search 'sourceMappingURL='
+    if cont.includes 'sourceMappingURL='
       throw new Error()
 
     await clean_()

@@ -124,7 +124,7 @@ M = class M {
           throw new Error(`zip_/error: invalid type '${type}'`);
       }
     })();
-    if (~source.search(/\*/)) {
+    if (source.includes('*')) {
       return _.trim(source.replace(/\*.*/, ''), '/');
     }
     return $.getDirname(source); // return

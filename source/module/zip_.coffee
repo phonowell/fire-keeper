@@ -102,7 +102,7 @@ class M
       when 'string' then source
       else throw "zip_/error: invalid type '#{type}'"
 
-    if ~source.search /\*/
+    if source.includes '*'
       return _.trim (source.replace /\*.*/, ''), '/'
 
     $.getDirname source # return
