@@ -13,6 +13,8 @@ temp
 *.coffee
 *.map
 *.md
+*.yaml
+*.yml
 .stylintrc
 coffeelint.json
 package-lock.json

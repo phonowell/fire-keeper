@@ -1,12 +1,12 @@
 export default ->
 
   await $.lint_ [
+    # './**/*.pug'
+    # './**/*.ts'
     './**/*.coffee'
     './**/*.md'
-    # './**/*.pug'
     './**/*.styl'
-    # './**/*.ts'
-    '!**/node_modules/**'
-    '!**/gurumin/**'
+    # ---
     '!**/nib/**'
+    '!**/node_modules/**'
   ]

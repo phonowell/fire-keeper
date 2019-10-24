@@ -2,7 +2,7 @@
 
 ## 方法
 
-共计50个方法。
+共计49个方法。
 
 - _watch: [文档](../doc/_watch.md) / [源码](../source/module/_watch.coffee) / [测试](../test/_watch.coffee)
 - argv: [文档](../doc/argv.md) / [源码](../source/module/argv.coffee) / [测试](../test/argv.coffee)
@@ -14,7 +14,6 @@
 - copy_: [文档](../doc/copy_.md) / [源码](../source/module/copy_.coffee) / [测试](../test/copy_.coffee)
 - download_: [文档](../doc/download_.md) / [源码](../source/module/download_.coffee) / [测试](../test/download_.coffee)
 - exec_: [文档](../doc/exec_.md) / [源码](../source/module/exec_.coffee) / [测试](../test/exec_.coffee)
-- fetchGithub_: [文档](../doc/fetchGithub_.md) / [源码](../source/module/fetchGithub_.coffee) / [测试](../test/fetchGithub_.coffee)
 - formatArgument: [文档](../doc/formatArgument.md) / [源码](../source/module/formatArgument.coffee) / [测试](../test/formatArgument.coffee)
 - getBasename: [文档](../doc/getBasename.md) / [源码](../source/module/getBasename.coffee) / [测试](../test/getBasename.coffee)
 - getDirname: [文档](../doc/getDirname.md) / [源码](../source/module/getDirname.coffee) / [测试](../test/getDirname.coffee)
@@ -57,16 +56,14 @@
 
 ## 任务
 
-共计9个任务。
+共计7个任务。
 
 - build: [源码](../source/task/build.coffee)
 - default: [源码](../source/task/default.coffee)
-- gurumin: [源码](../source/task/gurumin.coffee)
-- kokoro: [源码](../source/task/kokoro.coffee)
 - lint: [源码](../source/task/lint.coffee)
 - noop: [源码](../source/task/noop.coffee)
 - prune: [源码](../source/task/prune.coffee)
 - update: [源码](../source/task/update.coffee)
 - watch: [源码](../source/task/watch.coffee)
 
-**最后更新于`2019/10/18`。**
+**最后更新于`2019/10/24`。**

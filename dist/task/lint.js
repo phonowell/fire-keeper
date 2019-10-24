@@ -6,13 +6,13 @@ $.lint_ = require('../../dist/lint_');
 
 module.exports = async function() {
   return (await $.lint_([
+    // './**/*.pug'
+    // './**/*.ts'
     './**/*.coffee',
     './**/*.md',
-    // './**/*.pug'
     './**/*.styl',
-    // './**/*.ts'
-    '!**/node_modules/**',
-    '!**/gurumin/**',
-    '!**/nib/**'
+    // ---
+    '!**/nib/**',
+    '!**/node_modules/**'
   ]));
 };

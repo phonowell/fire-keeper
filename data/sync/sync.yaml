@@ -1,0 +1,3 @@
+midway:
+  - data/sync/kokoro.yaml
+  - data/sync/task.yaml
