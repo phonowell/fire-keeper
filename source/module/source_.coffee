@@ -1,10 +1,10 @@
 gulp = require 'gulp'
 
-export default (source, option) ->
+module.exports = (source, option) ->
 
   groupSource = $.normalizePathToArray source
   
-  option = _.merge
+  option = Object.assign
     allowEmpty: true
     read: false
   , option

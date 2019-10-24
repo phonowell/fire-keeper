@@ -1,4 +1,4 @@
-export default (ipt) ->
+module.exports = (ipt) ->
 
   switch $.type ipt
 

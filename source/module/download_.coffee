@@ -1,6 +1,6 @@
 # https://github.com/kevva/download
 
-export default (arg...) ->
+module.exports = (arg...) ->
 
   [source, target, option] = switch arg.length
     when 2 then [arg[0], arg[1], null]

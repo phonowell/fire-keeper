@@ -95,7 +95,7 @@ class M
 # return
 m = new M()
 
-export default (cmd, option) ->
+module.exports = (cmd, option) ->
   
   unless cmd
     throw 'exec_/error: cmd undefined'

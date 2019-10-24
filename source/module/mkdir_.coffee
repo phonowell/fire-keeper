@@ -1,6 +1,6 @@
 fse = require 'fs-extra'
 
-export default (source) ->
+module.exports = (source) ->
 
   unless source
     throw 'mkdir_/error: invalid source'

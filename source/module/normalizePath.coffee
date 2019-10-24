@@ -1,6 +1,6 @@
 path = require 'path'
 
-export default (string) ->
+module.exports = (string) ->
 
   unless 'string' == $.type string
     return null

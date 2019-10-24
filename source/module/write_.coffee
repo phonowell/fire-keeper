@@ -1,6 +1,6 @@
 fse = require 'fs-extra'
 
-export default (source, data, option) ->
+module.exports = (source, data, option) ->
 
   source = $.normalizePath source
 

@@ -1,1 +1,1 @@
-export default (source) -> ($.getName source).basename
+module.exports = (source) -> ($.getName source).basename

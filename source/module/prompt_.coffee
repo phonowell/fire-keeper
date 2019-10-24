@@ -148,5 +148,5 @@ class M
     option # return
 
 m = new M()
-export default (arg...) ->
+module.exports = (arg...) ->
   await m.execute_ arg...

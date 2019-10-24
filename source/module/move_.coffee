@@ -1,4 +1,4 @@
-export default (source, target, option) ->
+module.exports = (source, target, option) ->
 
   unless source and target
     throw 'move_/error: invalid argument length'

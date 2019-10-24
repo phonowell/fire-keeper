@@ -1,6 +1,6 @@
 fse = require 'fs-extra'
 
-export default (source) ->
+module.exports = (source) ->
 
   listSource = await $.source_ source
   unless listSource.length

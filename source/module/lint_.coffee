@@ -119,7 +119,7 @@ class M
   #   @ # return
 
 # return
-export default (arg...) ->
+module.exports = (arg...) ->
   m = new M()
   await m.execute_ arg...
   @ # return

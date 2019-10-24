@@ -1,5 +1,5 @@
 watch = require 'gulp-watch'
 
-export default (arg...) ->
+module.exports = (arg...) ->
   watch arg...
   @ # return

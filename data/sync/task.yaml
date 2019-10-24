@@ -1,3 +1,2 @@
-midway:
-  - gulpfile.coffee
-  - task/sync.coffee
+- gulpfile.coffee
+- task/sync.coffee

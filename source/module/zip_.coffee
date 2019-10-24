@@ -120,7 +120,7 @@ class M
 
       else [null, null]
 
-export default (arg...) ->
+module.exports = (arg...) ->
   m = new M()
   await m.execute_ arg...
   @ # return

@@ -2,12 +2,10 @@
 
 ## 方法
 
-共计49个方法。
+共计47个方法。
 
-- _watch: [文档](../doc/_watch.md) / [源码](../source/module/_watch.coffee) / [测试](../test/_watch.coffee)
 - argv: [文档](../doc/argv.md) / [源码](../source/module/argv.coffee) / [测试](../test/argv.coffee)
 - backup_: [文档](../doc/backup_.md) / [源码](../source/module/backup_.coffee) / [测试](../test/backup_.coffee)
-- build_: [文档](../doc/build_.md) / [源码](../source/module/build_.coffee) / [测试](../test/build_.coffee)
 - chain: [文档](../doc/chain.md) / [源码](../source/module/chain.coffee) / [测试](../test/chain.coffee)
 - clean_: [文档](../doc/clean_.md) / [源码](../source/module/clean_.coffee) / [测试](../test/clean_.coffee)
 - compile_: [文档](../doc/compile_.md) / [源码](../source/module/compile_.coffee) / [测试](../test/compile_.coffee)
@@ -56,14 +54,12 @@
 
 ## 任务
 
-共计7个任务。
+共计5个任务。
 
-- build: [源码](../source/task/build.coffee)
 - default: [源码](../source/task/default.coffee)
 - lint: [源码](../source/task/lint.coffee)
 - noop: [源码](../source/task/noop.coffee)
 - prune: [源码](../source/task/prune.coffee)
 - update: [源码](../source/task/update.coffee)
-- watch: [源码](../source/task/watch.coffee)
 
-**最后更新于`2019/10/24`。**
+**最后更新于`2019/11/5`。**

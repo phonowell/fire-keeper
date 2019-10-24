@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-export default (source, option = {}) ->
+module.exports = (source, option = {}) ->
 
   _source = source
   listSource = await $.source_ source

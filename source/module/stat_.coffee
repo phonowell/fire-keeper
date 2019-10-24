@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-export default (source) ->
+module.exports = (source) ->
 
   source = $.normalizePath source
 

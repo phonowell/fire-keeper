@@ -52,7 +52,7 @@ class M
     result.unwrap()
 
 m = new M()
-export default (arg...) ->
+module.exports = (arg...) ->
   result = m.execute arg...
   
   # magic value

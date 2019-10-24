@@ -1,3 +1,3 @@
-export default (msg) ->
+module.exports = (msg) ->
   console.log msg
   msg # return

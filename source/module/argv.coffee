@@ -1,1 +1,1 @@
-export default -> (require 'yargs').argv
+module.exports = -> (require 'yargs').argv

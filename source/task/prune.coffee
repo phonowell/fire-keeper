@@ -1,6 +1,6 @@
 # https://github.com/tj/node-prune
 
-export default ->
+module.exports = ->
 
   # await $.exec_ 'npm prune'
 

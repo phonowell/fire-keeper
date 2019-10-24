@@ -1,1 +1,1 @@
-export default (source) -> ($.getName source).dirname
+module.exports = (source) -> ($.getName source).dirname

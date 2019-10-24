@@ -1,7 +1,7 @@
 gulp = require 'gulp'
 using = require 'gulp-using'
 
-export default (source, option) ->
+module.exports = (source, option) ->
 
   source = $.normalizePathToArray source
 

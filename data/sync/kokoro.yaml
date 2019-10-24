@@ -1,7 +1,5 @@
-midway:
-
-  - .gitignore
-  - .npmignore
-  - .stylintrc
-  - coffeelint.json
-  - license.md
+- .gitignore
+- .npmignore
+- .stylintrc
+- coffeelint.json
+- license.md

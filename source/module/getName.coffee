@@ -1,6 +1,6 @@
 path = require 'path'
 
-export default (source) ->
+module.exports = (source) ->
 
   unless source?.length or source > 0
     throw "getName/error: invalid source '#{source}'"

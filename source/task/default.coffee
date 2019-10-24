@@ -1,4 +1,4 @@
-export default ->
+module.exports = ->
   
   list = _.keys $.task()
   list.sort()

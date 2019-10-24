@@ -6,7 +6,7 @@ Lang =
   'zh-hk': 'sin-ji'
   'zh-tw': 'mei-jia'
 
-export default (text, option = {}) ->
+module.exports = (text, option = {}) ->
 
   for msg in $.formatArgument text
 

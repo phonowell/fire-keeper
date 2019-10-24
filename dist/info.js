@@ -18,8 +18,6 @@ _.padStart = require('lodash/padStart');
 
 _.floor = require('lodash/floor');
 
-_.now = require('lodash/now');
-
 _.repeat = require('lodash/repeat');
 
 kleur = require('kleur');
@@ -97,7 +95,7 @@ M = (function() {
     renderTime() {
       var cache, stringTime, ts;
       cache = this['$cache-time'];
-      ts = _.floor(_.now(), -3);
+      ts = _.floor(new Date().getTime(), -3);
       if (ts === cache[0]) {
         return cache[1];
       }

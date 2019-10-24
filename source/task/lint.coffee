@@ -1,4 +1,4 @@
-export default ->
+module.exports = ->
 
   await $.lint_ [
     # './**/*.pug'

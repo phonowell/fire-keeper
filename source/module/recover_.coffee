@@ -1,4 +1,4 @@
-export default (source) ->
+module.exports = (source) ->
 
   msg = "recovered #{$.wrapList source}"
 

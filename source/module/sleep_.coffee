@@ -1,4 +1,4 @@
-export default (time = 0) ->
+module.exports = (time = 0) ->
   
   await new Promise (resolve) ->
     setTimeout ->

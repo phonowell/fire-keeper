@@ -3,8 +3,7 @@
 .idea
 .temp
 .vscode
-gurumin
-lint
+data/sync
 secret
 source
 storage
@@ -13,8 +12,6 @@ temp
 *.coffee
 *.map
 *.md
-*.yaml
-*.yml
 .stylintrc
 coffeelint.json
 package-lock.json

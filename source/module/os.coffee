@@ -11,7 +11,7 @@ fn = ->
 
   'linux'
 
-export default (name) ->
+module.exports = (name) ->
   os or= fn()
 
   if name

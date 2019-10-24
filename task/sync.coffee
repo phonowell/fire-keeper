@@ -1,8 +1,7 @@
 _ = require 'lodash'
-$ = try
-  require 'fire-keeper'
-catch
-  require '../index'
+
+$ = try require 'fire-keeper'
+catch then require '../index'
 
 # function
 
@@ -68,29 +67,28 @@ class M
     data = await @load_()
 
     # diff
-    for namespace, list of data
+    for line in data
 
-      [name, space] = namespace.split '/'
-      space or= ''
-
-      for path in list
+      [path, extra] = line.split '@'
+      extra or= ''
+      [namespace, version] = extra.split '/'
+      namespace or= 'default'
+      version or= '0.0.1'
         
-        source = "./#{path}"
-        target = "../#{name}/#{path}"
+      source = "./#{path}"
+      target = "../midway/#{path}"
+      {basename, dirname, extname} = $.getName target
+      target = "#{dirname}/#{basename}-#{namespace}-#{version}#{extname}"
 
-        if space
-          {basename, dirname, extname} = $.getName target
-          target = "#{dirname}/#{basename}-#{space}#{extname}"
+      if await $.isSame_ [source, target]
+        continue
 
-        if await $.isSame_ [source, target]
-          continue
+      $.info "'#{source}' is different from '#{target}'"
 
-        $.info "'#{source}' is different from '#{target}'"
-
-        unless value = await @ask_ source, target
-          break
-          
-        await @overwrite_ value, source, target
+      unless value = await @ask_ source, target
+        break
+        
+      await @overwrite_ value, source, target
 
   load_: ->
 
@@ -99,19 +97,15 @@ class M
     listData = (await $.read_ source for source in listSource)
     $.info().resume()
 
-    result = {}
+    result = []
 
     for data in listData
-      
-      # project name: rule list
-      for key, value of data
+      result = [
+        result...
+        data...
+      ]
 
-        result[key] = _.uniq [
-          (result[key] or [])...
-          value...
-        ]
-
-    result # return
+    _.uniq result # return
 
   overwrite_: (value, source, target) -> switch value
       

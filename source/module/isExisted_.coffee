@@ -1,6 +1,6 @@
 fse = require 'fs-extra'
 
-export default (source) ->
+module.exports = (source) ->
 
   groupSource = $.normalizePathToArray source
   unless groupSource.length

@@ -31,7 +31,6 @@ class M
 
     cont = @injectLodash cont
     cont = @injectFunction cont, from
-    cont = @replaceExport cont
     cont = @replaceThrow cont
 
     cont # return
@@ -82,12 +81,9 @@ class M
       cont
     ].join '\n'
 
-  replaceExport: (cont) ->
-    cont.replace /export default/g, 'module.exports ='
-
   replaceThrow: (cont) ->
     cont
-    .replace /throw/g, 'throw new Error'
+    .replace /throw /g, 'throw new Error '
     .replace /new Error new Error/g, 'new Error'
 
 # return

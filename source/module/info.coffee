@@ -95,7 +95,7 @@ class M
   renderTime: ->
 
     cache = @['$cache-time']
-    ts = _.floor _.now(), -3
+    ts = _.floor (new Date().getTime()), -3
 
     if ts == cache[0]
       return cache[1]
@@ -131,5 +131,5 @@ class M
 
 # return
 m = new M()
-export default (arg...) ->
+module.exports = (arg...) ->
   m.execute arg...

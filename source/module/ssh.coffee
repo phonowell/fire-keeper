@@ -184,4 +184,4 @@ class M
 
     @ # return
 
-export default -> new M()
+module.exports = -> new M()

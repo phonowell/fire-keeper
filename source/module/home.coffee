@@ -1,1 +1,1 @@
-export default -> (require 'os').homedir()
+module.exports = -> (require 'os').homedir()

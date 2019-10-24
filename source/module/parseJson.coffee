@@ -1,4 +1,4 @@
-export default (ipt) ->
+module.exports = (ipt) ->
   switch type = $.type ipt
     when 'array', 'object' then ipt
     when 'string', 'uint8array' then JSON.parse ipt

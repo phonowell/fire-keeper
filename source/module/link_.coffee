@@ -1,6 +1,6 @@
 fse = require 'fs-extra'
 
-export default (source, target) ->
+module.exports = (source, target) ->
 
   unless source and target
     throw 'link_/error: invalid argument length'

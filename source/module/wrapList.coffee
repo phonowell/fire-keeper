@@ -1,4 +1,4 @@
-export default (list) ->
+module.exports = (list) ->
   
   unless list?
     return ''

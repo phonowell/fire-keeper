@@ -99,7 +99,7 @@ class M
 
     @ # return
 
-export default ->
+module.exports = ->
 
   {registry} = $.argv()
 

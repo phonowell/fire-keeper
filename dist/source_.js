@@ -1,19 +1,15 @@
-var $, _, gulp;
+var $, gulp;
 
 $ = {};
 
 $.normalizePathToArray = require('../dist/normalizePathToArray');
-
-_ = {};
-
-_.merge = require('lodash/merge');
 
 gulp = require('gulp');
 
 module.exports = async function(source, option) {
   var groupSource;
   groupSource = $.normalizePathToArray(source);
-  option = _.merge({
+  option = Object.assign({
     allowEmpty: true,
     read: false
   }, option);

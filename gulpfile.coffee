@@ -1,4 +1,6 @@
-$ = require './index'
+$ = try require 'fire-keeper'
+catch then require './index'
+
 fs = require 'fs'
 
 # task

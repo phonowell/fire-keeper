@@ -1,1 +1,1 @@
-export default (source) -> require $.normalizePath "#{source}"
+module.exports = (source) -> require $.normalizePath "#{source}"

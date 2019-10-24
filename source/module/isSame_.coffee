@@ -1,4 +1,4 @@
-export default (source) ->
+module.exports = (source) ->
 
   # why $.normailizePathToArray, but not $.source_?
   # because source may be not existed

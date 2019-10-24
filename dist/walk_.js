@@ -1,12 +1,8 @@
-var $, _, walk;
+var $, walk;
 
 $ = {};
 
 $.normalizePath = require('../dist/normalizePath');
-
-_ = {};
-
-_.merge = require('lodash/merge');
 
 walk = require('klaw');
 
@@ -17,7 +13,7 @@ module.exports = async function(source, callback) {
   source = $.normalizePath(source);
   await new Promise(function(resolve) {
     return walk(source).on('data', function(item) {
-      return callback(_.merge(item, {
+      return callback(Object.assign(item, {
         path: $.normalizePath(item.path)
       }));
     }).on('end', function() {

@@ -2,7 +2,7 @@ gulp = require 'gulp'
 gulpIf = require 'gulp-if'
 using = require 'gulp-using'
 
-export default (arg...) ->
+module.exports = (arg...) ->
 
   # source, target, [option]
   [source, target, option] = switch arg.length

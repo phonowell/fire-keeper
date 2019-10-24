@@ -1,4 +1,4 @@
-export default (source) ->
+module.exports = (source) ->
 
   type = $.type source
   unless type == 'string'

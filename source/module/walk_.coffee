@@ -1,6 +1,6 @@
 walk = require 'klaw'
 
-export default (source, callback) ->
+module.exports = (source, callback) ->
 
   unless source and callback
     throw 'walk_/error: invalid argument length'
@@ -11,7 +11,7 @@ export default (source, callback) ->
 
     walk source
     .on 'data', (item) ->
-      callback _.merge item,
+      callback Object.assign item,
         path: $.normalizePath item.path
     .on 'end', -> resolve()
 
