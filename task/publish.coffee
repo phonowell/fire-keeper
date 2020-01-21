@@ -3,7 +3,7 @@ $ = require '../index'
 module.exports = ->
 
   # clean
-  if $.os == 'macos'
+  if $.os() == 'macos'
     await $.remove_ './**/.DS_Store'
 
   # exec
