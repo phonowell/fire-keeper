@@ -1,1 +1,0 @@
-module.exports = (source) -> ($.getName source).extname

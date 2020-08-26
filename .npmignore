@@ -12,6 +12,8 @@ temp
 *.coffee
 *.map
 *.md
+*.ts
 .stylintrc
 coffeelint.json
 package-lock.json
+tsconfig.json

@@ -1,0 +1,1 @@
+export type IFnAsync = (...args: unknown[]) => Promise<unknown>
