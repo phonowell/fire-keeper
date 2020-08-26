@@ -11,7 +11,7 @@ for (const filename of fs.readdirSync('./task')) {
 
   const name = filename.replace('.ts', '')
   $.task(name, async (...args: any[]) => {
-    const fnAsync = (await import(`./task/${name}.ts`)).default as IFnAsync
+    const fnAsync = (await import(`./task/${name}`)).default as IFnAsync
     await fnAsync(...args)
   })
 }

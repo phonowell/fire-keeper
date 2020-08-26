@@ -17,3 +17,5 @@ temp
 coffeelint.json
 package-lock.json
 tsconfig.json
+# inlcude
+!*.d.ts
