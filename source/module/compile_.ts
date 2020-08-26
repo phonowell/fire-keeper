@@ -293,7 +293,7 @@ class M {
           option.base = $.normalizePath(input[0])
             .replace(/\/\*.*/, '')
       } else
-        throw new Error('compile_/error: empty option.base')
+        option.base = ''
 
     return {
       source: listSource,

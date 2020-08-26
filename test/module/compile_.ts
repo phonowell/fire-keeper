@@ -83,11 +83,31 @@ async function e_() {
   if (!await $.isExisted_(listTarget)) throw new Error('0')
 }
 
+async function f_() {
+  const listSource = [
+    `${temp}/a.ts`,
+    `${temp}/b.ts`,
+    `${temp}/c.ts`
+  ]
+  const listTarget = [
+    `${temp}/a.js`,
+    `${temp}/b.js`,
+    `${temp}/c.js`
+  ]
+  const content = 'alert(1)'
+  for (const source of listSource)
+    await $.write_(source, content)
+  await $.compile_(listSource)
+
+  if (!await $.isExisted_(listTarget)) throw new Error('0')
+}
+
 // export
 export {
   a_,
   b_,
   c_,
   d_,
-  e_
+  e_,
+  f_
 }

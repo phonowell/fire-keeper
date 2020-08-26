@@ -176,7 +176,7 @@ class M {
                         .replace(/\/\*.*/, '');
             }
             else
-                throw new Error('compile_/error: empty option.base');
+                option.base = '';
         return {
             source: listSource,
             target,

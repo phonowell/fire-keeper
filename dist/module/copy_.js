@@ -22,10 +22,10 @@ async function main_(source, target, option) {
             .pipe(gulp_1.default.dest(e => target || e.base))
             .on('end', () => resolve());
     });
-    let msg = `copied ${__1.default.wrapList(source)} to 'target'}`;
+    let msg = `copied ${__1.default.wrapList(source)} to 'target'`;
     if (option)
         msg += `, as '${__1.default.parseString(option)}'`;
-    __1.default.info(msg);
+    __1.default.info('file', msg);
 }
 // export
 exports.default = main_;
