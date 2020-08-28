@@ -7,7 +7,6 @@ const __1 = __importDefault(require(".."));
 const findIndex_1 = __importDefault(require("lodash/findIndex"));
 const get_1 = __importDefault(require("lodash/get"));
 const prompts_1 = __importDefault(require("prompts"));
-// function
 class M {
     constructor() {
         this.listType = [
@@ -28,6 +27,7 @@ class M {
             'toggle'
         ];
         this.mapMessage = {
+            autocomplete: 'input',
             confirm: 'confirm',
             multiselect: 'select',
             number: 'input number',
@@ -81,20 +81,16 @@ class M {
         await __1.default.write_(this.pathCache, cache);
     }
     async setOption_(option) {
-        // clone
         const opt = { ...option };
         Object.assign(opt, {
             id: undefined
         });
-        // alias
         if (opt.type === 'auto')
             opt.type = 'autocomplete';
-        // check type
         if (!this.listType.includes(opt.type))
             throw new Error(`prompt_/error: invalid type '${opt.type}'`);
-        // default value
         if (!opt.message)
-            opt.message = this.mapMessage[opt.type] || 'input';
+            opt.message = this.mapMessage[opt.type];
         if (!opt.name)
             opt.name = 'value';
         if (['autocomplete', 'multiselect', 'select'].includes(opt.type)) {
@@ -115,14 +111,11 @@ class M {
             if (!opt.inactive)
                 opt.inactive = 'off';
         }
-        // have to be here
-        // behind option.choices
         if (['null', 'undefined'].includes(typeof opt.initial))
             opt.initial = opt.default || await this.getCache_(option);
         opt.default = undefined;
         return opt;
     }
 }
-// export
 const m = new M();
 exports.default = m.execute_.bind(m);

@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const gulp_1 = __importDefault(require("gulp"));
-// function
 class M {
     add(name, fn) {
         gulp_1.default.task(name, fn);
@@ -30,6 +29,5 @@ class M {
         return result.unwrap();
     }
 }
-// export
 const m = new M();
 exports.default = m.execute.bind(m);

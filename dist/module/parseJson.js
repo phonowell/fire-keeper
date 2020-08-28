@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 function main(input) {
     if (typeof input === 'string')
         return JSON.parse(input);
@@ -17,5 +16,4 @@ function main(input) {
         return input;
     throw new Error(`parseJson/error: invalid type '${type}'`);
 }
-// export
 exports.default = main;

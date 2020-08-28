@@ -8,7 +8,6 @@ const gulp_1 = __importDefault(require("gulp"));
 const gulp_if_1 = __importDefault(require("gulp-if"));
 const gulp_using_1 = __importDefault(require("gulp-using"));
 const gulp_rename_1 = __importDefault(require("gulp-rename"));
-// function
 async function main_(source, option) {
     const listSource = __1.default.normalizePathToArray(source);
     const listHistory = [];
@@ -30,5 +29,4 @@ async function main_(source, option) {
     __1.default.info().resume();
     __1.default.info('file', `renamed ${__1.default.wrapList(source)} as '${__1.default.parseString(option)}'`);
 }
-// export
 exports.default = main_;

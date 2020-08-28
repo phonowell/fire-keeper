@@ -15,5 +15,4 @@ function main(input) {
         return [input];
     throw new Error(`formatArgument/error: invalid type '${__1.default.type(input)}'`);
 }
-// export
 exports.default = main;

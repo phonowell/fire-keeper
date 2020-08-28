@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const fs_1 = __importDefault(require("fs"));
-// function
 async function main_(source) {
     source = __1.default.normalizePath(source);
     if (!await __1.default.isExisted_(source)) {
@@ -20,5 +19,4 @@ async function main_(source) {
         });
     });
 }
-// export
 exports.default = main_;

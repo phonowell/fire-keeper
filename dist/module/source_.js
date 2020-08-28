@@ -5,9 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const gulp_1 = __importDefault(require("gulp"));
-// variable
 const keyPrivate = '__is_listed_as_source__';
-// function
 async function main_(source) {
     if (!source)
         return [];
@@ -26,5 +24,4 @@ async function main_(source) {
             .on('end', () => resolve(listSource));
     });
 }
-// export
 exports.default = main_;

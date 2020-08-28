@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 async function main_(source, target, option) {
     const listSource = await __1.default.source_(source);
     if (!listSource.length)
@@ -18,5 +17,4 @@ async function main_(source, target, option) {
         msg += `, as '${__1.default.parseString(option)}'`;
     __1.default.info('file', msg);
 }
-// export
 exports.default = main_;

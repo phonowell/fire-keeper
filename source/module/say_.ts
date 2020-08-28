@@ -3,8 +3,8 @@ import $ from '..'
 // interface
 
 type IOption = {
-  lang?: string
-  voice?: string
+  lang?: keyof typeof Lang
+  voice?: typeof Lang[keyof typeof Lang]
 }
 
 // variable
@@ -34,18 +34,11 @@ async function main_(text: string, option: IOption = {}): Promise<void> {
 
     const listCmd = ['say']
 
-    if (option.lang) {
-      let lang = option.lang.toLowerCase()
-      const name = Lang[lang]
-      if (name)
-        lang = name
-      listCmd.push(`--voice=${lang}`)
-    }
+    if (option.lang)
+      listCmd.push(`--voice=${Lang[option.lang]}`)
 
-    if (option.voice) {
-      let voice = option.voice.toLowerCase()
-      listCmd.push(`--voice=${voice}`)
-    }
+    if (option.voice)
+      listCmd.push(`--voice=${option.voice}`)
 
     listCmd.push(message)
 

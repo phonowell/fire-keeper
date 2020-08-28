@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
-// function
 function main(input) {
     if (!input)
         throw new Error(`getName/error: empty input`);
@@ -16,5 +15,4 @@ function main(input) {
     const filename = `${basename}${extname}`;
     return { basename, dirname, extname, filename };
 }
-// export
 exports.default = main;

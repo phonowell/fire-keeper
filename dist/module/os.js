@@ -1,7 +1,5 @@
 "use strict";
-// interface
 Object.defineProperty(exports, "__esModule", { value: true });
-// variable
 let cache = '';
 function main(os) {
     if (!cache) {
@@ -17,5 +15,4 @@ function main(os) {
         return os === cache;
     return cache;
 }
-// export
 exports.default = main;

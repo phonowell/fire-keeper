@@ -30,10 +30,10 @@ class M {
     '.styl': 'compileStyl_',
     '.ts': 'compileTs_',
     '.yaml': 'compileYaml_'
-  }
+  } as const
 
   async compileCoffee_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -57,7 +57,7 @@ class M {
   }
 
   async compileHtml_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -79,7 +79,7 @@ class M {
   }
 
   async compileCss_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -99,7 +99,7 @@ class M {
   }
 
   async compileJs_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -121,7 +121,7 @@ class M {
   }
 
   async compileMd_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -145,7 +145,7 @@ class M {
   }
 
   async compilePug_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -165,7 +165,7 @@ class M {
   }
 
   async compileStyl_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -185,7 +185,7 @@ class M {
   }
 
   async compileTs_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -210,7 +210,7 @@ class M {
   }
 
   async compileYaml_(
-    source: string[],
+    source: string,
     target: string,
     option: IOption
   ): Promise<void> {
@@ -251,7 +251,9 @@ class M {
     for (const src of source) {
       const { extname, dirname } = $.getName(src)
 
-      const method = this.mapMethod[extname]
+      const method = this.mapMethod[
+        extname as keyof M['mapMethod']
+      ]
       if (!method) throw new Error(`compile_/error: invalid extname '${extname}'`)
 
       await this[method](
@@ -269,7 +271,7 @@ class M {
   ): Promise<{
     source: string[]
     target: string
-    option: Partial<IOption>
+    option: IOption
   }> {
 
     const listSource = await $.source_(input[0])

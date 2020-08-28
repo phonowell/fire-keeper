@@ -7,7 +7,6 @@ const __1 = __importDefault(require(".."));
 const gulp_1 = __importDefault(require("gulp"));
 const gulp_if_1 = __importDefault(require("gulp-if"));
 const gulp_using_1 = __importDefault(require("gulp-using"));
-// function
 class M {
     constructor() {
         this.mapMethod = {
@@ -140,11 +139,9 @@ class M {
     }
     async execute_(...args) {
         const { source, target, option } = await this.formatArgument_(args);
-        // message
         let msg = `compiled ${__1.default.wrapList(args[0])}`;
         if (target)
             msg += ` to '${target}'`;
-        // each
         for (const src of source) {
             const { extname, dirname } = __1.default.getName(src);
             const method = this.mapMethod[extname];
@@ -168,7 +165,6 @@ class M {
             target = input[1];
             option = input[2];
         }
-        // base
         if (!option.base)
             if (typeof input[0] === 'string') {
                 if (input[0].includes('/*'))
@@ -192,6 +188,5 @@ class M {
         return sourcemaps === true ? { sourcemaps } : undefined;
     }
 }
-// export
 const m = new M();
 exports.default = m.execute_.bind(m);

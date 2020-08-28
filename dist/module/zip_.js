@@ -9,7 +9,6 @@ const fs_1 = __importDefault(require("fs"));
 const kleur_1 = __importDefault(require("kleur"));
 const ora_1 = __importDefault(require("ora"));
 const trim_1 = __importDefault(require("lodash/trim"));
-// function
 class M {
     async archive_(listSource, target, option) {
         const { base, filename } = option;
@@ -45,7 +44,6 @@ class M {
                 spinner.warn(e.message);
                 throw (e);
             });
-            // execute
             archive.pipe(output);
             for (const src of await __1.default.source_(listSource)) {
                 const name = src.replace(base, '');
@@ -86,6 +84,5 @@ class M {
         return __1.default.getDirname(source);
     }
 }
-// export
 const m = new M();
 exports.default = m.execute_.bind(m);

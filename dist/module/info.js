@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const kleur_1 = __importDefault(require("kleur"));
-// function
 class M {
     constructor() {
         this.cacheTime = [0, ''];
@@ -71,7 +70,6 @@ class M {
     }
     renderContent(message) {
         return this.renderPath(message)
-            // 'xxx'
             .replace(/'.*?'/g, text => {
             const cont = text.replace(/'/g, '');
             return cont
@@ -117,6 +115,5 @@ class M {
         return result;
     }
 }
-// export
 const m = new M();
 exports.default = m.execute.bind(m);

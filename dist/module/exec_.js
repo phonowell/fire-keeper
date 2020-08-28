@@ -7,7 +7,6 @@ const __1 = __importDefault(require(".."));
 const child_process_1 = __importDefault(require("child_process"));
 const kleur_1 = __importDefault(require("kleur"));
 const trimEnd_1 = __importDefault(require("lodash/trimEnd"));
-// function
 class M {
     constructor() {
         this.spawn = child_process_1.default.spawn;
@@ -62,6 +61,5 @@ class M {
         return trimEnd_1.default(buffer.toString(), '\n');
     }
 }
-// export
 const m = new M();
 exports.default = m.execute_.bind(m);

@@ -4,5 +4,4 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const gulp_watch_1 = __importDefault(require("gulp-watch"));
-// export
 exports.default = gulp_watch_1.default;

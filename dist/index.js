@@ -49,7 +49,6 @@ const listModule = [
 const listTask = [
     'default'
 ];
-// inject module
 for (const name of listModule) {
     const isAsync = name.endsWith('_');
     if (!isAsync) {
@@ -65,12 +64,10 @@ for (const name of listModule) {
         };
     }
 }
-// inject task
 for (const name of listTask) {
     $.task(name, async function (...args) {
         const fn_ = require(`./task/${name}`).default;
         return await fn_(...args);
     });
 }
-// export
 exports.default = $;

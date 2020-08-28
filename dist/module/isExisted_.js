@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-// function
 async function main_(source) {
     const group = __1.default.normalizePathToArray(source);
     if (!group.length)
@@ -19,5 +18,4 @@ async function main_(source) {
     }
     return true;
 }
-// export
 exports.default = main_;

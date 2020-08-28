@@ -65,6 +65,7 @@ class M {
   ] as const
 
   mapMessage = {
+    autocomplete: 'input',
     confirm: 'confirm',
     multiselect: 'select',
     number: 'input number',
@@ -177,7 +178,7 @@ class M {
 
     // default value
     if (!opt.message)
-      opt.message = this.mapMessage[opt.type] || 'input'
+      opt.message = this.mapMessage[opt.type]
     if (!opt.name)
       opt.name = 'value'
 

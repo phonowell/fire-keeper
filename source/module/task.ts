@@ -40,7 +40,7 @@ class M {
     })._registry._tasks
 
     if (!name) {
-      const result = {}
+      const result: IMapFunction = {}
       for (const name of Object.keys(map))
         result[name] = map[name].unwrap()
       return result

@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const fs_1 = __importDefault(require("fs"));
-// variable
 const listExtnameOfString = [
     '.css',
     '.html',
@@ -19,7 +18,6 @@ const listExtnameOfString = [
     '.xml',
     '.coffee'
 ];
-// function
 async function main_(source, option = {}) {
     const _source = source;
     const listSource = await __1.default.source_(source);
@@ -49,5 +47,4 @@ async function main_(source, option = {}) {
     }
     return content;
 }
-// export
 exports.default = main_;

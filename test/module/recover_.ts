@@ -5,7 +5,6 @@ import { $, temp } from '..'
 async function a_() {
 
   const source: string = `${temp}/readme.md`
-  const target: string = `${temp}/readme.md.bak`
 
   await $.copy_('./readme.md', temp)
   await $.backup_(source)

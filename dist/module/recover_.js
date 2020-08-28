@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 async function main_(source) {
     const msg = `recovered ${__1.default.wrapList(source)}`;
     for (const src of __1.default.normalizePathToArray(source)) {
@@ -22,5 +21,4 @@ async function main_(source) {
     }
     __1.default.info('recover', msg);
 }
-// export
 exports.default = main_;

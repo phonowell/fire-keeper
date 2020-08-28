@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-// function
 async function main_(source, content, option) {
     source = __1.default.normalizePath(source);
     content = __1.default.parseString(content);
@@ -13,5 +12,4 @@ async function main_(source, content, option) {
     __1.default.info('file', `wrote ${__1.default.wrapList(source)}`);
     return true;
 }
-// export
 exports.default = main_;

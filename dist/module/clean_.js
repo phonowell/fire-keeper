@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 async function main_(source) {
     const listSource = __1.default.normalizePathToArray(source);
     await __1.default.remove_(listSource);
@@ -13,5 +12,4 @@ async function main_(source) {
         return;
     await __1.default.remove_(dirname);
 }
-// export
 exports.default = main_;

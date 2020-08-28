@@ -8,7 +8,6 @@ const gulp_1 = __importDefault(require("gulp"));
 const gulp_if_1 = __importDefault(require("gulp-if"));
 const gulp_using_1 = __importDefault(require("gulp-using"));
 const gulp_rename_1 = __importDefault(require("gulp-rename"));
-// function
 async function main_(source, target, option) {
     const listSource = __1.default.normalizePathToArray(source);
     if (target)
@@ -27,5 +26,4 @@ async function main_(source, target, option) {
         msg += `, as '${__1.default.parseString(option)}'`;
     __1.default.info('file', msg);
 }
-// export
 exports.default = main_;

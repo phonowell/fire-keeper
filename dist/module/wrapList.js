@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 function main(input) {
     if (!input)
         return '';
@@ -12,5 +11,4 @@ function main(input) {
         .map(it => `'${it}'`)
         .join(', ');
 }
-// export
 exports.default = main;

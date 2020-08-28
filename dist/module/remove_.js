@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-// function
 async function main_(source) {
     const listSource = await __1.default.source_(source);
     if (!listSource.length)
@@ -15,5 +14,4 @@ async function main_(source) {
         await fs_extra_1.default.remove(source);
     __1.default.info('remove', msg);
 }
-// export
 exports.default = main_;

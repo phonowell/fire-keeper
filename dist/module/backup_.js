@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = __importDefault(require(".."));
-// function
 async function main_(source) {
     const msg = `backed up ${__1.default.wrapList(source)}`;
     for (const src of await __1.default.source_(source)) {
@@ -16,5 +15,4 @@ async function main_(source) {
     }
     __1.default.info('backup', msg);
 }
-// export
 exports.default = main_;
