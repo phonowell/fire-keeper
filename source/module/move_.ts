@@ -2,14 +2,14 @@ import $ from '..'
 
 // interface
 
-type IArgument = Parameters<typeof $.copy_>
+type Argument = Parameters<typeof $.copy_>
 
 // function
 
 async function main_(
-  source: IArgument[0],
-  target: IArgument[1],
-  option?: IArgument[2]
+  source: Argument[0],
+  target: Argument[1],
+  option?: Argument[2]
 ): Promise<void> {
 
   const listSource = await $.source_(source)

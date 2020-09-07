@@ -1,4 +1,4 @@
-import { IFnAsync } from '../type';
+import { FnAsync } from '../type';
 declare class M {
     cacheTime: [number, string];
     cacheType: {
@@ -13,7 +13,7 @@ declare class M {
     execute(): this;
     execute<T>(input: T): T;
     execute<T>(type: string, input: T): T;
-    freeze_(fn_: IFnAsync): Promise<unknown>;
+    freeze_(fn_: FnAsync): Promise<unknown>;
     makeTextOfTime(): string;
     pause(): void;
     render(type: string, message: string): string;
@@ -22,7 +22,7 @@ declare class M {
     renderTime(): string;
     renderType(type: string): string;
     resume(): void;
-    whisper_(fn_: IFnAsync): Promise<unknown>;
+    whisper_(fn_: FnAsync): Promise<unknown>;
 }
 declare const _default: {
     (): M;

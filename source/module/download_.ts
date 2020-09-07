@@ -3,7 +3,7 @@ import download from 'download'
 
 // interface
 
-interface IOption {
+interface Option {
   filename: string
   timeout: number
 }
@@ -13,8 +13,8 @@ interface IOption {
 function format(
   source: string,
   target: string,
-  option: string | Partial<IOption>
-): [string, string, IOption] {
+  option: string | Partial<Option>
+): [string, string, Option] {
 
   if (!source) throw new Error('download_/error: empty source')
   if (source.startsWith('//'))
@@ -36,7 +36,7 @@ function format(
 async function main_(
   source: string,
   target: string,
-  option: string | Partial<IOption> = {}
+  option: string | Partial<Option> = {}
 ): Promise<void> {
 
   await download.call(null, ...format(source, target, option))

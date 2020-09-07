@@ -86,13 +86,16 @@ async function e_() {
 async function f_() {
   const listSource = [
     `${temp}/a.ts`,
-    `${temp}/b.ts`,
-    `${temp}/c.ts`
+    `${temp}/b/b.ts`,
+    `${temp}/c/c/c.ts`
   ]
   const listTarget = [
     `${temp}/a.js`,
-    `${temp}/b.js`,
-    `${temp}/c.js`
+    `${temp}/b/b.js`,
+    `${temp}/c/c/c.js`,
+    `${temp}/a.d.ts`,
+    `${temp}/b/b.d.ts`,
+    `${temp}/c/c/c.d.ts`
   ]
   const content = 'alert(1)'
   for (const source of listSource)

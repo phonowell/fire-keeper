@@ -1,4 +1,4 @@
-declare type IOption = {
+declare type Option = {
     lang?: keyof typeof Lang;
     voice?: typeof Lang[keyof typeof Lang];
 };
@@ -10,5 +10,5 @@ declare const Lang: {
     readonly 'zh-hk': "sin-ji";
     readonly 'zh-tw': "mei-jia";
 };
-declare function main_(text: string, option?: IOption): Promise<void>;
+declare function main_(text: string, option?: Option): Promise<void>;
 export default main_;

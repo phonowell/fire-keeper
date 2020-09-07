@@ -2,7 +2,7 @@ import $ from './source'
 import fs from 'fs'
 
 // interface
-type IFnAsync = (...args: any[]) => Promise<unknown>
+type FnAsync = (...args: any[]) => Promise<unknown>
 
 // task
 for (const filename of fs.readdirSync('./task')) {
@@ -11,7 +11,7 @@ for (const filename of fs.readdirSync('./task')) {
 
   const name = filename.replace('.ts', '')
   $.task(name, async (...args: any[]) => {
-    const fnAsync = (await import(`./task/${name}`)).default as IFnAsync
+    const fnAsync: FnAsync = (await import(`./task/${name}`)).default
     await fnAsync(...args)
   })
 }

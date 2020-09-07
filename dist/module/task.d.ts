@@ -1,10 +1,10 @@
-import { IFnAsync } from '../type';
-declare type IMapFunction = {
-    [key: string]: IFnAsync;
+import { FnAsync } from '../type';
+declare type MapFunction = {
+    [key: string]: FnAsync;
 };
 declare const _default: {
-    (): IMapFunction;
-    (name: string): IFnAsync;
-    (name: string, fn: IFnAsync): void;
+    (): MapFunction;
+    (name: string): FnAsync;
+    (name: string, fn: FnAsync): void;
 };
 export default _default;

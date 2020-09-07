@@ -139,7 +139,7 @@ const listTask = [
 
 // interface
 
-import { IFnAsync } from './type'
+import { FnAsync } from './type'
 
 // inject module
 for (const name of listModule) {
@@ -155,7 +155,7 @@ for (const name of listModule) {
     $[name] = async function (...args: unknown[]) {
       $[name] = require(
         `./module/${name}`
-      ).default as IFnAsync
+      ).default as FnAsync
       return await $[name](...args)
     }
   }
@@ -166,7 +166,7 @@ for (const name of listTask) {
   $.task(name, async function (...args: unknown[]) {
     const fn_ = require(
       `./task/${name}`
-    ).default as IFnAsync
+    ).default as FnAsync
     return await fn_(...args)
   })
 }

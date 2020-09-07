@@ -1,16 +1,16 @@
 // interface
 
-type IOS = 'linux' | 'macos' | 'unknown' | 'windows'
+type OS = 'linux' | 'macos' | 'unknown' | 'windows'
 
 // variable
 
-let cache = '' as IOS
+let cache = '' as OS
 
 // function
 
-function main(): IOS
-function main(os: IOS): boolean
-function main(os?: IOS) {
+function main(): OS
+function main(os: OS): boolean
+function main(os?: OS) {
 
   if (!cache) {
     const string = process.platform

@@ -5,41 +5,41 @@ import prompts from 'prompts'
 
 // interface
 
-type IFile = {
-  [key: string]: ISave
+type File = {
+  [key: string]: Save
 }
 
-type IOption = {
+type Option = {
   active?: string
   choices?: prompts.Choice[]
   inactive?: string
-  initial?: IValue
+  initial?: Value
   max?: number
   message?: string
   min?: number
   name?: string
 }
 
-interface IOptionThat extends IOption {
+interface OptionThat extends Option {
   name: string
-  type: IType
+  type: Type
 }
 
-interface IOptionThis extends IOption {
-  default?: IOption['initial']
+interface OptionThis extends Option {
+  default?: Option['initial']
   id?: string
   list?: unknown[]
-  type: IType | 'auto'
+  type: Type | 'auto'
 }
 
-type IType = typeof m.listType[number]
+type Type = typeof m.listType[number]
 
-type ISave = {
-  type: IType
-  value: IValue
+type Save = {
+  type: Type
+  value: Value
 }
 
-type IValue = string | number | boolean
+type Value = string | number | boolean
 
 // function
 
@@ -104,15 +104,15 @@ class M {
     message?: string
     type: 'auto' | 'autocomplete' | 'select'
   }): Promise<string>
-  async execute_(option: IOptionThis): Promise<IValue> {
+  async execute_(option: OptionThis): Promise<Value> {
 
     if (!option)
       throw new Error('prompt_/error: empty option')
 
     $.info().pause()
 
-    const opt: IOptionThat = await this.setOption_(option)
-    const result: IValue = (await prompts(opt))[opt.name]
+    const opt: OptionThat = await this.setOption_(option)
+    const result: Value = (await prompts(opt))[opt.name]
     await this.setCache_(option, result)
 
     $.info().resume()
@@ -120,15 +120,15 @@ class M {
     return result
   }
 
-  async getCache_(option: IOptionThis): Promise<IValue | undefined> {
+  async getCache_(option: OptionThis): Promise<Value | undefined> {
 
     if (!option.id) return
     if (!this.listTypeCache.includes(
       option.type as typeof m.listTypeCache[number]
     )) return
 
-    const cache: IFile = await $.read_(this.pathCache) as IFile
-    const item: ISave = get(cache, option.id)
+    const cache: File = await $.read_(this.pathCache) as File
+    const item: Save = get(cache, option.id)
     if (!item) return
 
     const { type, value } = item
@@ -144,12 +144,12 @@ class M {
     return value
   }
 
-  async setCache_(option: IOptionThis, value: IValue): Promise<void> {
+  async setCache_(option: OptionThis, value: Value): Promise<void> {
 
     const { id, type } = option
     if (!id) return
 
-    const cache: IFile = await $.read_(this.pathCache) as IFile || {}
+    const cache: File = await $.read_(this.pathCache) as File || {}
 
     cache[id] = {
       type: type === 'auto'
@@ -160,7 +160,7 @@ class M {
     await $.write_(this.pathCache, cache)
   }
 
-  async setOption_(option: IOptionThis): Promise<IOptionThat> {
+  async setOption_(option: OptionThis): Promise<OptionThat> {
 
     // clone
     const opt = { ...option }
@@ -209,7 +209,7 @@ class M {
     return opt as typeof opt & {
       message: string
       name: string
-      type: IType
+      type: Type
     }
   }
 }

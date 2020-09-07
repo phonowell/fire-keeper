@@ -9,7 +9,7 @@ declare global {
   function using(): NodeJS.ReadWriteStream
 }
 
-interface IOption {
+interface Option {
   bare: boolean
   base: string
   minify: boolean
@@ -35,7 +35,7 @@ class M {
   async compileCoffee_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -59,7 +59,7 @@ class M {
   async compileHtml_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -81,7 +81,7 @@ class M {
   async compileCss_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -101,7 +101,7 @@ class M {
   async compileJs_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -123,7 +123,7 @@ class M {
   async compileMd_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -147,7 +147,7 @@ class M {
   async compilePug_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -167,7 +167,7 @@ class M {
   async compileStyl_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -187,7 +187,7 @@ class M {
   async compileTs_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -212,7 +212,7 @@ class M {
   async compileYaml_(
     source: string,
     target: string,
-    option: IOption
+    option: Option
   ): Promise<void> {
 
     await new Promise(resolve => {
@@ -231,12 +231,12 @@ class M {
 
   async execute_(
     source: string | string[],
-    option?: Partial<IOption>
+    option?: Partial<Option>
   ): Promise<void>
   async execute_(
     source: string | string[],
     target: string,
-    option?: Partial<IOption>
+    option?: Partial<Option>
   ): Promise<void>
   async execute_(...args: [string | string[], ...unknown[]]): Promise<void> {
 
@@ -271,21 +271,21 @@ class M {
   ): Promise<{
     source: string[]
     target: string
-    option: IOption
+    option: Option
   }> {
 
     const listSource = await $.source_(input[0])
     let target = ''
-    let option: Partial<IOption> = {}
+    let option: Partial<Option> = {}
 
     if (input.length === 2) {
       if (typeof input[1] === 'string')
         target = input[1]
       else
-        option = input[1] as Partial<IOption>
+        option = input[1] as Partial<Option>
     } else if (input.length === 3) {
       target = input[1] as string
-      option = input[2] as Partial<IOption>
+      option = input[2] as Partial<Option>
     }
 
     // base

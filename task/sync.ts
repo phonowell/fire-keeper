@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 // interface
 
-interface IChoice {
+interface Choice {
   title: string
   value: string
 }

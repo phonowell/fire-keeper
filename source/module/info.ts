@@ -3,7 +3,7 @@ import kleur from 'kleur'
 
 // interface
 
-import { IFnAsync } from '../type'
+import { FnAsync } from '../type'
 
 // function
 
@@ -48,7 +48,7 @@ class M {
     return message
   }
 
-  async freeze_(fn_: IFnAsync): Promise<unknown> {
+  async freeze_(fn_: FnAsync): Promise<unknown> {
     Object.assign(this, {
       isFrozen: true,
       isSilent: true
@@ -134,7 +134,7 @@ class M {
     this.isSilent = false
   }
 
-  async whisper_(fn_: IFnAsync): Promise<unknown> {
+  async whisper_(fn_: FnAsync): Promise<unknown> {
     this.pause()
     const result = await fn_()
     this.resume()

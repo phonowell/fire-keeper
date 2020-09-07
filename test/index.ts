@@ -91,7 +91,7 @@ const mapModule = {
 
 import $ from '../source'
 import { describe, it } from 'mocha'
-import { IFnAsync } from '../source/type'
+import { FnAsync } from '../source/type'
 
 // variable
 
@@ -114,7 +114,7 @@ for (const name of listModule)
   describe(name, () => {
     const listIt = Object.keys(mapModule[name])
     for (const key of listIt) {
-      const fn_ = mapModule[name][key] as IFnAsync & { description?: string }
+      const fn_ = mapModule[name][key] as FnAsync & { description?: string }
       it(fn_.description || (listIt.length === 1 ? 'default' : key), async () => {
         await clean_()
         await $.info().freeze_(fn_)

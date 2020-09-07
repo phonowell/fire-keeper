@@ -2,45 +2,45 @@ import gulp from 'gulp'
 
 // interface
 
-import { IFnAsync } from '../type'
+import { FnAsync } from '../type'
 
-type IMapFunction = {
-  [key: string]: IFnAsync
+type MapFunction = {
+  [key: string]: FnAsync
 }
 
 // function
 
 class M {
 
-  add(name: string, fn: IFnAsync): void {
+  add(name: string, fn: FnAsync): void {
     gulp.task(name, fn as gulp.TaskFunction)
   }
 
-  execute(): IMapFunction
-  execute(name: string): IFnAsync
-  execute(name: string, fn: IFnAsync): void
-  execute(name?: string, fn?: IFnAsync): IMapFunction | IFnAsync | void {
+  execute(): MapFunction
+  execute(name: string): FnAsync
+  execute(name: string, fn: FnAsync): void
+  execute(name?: string, fn?: FnAsync): MapFunction | FnAsync | void {
     if (!name) return this.get()
     if (!fn) return this.get(name)
     this.add(name, fn)
   }
 
-  get(): IMapFunction
-  get(name: string): IFnAsync
-  get(name?: string): IMapFunction | IFnAsync {
+  get(): MapFunction
+  get(name: string): FnAsync
+  get(name?: string): MapFunction | FnAsync {
 
     const map = (gulp as typeof gulp & {
       _registry: {
         _tasks: {
           [key: string]: {
-            unwrap: () => IFnAsync
+            unwrap: () => FnAsync
           }
         }
       }
     })._registry._tasks
 
     if (!name) {
-      const result: IMapFunction = {}
+      const result: MapFunction = {}
       for (const name of Object.keys(map))
         result[name] = map[name].unwrap()
       return result

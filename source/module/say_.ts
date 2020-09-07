@@ -2,7 +2,7 @@ import $ from '..'
 
 // interface
 
-type IOption = {
+type Option = {
   lang?: keyof typeof Lang
   voice?: typeof Lang[keyof typeof Lang]
 }
@@ -20,7 +20,7 @@ const Lang = {
 
 // function
 
-async function main_(text: string, option: IOption = {}): Promise<void> {
+async function main_(text: string, option: Option = {}): Promise<void> {
   for (let message of $.formatArgument(text)) {
     $.info('say', message)
 

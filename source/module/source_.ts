@@ -3,7 +3,7 @@ import gulp from 'gulp'
 
 // interface
 
-type IListSource = string[] & { __is_listed_as_source__?: boolean }
+type ListSource = string[] & { __is_listed_as_source__?: boolean }
 
 // variable
 
@@ -11,15 +11,15 @@ const keyPrivate = '__is_listed_as_source__'
 
 // function
 
-async function main_(source: string | string[] | IListSource): Promise<string[]> {
+async function main_(source: string | string[] | ListSource): Promise<string[]> {
 
   if (!source) return []
   if (source instanceof Array)
-    if ((source as IListSource)[keyPrivate]) return source
+    if ((source as ListSource)[keyPrivate]) return source
   const group = $.normalizePathToArray(source)
 
   return await new Promise(resolve => {
-    const listSource = [] as IListSource
+    const listSource = [] as ListSource
     listSource[keyPrivate] = true
 
     gulp.src(group, {

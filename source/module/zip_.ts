@@ -7,7 +7,7 @@ import trim from 'lodash/trim'
 
 // interface
 
-type IOption = {
+type Option = {
   base?: string
   filename?: string
 }
@@ -19,7 +19,7 @@ class M {
   async archive_(
     listSource: string[],
     target: string,
-    option: Required<IOption>
+    option: Required<Option>
   ): Promise<void> {
 
     const { base, filename } = option
@@ -79,7 +79,7 @@ class M {
   async execute_(
     source: string | string[],
     target: string = '',
-    option: string | IOption = ''
+    option: string | Option = ''
   ): Promise<void> {
     
     await this.archive_.call(this, ...this.formatArgument(source, target, option))
@@ -89,8 +89,8 @@ class M {
   formatArgument(
     source: string | string[],
     target: string,
-    option: string | IOption
-  ): [string[], string, Required<IOption>] {
+    option: string | Option
+  ): [string[], string, Required<Option>] {
 
     const listSource = $.normalizePathToArray(source)
     const pathTarget = $.normalizePath(

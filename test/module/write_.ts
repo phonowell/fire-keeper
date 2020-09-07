@@ -17,7 +17,7 @@ async function b_() {
   const content = { message }
   await $.write_(source, content)
 
-  const cont = await $.read_(source) as { message: string }
+  const cont:{message:string} = await $.read_(source) as { message: string }
   if (cont.message !== message) throw new Error('0')
 }
 b_.description = '.json'

@@ -1,4 +1,4 @@
-declare type IOS = 'linux' | 'macos' | 'unknown' | 'windows';
-declare function main(): IOS;
-declare function main(os: IOS): boolean;
+declare type OS = 'linux' | 'macos' | 'unknown' | 'windows';
+declare function main(): OS;
+declare function main(os: OS): boolean;
 export default main;
