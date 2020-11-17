@@ -4,7 +4,6 @@
     "alwaysStrict": true,
     "baseUrl": ".",
     "declaration": true,
-    "declarationDir": "dist",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "jsx": "preserve",

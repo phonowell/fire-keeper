@@ -1,1 +1,7 @@
-- data/sync/kokoro.yaml
+# kokoro
+- .gitignore
+- .npmignore
+- .stylintrc
+- coffeelint.json
+- license.md
+- tslint.json

@@ -32,7 +32,7 @@ interface OptionThis extends Option {
   type: Type | 'auto'
 }
 
-type Type = typeof m.listType[number]
+type Type = typeof listType[number]
 
 type Save = {
   type: Type
@@ -41,179 +41,188 @@ type Save = {
 
 type Value = string | number | boolean
 
+// variable
+
+const listType = [
+  'autocomplete',
+  'confirm',
+  'multiselect',
+  'number',
+  'select',
+  'text',
+  'toggle'
+] as const
+
+const listTypeCache = [
+  'autocomplete',
+  'confirm',
+  'number',
+  'select',
+  'text',
+  'toggle'
+] as const
+
+const mapMessage = {
+  autocomplete: 'input',
+  confirm: 'confirm',
+  multiselect: 'select',
+  number: 'input number',
+  select: 'select',
+  text: 'input text',
+  toggle: 'toggle'
+} as const
+
+const pathCache = './temp/cache-prompt.json' as const
+
 // function
 
-class M {
+async function main_(option: {
+  default?: boolean
+  id?: string
+  message?: string
+  type: 'confirm'
+}): Promise<boolean>
 
-  listType = [
-    'autocomplete',
-    'confirm',
-    'multiselect',
-    'number',
-    'select',
-    'text',
-    'toggle'
-  ] as const
+async function main_(option: {
+  default?: number
+  max?: number
+  message?: string
+  min?: number
+  type: 'number'
+}): Promise<number>
 
-  listTypeCache = [
-    'autocomplete',
-    'confirm',
-    'number',
-    'select',
-    'text',
-    'toggle'
-  ] as const
+async function main_(option: {
+  default?: string
+  id?: string
+  message?: string
+  type: 'text'
+}): Promise<string>
 
-  mapMessage = {
-    autocomplete: 'input',
-    confirm: 'confirm',
-    multiselect: 'select',
-    number: 'input number',
-    select: 'select',
-    text: 'input text',
-    toggle: 'toggle'
-  } as const
+async function main_(option: {
+  default?: string | number
+  id?: string
+  list: prompts.Choice[] | unknown[]
+  message?: string
+  type: 'auto' | 'autocomplete' | 'select'
+}): Promise<string>
 
-  pathCache = './temp/cache-prompt.json' as const
+async function main_(
+  option: OptionThis
+): Promise<Value> {
 
-  // function
+  if (!option)
+    throw new Error('prompt_/error: empty option')
 
-  async execute_(option: {
-    default?: boolean
-    id?: string
-    message?: string
-    type: 'confirm'
-  }): Promise<boolean>
-  async execute_(option: {
-    default?: number
-    max?: number
-    message?: string
-    min?: number
-    type: 'number'
-  }): Promise<number>
-  async execute_(option: {
-    default?: string
-    id?: string
-    message?: string
-    type: 'text'
-  }): Promise<string>
-  async execute_(option: {
-    default?: string
-    id?: string
-    list: prompts.Choice[] | unknown[]
-    message?: string
-    type: 'auto' | 'autocomplete' | 'select'
-  }): Promise<string>
-  async execute_(option: OptionThis): Promise<Value> {
+  $.info().pause()
 
-    if (!option)
-      throw new Error('prompt_/error: empty option')
+  const opt = await setOption_(option)
+  const result: Value = (await prompts(opt))[opt.name]
+  await setCache_(option, result)
 
-    $.info().pause()
+  $.info().resume()
 
-    const opt: OptionThat = await this.setOption_(option)
-    const result: Value = (await prompts(opt))[opt.name]
-    await this.setCache_(option, result)
+  return result
+}
 
-    $.info().resume()
+async function getCache_(
+  option: OptionThis
+): Promise<Value | undefined> {
 
-    return result
+  if (!option.id) return
+  if (!listTypeCache.includes(
+    option.type as typeof listTypeCache[number]
+  )) return
+
+  const cache: File = await $.read_(pathCache) as File
+  const item: Save = get(cache, option.id)
+  if (!item) return
+
+  const { type, value } = item
+  if (type !== option.type) return
+
+  if (type === 'select') {
+    const index = findIndex(option.choices, { value })
+    return ~index
+      ? index
+      : undefined
   }
 
-  async getCache_(option: OptionThis): Promise<Value | undefined> {
+  return value
+}
 
-    if (!option.id) return
-    if (!this.listTypeCache.includes(
-      option.type as typeof m.listTypeCache[number]
-    )) return
+async function setCache_(
+  option: OptionThis,
+  value: Value
+): Promise<void> {
 
-    const cache: File = await $.read_(this.pathCache) as File
-    const item: Save = get(cache, option.id)
-    if (!item) return
+  const { id, type } = option
+  if (!id) return
 
-    const { type, value } = item
-    if (type !== option.type) return
+  const cache: File = await $.read_(pathCache) as File || {}
 
-    if (type === 'select') {
-      const index = findIndex(option.choices, { value })
-      return ~index
-        ? index
-        : undefined
-    }
+  cache[id] = {
+    type: type === 'auto'
+      ? 'autocomplete'
+      : type,
+    value
+  }
+  await $.write_(pathCache, cache)
+}
 
-    return value
+async function setOption_(
+  option: OptionThis
+): Promise<OptionThat> {
+
+  // clone
+  const opt = { ...option }
+  Object.assign(opt, {
+    id: undefined
+  })
+
+  // alias
+  if (opt.type === 'auto')
+    opt.type = 'autocomplete'
+
+  // check type
+  if (!listType.includes(opt.type))
+    throw new Error(`prompt_/error: invalid type '${opt.type}'`)
+
+  // default value
+  if (!opt.message)
+    opt.message = mapMessage[opt.type]
+  if (!opt.name)
+    opt.name = 'value'
+
+  if (['autocomplete', 'multiselect', 'select'].includes(opt.type)) {
+    if (!opt.list)
+      throw new Error('prompt_/error: empty list')
+    opt.choices = [...opt.list]
+      .map((it): prompts.Choice =>
+        $.type(it) === 'object'
+          ? it as prompts.Choice
+          : {
+            title: $.parseString(it),
+            value: it
+          }
+      )
+    opt.list = undefined
+  } else if (opt.type === 'toggle') {
+    if (!opt.active) opt.active = 'on'
+    if (!opt.inactive) opt.inactive = 'off'
   }
 
-  async setCache_(option: OptionThis, value: Value): Promise<void> {
+  // have to be here
+  // behind option.choices
+  if (['null', 'undefined'].includes(typeof opt.initial))
+    opt.initial = opt.default || await getCache_(option)
+  opt.default = undefined
 
-    const { id, type } = option
-    if (!id) return
-
-    const cache: File = await $.read_(this.pathCache) as File || {}
-
-    cache[id] = {
-      type: type === 'auto'
-        ? 'autocomplete'
-        : type,
-      value
-    }
-    await $.write_(this.pathCache, cache)
-  }
-
-  async setOption_(option: OptionThis): Promise<OptionThat> {
-
-    // clone
-    const opt = { ...option }
-    Object.assign(opt, {
-      id: undefined
-    })
-
-    // alias
-    if (opt.type === 'auto')
-      opt.type = 'autocomplete'
-
-    // check type
-    if (!this.listType.includes(opt.type))
-      throw new Error(`prompt_/error: invalid type '${opt.type}'`)
-
-    // default value
-    if (!opt.message)
-      opt.message = this.mapMessage[opt.type]
-    if (!opt.name)
-      opt.name = 'value'
-
-    if (['autocomplete', 'multiselect', 'select'].includes(opt.type)) {
-      if (!opt.list)
-        throw new Error('prompt_/error: empty list')
-      opt.choices = [...opt.list]
-        .map((it): prompts.Choice =>
-          $.type(it) === 'object'
-            ? it as prompts.Choice
-            : {
-              title: $.parseString(it),
-              value: it
-            }
-        )
-      opt.list = undefined
-    } else if (opt.type === 'toggle') {
-      if (!opt.active) opt.active = 'on'
-      if (!opt.inactive) opt.inactive = 'off'
-    }
-
-    // have to be here
-    // behind option.choices
-    if (['null', 'undefined'].includes(typeof opt.initial))
-      opt.initial = opt.default || await this.getCache_(option)
-    opt.default = undefined
-
-    return opt as typeof opt & {
-      message: string
-      name: string
-      type: Type
-    }
+  return opt as typeof opt & {
+    message: string
+    name: string
+    type: Type
   }
 }
 
 // export
-const m = new M()
-export default m.execute_.bind(m) as typeof m.execute_
+export default main_

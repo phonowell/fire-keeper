@@ -1,6 +1,9 @@
 // function
 
-function main<T>(input: T): T {
+function main<T>(
+  input: T
+): T {
+
   console.log(input)
   return input
 }

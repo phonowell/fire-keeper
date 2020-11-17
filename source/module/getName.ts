@@ -8,6 +8,7 @@ function main(input: string): {
   extname: string
   filename: string
 } {
+
   if (!input) throw new Error(`getName/error: empty input`)
 
   input = input

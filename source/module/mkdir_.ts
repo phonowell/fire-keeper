@@ -3,7 +3,9 @@ import fse from 'fs-extra'
 
 // function
 
-async function main_(source: string | string[]): Promise<void> {
+async function main_(
+  source: string | string[]
+): Promise<void> {
   if (!source) throw new Error('mkdir_/error: empty source')
 
   const listSource = $.normalizePathToArray(source)

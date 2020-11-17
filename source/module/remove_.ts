@@ -3,7 +3,10 @@ import fse from 'fs-extra'
 
 // function
 
-async function main_(source: string | string[]): Promise<void> {
+async function main_(
+  source: string | string[]
+): Promise<void> {
+
   const listSource = await $.source_(source)
   if (!listSource.length) return
 

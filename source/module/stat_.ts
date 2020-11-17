@@ -3,7 +3,9 @@ import fs from 'fs'
 
 // function
 
-async function main_(source: string): Promise<fs.Stats | null> {
+async function main_(
+  source: string
+): Promise<fs.Stats | null> {
 
   source = $.normalizePath(source)
 

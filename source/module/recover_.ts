@@ -2,7 +2,9 @@ import $ from '..'
 
 // function
 
-async function main_(source: string | string[]): Promise<void> {
+async function main_(
+  source: string | string[]
+): Promise<void> {
 
   const msg: string = `recovered ${$.wrapList(source)}`
 

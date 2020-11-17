@@ -9,7 +9,7 @@ declare global {
   function using(): NodeJS.ReadWriteStream
 }
 
-interface Option {
+type Option = {
   bare: boolean
   base: string
   minify: boolean

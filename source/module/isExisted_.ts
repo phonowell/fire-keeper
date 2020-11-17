@@ -3,7 +3,10 @@ import fse from 'fs-extra'
 
 // function
 
-async function main_(source: string | string[]): Promise<boolean> {
+async function main_(
+  source: string | string[]
+): Promise<boolean> {
+
   const group = $.normalizePathToArray(source)
   if (!group.length) return false
 

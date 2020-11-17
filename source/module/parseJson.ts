@@ -2,7 +2,10 @@ import $ from '..'
 
 // function
 
-function main(input: unknown): unknown[] | Object {
+function main(
+  input: unknown
+): unknown[] | Object {
+
   if (typeof input === 'string') return JSON.parse(input)
   if (input instanceof Array) return input
   if (input instanceof Uint8Array) return JSON.parse(input.toString())

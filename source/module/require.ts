@@ -2,7 +2,10 @@ import $ from '..'
 
 // function
 
-function main(source: string): unknown {
+function main(
+  source: string
+): unknown {
+
   return require($.normalizePath(source))
 }
 

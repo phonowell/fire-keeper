@@ -19,9 +19,11 @@ const listExtnameOfString = [
 
 // function
 
-async function main_(source: string, option: {
-  raw?: boolean
-} = {}): Promise<unknown> {
+async function main_(
+  source: string,
+  option: {
+    raw?: boolean
+  } = {}): Promise<unknown> {
 
   const _source = source
   const listSource = await $.source_(source)

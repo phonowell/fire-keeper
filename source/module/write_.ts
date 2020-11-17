@@ -3,7 +3,12 @@ import fse from 'fs-extra'
 
 // function
 
-async function main_(source: string, content: unknown, option?: string | fse.WriteFileOptions) {
+async function main_(
+  source: string,
+  content: unknown,
+  option?: string | fse.WriteFileOptions
+) {
+
   source = $.normalizePath(source)
   content = $.parseString(content)
 

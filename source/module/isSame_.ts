@@ -2,7 +2,9 @@ import $ from '..'
 
 // function
 
-async function main_(source: string | string[]): Promise<boolean> {
+async function main_(
+  source: string | string[]
+): Promise<boolean> {
 
   const listSource = $.normalizePathToArray(source)
   if (listSource.length < 2) return false

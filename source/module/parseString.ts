@@ -2,7 +2,9 @@ import $ from '..'
 
 // function
 
-function main(input: unknown): string {
+function main(
+  input: unknown
+): string {
 
   if (typeof input === 'string')
     return input

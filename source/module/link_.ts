@@ -3,7 +3,9 @@ import fse from 'fs-extra'
 
 // function
 
-async function main_(source: string, target: string): Promise<void> {
+async function main_(
+  source: string, target: string
+): Promise<void> {
 
   source = $.normalizePath(source)
   target = $.normalizePath(target)

@@ -1,5 +1,4 @@
 import $ from '../source'
-// import $ from '../lib/fire-keeper'
 
 // function
 

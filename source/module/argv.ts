@@ -1,4 +1,3 @@
-// function
 import yargs from 'yargs'
 
 // function

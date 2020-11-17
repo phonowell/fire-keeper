@@ -4,7 +4,9 @@ import path from 'path'
 
 // function
 
-function main(source: string): string {
+function main(
+  source: string
+): string {
 
   // validate
   if (typeof source !== 'string') return ''

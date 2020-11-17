@@ -15,7 +15,7 @@ temp
 *.ts
 .stylintrc
 coffeelint.json
-package-lock.json
 tsconfig.json
+tslint.json
 # inlcude
 !*.d.ts

@@ -2,7 +2,10 @@ import $ from '..'
 
 // function
 
-async function main_(source: string | string[]): Promise<void> {
+async function main_(
+  source: string | string[]
+): Promise<void> {
+
   const msg = `backed up ${$.wrapList(source)}`
 
   for (const src of await $.source_(source)) {
