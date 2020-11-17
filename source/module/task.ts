@@ -2,7 +2,7 @@ import gulp from 'gulp'
 
 // interface
 
-import { FnAsync } from '../type'
+type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 type MapFunction = {
   [key: string]: FnAsync

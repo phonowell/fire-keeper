@@ -1,1 +1,0 @@
-export type FnAsync = (...args: unknown[]) => Promise<unknown>

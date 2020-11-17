@@ -1,4 +1,4 @@
-import { FnAsync } from '../type';
+declare type FnAsync = (...args: unknown[]) => Promise<unknown>;
 declare class M {
     cacheTime: [number, string];
     cacheType: {

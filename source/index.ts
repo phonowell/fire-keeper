@@ -139,7 +139,7 @@ const listTask = [
 
 // interface
 
-import { FnAsync } from './type'
+type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 // inject module
 for (const name of listModule) {

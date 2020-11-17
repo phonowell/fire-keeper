@@ -3,7 +3,7 @@ import kleur from 'kleur'
 
 // interface
 
-import { FnAsync } from '../type'
+type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 // function
 

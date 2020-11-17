@@ -91,7 +91,10 @@ const mapModule = {
 
 import $ from '../source'
 import { describe, it } from 'mocha'
-import { FnAsync } from '../source/type'
+
+// interface
+
+type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 // variable
 
