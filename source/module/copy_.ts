@@ -31,7 +31,7 @@ async function main_(
       .on('end', () => resolve(true))
   })
 
-  let msg = `copied ${$.wrapList(source)} to 'target'`
+  let msg = `copied ${$.wrapList(source)} to '${target}'`
   if (option) msg += `, as '${$.parseString(option)}'`
   $.info('file', msg)
 }
