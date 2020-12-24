@@ -48,7 +48,7 @@ class M {
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(coffee({ bare }))
-        .pipe(gulpIf(!!minify, terser()))
+        .pipe(gulpIf(!!minify, terser({ safari10: true })))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
         .on('end', () => resolve(true))
     })
@@ -110,7 +110,7 @@ class M {
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(gulpIf(!!minify, terser()))
+        .pipe(gulpIf(!!minify, terser({ safari10: true })))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
         .on('end', () => resolve(true))
     })
@@ -190,14 +190,14 @@ class M {
 
       const ts = require('gulp-typescript')
       const tsProject = ts.createProject($.normalizePath('./tsconfig.json'))
-      const terser = require('gulp-terser')
+      // const terser = require('gulp-terser')
 
-      const { base, minify, sourcemaps } = option
+      const { base, sourcemaps } = option
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(tsProject())
-        .pipe(gulpIf(!!minify, terser()))
+        // .pipe(gulpIf(!!minify, terser({ safari10: true })))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
         .on('end', () => resolve(true))
     })

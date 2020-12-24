@@ -3,7 +3,7 @@ import $ from '../source'
 // function
 
 async function main_() {
-  $.info('z')
+  await $.compile_('./task/z.ts')
 }
 
 // export

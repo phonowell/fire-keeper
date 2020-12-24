@@ -29,7 +29,7 @@ class M {
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(coffee({ bare }))
-                .pipe(gulp_if_1.default(!!minify, terser()))
+                .pipe(gulp_if_1.default(!!minify, terser({ safari10: true })))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
                 .on('end', () => resolve(true));
         });
@@ -64,7 +64,7 @@ class M {
             const { base, minify, sourcemaps } = option;
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
-                .pipe(gulp_if_1.default(!!minify, terser()))
+                .pipe(gulp_if_1.default(!!minify, terser({ safari10: true })))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
                 .on('end', () => resolve(true));
         });
@@ -110,12 +110,10 @@ class M {
         await new Promise(resolve => {
             const ts = require('gulp-typescript');
             const tsProject = ts.createProject(__1.default.normalizePath('./tsconfig.json'));
-            const terser = require('gulp-terser');
-            const { base, minify, sourcemaps } = option;
+            const { base, sourcemaps } = option;
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(tsProject())
-                .pipe(gulp_if_1.default(!!minify, terser()))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
                 .on('end', () => resolve(true));
         });

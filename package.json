@@ -63,5 +63,5 @@
     "test": "npm run build && mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.177"
+  "version": "0.0.178"
 }
