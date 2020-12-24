@@ -28,7 +28,7 @@ async function main_(
       .pipe(gulpIf(!$.info().isSilent, using()))
       .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | rename.Options)))
       .pipe(gulp.dest(e => target || e.base))
-      .on('end', () => resolve())
+      .on('end', () => resolve(true))
   })
 
   let msg = `copied ${$.wrapList(source)} to 'target'`

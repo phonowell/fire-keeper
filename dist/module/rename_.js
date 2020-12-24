@@ -19,7 +19,7 @@ async function main_(source, option) {
             listHistory.push([...e.history]);
             return e.base;
         }))
-            .on('end', () => resolve());
+            .on('end', () => resolve(true));
     });
     __1.default.info().pause();
     for (const item of listHistory) {

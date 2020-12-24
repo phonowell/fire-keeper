@@ -24,16 +24,14 @@ class M {
     async compileCoffee_(source, target, option) {
         await new Promise(resolve => {
             const coffee = require('gulp-coffee');
-            const uglifyEs = require('uglify-es');
-            const composer = require('gulp-uglify/composer');
-            const uglify = composer(uglifyEs, console);
+            const terser = require('gulp-terser');
             const { bare, base, minify, sourcemaps } = option;
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(coffee({ bare }))
-                .pipe(gulp_if_1.default(!!minify, uglify()))
+                .pipe(gulp_if_1.default(!!minify, terser()))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileHtml_(source, target, option) {
@@ -46,7 +44,7 @@ class M {
                 .pipe(rename({ extname: '.html' }))
                 .pipe(gulp_if_1.default(!!minify, htmlmin({ collapseWhitespace: true })))
                 .pipe(gulp_1.default.dest(target))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileCss_(source, target, option) {
@@ -57,20 +55,18 @@ class M {
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(gulp_if_1.default(!!minify, cleanCss()))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileJs_(source, target, option) {
         await new Promise(resolve => {
-            const uglifyEs = require('uglify-es');
-            const composer = require('gulp-uglify/composer');
-            const uglify = composer(uglifyEs, console);
+            const terser = require('gulp-terser');
             const { base, minify, sourcemaps } = option;
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
-                .pipe(gulp_if_1.default(!!minify, uglify()))
+                .pipe(gulp_if_1.default(!!minify, terser()))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileMd_(source, target, option) {
@@ -85,7 +81,7 @@ class M {
                 .pipe(rename({ extname: '.html' }))
                 .pipe(gulp_if_1.default(!!minify, htmlmin({ collapseWhitespace: true })))
                 .pipe(gulp_1.default.dest(target))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compilePug_(source, target, option) {
@@ -96,7 +92,7 @@ class M {
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(pug({ pretty: !minify }))
                 .pipe(gulp_1.default.dest(target))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileStyl_(source, target, option) {
@@ -107,23 +103,21 @@ class M {
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(stylus({ compress: minify }))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileTs_(source, target, option) {
         await new Promise(resolve => {
             const ts = require('gulp-typescript');
             const tsProject = ts.createProject(__1.default.normalizePath('./tsconfig.json'));
-            const uglifyEs = require('uglify-es');
-            const composer = require('gulp-uglify/composer');
-            const uglify = composer(uglifyEs, console);
+            const terser = require('gulp-terser');
             const { base, minify, sourcemaps } = option;
             gulp_1.default.src(source, { base, sourcemaps })
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(tsProject())
-                .pipe(gulp_if_1.default(!!minify, uglify()))
+                .pipe(gulp_if_1.default(!!minify, terser()))
                 .pipe(gulp_1.default.dest(target, this.returnSourcemaps(sourcemaps)))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async compileYaml_(source, target, option) {
@@ -134,7 +128,7 @@ class M {
                 .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
                 .pipe(yaml({ safe: true }))
                 .pipe(gulp_1.default.dest(target))
-                .on('end', () => resolve());
+                .on('end', () => resolve(true));
         });
     }
     async execute_(...args) {

@@ -9,7 +9,6 @@ declare class M {
     regHome: RegExp;
     regRoot: RegExp;
     separator: string;
-    constructor();
     execute(): this;
     execute<T>(input: T): T;
     execute<T>(type: string, input: T): T;

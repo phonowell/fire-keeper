@@ -28,7 +28,7 @@ async function main_(
         listHistory.push([...e.history])
         return e.base
       }))
-      .on('end', (): void => resolve())
+      .on('end', (): void => resolve(true))
   })
 
   $.info().pause()

@@ -19,7 +19,7 @@ async function main_(source, target, option) {
             .pipe(gulp_if_1.default(!__1.default.info().isSilent, gulp_using_1.default()))
             .pipe(gulp_if_1.default(!!option, gulp_rename_1.default(option)))
             .pipe(gulp_1.default.dest(e => target || e.base))
-            .on('end', () => resolve());
+            .on('end', () => resolve(true));
     });
     let msg = `copied ${__1.default.wrapList(source)} to 'target'`;
     if (option)

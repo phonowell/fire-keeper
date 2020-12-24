@@ -9,25 +9,15 @@ type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 class M {
 
-  cacheTime: [number, string]
-  cacheType: { [key: string]: string }
-  isFrozen: boolean
-  isSilent: boolean
-  regHome: RegExp
-  regRoot: RegExp
-  separator: string
-
-  constructor() {
-    this.cacheTime = [0, '']
-    this.cacheType = {
-      default: ''
-    }
-    this.isFrozen = false
-    this.isSilent = false
-    this.regHome = new RegExp(`^${$.home()}`, 'g')
-    this.regRoot = new RegExp(`^${$.root()}`, 'g')
-    this.separator = `${kleur.gray('›')} `
+  cacheTime: [number, string] = [0, '']
+  cacheType: { [key: string]: string } = {
+    default: ''
   }
+  isFrozen = false
+  isSilent = false
+  regHome = new RegExp(`^${$.home()}`, 'g')
+  regRoot = new RegExp(`^${$.root()}`, 'g')
+  separator = `${kleur.gray('›')} `
 
   execute(): this
   execute<T>(input: T): T

@@ -41,18 +41,16 @@ class M {
     await new Promise(resolve => {
 
       const coffee = require('gulp-coffee')
-      const uglifyEs = require('uglify-es')
-      const composer = require('gulp-uglify/composer')
-      const uglify = composer(uglifyEs, console)
+      const terser = require('gulp-terser')
 
       const { bare, base, minify, sourcemaps } = option
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(coffee({ bare }))
-        .pipe(gulpIf(!!minify, uglify()))
+        .pipe(gulpIf(!!minify, terser()))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -74,7 +72,7 @@ class M {
         .pipe(rename({ extname: '.html' }))
         .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
         .pipe(gulp.dest(target))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -94,7 +92,7 @@ class M {
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(gulpIf(!!minify, cleanCss()))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -106,17 +104,15 @@ class M {
 
     await new Promise(resolve => {
 
-      const uglifyEs = require('uglify-es')
-      const composer = require('gulp-uglify/composer')
-      const uglify = composer(uglifyEs, console)
+      const terser = require('gulp-terser')
 
       const { base, minify, sourcemaps } = option
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(gulpIf(!!minify, uglify()))
+        .pipe(gulpIf(!!minify, terser()))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -140,7 +136,7 @@ class M {
         .pipe(rename({ extname: '.html' }))
         .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
         .pipe(gulp.dest(target))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -160,7 +156,7 @@ class M {
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(pug({ pretty: !minify }))
         .pipe(gulp.dest(target))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -180,7 +176,7 @@ class M {
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(stylus({ compress: minify }))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -194,18 +190,16 @@ class M {
 
       const ts = require('gulp-typescript')
       const tsProject = ts.createProject($.normalizePath('./tsconfig.json'))
-      const uglifyEs = require('uglify-es')
-      const composer = require('gulp-uglify/composer')
-      const uglify = composer(uglifyEs, console)
+      const terser = require('gulp-terser')
 
       const { base, minify, sourcemaps } = option
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(tsProject())
-        .pipe(gulpIf(!!minify, uglify()))
+        .pipe(gulpIf(!!minify, terser()))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 
@@ -225,7 +219,7 @@ class M {
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(yaml({ safe: true }))
         .pipe(gulp.dest(target))
-        .on('end', () => resolve())
+        .on('end', () => resolve(true))
     })
   }
 

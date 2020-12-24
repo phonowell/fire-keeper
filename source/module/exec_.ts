@@ -8,11 +8,7 @@ import trimEnd from 'lodash/trimEnd'
 class M {
 
   process: child.ChildProcessWithoutNullStreams | undefined
-  spawn: typeof child.spawn
-
-  constructor() {
-    this.spawn = child.spawn
-  }
+  spawn: typeof child.spawn = child.spawn
 
   close(): void {
     if (!this.process) return

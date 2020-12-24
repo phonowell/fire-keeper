@@ -2,56 +2,58 @@ import gulp from 'gulp'
 
 // interface
 
-type FnAsync = (...args: unknown[]) => Promise<unknown>
-
 type MapFunction = {
-  [key: string]: FnAsync
+  [key: string]: Function
 }
 
 // function
 
-class M {
+function add(
+  name: string, fn: Function
+): void {
 
-  add(name: string, fn: FnAsync): void {
-    gulp.task(name, fn as gulp.TaskFunction)
-  }
+  gulp.task(name, fn as gulp.TaskFunction)
+}
 
-  execute(): MapFunction
-  execute(name: string): FnAsync
-  execute(name: string, fn: FnAsync): void
-  execute(name?: string, fn?: FnAsync): MapFunction | FnAsync | void {
-    if (!name) return this.get()
-    if (!fn) return this.get(name)
-    this.add(name, fn)
-  }
+function get(): MapFunction
+function get(name: string): Function
+function get(
+  name?: string
+): MapFunction | Function {
 
-  get(): MapFunction
-  get(name: string): FnAsync
-  get(name?: string): MapFunction | FnAsync {
-
-    const map = (gulp as typeof gulp & {
-      _registry: {
-        _tasks: {
-          [key: string]: {
-            unwrap: () => FnAsync
-          }
+  const map = (gulp as typeof gulp & {
+    _registry: {
+      _tasks: {
+        [key: string]: {
+          unwrap: () => Function
         }
       }
-    })._registry._tasks
-
-    if (!name) {
-      const result: MapFunction = {}
-      for (const name of Object.keys(map))
-        result[name] = map[name].unwrap()
-      return result
     }
+  })._registry._tasks
 
-    const result = map[name]
-    if (!result) throw new Error(`task/error: invalid task '${name}'`)
-    return result.unwrap()
+  if (!name) {
+    const result: MapFunction = {}
+    for (const name of Object.keys(map))
+      result[name] = map[name].unwrap()
+    return result
   }
+
+  const result = map[name]
+  if (!result) throw new Error(`task/error: invalid task '${name}'`)
+  return result.unwrap()
+}
+
+function main(): MapFunction
+function main(name: string): Function
+function main(name: string, fn: Function): void
+function main(
+  name?: string, fn?: Function
+): MapFunction | Function | void {
+
+  if (!name) return get()
+  if (!fn) return get(name)
+  add(name, fn)
 }
 
 // export
-const m = new M()
-export default m.execute.bind(m) as typeof m.execute
+export default main

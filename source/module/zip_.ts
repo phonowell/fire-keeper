@@ -14,120 +14,118 @@ type Option = {
 
 // function
 
-class M {
+async function archive_(
+  listSource: string[],
+  target: string,
+  option: Required<Option>
+): Promise<void> {
 
-  async archive_(
-    listSource: string[],
-    target: string,
-    option: Required<Option>
-  ): Promise<void> {
+  const { base, filename } = option
+  const spinner = ora().start()
 
-    const { base, filename } = option
-    const spinner = ora().start()
+  await new Promise(async resolve => {
 
-    await new Promise(async resolve => {
-
-      const output = fs.createWriteStream(`${target}/${filename}`)
-      const archive = archiver('zip', {
-        zlib: {
-          level: 9
-        }
-      })
-      let message = ''
-
-      archive.on('end', () => {
-        spinner.succeed()
-        resolve()
-      })
-
-      archive.on('entry', e => {
-        message = $.info().renderPath(`${e.name}`)
-      })
-
-      archive.on('error', e => {
-        spinner.fail(e.message)
-        throw (e)
-      })
-
-      archive.on('progress', e => {
-        if (!message) return
-
-        const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
-        const magenta = kleur.magenta(message)
-
-        spinner.text = `${gray} ${magenta}`
-        message = ''
-      })
-
-      archive.on('warning', e => {
-        spinner.warn(e.message)
-        throw (e)
-      })
-
-      // execute
-      archive.pipe(output)
-
-      for (const src of await $.source_(listSource)) {
-        const name = src.replace(base, '')
-        archive.file(src, { name })
+    const output = fs.createWriteStream(`${target}/${filename}`)
+    const archive = archiver('zip', {
+      zlib: {
+        level: 9
       }
-
-      archive.finalize()
     })
-  }
+    let message = ''
 
-  async execute_(
-    source: string | string[],
-    target: string = '',
-    option: string | Option = ''
-  ): Promise<void> {
-    
-    await this.archive_.call(this, ...this.formatArgument(source, target, option))
-    $.info('zip', `zipped ${$.wrapList(source)} to '${target}', as '${option.toString()}'`)
-  }
+    archive.on('end', () => {
+      spinner.succeed()
+      resolve(true)
+    })
 
-  formatArgument(
-    source: string | string[],
-    target: string,
-    option: string | Option
-  ): [string[], string, Required<Option>] {
+    archive.on('entry', e => {
+      message = $.info().renderPath(`${e.name}`)
+    })
 
-    const listSource = $.normalizePathToArray(source)
-    const pathTarget = $.normalizePath(
-      target || $.getDirname(listSource[0]).replace(/\*/g, '')
-    )
+    archive.on('error', e => {
+      spinner.fail(e.message)
+      throw (e)
+    })
 
-    let [base, filename] = typeof option === 'string'
-      ? ['', option]
-      : [
-        option.base || '',
-        option.filename || ''
-      ]
+    archive.on('progress', e => {
+      if (!message) return
 
-    base = $.normalizePath(base || this.getBase(listSource))
-    if (!filename) filename = `${$.getBasename(pathTarget)}.zip`
+      const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
+      const magenta = kleur.magenta(message)
 
-    return [
-      listSource,
-      pathTarget,
-      {
-        base,
-        filename
-      }
+      spinner.text = `${gray} ${magenta}`
+      message = ''
+    })
+
+    archive.on('warning', e => {
+      spinner.warn(e.message)
+      throw (e)
+    })
+
+    // execute
+    archive.pipe(output)
+
+    for (const src of await $.source_(listSource)) {
+      const name = src.replace(base, '')
+      archive.file(src, { name })
+    }
+
+    archive.finalize()
+  })
+}
+
+function formatArgument(
+  source: string | string[],
+  target: string,
+  option: string | Option
+): [string[], string, Required<Option>] {
+
+  const listSource = $.normalizePathToArray(source)
+  const pathTarget = $.normalizePath(
+    target || $.getDirname(listSource[0]).replace(/\*/g, '')
+  )
+
+  let [base, filename] = typeof option === 'string'
+    ? ['', option]
+    : [
+      option.base || '',
+      option.filename || ''
     ]
-  }
 
-  getBase(listSource: string[]): string {
+  base = $.normalizePath(base || getBase(listSource))
+  if (!filename) filename = `${$.getBasename(pathTarget)}.zip`
 
-    const [source] = listSource
+  return [
+    listSource,
+    pathTarget,
+    {
+      base,
+      filename
+    }
+  ]
+}
 
-    if (source.includes('*'))
-      return trim(source.replace(/\*.*/, ''), '/')
+function getBase(
+  listSource: string[]
+): string {
 
-    return $.getDirname(source)
-  }
+  const [source] = listSource
+
+  if (source.includes('*'))
+    return trim(source.replace(/\*.*/, ''), '/')
+
+  return $.getDirname(source)
+}
+
+async function main_(
+  source: string | string[],
+  target: string = '',
+  option: string | Option = ''
+): Promise<void> {
+
+  await archive_(...formatArgument(source, target, option))
+  $.info('zip', `zipped ${$.wrapList(source)} to '${target}', as '${option.toString()}'`)
 }
 
 // export
-const m = new M()
-export default m.execute_.bind(m) as typeof m.execute_
+export default main_
