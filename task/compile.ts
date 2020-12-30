@@ -5,10 +5,10 @@ import $ from '../source'
 async function compile_(): Promise<void> {
   await $.compile_([
     './source/**/*.ts',
-    '!./source/type.ts'
+    '!./source/type.ts',
   ], './dist', {
     base: './source',
-    minify: false
+    minify: false,
   })
 }
 

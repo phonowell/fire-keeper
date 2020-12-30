@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 
 // function
@@ -22,9 +23,9 @@ async function check_(
 
 async function a_(): Promise<void> {
 
-  const source: string = `${temp}/a.txt`
-  const target: string = `${temp}/b.txt`
-  const contSource: string = 'to be or not to be'
+  const source = `${temp}/a.txt`
+  const target = `${temp}/b.txt`
+  const contSource = 'to be or not to be'
 
   await $.write_(source, contSource)
   await $.rename_(source, 'b.txt')
@@ -34,14 +35,14 @@ async function a_(): Promise<void> {
 
 async function b_(): Promise<void> {
 
-  const source: string = `${temp}/a.txt`
-  const target: string = `${temp}/a-test.md`
-  const contSource: string = 'to be or not to be'
+  const source = `${temp}/a.txt`
+  const target = `${temp}/a-test.md`
+  const contSource = 'to be or not to be'
 
   await $.write_(source, contSource)
   await $.rename_(source, {
     extname: '.md',
-    suffix: '-test'
+    suffix: '-test',
   })
 
   if (!await check_(source, target, contSource)) throw new Error('0')
@@ -53,18 +54,18 @@ async function c_(): Promise<void> {
     .map((it): string => it.toString())
 
   for (const filename of listFilename) {
-    const source: string = `${temp}/${filename}.txt`
+    const source = `${temp}/${filename}.txt`
     const contSource: string = filename
     await $.write_(source, contSource)
   }
 
   await $.rename_(`${temp}/*.txt`, {
-    extname: '.md'
+    extname: '.md',
   })
 
   for (const filename of listFilename) {
-    const source: string = `${temp}/${filename}.txt`
-    const target: string = `${temp}/${filename}.md`
+    const source = `${temp}/${filename}.txt`
+    const target = `${temp}/${filename}.md`
     const contSource: string = filename
     if (!await check_(source, target, contSource)) throw new Error('0')
   }
@@ -74,5 +75,5 @@ async function c_(): Promise<void> {
 export {
   a_,
   b_,
-  c_
+  c_,
 }

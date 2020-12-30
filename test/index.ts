@@ -89,8 +89,8 @@ const mapModule = {
 
 // ---
 
-import $ from '../source'
 import { describe, it } from 'mocha'
+import $ from '../source'
 
 // interface
 
@@ -103,7 +103,7 @@ const temp = $.normalizePath('./temp')
 // function
 
 async function clean_(): Promise<void> {
-  await $.info().whisper_(async () => await $.remove_(temp))
+  await $.info().whisper_(async () => $.remove_(temp))
 }
 
 // execute

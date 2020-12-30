@@ -50,7 +50,7 @@ const listType = [
   'number',
   'select',
   'text',
-  'toggle'
+  'toggle',
 ] as const
 
 const listTypeCache = [
@@ -59,7 +59,7 @@ const listTypeCache = [
   'number',
   'select',
   'text',
-  'toggle'
+  'toggle',
 ] as const
 
 const mapMessage = {
@@ -69,7 +69,7 @@ const mapMessage = {
   number: 'input number',
   select: 'select',
   text: 'input text',
-  toggle: 'toggle'
+  toggle: 'toggle',
 } as const
 
 const pathCache = './temp/cache-prompt.json' as const
@@ -128,17 +128,17 @@ async function getCache_(
   option: OptionThis
 ): Promise<Value | undefined> {
 
-  if (!option.id) return
+  if (!option.id) return undefined
   if (!listTypeCache.includes(
     option.type as typeof listTypeCache[number]
-  )) return
+  )) return undefined
 
   const cache: File = await $.read_(pathCache) as File
   const item: Save = get(cache, option.id)
-  if (!item) return
+  if (!item) return undefined
 
   const { type, value } = item
-  if (type !== option.type) return
+  if (type !== option.type) return undefined
 
   if (type === 'select') {
     const index = findIndex(option.choices, { value })
@@ -164,7 +164,7 @@ async function setCache_(
     type: type === 'auto'
       ? 'autocomplete'
       : type,
-    value
+    value,
   }
   await $.write_(pathCache, cache)
 }
@@ -176,7 +176,7 @@ async function setOption_(
   // clone
   const opt = { ...option }
   Object.assign(opt, {
-    id: undefined
+    id: undefined,
   })
 
   // alias
@@ -197,14 +197,14 @@ async function setOption_(
     if (!opt.list)
       throw new Error('prompt_/error: empty list')
     opt.choices = [...opt.list]
-      .map((it): prompts.Choice =>
+      .map((it): prompts.Choice => (
         $.type(it) === 'object'
           ? it as prompts.Choice
           : {
             title: $.parseString(it),
-            value: it
+            value: it,
           }
-      )
+      ))
     opt.list = undefined
   } else if (opt.type === 'toggle') {
     if (!opt.active) opt.active = 'on'

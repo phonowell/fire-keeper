@@ -190,14 +190,13 @@ class M {
 
       const ts = require('gulp-typescript')
       const tsProject = ts.createProject($.normalizePath('./tsconfig.json'))
-      // const terser = require('gulp-terser')
 
       const { base, sourcemaps } = option
 
       gulp.src(source, { base, sourcemaps })
         .pipe(gulpIf(!$.info().isSilent, using()))
         .pipe(tsProject())
-        // .pipe(gulpIf(!!minify, terser({ safari10: true })))
+        // .pipe(gulpIf(!!minify, terser({ ecma: 2016, safari10: true })))
         .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
         .on('end', () => resolve(true))
     })

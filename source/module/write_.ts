@@ -6,13 +6,13 @@ import fse from 'fs-extra'
 async function main_(
   source: string,
   content: unknown,
-  option?: string | fse.WriteFileOptions
-) {
+  option?: string | fse.WriteFileOptions,
+): Promise<boolean> {
 
-  source = $.normalizePath(source)
-  content = $.parseString(content)
+  const _source = $.normalizePath(source)
+  const _content = $.parseString(content)
 
-  await fse.outputFile(source, content, option)
+  await fse.outputFile(_source, _content, option)
   $.info('file', `wrote ${$.wrapList(source)}`)
   return true
 }

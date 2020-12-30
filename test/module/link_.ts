@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const target = `${temp}/source`
   await $.link_('./source', target)
   if (!await $.isExisted_(target)) throw new Error('1')
@@ -11,5 +12,5 @@ async function a_() {
 
 // export
 export {
-  a_
+  a_,
 }

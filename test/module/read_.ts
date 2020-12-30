@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = `${temp}/a.txt`
   const content = 'a little message'
   await $.write_(source, content)
@@ -11,7 +12,8 @@ async function a_() {
 }
 a_.description = '.txt'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const source = `${temp}/b.json`
   const message = 'a little message'
   const content = { message }
@@ -21,13 +23,15 @@ async function b_() {
 }
 b_.description = '.json'
 
-async function c_() {
+async function c_(): Promise<void> {
+
   const source = `${temp}/c.txt`
   if (await $.read_(source)) throw new Error('0')
 }
 c_.description = 'from an unexisted file'
 
-async function d_() {
+async function d_(): Promise<void> {
+
   const source = `${temp}/d.txt`
   const content = 'a little message'
   await $.write_(source, content)
@@ -40,7 +44,8 @@ async function d_() {
 }
 d_.description = 'as { raw: true }'
 
-async function e_() {
+async function e_(): Promise<void> {
+
   const source = `${temp}/e.yaml`
   const content = 'a little message'
   await $.write_(source, `- value: ${content}`)

@@ -14,29 +14,31 @@ function main(
 
   // ignore?
   const isIgnored = source[0] === '!'
-  if (isIgnored) source = source.slice(1)
+  let _source = isIgnored
+    ? source.slice(1)
+    : source
 
   // replace . & ~
-  source = source.replace(/\.{2}/g, '__parent_directory__')
-  if (source[0] === '.') source = source.replace(/\./, $.root())
-  else if (source[0] === '~') source = source.replace(/~/, $.home())
-  source = source.replace(/__parent_directory__/g, '..')
+  _source = _source.replace(/\.{2}/gu, '__parent_directory__')
+  if (_source[0] === '.') _source = _source.replace(/\./u, $.root())
+  else if (_source[0] === '~') _source = _source.replace(/~/u, $.home())
+  _source = _source.replace(/__parent_directory__/gu, '..')
 
   // replace ../ to ./../ at start
-  if (source.startsWith('..')) source = `${$.root()}/${source}`
+  if (_source.startsWith('..')) _source = `${$.root()}/${_source}`
 
   // normalize
-  source = path.normalize(source)
-    .replace(/\\/g, '/')
+  _source = path.normalize(_source)
+    .replace(/\\/gu, '/')
 
   // absolute
-  if (!path.isAbsolute(source))
-    source = `${$.root()}/${source}`
+  if (!path.isAbsolute(_source))
+    _source = `${$.root()}/${_source}`
 
   // ignore?
-  if (isIgnored) source = `!${source}`
+  if (isIgnored) _source = `!${_source}`
 
-  return _trimEnd(source, '/')
+  return _trimEnd(_source, '/')
 }
 
 // export

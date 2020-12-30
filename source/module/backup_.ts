@@ -8,7 +8,10 @@ async function main_(
 
   const msg = `backed up ${$.wrapList(source)}`
 
-  for (const src of await $.source_(source)) {
+  async function sub_(
+    src: string
+  ): Promise<void> {
+
     const suffix = $.getExtname(src)
     const extname = '.bak'
 
@@ -16,6 +19,7 @@ async function main_(
       await $.copy_(src, '', { extname, suffix })
     })
   }
+  await Promise.all((await $.source_(source)).map(sub_))
 
   $.info('backup', msg)
 }

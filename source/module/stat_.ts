@@ -7,15 +7,15 @@ async function main_(
   source: string
 ): Promise<fs.Stats | null> {
 
-  source = $.normalizePath(source)
+  const _source = $.normalizePath(source)
 
-  if (!await $.isExisted_(source)) {
-    $.info('file', `${$.wrapList(source)} not existed`)
+  if (!await $.isExisted_(_source)) {
+    $.info('file', `${$.wrapList(_source)} not existed`)
     return null
   }
 
-  return await new Promise(resolve => {
-    fs.stat(source, (err, stat) => {
+  return new Promise(resolve => {
+    fs.stat(_source, (err, stat) => {
       if (err) throw err
       resolve(stat)
     })

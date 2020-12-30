@@ -1,8 +1,10 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = `${temp}/a.txt`
   const content = 'aloha'
   await $.write_(source, content)
@@ -11,17 +13,19 @@ async function a_() {
 }
 a_.description = 'file/single/existed'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const source = `${temp}/a.txt`
   if (await $.isExisted_(source)) throw new Error('0')
 }
 b_.description = 'file/single/not existed'
 
-async function c_() {
+async function c_(): Promise<void> {
+
   const listSource = [
     `${temp}/a.txt`,
     `${temp}/b.txt`,
-    `${temp}/c.txt`
+    `${temp}/c.txt`,
   ]
   const content = 'aloha'
   for (const source of listSource)
@@ -31,11 +35,12 @@ async function c_() {
 }
 c_.description = 'file/mutiple/existed'
 
-async function d_() {
+async function d_(): Promise<void> {
+
   const listSource = [
     `${temp}/a.txt`,
     `${temp}/b.txt`,
-    `${temp}/c.txt`
+    `${temp}/c.txt`,
   ]
   const content = 'aloha'
   for (const source of listSource)
@@ -47,7 +52,8 @@ async function d_() {
 }
 d_.description = 'file/mutiple/not existed'
 
-async function e_() {
+async function e_(): Promise<void> {
+
   const source = `${temp}/a`
   await $.mkdir_(source)
 
@@ -55,17 +61,19 @@ async function e_() {
 }
 e_.description = 'folder/single/existed'
 
-async function f_() {
+async function f_(): Promise<void> {
+
   const source = `${temp}/a`
   if (await $.isExisted_(source)) throw new Error('0')
 }
 f_.description = 'folder/single/not existed'
 
-async function g_() {
+async function g_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/c`
+    `${temp}/c`,
   ]
   for (const source of listSource)
     await $.mkdir_(source)
@@ -74,11 +82,12 @@ async function g_() {
 }
 g_.description = 'folder/mutiple/existed'
 
-async function h_() {
+async function h_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/c`
+    `${temp}/c`,
   ]
   for (const source of listSource)
     await $.mkdir_(source)
@@ -88,11 +97,12 @@ async function h_() {
 }
 h_.description = 'folder/mutiple/not existed'
 
-async function i_() {
+async function i_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/a/b.txt`
+    `${temp}/a/b.txt`,
   ]
   await $.mkdir_(listSource[0])
   await $.mkdir_(listSource[1])
@@ -102,11 +112,12 @@ async function i_() {
 }
 i_.description = 'file & fold/existed'
 
-async function j_() {
+async function j_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/a/b.txt`
+    `${temp}/a/b.txt`,
   ]
   await $.write_(listSource[2], 'aloha')
 
@@ -125,5 +136,5 @@ export {
   g_,
   h_,
   i_,
-  j_
+  j_,
 }

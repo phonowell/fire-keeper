@@ -4,8 +4,11 @@ import $ from '../source'
 
 async function main_(): Promise<void> {
 
-  await $.sleep_(1e3)
-  $.i('y')
+  await $.exec_([
+    'npm run build',
+    'nrm use npm',
+    // 'npm publish',
+  ])
 }
 
 // export

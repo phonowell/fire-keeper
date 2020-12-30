@@ -2,9 +2,9 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
 
-  const source: string = `${temp}/readme.md`
+  const source = `${temp}/readme.md`
 
   await $.copy_('./readme.md', temp)
   await $.backup_(source)
@@ -17,5 +17,5 @@ async function a_() {
 
 // export
 export {
-  a_
+  a_,
 }

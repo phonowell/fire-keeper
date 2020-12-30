@@ -7,7 +7,7 @@ function main(input: number): number[]
 function main(input: string | string[]): string[]
 function main(input: unknown | unknown[]): unknown[]
 function main(input: unknown): unknown[] {
-  
+
   if (input instanceof Array) return [...input]
   if (typeof input === 'boolean') return [input]
   if (typeof input === 'number') return [input]

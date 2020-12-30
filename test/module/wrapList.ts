@@ -2,7 +2,7 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
   const question = ['a', 'b', 'c']
   const answer = "'a', 'b', 'c'"
   if ($.wrapList(question) !== answer) throw new Error('0')

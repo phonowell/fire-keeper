@@ -2,8 +2,13 @@ import $ from '../source'
 
 // function
 
-async function main_() {
-  await $.compile_('./task/z.ts')
+async function main_(): Promise<void> {
+
+  await $.exec_([
+    'npm run alice y',
+    'nrm use npm',
+    'npm run alice x',
+  ])
 }
 
 // export

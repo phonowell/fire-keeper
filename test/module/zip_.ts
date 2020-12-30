@@ -1,8 +1,9 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
 
   $.i(temp)
 
@@ -10,7 +11,7 @@ async function a_() {
     await $.write_(`${temp}/${key}.txt`, 'a little message')
 
   await $.zip_(`${temp}/*.txt`, '', {
-    base: temp
+    base: temp,
   })
 
   if (!await $.isExisted_(`${temp}/temp.zip`)) throw new Error('0')
@@ -18,5 +19,5 @@ async function a_() {
 
 // export
 export {
-  a_
+  a_,
 }

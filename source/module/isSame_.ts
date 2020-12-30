@@ -11,8 +11,10 @@ async function main_(
 
   // size
   let cacheSize = 0
-  for (const source of listSource) {
-    const stat = await $.stat_(source)
+
+  for (const src of listSource) {
+    // eslint-disable-next-line no-await-in-loop
+    const stat = await $.stat_(src)
     if (!stat) return false
 
     const { size } = stat
@@ -27,9 +29,10 @@ async function main_(
 
   // content
   let cacheCont = ''
-  for (const source of listSource) {
+  for (const src of listSource) {
+    // eslint-disable-next-line no-await-in-loop
     let cont = await $.info().whisper_(async () =>
-      await $.read_(source)
+      $.read_(src)
     ) as string
     if (!cont) return false
 

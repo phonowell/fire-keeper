@@ -2,7 +2,8 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
+
   const source = '~/Downloads/test.txt'
   const { basename, dirname, extname, filename } = $.getName(source)
 
@@ -13,7 +14,8 @@ function a() {
 }
 a.description = 'default'
 
-function b() {
+function b(): void {
+
   const source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
   const { basename, dirname, extname, filename } = $.getName(source)
 
@@ -27,5 +29,5 @@ b.description = '@windows'
 // export
 export {
   a,
-  b
+  b,
 }

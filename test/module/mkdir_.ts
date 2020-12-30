@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = `${temp}/m/k/d/i/r`
   await $.mkdir_(source)
 
@@ -10,11 +11,12 @@ async function a_() {
 }
 a_.description = 'single'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/c`
+    `${temp}/c`,
   ]
   await $.mkdir_(listSource)
 
@@ -25,5 +27,5 @@ b_.description = 'multiple'
 // export
 export {
   a_,
-  b_
+  b_,
 }

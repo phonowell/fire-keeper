@@ -10,7 +10,9 @@ let cache = '' as OS
 
 function main(): OS
 function main(os: OS): boolean
-function main(os?: OS) {
+function main(
+  os?: OS
+): OS | boolean {
 
   if (!cache) {
     const string = process.platform

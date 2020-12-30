@@ -14,7 +14,7 @@ const listExtnameOfString = [
   '.ts',
   '.txt',
   '.xml',
-  '.coffee'
+  '.coffee',
 ]
 
 // function
@@ -25,30 +25,31 @@ async function main_(
     raw?: boolean
   } = {}): Promise<unknown> {
 
-  const _source = source
-  const listSource = await $.source_(source)
+  let _source = source
+  const listSource = await $.source_(_source)
 
   if (!listSource.length) {
-    $.info('file', `'${_source}' not existed`)
+    $.info('file', `'${source}' not existed`)
     return null
   }
-  source = listSource[0]
+  _source = listSource[0]
 
   const content = await new Promise(resolve => {
-    fs.readFile(source, (err, data) => {
+    fs.readFile(_source, (err, data) => {
       if (err) throw err
       resolve(data)
     })
   })
-  $.info('file', `read '${_source}'`)
+  $.info('file', `read '${source}'`)
 
   if (option.raw) return content
 
-  const extname = $.getExtname(source)
+  const extname = $.getExtname(_source)
 
   if (listExtnameOfString.includes(extname)) return $.parseString(content)
   if (extname === '.json') return $.parseJson(content)
   if (['.yaml', '.yml'].includes(extname)) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const jsYaml = require('js-yaml')
     return jsYaml.safeLoad(content)
   }

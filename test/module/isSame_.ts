@@ -2,11 +2,12 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const listSource = [
     './readme.md',
     `${temp}/a.md`,
-    `${temp}/b.md`
+    `${temp}/b.md`,
   ]
 
   await $.copy_(listSource[0], temp, 'a.md')
@@ -16,10 +17,11 @@ async function a_() {
   if (!result) throw new Error('0')
 }
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const result = await $.isSame_([
     `${temp}/null/txt`,
-    './readme.nd'
+    './readme.nd',
   ])
   if (result) throw new Error('0')
 }
@@ -27,5 +29,5 @@ async function b_() {
 // export
 export {
   a_,
-  b_
+  b_,
 }

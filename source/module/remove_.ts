@@ -12,8 +12,13 @@ async function main_(
 
   const msg = `removed ${$.wrapList(source)}`
 
-  for (const source of listSource)
-    await fse.remove(source)
+  async function sub_(
+    src: string
+  ): Promise<void> {
+
+    await fse.remove(src)
+  }
+  await Promise.all(listSource.map(sub_))
 
   $.info('remove', msg)
 }

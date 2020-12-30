@@ -2,7 +2,7 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
   if ($.type($.prompt_) !== 'asyncfunction') throw new Error('0')
 }
 

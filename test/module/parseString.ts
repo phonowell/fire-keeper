@@ -2,7 +2,8 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
+
   const listQuestion = [
     42, // number
     'Aloha', // string
@@ -15,7 +16,7 @@ function a() {
     Buffer.from('String'), // buffer
     null, // null
     undefined, // undefined
-    NaN // NaN
+    NaN, // NaN
   ]
   const listAnswer = [
     '42',
@@ -23,13 +24,13 @@ function a() {
     'true',
     '[1,2,3]',
     '{"a":1,"b":2}',
-    (listQuestion[5] as Function).toString(),
+    (listQuestion[5] as () => void).toString(),
     (listQuestion[6] as Date).toString(),
     (listQuestion[7] as Error).toString(),
     (listQuestion[8] as Buffer).toString(),
     'null',
     'undefined',
-    'NaN'
+    'NaN',
   ]
   for (let i = 0; i < listQuestion.length; i++) {
     const question = listQuestion[i]

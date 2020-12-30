@@ -2,7 +2,8 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
+
   const string = 'a little message'
   const object = { message: string }
   const buffer = Buffer.from($.parseString(object))

@@ -3,6 +3,7 @@ import gulp from 'gulp'
 
 // interface
 
+// eslint-disable-next-line camelcase
 type ListSource = string[] & { __is_listed_as_source__?: boolean }
 
 // variable
@@ -20,13 +21,13 @@ async function main_(
     if ((source as ListSource)[keyPrivate]) return source
   const group = $.normalizePathToArray(source)
 
-  return await new Promise(resolve => {
+  return new Promise(resolve => {
     const listSource = [] as ListSource
     listSource[keyPrivate] = true
 
     gulp.src(group, {
       allowEmpty: true,
-      read: false
+      read: false,
     })
       .on('data', (it: { path: string }) => listSource.push(it.path))
       .on('end', () => resolve(listSource))

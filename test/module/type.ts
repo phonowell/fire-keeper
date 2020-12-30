@@ -2,7 +2,8 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
+
   const listQuestion = [
     42, // number
     'Aloha', // string
@@ -16,7 +17,7 @@ function a() {
     Buffer.from('String'), // buffer
     null, // null
     undefined, // undefined
-    NaN // NaN
+    NaN, // NaN
   ]
   const listAnswer = [
     'number',
@@ -31,7 +32,7 @@ function a() {
     'uint8array',
     'null',
     'undefined',
-    'number'
+    'number',
   ]
   for (let i = 0; i < listQuestion.length; i++) {
     const question = listQuestion[i]

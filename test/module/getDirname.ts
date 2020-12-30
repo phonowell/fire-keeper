@@ -2,7 +2,7 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
   if ($.type($.getDirname) !== 'function') throw new Error('0')
 }
 

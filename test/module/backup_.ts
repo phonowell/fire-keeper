@@ -1,22 +1,23 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 import isEqual from 'lodash/isEqual'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
   await $.copy_([
     './license.md',
-    './readme.md'
+    './readme.md',
   ], temp)
 
   const listSource = [
     `${temp}/license.md`,
-    `${temp}/readme.md`
+    `${temp}/readme.md`,
   ]
 
   const listTarget = [
     `${temp}/license.md.bak`,
-    `${temp}/readme.md.bak`
+    `${temp}/readme.md.bak`,
   ]
 
   await $.backup_(listSource)

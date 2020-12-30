@@ -5,7 +5,7 @@ function main(
 ): string {
 
   return Object.prototype.toString.call(input)
-    .replace(/^\[object (.+)]$/, '$1')
+    .replace(/^\[object (.+)\]$/u, '$1')
     .toLowerCase()
 }
 

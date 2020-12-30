@@ -17,20 +17,23 @@ function format(
 ): [string, string, Option] {
 
   if (!source) throw new Error('download_/error: empty source')
-  if (source.startsWith('//'))
-    source = `https:${source}`
+  const _source = source.startsWith('//')
+    ? `https:${source}`
+    : source
 
   if (!target) throw new Error('download_/error: empty target')
-  target = $.normalizePath(target)
+  const _target = $.normalizePath(target)
 
-  if (typeof option === 'string')
-    option = { filename: option }
-  const optionX = Object.assign({
+  const _option = typeof option === 'string'
+    ? { filename: option }
+    : { ...option }
+  const optionX = {
     filename: '',
-    timeout: 10e3
-  }, option)
+    timeout: 10e3,
+    ..._option,
+  }
 
-  return [source, target, optionX]
+  return [_source, _target, optionX]
 }
 
 async function main_(
@@ -39,7 +42,7 @@ async function main_(
   option: string | Partial<Option> = {}
 ): Promise<void> {
 
-  await download.call(null, ...format(source, target, option))
+  await download(...format(source, target, option))
   $.info('download', `downloaded '${source}' to '${target}', as '${$.parseString(option)}'`)
 }
 

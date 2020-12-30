@@ -2,30 +2,32 @@ import gulp from 'gulp'
 
 // interface
 
+type Fn = () => void
+
 type MapFunction = {
-  [key: string]: Function
+  [key: string]: Fn
 }
 
 // function
 
 function add(
-  name: string, fn: Function
+  name: string, fn: Fn
 ): void {
 
   gulp.task(name, fn as gulp.TaskFunction)
 }
 
 function get(): MapFunction
-function get(name: string): Function
+function get(name: string): Fn
 function get(
   name?: string
-): MapFunction | Function {
+): MapFunction | Fn {
 
   const map = (gulp as typeof gulp & {
     _registry: {
       _tasks: {
         [key: string]: {
-          unwrap: () => Function
+          unwrap: () => Fn
         }
       }
     }
@@ -33,8 +35,8 @@ function get(
 
   if (!name) {
     const result: MapFunction = {}
-    for (const name of Object.keys(map))
-      result[name] = map[name].unwrap()
+    for (const _name of Object.keys(map))
+      result[_name] = map[_name].unwrap()
     return result
   }
 
@@ -44,15 +46,16 @@ function get(
 }
 
 function main(): MapFunction
-function main(name: string): Function
-function main(name: string, fn: Function): void
+function main(name: string): Fn
+function main(name: string, fn: Fn): void
 function main(
-  name?: string, fn?: Function
-): MapFunction | Function | void {
+  name?: string, fn?: Fn
+): MapFunction | Fn | void {
 
   if (!name) return get()
   if (!fn) return get(name)
   add(name, fn)
+  return undefined
 }
 
 // export

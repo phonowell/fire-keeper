@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = './license.md'
   const target = `${temp}/test.md`
 
@@ -11,12 +12,13 @@ async function a_() {
 
   const listCont = [
     await $.read_(source),
-    await $.read_(target)
+    await $.read_(target),
   ]
   if (listCont[0] !== listCont[1]) throw new Error('1')
 }
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const source = './license.md'
   const target = `${temp}/new/license.md`
 
@@ -25,12 +27,13 @@ async function b_() {
 
   const listCont = [
     await $.read_(source),
-    await $.read_(target)
+    await $.read_(target),
   ]
   if (listCont[0] !== listCont[1]) throw new Error('1')
 }
 
-async function c_() {
+async function c_(): Promise<void> {
+
   if (!$.os('macos')) return
   const source = './license.md'
   const target = '~/Downloads/temp/license.md'
@@ -40,14 +43,15 @@ async function c_() {
 
   const listCont = [
     await $.read_(source),
-    await $.read_(target)
+    await $.read_(target),
   ]
   if (listCont[0] !== listCont[1]) throw new Error('1')
 
   await $.remove_('~/Downloads/temp')
 }
 
-async function d_() {
+async function d_(): Promise<void> {
+
   const source = `${temp}/a.txt`
   const target = `${temp}/b.txt`
   const content = 'a little message'
@@ -65,5 +69,5 @@ export {
   a_,
   b_,
   c_,
-  d_
+  d_,
 }

@@ -11,14 +11,14 @@ function main(
 
   if (input instanceof Array)
     return (JSON.stringify({ __container__: input }))
-      .replace(/{(.*)}/, '$1')
-      .replace(/"__container__":/, '')
+      .replace(/\{(.*)\}/u, '$1')
+      .replace(/"__container__":/u, '')
 
   if ($.type(input) === 'object')
     return JSON.stringify(input)
 
-  if (input && (input as any).toString)
-    return (input as any).toString()
+  if (input && (input as string).toString)
+    return (input as string).toString()
   return String(input)
 }
 

@@ -8,5 +8,5 @@ async function a_(): Promise<void> {
 
 // export
 export {
-  a_
+  a_,
 }

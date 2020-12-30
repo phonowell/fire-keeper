@@ -2,7 +2,8 @@ import { $ } from '..'
 
 // function
 
-function a() {
+function a(): void {
+
   if ($.type($.os) !== 'function') throw new Error('0')
 }
 

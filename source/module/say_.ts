@@ -15,7 +15,7 @@ const Lang = {
   'zh': 'ting-ting',
   'zh-cn': 'ting-ting',
   'zh-hk': 'sin-ji',
-  'zh-tw': 'mei-jia'
+  'zh-tw': 'mei-jia',
 } as const
 
 // function
@@ -31,7 +31,7 @@ async function main_(
     if (!$.os('macos')) continue
 
     message = message
-      .replace(/[#\(\)-]/g, '')
+      .replace(/[#()-]/gu, '')
       .trim()
 
     if (!message) continue
@@ -46,6 +46,7 @@ async function main_(
 
     listCmd.push(message)
 
+    // eslint-disable-next-line no-await-in-loop
     await $.exec_(listCmd.join(' '), { silent: true })
   }
 }

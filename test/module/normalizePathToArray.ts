@@ -3,18 +3,19 @@ import isEqual from 'lodash/isEqual'
 
 // function
 
-function a() {
+function a(): void {
+
   const question = [
     './source',
     '~/opt',
     'opt/a/b/../c',
-    '!**/include/**'
+    '!**/include/**',
   ]
   const answer = [
     `${$.root()}/source`,
     `${$.home()}/opt`,
     `${$.root()}/opt/a/c`,
-    `!${$.root()}/**/include/**`
+    `!${$.root()}/**/include/**`,
   ]
   if (!isEqual($.normalizePathToArray(question), answer)) throw new Error('0')
 }

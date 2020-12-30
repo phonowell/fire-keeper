@@ -23,13 +23,15 @@ async function archive_(
   const { base, filename } = option
   const spinner = ora().start()
 
-  await new Promise(async resolve => {
+  const listResource = await $.source_(listSource)
+
+  await new Promise(resolve => {
 
     const output = fs.createWriteStream(`${target}/${filename}`)
     const archive = archiver('zip', {
       zlib: {
-        level: 9
-      }
+        level: 9,
+      },
     })
     let message = ''
 
@@ -65,7 +67,7 @@ async function archive_(
     // execute
     archive.pipe(output)
 
-    for (const src of await $.source_(listSource)) {
+    for (const src of listResource) {
       const name = src.replace(base, '')
       archive.file(src, { name })
     }
@@ -82,14 +84,14 @@ function formatArgument(
 
   const listSource = $.normalizePathToArray(source)
   const pathTarget = $.normalizePath(
-    target || $.getDirname(listSource[0]).replace(/\*/g, '')
+    target || $.getDirname(listSource[0]).replace(/\*/gu, '')
   )
 
   let [base, filename] = typeof option === 'string'
     ? ['', option]
     : [
       option.base || '',
-      option.filename || ''
+      option.filename || '',
     ]
 
   base = $.normalizePath(base || getBase(listSource))
@@ -100,8 +102,8 @@ function formatArgument(
     pathTarget,
     {
       base,
-      filename
-    }
+      filename,
+    },
   ]
 }
 
@@ -112,14 +114,14 @@ function getBase(
   const [source] = listSource
 
   if (source.includes('*'))
-    return trim(source.replace(/\*.*/, ''), '/')
+    return trim(source.replace(/\*.*/u, ''), '/')
 
   return $.getDirname(source)
 }
 
 async function main_(
   source: string | string[],
-  target: string = '',
+  target = '',
   option: string | Option = ''
 ): Promise<void> {
 

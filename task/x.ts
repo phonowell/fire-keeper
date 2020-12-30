@@ -5,7 +5,7 @@ import $ from '../source'
 async function main_(): Promise<void> {
 
   await $.sleep_(1e3)
-  $.i('y')
+  $.i('x')
 }
 
 // export

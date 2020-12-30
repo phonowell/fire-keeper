@@ -1,15 +1,17 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = `${temp}/test.coffee`
   const target = `${temp}/test.js`
   const content = 'console.log 123'
   await $.write_(source, content)
   await $.compile_(source, {
     bare: true,
-    sourcemaps: true
+    sourcemaps: true,
   })
 
   if (!await $.isExisted_(target)) throw new Error('0')
@@ -21,7 +23,8 @@ async function a_() {
 }
 a_.description = '.coffee, as { bare: true, sourcemaps: true }'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const source = `${temp}/test.ts`
   const target = `${temp}/test.js`
   const content = 'console.log(123)'
@@ -36,7 +39,8 @@ async function b_() {
 }
 b_.description = '.ts'
 
-async function c_() {
+async function c_(): Promise<void> {
+
   const source = `${temp}/test.md`
   const target = `${temp}/test.html`
   const content = '# title'
@@ -50,7 +54,8 @@ async function c_() {
 }
 c_.description = '.md'
 
-async function d_() {
+async function d_(): Promise<void> {
+
   const source = `${temp}/test.yaml`
   const target = `${temp}/test.json`
   const content = '- value: 123'
@@ -64,16 +69,17 @@ async function d_() {
 }
 d_.description = '.yaml'
 
-async function e_() {
+async function e_(): Promise<void> {
+
   const listSource = [
     `${temp}/source/a.md`,
     `${temp}/source/b/b.md`,
-    `${temp}/source/b/c/c.md`
+    `${temp}/source/b/c/c.md`,
   ]
   const listTarget = [
     `${temp}/build/a.html`,
     `${temp}/build/b/b.html`,
-    `${temp}/build/b/c/c.html`
+    `${temp}/build/b/c/c.html`,
   ]
   const content = '# test'
   for (const source of listSource)
@@ -83,11 +89,12 @@ async function e_() {
   if (!await $.isExisted_(listTarget)) throw new Error('0')
 }
 
-async function f_() {
+async function f_(): Promise<void> {
+
   const listSource = [
     `${temp}/a.ts`,
     `${temp}/b/b.ts`,
-    `${temp}/c/c/c.ts`
+    `${temp}/c/c/c.ts`,
   ]
   const listTarget = [
     `${temp}/a.js`,
@@ -95,7 +102,7 @@ async function f_() {
     `${temp}/c/c/c.js`,
     `${temp}/a.d.ts`,
     `${temp}/b/b.d.ts`,
-    `${temp}/c/c/c.d.ts`
+    `${temp}/c/c/c.d.ts`,
   ]
   const content = 'alert(1)'
   for (const source of listSource)
@@ -112,5 +119,5 @@ export {
   c_,
   d_,
   e_,
-  f_
+  f_,
 }

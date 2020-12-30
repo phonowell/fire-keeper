@@ -2,7 +2,7 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
   const source = `${temp}/a.txt`
   await $.write_(source, 'text')
   await $.clean_(source)
@@ -12,10 +12,10 @@ async function a_() {
 }
 a_.description = 'normal'
 
-async function b_() {
+async function b_(): Promise<void> {
   const listSource = [
     `${temp}/a.txt`,
-    `${temp}/b.txt`
+    `${temp}/b.txt`,
   ]
   await $.write_(listSource[0], 'text')
   await $.write_(listSource[1], 'text')
@@ -26,10 +26,10 @@ async function b_() {
 }
 b_.description = 'file existed'
 
-async function c_() {
+async function c_(): Promise<void> {
   const listSource = [
     `${temp}/a.txt`,
-    `${temp}/b/b.txt`
+    `${temp}/b/b.txt`,
   ]
   await $.write_(listSource[0], 'text')
   await $.write_(listSource[1], 'text')
@@ -44,5 +44,5 @@ c_.description = 'folder existed'
 export {
   a_,
   b_,
-  c_
+  c_,
 }

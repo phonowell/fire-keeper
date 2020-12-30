@@ -1,12 +1,13 @@
 import $ from '..'
 import gulp from 'gulp'
 import gulpIf from 'gulp-if'
-import using from 'gulp-using'
 import rename from 'gulp-rename'
+import using from 'gulp-using'
 
 // interface
 
 declare global {
+  // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
 }
 
@@ -32,10 +33,16 @@ async function main_(
   })
 
   $.info().pause()
-  for (const item of listHistory) {
+
+  async function sub_(
+    item: string[]
+  ): Promise<void> {
+
     if (await $.isExisted_(item[1]))
       await $.remove_(item[0])
   }
+  await Promise.all(listHistory.map(sub_))
+
   $.info().resume()
 
   $.info('file', `renamed ${$.wrapList(source)} as '${$.parseString(option)}'`)

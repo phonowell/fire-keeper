@@ -6,14 +6,16 @@ async function main_(
   source: string | string[]
 ): Promise<void> {
 
-  const msg: string = `recovered ${$.wrapList(source)}`
+  const msg = `recovered ${$.wrapList(source)}`
 
-  for (const src of $.normalizePathToArray(source)) {
+  async function sub_(
+    src: string
+  ): Promise<void> {
 
-    const pathBak: string = `${src}.bak`
+    const pathBak = `${src}.bak`
     if (!await $.isExisted_(pathBak)) {
       $.info('recover', `'${pathBak}' not found`)
-      continue
+      return
     }
 
     const filename: string = $.getFilename(src)
@@ -24,6 +26,7 @@ async function main_(
     await $.remove_(pathBak)
     $.info().resume()
   }
+  await Promise.all($.normalizePathToArray(source).map(sub_))
 
   $.info('recover', msg)
 }

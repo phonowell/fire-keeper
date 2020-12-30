@@ -1,7 +1,7 @@
 # kokoro
+- .eslintrc.yaml
 - .gitignore
 - .npmignore
 - .stylintrc
 - coffeelint.json
 - license.md
-- tslint.json

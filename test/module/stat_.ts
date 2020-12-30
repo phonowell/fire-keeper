@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   await $.copy_('./package.json', temp)
   const stat = await $.stat_('./package.json')
   if (!stat) throw new Error('0')
@@ -10,7 +11,8 @@ async function a_() {
   if ($.type(stat.size) !== 'number') throw new Error('2')
 }
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const stat = await $.stat_(`${temp}/null.txt`)
   if (stat) throw new Error('0')
 }
@@ -18,5 +20,5 @@ async function b_() {
 // export
 export {
   a_,
-  b_
+  b_,
 }

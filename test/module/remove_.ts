@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { $, temp } from '..'
 
 // function
@@ -11,11 +12,12 @@ async function a_() {
 }
 a_.description = 'single'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const listSource = [
     `${temp}/a`,
     `${temp}/b`,
-    `${temp}/c.txt`
+    `${temp}/c.txt`,
   ]
   await $.mkdir_([listSource[0], listSource[1]])
   await $.write_(listSource[2], 'a little message')
@@ -27,10 +29,11 @@ async function b_() {
 }
 b_.description = 'mutiple'
 
-async function c_() {
+async function c_(): Promise<void> {
+
   const listSource = [
     `${temp}/a.txt`,
-    `${temp}/b/c.txt`
+    `${temp}/b/c.txt`,
   ]
   for (const source of listSource)
     await $.write_(source, 'a little message')
@@ -45,5 +48,5 @@ c_.description = 'file(s) only'
 export {
   a_,
   b_,
-  c_
+  c_,
 }

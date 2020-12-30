@@ -2,7 +2,8 @@ import { $, temp } from '..'
 
 // function
 
-async function a_() {
+async function a_(): Promise<void> {
+
   const source = `${temp}/source/test.txt`
   const target = `${temp}/target`
   const content = 'a little message'
@@ -14,7 +15,8 @@ async function a_() {
 }
 a_.description = 'file/existed'
 
-async function b_() {
+async function b_(): Promise<void> {
+
   const source = `${temp}/source/test.txt`
   const target = `${temp}/target`
 
@@ -24,7 +26,8 @@ async function b_() {
 }
 b_.description = 'file/not existed'
 
-async function c_() {
+async function c_(): Promise<void> {
+
   await $.write_(`${temp}/source/test.txt`, 'a little message')
   await $.move_(`${temp}/source/**/*`, `${temp}/target`)
 
@@ -32,13 +35,15 @@ async function c_() {
 }
 c_.description = 'folder/existed'
 
-async function d_() {
+async function d_(): Promise<void> {
+
   await $.move_(`${temp}/source/**/*`, `${temp}/target`)
   if (await $.isExisted_(`${temp}/target/test.txt`)) throw new Error('0')
 }
 d_.description = 'folder/not existed'
 
-async function e_() {
+async function e_(): Promise<void> {
+
   const base = '~/Downloads'
   await $.write_(`${base}/source/test.txt`, 'a little message')
   await $.move_(`${base}/source/test.txt`, `${base}/target`)
@@ -47,12 +52,13 @@ async function e_() {
 
   await $.remove_([
     `${base}/source`,
-    `${base}/target`
+    `${base}/target`,
   ])
 }
 e_.description = 'outer/existed'
 
-async function f_() {
+async function f_(): Promise<void> {
+
   const base = '~/Downloads'
   await $.move_(`${base}/source/test.txt`, `${base}/target`)
 
@@ -60,12 +66,13 @@ async function f_() {
 
   await $.remove_([
     `${base}/source`,
-    `${base}/target`
+    `${base}/target`,
   ])
 }
 f_.description = 'outer/not existed'
 
-async function g_() {
+async function g_(): Promise<void> {
+
   await $.write_(`${temp}/test.txt`, 'a little message')
   await $.move_(`${temp}/test.txt`, `${temp}/a`, 'b.txt')
 
@@ -81,5 +88,5 @@ export {
   d_,
   e_,
   f_,
-  g_
+  g_,
 }

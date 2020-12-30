@@ -1,12 +1,13 @@
 import $ from '..'
 import gulp from 'gulp'
 import gulpIf from 'gulp-if'
-import using from 'gulp-using'
 import rename from 'gulp-rename'
+import using from 'gulp-using'
 
 // interface
 
 declare global {
+  // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
 }
 
@@ -19,7 +20,10 @@ async function main_(
 ): Promise<void> {
 
   const listSource = $.normalizePathToArray(source)
-  if (target) target = $.normalizePath(target)
+
+  const _target = target
+    ? $.normalizePath(target)
+    : ''
 
   if (!listSource.length) return
 
@@ -27,11 +31,11 @@ async function main_(
     gulp.src(listSource, { allowEmpty: true })
       .pipe(gulpIf(!$.info().isSilent, using()))
       .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | rename.Options)))
-      .pipe(gulp.dest(e => target || e.base))
+      .pipe(gulp.dest(e => _target || e.base))
       .on('end', () => resolve(true))
   })
 
-  let msg = `copied ${$.wrapList(source)} to '${target}'`
+  let msg = `copied ${$.wrapList(source)} to '${_target}'`
   if (option) msg += `, as '${$.parseString(option)}'`
   $.info('file', msg)
 }
