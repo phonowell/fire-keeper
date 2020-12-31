@@ -58,7 +58,7 @@
     "fire-keeper"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "index.js",
   "name": "fire-keeper",
   "repository": {
     "type": "git",
@@ -66,9 +66,11 @@
   },
   "scripts": {
     "alice": "ts-node task/alice",
-    "build": "npm run alice build",
+    "build": "npm run alice build && npm run alice compile",
+    "clean": "npm run alice clean",
+    "compile": "npm run alice compile",
     "test": "npm run build && mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.180"
+  "version": "0.0.181"
 }

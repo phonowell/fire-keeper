@@ -1,4 +1,5 @@
 import $ from '../source'
+import camelCase from 'lodash/camelCase'
 
 // function
 
@@ -9,29 +10,17 @@ async function main_(): Promise<void> {
 
 async function pickModule_(): Promise<string> {
 
-  const listModule = (await $.source_('./source/module/*.ts'))
+  const listModule = (await $.source_([
+    './source/*.ts',
+    '!**/index.ts',
+  ]))
     .map(it => $.getBasename(it))
+
   return [
-    ...listModule.map(it => `import __module_${it}__ from './module/${it}'`),
-    'const $ = {} as {',
-    ...listModule.map(it => `  ${it}: typeof __module_${it}__`),
+    ...listModule.map(it => `import ${camelCase(`m-${it}`)} from './${it}'`),
+    'export default {',
+    ...listModule.map(it => `  ${it}: ${camelCase(`m-${it}`)},`),
     '}',
-    'const listModule = [',
-    ...listModule.map((it, i) => `  '${it}'${i === listModule.length - 1 ? '' : ','
-      }`),
-    ']',
-  ].join('\n')
-}
-
-async function pickTask_(): Promise<string> {
-
-  const listTask = (await $.source_('./source/task/*.ts'))
-    .map(it => $.getBasename(it))
-  return [
-    'const listTask = [',
-    ...listTask.map((it, i) => `  '${it}'${i === listTask.length - 1 ? '' : ','
-      }`),
-    ']',
   ].join('\n')
 }
 
@@ -39,7 +28,6 @@ async function replace_(): Promise<void> {
 
   const content = [
     await pickModule_(),
-    await pickTask_(),
     '',
     '// ---',
   ]
@@ -50,16 +38,18 @@ async function replace_(): Promise<void> {
 
 async function replaceTest_(): Promise<void> {
 
-  const listModule = await $.source_('./test/module/*.ts')
+  const listModule = await $.source_([
+    './test/*.ts',
+    '!**/index.ts',
+  ])
 
   // index.ts
   const listTest = listModule
     .map(it => $.getBasename(it))
   const content = [
-    ...listTest.map(it => `import * as __module_${it}__ from './module/${it}'`),
+    ...listTest.map(it => `import * as ${camelCase(`m-${it}`)} from './${it}'`),
     'const mapModule = {',
-    ...listTest.map((it, i) => `  ${it}: __module_${it}__${i === listTest.length - 1 ? '' : ','
-      }`),
+    ...listTest.map(it => `  ${it}: ${camelCase(`m-${it}`)},`),
     '}',
     '',
     '// ---',
@@ -70,18 +60,17 @@ async function replaceTest_(): Promise<void> {
   await $.write_('./test/index.ts', cont)
 
   // module/*.ts
-  async function sub_(
-    source: string
-  ): Promise<void> {
+  await Promise.all(listModule.map(
+    source => (async () => {
 
-    const _cont = $.parseString(await $.read_(source))
-    if (!~_cont.search(/throw\s\d/u)) return
-    await $.write_(source, _cont
-      // throw 0 -> throw new Error('0')
-      .replace(/throw\s(\d+)/gu, "throw new Error('$1')")
-    )
-  }
-  await Promise.all(listModule.map(sub_))
+      const _cont = $.parseString(await $.read_(source))
+      if (!~_cont.search(/throw\s\d/u)) return
+      await $.write_(source, _cont
+        // throw 0 -> throw new Error('0')
+        .replace(/throw\s(\d+)/gu, "throw new Error('$1')")
+      )
+    })()
+  ))
 }
 
 // export

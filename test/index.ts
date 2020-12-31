@@ -1,90 +1,88 @@
-import * as __module_argv__ from './module/argv'
-import * as __module_backup___ from './module/backup_'
-import * as __module_clean___ from './module/clean_'
-import * as __module_compile___ from './module/compile_'
-import * as __module_copy___ from './module/copy_'
-import * as __module_download___ from './module/download_'
-import * as __module_exec___ from './module/exec_'
-import * as __module_formatArgument__ from './module/formatArgument'
-import * as __module_getBasename__ from './module/getBasename'
-import * as __module_getDirname__ from './module/getDirname'
-import * as __module_getExtname__ from './module/getExtname'
-import * as __module_getFilename__ from './module/getFilename'
-import * as __module_getName__ from './module/getName'
-import * as __module_home__ from './module/home'
-import * as __module_i__ from './module/i'
-import * as __module_info__ from './module/info'
-import * as __module_isExisted___ from './module/isExisted_'
-import * as __module_isSame___ from './module/isSame_'
-import * as __module_link___ from './module/link_'
-import * as __module_mkdir___ from './module/mkdir_'
-import * as __module_move___ from './module/move_'
-import * as __module_normalizePath__ from './module/normalizePath'
-import * as __module_normalizePathToArray__ from './module/normalizePathToArray'
-import * as __module_os__ from './module/os'
-import * as __module_parseJson__ from './module/parseJson'
-import * as __module_parseString__ from './module/parseString'
-import * as __module_prompt___ from './module/prompt_'
-import * as __module_read___ from './module/read_'
-import * as __module_recover___ from './module/recover_'
-import * as __module_remove___ from './module/remove_'
-import * as __module_rename___ from './module/rename_'
-import * as __module_require__ from './module/require'
-import * as __module_root__ from './module/root'
-import * as __module_say___ from './module/say_'
-import * as __module_sleep___ from './module/sleep_'
-import * as __module_source___ from './module/source_'
-import * as __module_stat___ from './module/stat_'
-import * as __module_task__ from './module/task'
-import * as __module_type__ from './module/type'
-import * as __module_watch__ from './module/watch'
-import * as __module_wrapList__ from './module/wrapList'
-import * as __module_write___ from './module/write_'
-import * as __module_zip___ from './module/zip_'
+import * as mArgv from './argv'
+import * as mBackup from './backup_'
+import * as mClean from './clean_'
+import * as mCompile from './compile_'
+import * as mCopy from './copy_'
+import * as mDownload from './download_'
+import * as mExec from './exec_'
+import * as mFormatArgument from './formatArgument'
+import * as mGetBasename from './getBasename'
+import * as mGetDirname from './getDirname'
+import * as mGetExtname from './getExtname'
+import * as mGetFilename from './getFilename'
+import * as mGetName from './getName'
+import * as mHome from './home'
+import * as mI from './i'
+import * as mInfo from './info'
+import * as mIsExisted from './isExisted_'
+import * as mIsSame from './isSame_'
+import * as mLink from './link_'
+import * as mMkdir from './mkdir_'
+import * as mMove from './move_'
+import * as mNormalizePath from './normalizePath'
+import * as mNormalizePathToArray from './normalizePathToArray'
+import * as mOs from './os'
+import * as mParseJson from './parseJson'
+import * as mParseString from './parseString'
+import * as mPrompt from './prompt_'
+import * as mRead from './read_'
+import * as mRecover from './recover_'
+import * as mRemove from './remove_'
+import * as mRename from './rename_'
+import * as mRequire from './require'
+import * as mRoot from './root'
+import * as mSay from './say_'
+import * as mSleep from './sleep_'
+import * as mSource from './source_'
+import * as mStat from './stat_'
+import * as mType from './type'
+import * as mWatch from './watch'
+import * as mWrapList from './wrapList'
+import * as mWrite from './write_'
+import * as mZip from './zip_'
 const mapModule = {
-  argv: __module_argv__,
-  backup_: __module_backup___,
-  clean_: __module_clean___,
-  compile_: __module_compile___,
-  copy_: __module_copy___,
-  download_: __module_download___,
-  exec_: __module_exec___,
-  formatArgument: __module_formatArgument__,
-  getBasename: __module_getBasename__,
-  getDirname: __module_getDirname__,
-  getExtname: __module_getExtname__,
-  getFilename: __module_getFilename__,
-  getName: __module_getName__,
-  home: __module_home__,
-  i: __module_i__,
-  info: __module_info__,
-  isExisted_: __module_isExisted___,
-  isSame_: __module_isSame___,
-  link_: __module_link___,
-  mkdir_: __module_mkdir___,
-  move_: __module_move___,
-  normalizePath: __module_normalizePath__,
-  normalizePathToArray: __module_normalizePathToArray__,
-  os: __module_os__,
-  parseJson: __module_parseJson__,
-  parseString: __module_parseString__,
-  prompt_: __module_prompt___,
-  read_: __module_read___,
-  recover_: __module_recover___,
-  remove_: __module_remove___,
-  rename_: __module_rename___,
-  require: __module_require__,
-  root: __module_root__,
-  say_: __module_say___,
-  sleep_: __module_sleep___,
-  source_: __module_source___,
-  stat_: __module_stat___,
-  task: __module_task__,
-  type: __module_type__,
-  watch: __module_watch__,
-  wrapList: __module_wrapList__,
-  write_: __module_write___,
-  zip_: __module_zip___
+  argv: mArgv,
+  backup_: mBackup,
+  clean_: mClean,
+  compile_: mCompile,
+  copy_: mCopy,
+  download_: mDownload,
+  exec_: mExec,
+  formatArgument: mFormatArgument,
+  getBasename: mGetBasename,
+  getDirname: mGetDirname,
+  getExtname: mGetExtname,
+  getFilename: mGetFilename,
+  getName: mGetName,
+  home: mHome,
+  i: mI,
+  info: mInfo,
+  isExisted_: mIsExisted,
+  isSame_: mIsSame,
+  link_: mLink,
+  mkdir_: mMkdir,
+  move_: mMove,
+  normalizePath: mNormalizePath,
+  normalizePathToArray: mNormalizePathToArray,
+  os: mOs,
+  parseJson: mParseJson,
+  parseString: mParseString,
+  prompt_: mPrompt,
+  read_: mRead,
+  recover_: mRecover,
+  remove_: mRemove,
+  rename_: mRename,
+  require: mRequire,
+  root: mRoot,
+  say_: mSay,
+  sleep_: mSleep,
+  source_: mSource,
+  stat_: mStat,
+  type: mType,
+  watch: mWatch,
+  wrapList: mWrapList,
+  write_: mWrite,
+  zip_: mZip,
 }
 
 // ---
