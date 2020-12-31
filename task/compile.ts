@@ -3,10 +3,7 @@ import $ from '../source'
 // function
 
 async function compile_(): Promise<void> {
-  await $.compile_([
-    './source/**/*.ts',
-    '!./source/type.ts',
-  ], '.', {
+  await $.compile_('./source/**/*.ts', '.', {
     base: './source',
     minify: false,
   })
