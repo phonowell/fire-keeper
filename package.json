@@ -34,8 +34,12 @@
     "@types/download": "^6.2.4",
     "@types/fs-extra": "^9.0.6",
     "@types/gulp": "^4.0.7",
+    "@types/gulp-clean-css": "^4.3.0",
+    "@types/gulp-htmlmin": "^1.3.32",
     "@types/gulp-if": "0.0.33",
     "@types/gulp-rename": "0.0.33",
+    "@types/gulp-stylus": "^2.7.1",
+    "@types/gulp-terser": "^1.2.1",
     "@types/gulp-watch": "^4.1.34",
     "@types/lodash": "^4.14.166",
     "@types/mocha": "^8.2.0",
@@ -63,9 +67,8 @@
   "scripts": {
     "alice": "ts-node task/alice",
     "build": "npm run alice build",
-    "publish": "npm run alice publish && npm publish",
     "test": "npm run build && mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.179"
+  "version": "0.0.180"
 }

@@ -49,8 +49,7 @@ async function main_(
   if (listExtnameOfString.includes(extname)) return $.parseString(content)
   if (extname === '.json') return $.parseJson(content)
   if (['.yaml', '.yml'].includes(extname)) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const jsYaml = require('js-yaml')
+    const jsYaml = (await import('js-yaml')).default
     return jsYaml.safeLoad(content)
   }
 

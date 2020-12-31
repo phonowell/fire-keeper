@@ -6,6 +6,7 @@ import using from 'gulp-using'
 // interface
 
 declare global {
+  // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
 }
 
@@ -16,299 +17,304 @@ type Option = {
   sourcemaps: boolean
 }
 
+// variable
+
+const mapFn = {
+  '.coffee': compileCoffee_,
+  '.css': compileCss_,
+  '.html': compileHtml_,
+  '.js': compileJs_,
+  '.md': compileMd_,
+  '.pug': compilePug_,
+  '.styl': compileStyl_,
+  '.ts': compileTs_,
+  '.yaml': compileYaml_,
+} as const
+
 // function
 
-class M {
+async function compileCoffee_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-  mapMethod = {
-    '.coffee': 'compileCoffee_',
-    '.css': 'compileCss_',
-    '.html': 'compileHtml_',
-    '.js': 'compileJs_',
-    '.md': 'compileMd_',
-    '.pug': 'compilePug_',
-    '.styl': 'compileStyl_',
-    '.ts': 'compileTs_',
-    '.yaml': 'compileYaml_'
-  } as const
+  const coffee = (await import('gulp-coffee')).default
+  const terser = (await import('gulp-terser')).default
 
-  async compileCoffee_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { bare, base, minify, sourcemaps } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const coffee = require('gulp-coffee')
-      const terser = require('gulp-terser')
+    gulp.src(source, { base, sourcemaps })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(coffee({ bare }))
+      .pipe(gulpIf(!!minify, terser({ safari10: true })))
+      .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { bare, base, minify, sourcemaps } = option
+async function compileHtml_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base, sourcemaps })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(coffee({ bare }))
-        .pipe(gulpIf(!!minify, terser({ safari10: true })))
-        .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve(true))
-    })
-  }
+  const htmlmin = (await import('gulp-htmlmin')).default
+  const rename = (await import('gulp-rename')).default
 
-  async compileHtml_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const htmlmin = require('gulp-htmlmin')
-      const rename = require('gulp-rename')
+    gulp.src(source, { base })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(rename({ extname: '.html' }))
+      .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
+      .pipe(gulp.dest(target))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify } = option
+async function compileCss_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(rename({ extname: '.html' }))
-        .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
-        .pipe(gulp.dest(target))
-        .on('end', () => resolve(true))
-    })
-  }
+  const cleanCss = (await import('gulp-clean-css')).default
 
-  async compileCss_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify, sourcemaps } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const cleanCss = require('gulp-clean-css')
+    gulp.src(source, { base, sourcemaps })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(gulpIf(!!minify, cleanCss()))
+      .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify, sourcemaps } = option
+async function compileJs_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base, sourcemaps })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(gulpIf(!!minify, cleanCss()))
-        .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve(true))
-    })
-  }
+  const terser = (await import('gulp-terser')).default
 
-  async compileJs_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify, sourcemaps } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const terser = require('gulp-terser')
+    gulp.src(source, { base, sourcemaps })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(gulpIf(!!minify, terser({ safari10: true })))
+      .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify, sourcemaps } = option
+async function compileMd_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base, sourcemaps })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(gulpIf(!!minify, terser({ safari10: true })))
-        .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve(true))
-    })
-  }
+  const htmlmin = (await import('gulp-htmlmin')).default
+  const markdown = (await import('gulp-markdown')).default
+  const rename = (await import('gulp-rename')).default
 
-  async compileMd_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const htmlmin = require('gulp-htmlmin')
-      const markdown = require('gulp-markdown')
-      const rename = require('gulp-rename')
+    gulp.src(source, { base })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(markdown({ sanitize: true }))
+      .pipe(rename({ extname: '.html' }))
+      .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
+      .pipe(gulp.dest(target))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify } = option
+async function compilePug_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(markdown({ sanitize: true }))
-        .pipe(rename({ extname: '.html' }))
-        .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
-        .pipe(gulp.dest(target))
-        .on('end', () => resolve(true))
-    })
-  }
+  const pug = (await import('gulp-pug')).default
 
-  async compilePug_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const pug = require('gulp-pug')
+    gulp.src(source, { base })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(pug({ pretty: !minify }))
+      .pipe(gulp.dest(target))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify } = option
+async function compileStyl_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(pug({ pretty: !minify }))
-        .pipe(gulp.dest(target))
-        .on('end', () => resolve(true))
-    })
-  }
+  const stylus = (await import('gulp-stylus')).default
 
-  async compileStyl_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, minify, sourcemaps } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const stylus = require('gulp-stylus')
+    gulp.src(source, { base, sourcemaps })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(stylus({ compress: minify }))
+      .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, minify, sourcemaps } = option
+async function compileTs_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base, sourcemaps })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(stylus({ compress: minify }))
-        .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve(true))
-    })
-  }
+  const ts = (await import('gulp-typescript')).default
+  const tsProject = ts.createProject($.normalizePath('./tsconfig.json'))
 
-  async compileTs_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base, sourcemaps } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const ts = require('gulp-typescript')
-      const tsProject = ts.createProject($.normalizePath('./tsconfig.json'))
+    gulp.src(source, { base, sourcemaps })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(tsProject())
+      // .pipe(gulpIf(!!minify, terser({ ecma: 2016, safari10: true })))
+      .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base, sourcemaps } = option
+async function compileYaml_(
+  source: string,
+  target: string,
+  option: Option
+): Promise<void> {
 
-      gulp.src(source, { base, sourcemaps })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(tsProject())
-        // .pipe(gulpIf(!!minify, terser({ ecma: 2016, safari10: true })))
-        .pipe(gulp.dest(target, this.returnSourcemaps(sourcemaps)))
-        .on('end', () => resolve(true))
-    })
-  }
+  const yaml = (await import('gulp-yaml')).default
 
-  async compileYaml_(
-    source: string,
-    target: string,
-    option: Option
-  ): Promise<void> {
+  const { base } = option
 
-    await new Promise(resolve => {
+  await new Promise(resolve => {
 
-      const yaml = require('gulp-yaml')
+    gulp.src(source, { base })
+      .pipe(gulpIf(!$.info().isSilent, using()))
+      .pipe(yaml({ safe: true }))
+      .pipe(gulp.dest(target))
+      .on('end', () => resolve(true))
+  })
+}
 
-      const { base } = option
+async function main_(
+  source: string | string[],
+  option?: Partial<Option>
+): Promise<void>
+async function main_(
+  source: string | string[],
+  target: string,
+  option?: Partial<Option>
+): Promise<void>
+async function main_(
+  ...args: [string | string[], ...unknown[]]
+): Promise<void> {
 
-      gulp.src(source, { base })
-        .pipe(gulpIf(!$.info().isSilent, using()))
-        .pipe(yaml({ safe: true }))
-        .pipe(gulp.dest(target))
-        .on('end', () => resolve(true))
-    })
-  }
+  const { source, target, option } = await formatArgument_(args)
 
-  async execute_(
-    source: string | string[],
-    option?: Partial<Option>
-  ): Promise<void>
-  async execute_(
-    source: string | string[],
-    target: string,
-    option?: Partial<Option>
-  ): Promise<void>
-  async execute_(...args: [string | string[], ...unknown[]]): Promise<void> {
+  // message
+  let msg = `compiled ${$.wrapList(args[0])}`
+  if (target)
+    msg += ` to '${target}'`
 
-    const { source, target, option } = await this.formatArgument_(args)
+  // each
+  await Promise.all(source.map(
+    src => (async () => {
 
-    // message
-    let msg = `compiled ${$.wrapList(args[0])}`
-    if (target)
-      msg += ` to '${target}'`
-
-    // each
-    for (const src of source) {
       const { extname, dirname } = $.getName(src)
 
-      const method = this.mapMethod[
-        extname as keyof M['mapMethod']
+      const fn = mapFn[
+        extname as keyof typeof mapFn
       ]
-      if (!method) throw new Error(`compile_/error: invalid extname '${extname}'`)
+      if (!fn) throw new Error(`compile_/error: invalid extname '${extname}'`)
 
-      await this[method](
+      await fn(
         src,
         target ? $.normalizePath(target) : dirname,
         option
       )
-    }
+    })()
+  ))
 
-    $.info('compile', msg)
+  $.info('compile', msg)
+}
+
+async function formatArgument_(
+  input: [string | string[], ...unknown[]]
+): Promise<{
+  source: string[]
+  target: string
+  option: Option
+}> {
+
+  const listSource = await $.source_(input[0])
+  let target = ''
+  let option: Partial<Option> = {}
+
+  if (input.length === 2) {
+    if (typeof input[1] === 'string')
+      target = input[1]
+    else
+      option = input[1] as Partial<Option>
+  } else if (input.length === 3) {
+    target = input[1] as string
+    option = input[2] as Partial<Option>
   }
 
-  async formatArgument_(
-    input: [string | string[], ...unknown[]]
-  ): Promise<{
-    source: string[]
-    target: string
-    option: Option
-  }> {
+  // base
+  if (!option.base)
+    if (typeof input[0] === 'string') {
+      if (input[0].includes('/*'))
+        option.base = $.normalizePath(input[0])
+          .replace(/\/\*.*/u, '')
+    } else
+      option.base = ''
 
-    const listSource = await $.source_(input[0])
-    let target = ''
-    let option: Partial<Option> = {}
-
-    if (input.length === 2) {
-      if (typeof input[1] === 'string')
-        target = input[1]
-      else
-        option = input[1] as Partial<Option>
-    } else if (input.length === 3) {
-      target = input[1] as string
-      option = input[2] as Partial<Option>
-    }
-
-    // base
-    if (!option.base)
-      if (typeof input[0] === 'string') {
-        if (input[0].includes('/*'))
-          option.base = $.normalizePath(input[0])
-            .replace(/\/\*.*/, '')
-      } else
-        option.base = ''
-
-    return {
-      source: listSource,
-      target,
-      option: Object.assign({
-        bare: false,
-        base: '',
-        minify: true,
-        sourcemaps: false
-      }, option)
-    }
-  }
-
-  returnSourcemaps(
-    sourcemaps: boolean | undefined
-  ): { sourcemaps: true } | undefined {
-    return sourcemaps === true ? { sourcemaps } : undefined
+  return {
+    option: {
+      bare: false,
+      base: '',
+      minify: true,
+      sourcemaps: false,
+      ...option,
+    },
+    source: listSource,
+    target,
   }
 }
 
+function returnSourcemaps(
+  sourcemaps: boolean | undefined
+): { sourcemaps: true } | undefined {
+
+  return sourcemaps === true ? { sourcemaps } : undefined
+}
+
 // export
-const m = new M()
-export default m.execute_.bind(m) as typeof m.execute_
+export default main_
