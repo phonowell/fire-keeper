@@ -248,23 +248,22 @@ async function main_(
     msg += ` to '${target}'`
 
   // each
-  await Promise.all(source.map(
-    src => (async () => {
+  for (const src of source) {
 
-      const { extname, dirname } = getName(src)
+    const { extname, dirname } = getName(src)
 
-      const fn = mapFn[
-        extname as keyof typeof mapFn
-      ]
-      if (!fn) throw new Error(`compile_/error: invalid extname '${extname}'`)
+    const fn = mapFn[
+      extname as keyof typeof mapFn
+    ]
+    if (!fn) throw new Error(`compile_/error: invalid extname '${extname}'`)
 
-      await fn(
-        src,
-        target ? normalizePath(target) : dirname,
-        option
-      )
-    })()
-  ))
+    // eslint-disable-next-line no-await-in-loop
+    await fn(
+      src,
+      target ? normalizePath(target) : dirname,
+      option
+    )
+  }
 
   info('compile', msg)
 }
