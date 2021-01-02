@@ -48,7 +48,7 @@
     "@types/yargs": "^15.0.12",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
-    "eslint": "^7.16.0",
+    "eslint": "^7.17.0",
     "mocha": "^8.2.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
@@ -69,8 +69,8 @@
     "build": "npm run alice build && npm run alice compile",
     "clean": "npm run alice clean",
     "compile": "npm run alice compile",
-    "test": "npm run build && mocha -r ts-node/register -t 10000 ./test/index.ts"
+    "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.184"
+  "version": "0.0.185"
 }

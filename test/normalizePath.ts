@@ -7,7 +7,8 @@ function a(): void {
 
   const question = './source'
   const answer = `${$.root()}/source`
-  if ($.normalizePath(question) !== answer) throw new Error('0')
+  if ($.normalizePath(question) !== answer)
+    throw new Error(`${$.normalizePath(question)} !== ${answer}`)
 }
 
 function b(): void {
@@ -28,7 +29,9 @@ function d(): void {
 
   const question = '../a'
   const answer = path.normalize(`${$.root()}/../a`)
-  if ($.normalizePath(question) !== answer) throw new Error('0')
+    .replace(/\\/gu, '/')
+  if ($.normalizePath(question) !== answer)
+    throw new Error(`${$.normalizePath(question)} !== ${answer}`)
 }
 
 // export

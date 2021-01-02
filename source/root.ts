@@ -1,9 +1,8 @@
-import path from 'path'
-
 // function
 
 function main(): string {
-  return path.normalize(process.cwd())
+  return process.cwd()
+    .replace(/\\/gu, '/')
 }
 
 // export

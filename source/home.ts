@@ -1,10 +1,10 @@
 import os from 'os'
-import path from 'path'
 
 // function
 
 function main(): string {
-  return path.normalize(os.homedir())
+  return os.homedir()
+    .replace(/\\/gu, '/')
 }
 
 // export

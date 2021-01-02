@@ -18,8 +18,8 @@ export class M {
   }
   isFrozen = false
   isSilent = false
-  regHome = new RegExp(`^${home()}`, 'gu')
-  regRoot = new RegExp(`^${root()}`, 'gu')
+  regHome = new RegExp(`^${home().replace(/\\/gu, '\\\\')}`, 'gu')
+  regRoot = new RegExp(`^${root().replace(/\\/gu, '\\\\')}`, 'gu')
   separator = `${kleur.gray('›')} `
 
   execute(): this
