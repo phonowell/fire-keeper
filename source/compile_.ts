@@ -201,7 +201,6 @@ async function compileTs_(
     gulp.src(source, { base, sourcemaps })
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(tsProject())
-      // .pipe(gulpIf(!!minify, terser({ ecma: 2016, safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
   })
@@ -244,8 +243,7 @@ async function main_(
 
   // message
   let msg = `compiled ${wrapList(args[0])}`
-  if (target)
-    msg += ` to '${target}'`
+  if (target) msg += ` to '${target}'`
 
   // each
   for (const src of source) {

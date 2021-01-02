@@ -34,7 +34,10 @@ async function load_(): Promise<string[]> {
 
 async function main_(): Promise<void> {
 
-  let task = $.argv()._[0].toString()
+  let task = $.argv()._[0]
+    ? $.argv()._[0].toString()
+    : ''
+
   const list = await load_()
 
   if (!task) {

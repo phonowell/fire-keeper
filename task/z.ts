@@ -4,11 +4,7 @@ import $ from '../source'
 
 async function main_(): Promise<void> {
 
-  await $.exec_([
-    'npm run alice y',
-    'nrm use npm',
-    'npm run alice x',
-  ])
+  $.i($.normalizePath('C:\\\\测试地址\\A'))
 }
 
 // export
