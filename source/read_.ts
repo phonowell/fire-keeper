@@ -54,7 +54,7 @@ async function main_(
   if (extname === '.json') return parseJson(content)
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
-    return jsYaml.safeLoad(content)
+    return jsYaml.load(content)
   }
 
   return content
