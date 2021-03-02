@@ -4,6 +4,7 @@ import info from './info'
 import isExisted_ from './isExisted_'
 import normalizePathToArray from './normalizePathToArray'
 import parseString from './parseString'
+import plumber from 'gulp-plumber'
 import remove_ from './remove_'
 import rename from 'gulp-rename'
 import using from 'gulp-using'
@@ -28,6 +29,7 @@ async function main_(
 
   await new Promise(resolve => {
     gulp.src(listSource, { allowEmpty: true })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(rename(option as rename.ParsedPath | rename.Options))
       .pipe(gulp.dest((e): string => {

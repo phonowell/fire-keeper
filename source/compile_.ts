@@ -3,6 +3,7 @@ import gulp from 'gulp'
 import gulpIf from 'gulp-if'
 import info from './info'
 import normalizePath from './normalizePath'
+import plumber from 'gulp-plumber'
 import source_ from './source_'
 import using from 'gulp-using'
 import wrapList from './wrapList'
@@ -51,12 +52,12 @@ async function compileCoffee_(
   await new Promise(resolve => {
 
     gulp.src(source, { base, sourcemaps })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(coffee({ bare }))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -74,12 +75,12 @@ async function compileHtml_(
   await new Promise(resolve => {
 
     gulp.src(source, { base })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -96,11 +97,11 @@ async function compileCss_(
   await new Promise(resolve => {
 
     gulp.src(source, { base, sourcemaps })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(gulpIf(!!minify, cleanCss()))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -117,11 +118,11 @@ async function compileJs_(
   await new Promise(resolve => {
 
     gulp.src(source, { base, sourcemaps })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -140,13 +141,13 @@ async function compileMd_(
   await new Promise(resolve => {
 
     gulp.src(source, { base })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(markdown({ sanitize: true }))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -163,11 +164,11 @@ async function compilePug_(
   await new Promise(resolve => {
 
     gulp.src(source, { base })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(pug({ pretty: !minify }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -184,11 +185,11 @@ async function compileStyl_(
   await new Promise(resolve => {
 
     gulp.src(source, { base, sourcemaps })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(stylus({ compress: minify }))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -206,11 +207,11 @@ async function compileTs_(
   await new Promise(resolve => {
 
     gulp.src(source, { base, sourcemaps })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(tsProject())
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -227,11 +228,11 @@ async function compileYaml_(
   await new Promise(resolve => {
 
     gulp.src(source, { base })
+      .pipe(plumber())
       .pipe(gulpIf(!info().isSilent, using()))
       .pipe(yaml({ safe: true }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
-      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
