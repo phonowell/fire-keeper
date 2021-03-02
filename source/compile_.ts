@@ -56,6 +56,7 @@ async function compileCoffee_(
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -78,6 +79,7 @@ async function compileHtml_(
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -98,6 +100,7 @@ async function compileCss_(
       .pipe(gulpIf(!!minify, cleanCss()))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -118,6 +121,7 @@ async function compileJs_(
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -142,6 +146,7 @@ async function compileMd_(
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -162,6 +167,7 @@ async function compilePug_(
       .pipe(pug({ pretty: !minify }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -182,6 +188,7 @@ async function compileStyl_(
       .pipe(stylus({ compress: minify }))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -203,6 +210,7 @@ async function compileTs_(
       .pipe(tsProject())
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
@@ -223,6 +231,7 @@ async function compileYaml_(
       .pipe(yaml({ safe: true }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
+      .on('error', (e: Error) => console.log(e.stack))
   })
 }
 
