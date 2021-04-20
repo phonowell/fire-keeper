@@ -24,25 +24,13 @@ type Option = {
 
 // variable
 
-const mapFn = {
-  '.coffee': compileCoffee_,
-  '.css': compileCss_,
-  '.html': compileHtml_,
-  '.js': compileJs_,
-  '.md': compileMd_,
-  '.pug': compilePug_,
-  '.styl': compileStyl_,
-  '.ts': compileTs_,
-  '.yaml': compileYaml_,
-} as const
-
 // function
 
-async function compileCoffee_(
+const compileCoffee_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const coffee = (await import('gulp-coffee')).default
   const terser = (await import('gulp-terser')).default
@@ -61,11 +49,11 @@ async function compileCoffee_(
   })
 }
 
-async function compileHtml_(
+const compileHtml_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const htmlmin = (await import('gulp-htmlmin')).default
   const rename = (await import('gulp-rename')).default
@@ -84,11 +72,11 @@ async function compileHtml_(
   })
 }
 
-async function compileCss_(
+const compileCss_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const cleanCss = (await import('gulp-clean-css')).default
 
@@ -105,11 +93,11 @@ async function compileCss_(
   })
 }
 
-async function compileJs_(
+const compileJs_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const terser = (await import('gulp-terser')).default
 
@@ -126,11 +114,11 @@ async function compileJs_(
   })
 }
 
-async function compileMd_(
+const compileMd_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const htmlmin = (await import('gulp-htmlmin')).default
   const markdown = (await import('gulp-markdown')).default
@@ -151,11 +139,11 @@ async function compileMd_(
   })
 }
 
-async function compilePug_(
+const compilePug_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const pug = (await import('gulp-pug')).default
 
@@ -172,11 +160,11 @@ async function compilePug_(
   })
 }
 
-async function compileStyl_(
+const compileStyl_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const stylus = (await import('gulp-stylus')).default
 
@@ -193,11 +181,11 @@ async function compileStyl_(
   })
 }
 
-async function compileTs_(
+const compileTs_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const ts = (await import('gulp-typescript')).default
   const tsProject = ts.createProject(normalizePath('./tsconfig.json'))
@@ -215,11 +203,11 @@ async function compileTs_(
   })
 }
 
-async function compileYaml_(
+const compileYaml_ = async (
   source: string,
   target: string,
-  option: Option
-): Promise<void> {
+  option: Option,
+): Promise<void> => {
 
   const yaml = (await import('gulp-yaml')).default
 
@@ -236,14 +224,26 @@ async function compileYaml_(
   })
 }
 
+const mapFn = {
+  '.coffee': compileCoffee_,
+  '.css': compileCss_,
+  '.html': compileHtml_,
+  '.js': compileJs_,
+  '.md': compileMd_,
+  '.pug': compilePug_,
+  '.styl': compileStyl_,
+  '.ts': compileTs_,
+  '.yaml': compileYaml_,
+} as const
+
 async function main_(
   source: string | string[],
-  option?: Partial<Option>
+  option?: Partial<Option>,
 ): Promise<void>
 async function main_(
   source: string | string[],
   target: string,
-  option?: Partial<Option>
+  option?: Partial<Option>,
 ): Promise<void>
 async function main_(
   ...args: [string | string[], ...unknown[]]
@@ -276,13 +276,13 @@ async function main_(
   info('compile', msg)
 }
 
-async function formatArgument_(
-  input: [string | string[], ...unknown[]]
+const formatArgument_ = async (
+  input: [string | string[], ...unknown[]],
 ): Promise<{
   source: string[]
   target: string
   option: Option
-}> {
+}> => {
 
   const listSource = await source_(input[0])
   let target = ''
@@ -320,12 +320,9 @@ async function formatArgument_(
   }
 }
 
-function returnSourcemaps(
-  sourcemaps: boolean | undefined
-): { sourcemaps: true } | undefined {
-
-  return sourcemaps === true ? { sourcemaps } : undefined
-}
+const returnSourcemaps = (
+  sourcemaps: boolean | undefined,
+): { sourcemaps: true } | undefined => sourcemaps === true ? { sourcemaps } : undefined
 
 // export
 export default main_

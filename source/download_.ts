@@ -12,11 +12,11 @@ interface Option {
 
 // function
 
-function format(
+const format = (
   source: string,
   target: string,
-  option: string | Partial<Option>
-): [string, string, Option] {
+  option: string | Partial<Option>,
+): [string, string, Option] => {
 
   if (!source) throw new Error('download_/error: empty source')
   const _source = source.startsWith('//')
@@ -38,11 +38,11 @@ function format(
   return [_source, _target, optionX]
 }
 
-async function main_(
+const main_ = async (
   source: string,
   target: string,
-  option: string | Partial<Option> = {}
-): Promise<void> {
+  option: string | Partial<Option> = {},
+): Promise<void> => {
 
   await download(...format(source, target, option))
   info('download', `downloaded '${source}' to '${target}', as '${parseString(option)}'`)

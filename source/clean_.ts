@@ -5,9 +5,9 @@ import source_ from './source_'
 
 // function
 
-async function main_(
-  source: string | string[]
-): Promise<void> {
+const main_ = async (
+  source: string | string[],
+): Promise<void> => {
 
   const listSource = normalizePathToArray(source)
   await remove_(listSource)

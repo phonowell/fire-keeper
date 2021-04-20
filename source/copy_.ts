@@ -18,11 +18,11 @@ declare global {
 
 // function
 
-async function main_(
+const main_ = async (
   source: string | string[],
   target: string,
-  option?: string | rename.Options
-): Promise<void> {
+  option?: string | rename.Options,
+): Promise<void> => {
 
   const listSource = normalizePathToArray(source)
 

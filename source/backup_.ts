@@ -6,15 +6,15 @@ import wrapList from './wrapList'
 
 // function
 
-async function main_(
-  source: string | string[]
-): Promise<void> {
+const main_ = async (
+  source: string | string[],
+): Promise<void> => {
 
   const msg = `backed up ${wrapList(source)}`
 
-  async function sub_(
-    src: string
-  ): Promise<void> {
+  const sub_ = async (
+    src: string,
+  ): Promise<void> => {
 
     const suffix = getExtname(src)
     const extname = '.bak'
