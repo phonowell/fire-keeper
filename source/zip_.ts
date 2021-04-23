@@ -20,11 +20,11 @@ type Option = {
 
 // function
 
-async function archive_(
+const archive_ = async (
   listSource: string[],
   target: string,
   option: Required<Option>
-): Promise<void> {
+): Promise<void> => {
 
   const { base, filename } = option
   const spinner = ora().start()
@@ -82,15 +82,15 @@ async function archive_(
   })
 }
 
-function formatArgument(
+const formatArgument = (
   source: string | string[],
   target: string,
   option: string | Option
-): [string[], string, Required<Option>] {
+): [string[], string, Required<Option>] => {
 
   const listSource = normalizePathToArray(source)
   const pathTarget = normalizePath(
-    target || getDirname(listSource[0]).replace(/\*/gu, '')
+    target || getDirname(listSource[0]).replace(/\*/g, '')
   )
 
   let [base, filename] = typeof option === 'string'
@@ -113,9 +113,9 @@ function formatArgument(
   ]
 }
 
-function getBase(
+const getBase = (
   listSource: string[]
-): string {
+): string => {
 
   const [source] = listSource
 
@@ -125,11 +125,11 @@ function getBase(
   return getDirname(source)
 }
 
-async function main_(
+const main_ = async (
   source: string | string[],
   target = '',
   option: string | Option = ''
-): Promise<void> {
+): Promise<void> => {
 
   await archive_(...formatArgument(source, target, option))
   info('zip', `zipped ${wrapList(source)} to '${target}', as '${option.toString()}'`)

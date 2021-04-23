@@ -49,4 +49,5 @@ const main_ = async (
 }
 
 // export
+export type { Option }
 export default main_

@@ -1,10 +1,27 @@
 import { $ } from './index'
 
+// interface
+
+type ListQuestion = [
+  number,
+  string,
+  boolean,
+  number[],
+  { [key: string]: number },
+  () => void,
+  Date,
+  Error,
+  Buffer,
+  null,
+  undefined,
+  typeof NaN,
+]
+
 // function
 
 function a(): void {
 
-  const listQuestion = [
+  const listQuestion: ListQuestion = [
     42, // number
     'Aloha', // string
     true, // boolean
@@ -24,10 +41,10 @@ function a(): void {
     'true',
     '[1,2,3]',
     '{"a":1,"b":2}',
-    (listQuestion[5] as () => void).toString(),
-    (listQuestion[6] as Date).toString(),
-    (listQuestion[7] as Error).toString(),
-    (listQuestion[8] as Buffer).toString(),
+    listQuestion[5].toString(),
+    listQuestion[6].toString(),
+    listQuestion[7].toString(),
+    listQuestion[8].toString(),
     'null',
     'undefined',
     'NaN',

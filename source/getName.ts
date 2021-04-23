@@ -1,20 +1,24 @@
 import path from 'path'
 
-// function
+// interface
 
-function main(
-  input: string
-): {
+type Name = {
   basename: string
   dirname: string
   extname: string
   filename: string
-} {
+}
+
+// function
+
+const main = (
+  input: string,
+): Name => {
 
   if (!input) throw new Error(`getName/error: empty input`)
 
   const _input = input
-    .replace(/\\/gu, '/')
+    .replace(/\\/g, '/')
 
   const extname = path.extname(_input)
   const basename = path.basename(_input, extname)

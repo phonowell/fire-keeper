@@ -2,12 +2,9 @@ import getName from './getName'
 
 // function
 
-function main(
-  input: string
-): string {
-
-  return getName(input).basename
-}
+const main = (
+  input: string,
+): string => getName(input).basename
 
 // export
 export default main

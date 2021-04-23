@@ -5,9 +5,9 @@ import root from './root'
 
 // function
 
-function main(
-  source: string
-): string {
+const main = (
+  source: string,
+): string => {
 
   // validate
   if (typeof source !== 'string') return ''
@@ -20,17 +20,17 @@ function main(
     : source
 
   // replace . & ~
-  _source = _source.replace(/\.{2}/gu, '__parent_directory__')
+  _source = _source.replace(/\.{2}/g, '__parent_directory__')
   if (_source[0] === '.') _source = _source.replace(/\./u, root())
   else if (_source[0] === '~') _source = _source.replace(/~/u, home())
-  _source = _source.replace(/__parent_directory__/gu, '..')
+  _source = _source.replace(/__parent_directory__/g, '..')
 
   // replace ../ to ./../ at start
   if (_source.startsWith('..')) _source = `${root()}/${_source}`
 
   // normalize
   _source = path.normalize(_source)
-    .replace(/\\/gu, '/')
+    .replace(/\\/g, '/')
 
   // absolute
   if (!path.isAbsolute(_source))

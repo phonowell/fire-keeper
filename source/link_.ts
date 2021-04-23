@@ -4,10 +4,10 @@ import normalizePath from './normalizePath'
 
 // function
 
-async function main_(
+const main_ = async (
   source: string,
   target: string,
-): Promise<void> {
+): Promise<void> => {
 
   const _source = normalizePath(source)
   const _target = normalizePath(target)

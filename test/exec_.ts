@@ -2,7 +2,7 @@ import { $ } from './index'
 
 // function
 
-async function a_(): Promise<void> {
+const a_ = async (): Promise<void> => {
 
   const [status, result] = await $.exec_('npm -v')
 
@@ -10,7 +10,7 @@ async function a_(): Promise<void> {
   if (!~result.search(/\d+\.\d+\.\d+/u)) throw new Error('1')
 }
 
-async function b_(): Promise<void> {
+const b_ = async (): Promise<void> => {
 
   const [status] = await $.exec_('fire-keeper-error')
   if (status) throw new Error('0')

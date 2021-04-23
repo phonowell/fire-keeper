@@ -5,6 +5,17 @@ import parseJson from './parseJson'
 import parseString from './parseString'
 import source_ from './source_'
 
+// interface
+
+type Main = {
+  <T>(source: string): Promise<T>
+  (source: string, option: Option): Promise<Buffer | null>
+}
+
+type Option = {
+  raw: boolean
+}
+
 // variable
 
 const listExtnameOfString = [
@@ -23,11 +34,10 @@ const listExtnameOfString = [
 
 // function
 
-async function main_(
+const main_: Main = async (
   source: string,
-  option: {
-    raw?: boolean
-  } = {}): Promise<unknown> {
+  option?: Option,
+) => {
 
   let _source = source
   const listSource = await source_(_source)
@@ -38,7 +48,7 @@ async function main_(
   }
   _source = listSource[0]
 
-  const content = await new Promise(resolve => {
+  const content = await new Promise<Buffer>(resolve => {
     fs.readFile(_source, (err, data) => {
       if (err) throw err
       resolve(data)
@@ -46,7 +56,7 @@ async function main_(
   })
   info('file', `read '${source}'`)
 
-  if (option.raw) return content
+  if (option?.raw) return content
 
   const extname = getExtname(_source)
 

@@ -23,10 +23,10 @@ const Lang = {
 
 // function
 
-async function main_(
+const main_ = async (
   text: string,
   option: Option = {}
-): Promise<void> {
+): Promise<void> => {
 
   for (let message of formatArgument(text)) {
     info('say', message)
@@ -34,7 +34,7 @@ async function main_(
     if (!os('macos')) continue
 
     message = message
-      .replace(/[#()-]/gu, '')
+      .replace(/[#()-]/g, '')
       .trim()
 
     if (!message) continue

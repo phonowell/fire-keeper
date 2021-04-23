@@ -2,9 +2,9 @@ import $ from '../source'
 
 // function
 
-async function main_(): Promise<void> {
+const main_ = async (): Promise<void> => {
 
-  $.i($.normalizePath('C:\\\\测试地址\\A'))
+  $.i($.os())
 }
 
 // export

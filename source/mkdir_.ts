@@ -5,9 +5,9 @@ import wrapList from './wrapList'
 
 // function
 
-async function main_(
-  source: string | string[]
-): Promise<void> {
+const main_ = async (
+  source: string | string[],
+): Promise<void> => {
   if (!source) throw new Error('mkdir_/error: empty source')
 
   const listSource = normalizePathToArray(source)

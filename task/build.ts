@@ -67,7 +67,7 @@ async function replaceTest_(): Promise<void> {
       if (!~_cont.search(/throw\s\d/u)) return
       await $.write_(source, _cont
         // throw 0 -> throw new Error('0')
-        .replace(/throw\s(\d+)/gu, "throw new Error('$1')")
+        .replace(/throw\s(\d+)/g, "throw new Error('$1')")
       )
     })()
   ))

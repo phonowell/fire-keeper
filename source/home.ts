@@ -2,10 +2,8 @@ import os from 'os'
 
 // function
 
-function main(): string {
-  return os.homedir()
-    .replace(/\\/gu, '/')
-}
+const main = (): string => os.homedir()
+  .replace(/\\/g, '/')
 
 // export
 export default main

@@ -2,9 +2,9 @@ import formatArgument from './formatArgument'
 
 // function
 
-function main(
+const main = (
   input: unknown
-): string {
+): string => {
 
   if (!input) return ''
   return formatArgument(input)

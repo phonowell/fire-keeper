@@ -4,50 +4,30 @@ import kleur from 'kleur'
 import os from './os'
 import trimEnd from 'lodash/trimEnd'
 
+// interface
+
+type Option = {
+  ignoreError?: boolean
+  silent?: boolean
+}
+
 // function
 
-export class M {
+class M {
 
   process: child.ChildProcessWithoutNullStreams | undefined
-
   spawn: typeof child.spawn = child.spawn
-
-  static info(
-    type: string,
-    message: string
-  ): void {
-
-    let msg = message.trim()
-    if (!msg) return
-
-    msg = msg
-      .replace(/\r/gu, '\n')
-      .replace(/\n{2,}/gu, '')
-
-    msg = type === 'error'
-      ? kleur.red(msg)
-      : kleur.gray(msg)
-
-    console.log(msg)
-  }
-
-  static parseMessage(buffer: Uint8Array): string {
-    return trimEnd(buffer.toString(), '\n')
-  }
 
   async execute_(
     cmd: string | string[],
-    option: {
-      ignoreError?: boolean
-      silent?: boolean
-    } = {}
+    option: Option = {},
   ): Promise<[boolean, string]> {
 
     const stringCmd = cmd instanceof Array
       ? cmd.join(' && ')
       : cmd
 
-    const [cmder, arg] = os() === 'macos'
+    const [cmder, arg] = os('macos')
       ? ['/bin/sh', ['-c', stringCmd]]
       : ['cmd.exe', ['/s', '/c', stringCmd]]
 
@@ -76,8 +56,32 @@ export class M {
       })
     })
   }
+
+  static info(
+    type: string,
+    message: string,
+  ): void {
+
+    let msg = message.trim()
+    if (!msg) return
+
+    msg = msg
+      .replace(/\r/g, '\n')
+      .replace(/\n{2,}/g, '')
+
+    msg = type === 'error'
+      ? kleur.red(msg)
+      : kleur.gray(msg)
+
+    console.log(msg)
+  }
+
+  static parseMessage(buffer: Uint8Array): string {
+    return trimEnd(buffer.toString(), '\n')
+  }
 }
 
 // export
 const m = new M()
+export { M }
 export default m.execute_.bind(m)

@@ -19,7 +19,7 @@ async function b_(): Promise<void> {
   const content = { message }
   await $.write_(source, content)
 
-  if ((await $.read_(source) as { message: string }).message !== message) throw new Error('0')
+  if ((await $.read_<{ message: string }>(source)).message !== message) throw new Error('0')
 }
 b_.description = '.json'
 
@@ -50,7 +50,7 @@ async function e_(): Promise<void> {
   const content = 'a little message'
   await $.write_(source, `- value: ${content}`)
 
-  const cont = await $.read_(source) as [{ value: string }]
+  const cont = await $.read_<[{ value: string }]>(source)
   if (cont[0].value !== content) throw new Error('0')
 }
 e_.description = '.yaml'

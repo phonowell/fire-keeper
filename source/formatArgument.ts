@@ -1,12 +1,19 @@
 import type from './type'
 
+// interface
+
+type Main = {
+  (input: boolean): boolean[]
+  (input: number): number[]
+  (input: string | string[]): string[]
+  (input: unknown | unknown[]): unknown[]
+}
+
 // function
 
-function main(input: boolean): boolean[]
-function main(input: number): number[]
-function main(input: string | string[]): string[]
-function main(input: unknown | unknown[]): unknown[]
-function main(input: unknown): unknown[] {
+const main: Main = (
+  input: unknown,
+) => {
 
   if (input instanceof Array) return [...input]
   if (typeof input === 'boolean') return [input]

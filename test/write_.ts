@@ -7,7 +7,7 @@ async function a_(): Promise<void> {
   const content = 'a little message'
   await $.write_(source, content)
 
-  if ((await $.read_(source) as string) !== content) throw new Error('0')
+  if ((await $.read_<string>(source)) !== content) throw new Error('0')
 }
 a_.description = '.txt'
 
@@ -17,7 +17,7 @@ async function b_(): Promise<void> {
   const content = { message }
   await $.write_(source, content)
 
-  const cont: { message: string } = await $.read_(source) as { message: string }
+  const cont = await $.read_<{ message: string }>(source)
   if (cont.message !== message) throw new Error('0')
 }
 b_.description = '.json'

@@ -4,7 +4,7 @@ type OS = 'linux' | 'macos' | 'unknown' | 'windows'
 
 // variable
 
-let cache = '' as OS
+let cache: OS
 
 // function
 
@@ -12,21 +12,16 @@ function main(): OS
 function main(os: OS): boolean
 function main(
   os?: OS
-): OS | boolean {
+) {
 
   if (!cache) {
-    const string = process.platform
-
-    if (string.includes('darwin'))
-      cache = 'macos'
-    else if (string.includes('win'))
-      cache = 'windows'
-    else
-      cache = 'unknown'
+    const { platform } = process
+    if (platform.includes('darwin')) cache = 'macos'
+    else if (platform.includes('win')) cache = 'windows'
+    else cache = 'unknown'
   }
 
   if (os) return os === cache
-
   return cache
 }
 

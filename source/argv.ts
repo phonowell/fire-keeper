@@ -2,7 +2,7 @@ import yargs from 'yargs'
 
 // function
 
-const main = (): typeof yargs.argv => yargs.argv
+const main = () => yargs.argv
 
 // export
 export default main

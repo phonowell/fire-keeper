@@ -6,20 +6,22 @@ import root from './root'
 
 // interface
 
-type FnAsync = (...args: unknown[]) => Promise<unknown>
+type CacheType = {
+  [key: string]: string
+}
 
 // function
 
-export class M {
+class M {
 
   cacheTime: [number, string] = [0, '']
-  cacheType: { [key: string]: string } = {
+  cacheType: CacheType = {
     default: '',
   }
   isFrozen = false
   isSilent = false
-  regHome = new RegExp(`^${home().replace(/\\/gu, '\\\\')}`, 'gu')
-  regRoot = new RegExp(`^${root().replace(/\\/gu, '\\\\')}`, 'gu')
+  regHome = new RegExp(`^${home().replace(/\\/g, '\\\\')}`, 'g')
+  regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
   separator = `${kleur.gray('›')} `
 
   execute(): this
@@ -27,7 +29,7 @@ export class M {
   execute<T>(type: string, input: T): T
   execute(
     ...args: [string] | [string, unknown]
-  ): unknown {
+  ) {
 
     if (!args.length) return this
     const [type, message] = args.length > 1
@@ -44,9 +46,9 @@ export class M {
     return message
   }
 
-  async freeze_(
-    fn_: FnAsync
-  ): Promise<unknown> {
+  async freeze_<T>(
+    fn_: () => Promise<T>,
+  ): Promise<T> {
 
     Object.assign(this, {
       isFrozen: true,
@@ -74,14 +76,13 @@ export class M {
   }
 
   pause(): void {
-
     if (this.isFrozen) return
     this.isSilent = true
   }
 
   render(
     type: string,
-    message: string
+    message: string,
   ): string {
 
     return [
@@ -93,13 +94,13 @@ export class M {
   }
 
   renderContent(
-    message: string
+    message: string,
   ): string {
 
     return this.renderPath(message)
       // 'xxx'
-      .replace(/'.*?'/gu, text => {
-        const cont = text.replace(/'/gu, '')
+      .replace(/'.*?'/g, text => {
+        const cont = text.replace(/'/g, '')
         return cont
           ? kleur.magenta(cont)
           : "''"
@@ -107,7 +108,7 @@ export class M {
   }
 
   renderPath(
-    message: string
+    message: string,
   ): string {
 
     return message
@@ -128,7 +129,7 @@ export class M {
   }
 
   renderType(
-    type: string
+    type: string,
   ): string {
 
     const cache = this.cacheType
@@ -150,9 +151,9 @@ export class M {
     this.isSilent = false
   }
 
-  async whisper_(
-    fn_: FnAsync
-  ): Promise<unknown> {
+  async whisper_<T>(
+    fn_: () => Promise<T>,
+  ): Promise<T> {
 
     this.pause()
     const result = await fn_()
@@ -163,4 +164,5 @@ export class M {
 
 // export
 const m = new M()
+export { M }
 export default m.execute.bind(m)

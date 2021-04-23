@@ -2,12 +2,9 @@ import normalizePath from './normalizePath'
 
 // function
 
-function main(
+const main = <T>(
   source: string
-): unknown {
-
-  return require(normalizePath(source))
-}
+): T => require(normalizePath(source))
 
 // export
 export default main

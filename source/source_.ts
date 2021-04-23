@@ -12,9 +12,9 @@ const keyPrivate = '__is_listed_as_source__'
 
 // function
 
-async function main_(
-  source: string | string[] | ListSource
-): Promise<string[]> {
+const main_ = async (
+  source: string | string[] | ListSource,
+): Promise<string[]> => {
 
   if (!source) return []
   if (source instanceof Array)

@@ -29,7 +29,7 @@ function d(): void {
 
   const question = '../a'
   const answer = path.normalize(`${$.root()}/../a`)
-    .replace(/\\/gu, '/')
+    .replace(/\\/g, '/')
   if ($.normalizePath(question) !== answer)
     throw new Error(`${$.normalizePath(question)} !== ${answer}`)
 }

@@ -10,11 +10,11 @@ type Argument = Parameters<typeof copy_>
 
 // function
 
-async function main_(
+const main_ = async (
   source: Argument[0],
   target: Argument[1],
-  option?: Argument[2]
-): Promise<void> {
+  option?: Argument[2],
+): Promise<void> => {
 
   const listSource = await source_(source)
   if (!listSource.length) return

@@ -8,7 +8,7 @@ function a(): void {
   const object = { message: string }
   const buffer = Buffer.from($.parseString(object))
 
-  const result = $.parseJson(buffer) as { [key: string]: unknown }
+  const result = $.parseJson<{ [key: string]: unknown }>(buffer)
   if (result.message !== string) throw new Error('0')
 }
 

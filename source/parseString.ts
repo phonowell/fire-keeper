@@ -2,9 +2,9 @@ import type from './type'
 
 // function
 
-function main(
-  input: unknown
-): string {
+const main = (
+  input: unknown,
+): string => {
 
   if (typeof input === 'string')
     return input

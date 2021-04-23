@@ -19,10 +19,10 @@ declare global {
 
 // function
 
-async function main_(
+const main_ = async (
   source: string | string[],
-  option: string | rename.Options
-): Promise<void> {
+  option: string | rename.Options,
+): Promise<void> => {
 
   const listSource: string[] = normalizePathToArray(source)
   const listHistory: string[][] = []
@@ -41,9 +41,9 @@ async function main_(
 
   info().pause()
 
-  async function sub_(
-    item: string[]
-  ): Promise<void> {
+  const sub_ = async (
+    item: string[],
+  ): Promise<void> => {
 
     if (await isExisted_(item[1]))
       await remove_(item[0])

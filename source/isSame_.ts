@@ -6,9 +6,9 @@ import stat_ from './stat_'
 
 // function
 
-async function main_(
-  source: string | string[]
-): Promise<boolean> {
+const main_ = async (
+  source: string | string[],
+): Promise<boolean> => {
 
   const listSource = normalizePathToArray(source)
   if (listSource.length < 2) return false
@@ -35,9 +35,7 @@ async function main_(
   let cacheCont = ''
   for (const src of listSource) {
     // eslint-disable-next-line no-await-in-loop
-    let cont = await info().whisper_(async () =>
-      read_(src)
-    ) as string
+    let cont = await info().whisper_<string>(async () => await read_(src))
     if (!cont) return false
 
     cont = parseString(cont)

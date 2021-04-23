@@ -6,9 +6,9 @@ import wrapList from './wrapList'
 
 // function
 
-async function main_(
-  source: string
-): Promise<fs.Stats | null> {
+const main_ = async (
+  source: string,
+): Promise<fs.Stats | null> => {
 
   const _source = normalizePath(source)
 

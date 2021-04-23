@@ -5,9 +5,9 @@ import wrapList from './wrapList'
 
 // function
 
-async function main_(
-  source: string | string[]
-): Promise<void> {
+const main_ = async (
+  source: string | string[],
+): Promise<void> => {
 
   const listSource = await source_(source)
   if (!listSource.length) return

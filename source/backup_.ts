@@ -19,9 +19,7 @@ const main_ = async (
     const suffix = getExtname(src)
     const extname = '.bak'
 
-    await info().whisper_(async () => {
-      await copy_(src, '', { extname, suffix })
-    })
+    await info().whisper_(async () => await copy_(src, '', { extname, suffix }))
   }
   await Promise.all((await source_(source)).map(sub_))
 
