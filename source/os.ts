@@ -11,7 +11,7 @@ let cache: OS
 function main(): OS
 function main(os: OS): boolean
 function main(
-  os?: OS
+  os?: OS,
 ) {
 
   if (!cache) {

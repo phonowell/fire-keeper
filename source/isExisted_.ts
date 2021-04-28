@@ -1,16 +1,16 @@
+import $normalizePathToArray from './normalizePathToArray'
 import fse from 'fs-extra'
-import normalizePathToArray from './normalizePathToArray'
 
 // function
 
-const main_ = async (
+const main = async (
   source: string | string[],
 ): Promise<boolean> => {
 
-  const group = normalizePathToArray(source)
+  const group = $normalizePathToArray(source)
   if (!group.length) return false
 
-  const sub_ = async (
+  const sub = async (
     src: string,
   ): Promise<boolean> => {
 
@@ -20,9 +20,9 @@ const main_ = async (
     return fse.pathExists(src)
   }
 
-  const listResult = await Promise.all(group.map(sub_))
+  const listResult = await Promise.all(group.map(sub))
   return !listResult.includes(false)
 }
 
 // export
-export default main_
+export default main

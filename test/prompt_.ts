@@ -3,7 +3,7 @@ import { $ } from './index'
 // function
 
 function a(): void {
-  if ($.type($.prompt_) !== 'asyncfunction') throw new Error('0')
+  if ($.type($.prompt_) !== 'function') throw new Error('0')
 }
 
 // export

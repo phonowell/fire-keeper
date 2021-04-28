@@ -16,7 +16,7 @@ async function a_(): Promise<void> {
 
   if (!await $.isExisted_(target)) throw new Error('0')
 
-  const cont = (await $.read_(target)) as string
+  const cont = (await $.read_<string>(target))
   $.i(cont)
   if (cont.startsWith('(function()')) throw new Error('1')
   if (!cont.includes('sourceMappingURL=')) throw new Error('2')
@@ -33,7 +33,7 @@ async function b_(): Promise<void> {
 
   if (!await $.isExisted_(target)) throw new Error('0')
 
-  const cont = (await $.read_(target)) as string
+  const cont = (await $.read_<string>(target))
   $.i(cont)
   if (cont.includes('sourceMappingURL=')) throw new Error('1')
 }

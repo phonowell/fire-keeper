@@ -1,61 +1,70 @@
-import $ from '../source'
+import $argv from '../source/argv'
+import $getBasename from '../source/getBasename'
+import $prompt_ from '../source/prompt_'
+import $source_ from '../source/source_'
+import _compact from 'lodash/compact'
+
 // interface
 
-type FnAsync = (...args: unknown[]) => Promise<unknown>
+type FnAsync = <T>() => Promise<T>
 
 // function
 
-async function ask_(
-  list: string[]
-): Promise<string> {
+const ask = async (
+  list: string[],
+): Promise<string> => {
 
-  const answer = await $.prompt_({
+  const answer = await $prompt_({
     id: 'default-task',
     list,
     message: 'select a task',
     type: 'auto',
   })
   if (!answer) return ''
-  if (!list.includes(answer)) return ask_(list)
+  if (!list.includes(answer)) return ask(list)
   return answer
 }
 
-async function load_(): Promise<string[]> {
+const load = async (): Promise<string[]> => {
 
-  const listSource = await $.source_('./task/*.ts')
-  const listResult: string[] = []
-  for (const source of listSource) {
-    const basename = $.getBasename(source)
-    if (basename === 'alice') continue
-    listResult.push(basename)
-  }
-  return listResult
+  const listSource = await $source_([
+    './task/*.js',
+    './task/*.ts',
+    '!*.d.ts',
+  ])
+
+  const listResult = listSource.map((source) => {
+    const basename = $getBasename(source)
+    return basename === 'alice'
+      ? ''
+      : basename
+  })
+
+  return _compact(listResult)
 }
 
-async function main_(): Promise<void> {
+const main = async (): Promise<void> => {
 
-  let task = $.argv()._[0]
-    ? $.argv()._[0].toString()
-    : ''
+  const task = $argv()._[0]
+    ? $argv()._[0].toString()
+    : await (async () => ask(await load()))()
 
-  const list = await load_()
-
-  if (!task) {
-    task = await ask_(list)
-    if (!task) return
-  }
-
-  await run_(task)
+  if (!task) return
+  await run(task)
 }
 
-async function run_(
-  task: string
-): Promise<void> {
+const run = async (
+  task: string,
+): Promise<void> => {
 
-  const [source] = await $.source_(`./task/${task}.ts`)
-  const fn_: FnAsync = (await import(source)).default
-  await fn_()
+  const [source] = await $source_([
+    `./task/${task}.js`,
+    `./task/${task}.ts`,
+  ])
+
+  const fn: FnAsync = (await import(source)).default
+  await fn()
 }
 
 // execute
-main_()
+main()

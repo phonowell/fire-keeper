@@ -1,34 +1,35 @@
-import copy_ from './copy_'
-import info from './info'
-import parseString from './parseString'
-import remove_ from './remove_'
-import source_ from './source_'
-import wrapList from './wrapList'
+import $copy from './copy_'
+import $info from './info'
+import $parseString from './parseString'
+import $remove from './remove_'
+import $source from './source_'
+import $wrapList from './wrapList'
+
 // interface
 
-type Argument = Parameters<typeof copy_>
+type Argument = Parameters<typeof $copy>
 
 // function
 
-const main_ = async (
+const main = async (
   source: Argument[0],
   target: Argument[1],
   option?: Argument[2],
 ): Promise<void> => {
 
-  const listSource = await source_(source)
+  const listSource = await $source(source)
   if (!listSource.length) return
 
-  await info().whisper_(async () => {
-    await copy_(listSource, target, option)
-    await remove_(listSource)
+  await $info().whisper_(async () => {
+    await $copy(listSource, target, option)
+    await $remove(listSource)
   })
 
-  let msg = `moved ${wrapList(listSource)} to '${target}'`
+  let msg = `moved ${$wrapList(listSource)} to '${target}'`
   if (option)
-    msg += `, as '${parseString(option)}'`
-  info('file', msg)
+    msg += `, as '${$parseString(option)}'`
+  $info('file', msg)
 }
 
 // export
-export default main_
+export default main

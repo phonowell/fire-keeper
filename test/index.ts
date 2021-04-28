@@ -100,15 +100,15 @@ const temp = $.normalizePath('./temp')
 
 // function
 
-async function clean_(): Promise<void> {
-  await $.info().whisper_(async () => $.remove_(temp))
+const clean = async (): Promise<void> => {
+  await $.info().whisper_($.remove_(temp))
 }
 
 // execute
 
-const { target } = $.argv()
+const { target } = $.argv<{ target?: string }>()
 const listModule = target
-  ? [target as string]
+  ? [target]
   : Object.keys(mapModule)
 
 for (const name of listModule)
@@ -117,11 +117,11 @@ for (const name of listModule)
     for (const key of listIt) {
       const fn_ = mapModule[name][key] as FnAsync & { description?: string }
       it(fn_.description || (listIt.length === 1 ? 'default' : key), async () => {
-        await clean_()
-        await $.info().freeze_(fn_)
+        await clean()
+        await $.info().freeze(fn_)
       })
     }
   })
 
 // export
-export { $, clean_, temp }
+export { $, clean, temp }

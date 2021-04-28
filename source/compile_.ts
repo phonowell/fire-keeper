@@ -1,18 +1,23 @@
+import $info from './info'
+import $normalizePath from './normalizePath'
+import $source from './source_'
+import $wrapList from './wrapList'
 import getName from './getName'
 import gulp from 'gulp'
 import gulpIf from 'gulp-if'
-import info from './info'
-import normalizePath from './normalizePath'
 import plumber from 'gulp-plumber'
-import source_ from './source_'
 import using from 'gulp-using'
-import wrapList from './wrapList'
 
 // interface
 
 declare global {
   // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
+}
+
+type Main = {
+  (source: Source, Option?: OptionPartial): Promise<void>
+  (source: Source, target: string, option?: OptionPartial): Promise<void>
 }
 
 type Option = {
@@ -22,11 +27,15 @@ type Option = {
   sourcemaps: boolean
 }
 
+type OptionPartial = Partial<Option>
+
+type Source = string | string[]
+
 // variable
 
 // function
 
-const compileCoffee_ = async (
+const compileCoffee = async (
   source: string,
   target: string,
   option: Option,
@@ -41,7 +50,7 @@ const compileCoffee_ = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(coffee({ bare }))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
@@ -49,7 +58,7 @@ const compileCoffee_ = async (
   })
 }
 
-const compileHtml_ = async (
+const compileHtml = async (
   source: string,
   target: string,
   option: Option,
@@ -64,7 +73,7 @@ const compileHtml_ = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
@@ -72,7 +81,7 @@ const compileHtml_ = async (
   })
 }
 
-const compileCss_ = async (
+const compileCss = async (
   source: string,
   target: string,
   option: Option,
@@ -86,14 +95,14 @@ const compileCss_ = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(gulpIf(!!minify, cleanCss()))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
   })
 }
 
-const compileJs_ = async (
+const compileJs = async (
   source: string,
   target: string,
   option: Option,
@@ -107,14 +116,14 @@ const compileJs_ = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
   })
 }
 
-const compileMd_ = async (
+const compileMd = async (
   source: string,
   target: string,
   option: Option,
@@ -130,7 +139,7 @@ const compileMd_ = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(markdown({ sanitize: true }))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
@@ -139,7 +148,7 @@ const compileMd_ = async (
   })
 }
 
-const compilePug_ = async (
+const compilePug = async (
   source: string,
   target: string,
   option: Option,
@@ -153,14 +162,14 @@ const compilePug_ = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(pug({ pretty: !minify }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
   })
 }
 
-const compileStyl_ = async (
+const compileStyl = async (
   source: string,
   target: string,
   option: Option,
@@ -174,21 +183,21 @@ const compileStyl_ = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(stylus({ compress: minify }))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
   })
 }
 
-const compileTs_ = async (
+const compileTs = async (
   source: string,
   target: string,
   option: Option,
 ): Promise<void> => {
 
   const ts = (await import('gulp-typescript')).default
-  const tsProject = ts.createProject(normalizePath('./tsconfig.json'))
+  const tsProject = ts.createProject($normalizePath('./tsconfig.json'))
 
   const { base, sourcemaps } = option
 
@@ -196,14 +205,14 @@ const compileTs_ = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(tsProject())
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
   })
 }
 
-const compileYaml_ = async (
+const compileYaml = async (
   source: string,
   target: string,
   option: Option,
@@ -217,7 +226,7 @@ const compileYaml_ = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(yaml({ safe: true }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
@@ -225,34 +234,25 @@ const compileYaml_ = async (
 }
 
 const mapFn = {
-  '.coffee': compileCoffee_,
-  '.css': compileCss_,
-  '.html': compileHtml_,
-  '.js': compileJs_,
-  '.md': compileMd_,
-  '.pug': compilePug_,
-  '.styl': compileStyl_,
-  '.ts': compileTs_,
-  '.yaml': compileYaml_,
+  '.coffee': compileCoffee,
+  '.css': compileCss,
+  '.html': compileHtml,
+  '.js': compileJs,
+  '.md': compileMd,
+  '.pug': compilePug,
+  '.styl': compileStyl,
+  '.ts': compileTs,
+  '.yaml': compileYaml,
 } as const
 
-async function main_(
-  source: string | string[],
-  option?: Partial<Option>,
-): Promise<void>
-async function main_(
-  source: string | string[],
-  target: string,
-  option?: Partial<Option>,
-): Promise<void>
-async function main_(
+const main: Main = async (
   ...args: [string | string[], ...unknown[]]
-): Promise<void> {
+) => {
 
-  const { source, target, option } = await formatArgument_(args)
+  const { source, target, option } = await formatArgument(args)
 
   // message
-  let msg = `compiled ${wrapList(args[0])}`
+  let msg = `compiled ${$wrapList(args[0])}`
   if (target) msg += ` to '${target}'`
 
   // each
@@ -268,15 +268,15 @@ async function main_(
     // eslint-disable-next-line no-await-in-loop
     await fn(
       src,
-      target ? normalizePath(target) : dirname,
+      target ? $normalizePath(target) : dirname,
       option
     )
   }
 
-  info('compile', msg)
+  $info('compile', msg)
 }
 
-const formatArgument_ = async (
+const formatArgument = async (
   input: [string | string[], ...unknown[]],
 ): Promise<{
   source: string[]
@@ -284,7 +284,7 @@ const formatArgument_ = async (
   option: Option
 }> => {
 
-  const listSource = await source_(input[0])
+  const listSource = await $source(input[0])
   let target = ''
   let option: Partial<Option> = {}
 
@@ -302,7 +302,7 @@ const formatArgument_ = async (
   if (!option.base)
     if (typeof input[0] === 'string') {
       if (input[0].includes('/*'))
-        option.base = normalizePath(input[0])
+        option.base = $normalizePath(input[0])
           .replace(/\/\*.*/u, '')
     } else
       option.base = ''
@@ -325,4 +325,4 @@ const returnSourcemaps = (
 ): { sourcemaps: true } | undefined => sourcemaps === true ? { sourcemaps } : undefined
 
 // export
-export default main_
+export default main

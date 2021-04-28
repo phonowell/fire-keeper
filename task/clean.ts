@@ -2,7 +2,7 @@ import $ from '../source'
 
 // function
 
-async function main_(): Promise<void> {
+const main = async (): Promise<void> => {
 
   await Promise.all((await $.source_('./source/*.ts')).map(
     source => (async () => {
@@ -16,4 +16,4 @@ async function main_(): Promise<void> {
 }
 
 // export
-export default main_
+export default main

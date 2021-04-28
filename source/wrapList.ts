@@ -1,13 +1,13 @@
-import formatArgument from './formatArgument'
+import $formatArgument from './formatArgument'
 
 // function
 
 const main = (
-  input: unknown
+  input: unknown,
 ): string => {
 
   if (!input) return ''
-  return formatArgument(input)
+  return $formatArgument(input)
     .map(it => `'${it}'`)
     .join(', ')
 }

@@ -1,8 +1,8 @@
-import os from 'os'
+import $os from 'os'
 
 // function
 
-const main = (): string => os.homedir()
+const main = (): string => $os.homedir()
   .replace(/\\/g, '/')
 
 // export

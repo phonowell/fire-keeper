@@ -46,12 +46,12 @@
     "@types/gulp-watch": "^4.1.34",
     "@types/lodash": "^4.14.168",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^14.14.41",
+    "@types/node": "^15.0.0",
     "@types/prompts": "^2.0.10",
     "@types/yargs": "^16.0.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "eslint": "^7.24.0",
+    "eslint": "^7.25.0",
     "mocha": "^8.3.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
@@ -75,5 +75,5 @@
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.189"
+  "version": "0.0.190"
 }

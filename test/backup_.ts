@@ -4,7 +4,8 @@ import isEqual from 'lodash/isEqual'
 
 // function
 
-async function a_(): Promise<void> {
+const a_ = async (): Promise<void> => {
+
   await $.copy_([
     './license.md',
     './readme.md',
@@ -23,13 +24,17 @@ async function a_(): Promise<void> {
   await $.backup_(listSource)
   if (!await $.isExisted_(listTarget)) throw new Error('0')
 
-  const listDataSource = [] as Uint8Array[]
-  for (const it of listSource)
-    listDataSource.push(await $.read_(it, { raw: true }) as Uint8Array)
-  const listDataTarget = [] as Uint8Array[]
-  for (const it of listTarget)
-    listDataTarget.push(await $.read_(it) as Uint8Array)
-  if (!isEqual(listDataSource, listDataTarget)) throw new Error('1')
+  const listDataSource: Buffer[] = []
+  for (const it of listSource) {
+    const data = await $.read_(it, { raw: true })
+    if (!data) throw new Error('1')
+    listDataSource.push(data)
+  }
+
+  const listDataTarget: Buffer[] = []
+  for (const it of listTarget) listDataTarget.push(await $.read_<Buffer>(it))
+
+  if (!isEqual(listDataSource, listDataTarget)) throw new Error('2')
 }
 
 // export

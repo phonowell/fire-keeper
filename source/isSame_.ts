@@ -1,16 +1,16 @@
-import info from './info'
-import normalizePathToArray from './normalizePathToArray'
-import parseString from './parseString'
-import read_ from './read_'
-import stat_ from './stat_'
+import $info from './info'
+import $normalizePathToArray from './normalizePathToArray'
+import $parseString from './parseString'
+import $read from './read_'
+import $stat from './stat_'
 
 // function
 
-const main_ = async (
+const main = async (
   source: string | string[],
 ): Promise<boolean> => {
 
-  const listSource = normalizePathToArray(source)
+  const listSource = $normalizePathToArray(source)
   if (listSource.length < 2) return false
 
   // size
@@ -18,7 +18,7 @@ const main_ = async (
 
   for (const src of listSource) {
     // eslint-disable-next-line no-await-in-loop
-    const stat = await stat_(src)
+    const stat = await $stat(src)
     if (!stat) return false
 
     const { size } = stat
@@ -35,10 +35,10 @@ const main_ = async (
   let cacheCont = ''
   for (const src of listSource) {
     // eslint-disable-next-line no-await-in-loop
-    let cont = await info().whisper_<string>(async () => await read_(src))
+    let cont = await $info().whisper_<string>(async () => await $read(src))
     if (!cont) return false
 
-    cont = parseString(cont)
+    cont = $parseString(cont)
 
     if (!cacheCont) {
       cacheCont = cont
@@ -52,4 +52,4 @@ const main_ = async (
 }
 
 // export
-export default main_
+export default main

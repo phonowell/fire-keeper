@@ -1,15 +1,15 @@
+import $getExtname from './getExtname'
+import $info from './info'
+import $parseJson from './parseJson'
+import $parseString from './parseString'
+import $source from './source_'
 import fs from 'fs'
-import getExtname from './getExtname'
-import info from './info'
-import parseJson from './parseJson'
-import parseString from './parseString'
-import source_ from './source_'
 
 // interface
 
 type Main = {
   <T>(source: string): Promise<T>
-  (source: string, option: Option): Promise<Buffer | null>
+  (source: string, option: Option): Promise<Buffer | undefined>
 }
 
 type Option = {
@@ -34,17 +34,17 @@ const listExtnameOfString = [
 
 // function
 
-const main_: Main = async (
+const main: Main = async (
   source: string,
   option?: Option,
 ) => {
 
   let _source = source
-  const listSource = await source_(_source)
+  const listSource = await $source(_source)
 
   if (!listSource.length) {
-    info('file', `'${source}' not existed`)
-    return null
+    $info('file', `'${source}' not existed`)
+    return undefined
   }
   _source = listSource[0]
 
@@ -54,14 +54,14 @@ const main_: Main = async (
       resolve(data)
     })
   })
-  info('file', `read '${source}'`)
+  $info('file', `read '${source}'`)
 
   if (option?.raw) return content
 
-  const extname = getExtname(_source)
+  const extname = $getExtname(_source)
 
-  if (listExtnameOfString.includes(extname)) return parseString(content)
-  if (extname === '.json') return parseJson(content)
+  if (listExtnameOfString.includes(extname)) return $parseString(content)
+  if (extname === '.json') return $parseJson(content)
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
     return jsYaml.load(content)
@@ -71,4 +71,4 @@ const main_: Main = async (
 }
 
 // export
-export default main_
+export default main

@@ -2,10 +2,10 @@ import $ from '../source'
 
 // function
 
-const main_ = async (): Promise<void> => {
+const main = async () => {
 
-  $.i($.os())
+  const os = $.os()
 }
 
 // export
-export default main_
+export default main

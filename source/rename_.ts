@@ -1,14 +1,14 @@
+import $info from './info'
+import $isExisted from './isExisted_'
+import $normalizePathToArray from './normalizePathToArray'
+import $parseString from './parseString'
+import $remove from './remove_'
+import $wrapList from './wrapList'
 import gulp from 'gulp'
 import gulpIf from 'gulp-if'
-import info from './info'
-import isExisted_ from './isExisted_'
-import normalizePathToArray from './normalizePathToArray'
-import parseString from './parseString'
 import plumber from 'gulp-plumber'
-import remove_ from './remove_'
 import rename from 'gulp-rename'
 import using from 'gulp-using'
-import wrapList from './wrapList'
 
 // interface
 
@@ -19,18 +19,18 @@ declare global {
 
 // function
 
-const main_ = async (
+const main = async (
   source: string | string[],
   option: string | rename.Options,
 ): Promise<void> => {
 
-  const listSource: string[] = normalizePathToArray(source)
+  const listSource: string[] = $normalizePathToArray(source)
   const listHistory: string[][] = []
 
   await new Promise(resolve => {
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
-      .pipe(gulpIf(!info().isSilent, using()))
+      .pipe(gulpIf(!$info().isSilent, using()))
       .pipe(rename(option as rename.ParsedPath | rename.Options))
       .pipe(gulp.dest((e): string => {
         listHistory.push([...e.history])
@@ -39,21 +39,21 @@ const main_ = async (
       .on('end', (): void => resolve(true))
   })
 
-  info().pause()
+  $info().pause()
 
-  const sub_ = async (
+  const sub = async (
     item: string[],
   ): Promise<void> => {
 
-    if (await isExisted_(item[1]))
-      await remove_(item[0])
+    if (await $isExisted(item[1]))
+      await $remove(item[0])
   }
-  await Promise.all(listHistory.map(sub_))
+  await Promise.all(listHistory.map(sub))
 
-  info().resume()
+  $info().resume()
 
-  info('file', `renamed ${wrapList(source)} as '${parseString(option)}'`)
+  $info('file', `renamed ${$wrapList(source)} as '${$parseString(option)}'`)
 }
 
 // export
-export default main_
+export default main

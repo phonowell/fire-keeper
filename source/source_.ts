@@ -1,5 +1,5 @@
 import gulp from 'gulp'
-import normalizePathToArray from './normalizePathToArray'
+import $normalizePathToArray from './normalizePathToArray'
 
 // interface
 
@@ -12,17 +12,17 @@ const keyPrivate = '__is_listed_as_source__'
 
 // function
 
-const main_ = async (
+const main = async (
   source: string | string[] | ListSource,
 ): Promise<string[]> => {
 
   if (!source) return []
   if (source instanceof Array)
-    if ((source as ListSource)[keyPrivate]) return source
-  const group = normalizePathToArray(source)
+    if (source[keyPrivate]) return source
+  const group = $normalizePathToArray(source)
 
   return new Promise(resolve => {
-    const listSource = [] as ListSource
+    const listSource: ListSource = []
     listSource[keyPrivate] = true
 
     gulp.src(group, {
@@ -35,4 +35,4 @@ const main_ = async (
 }
 
 // export
-export default main_
+export default main

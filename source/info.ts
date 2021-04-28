@@ -1,8 +1,8 @@
-import home from './home'
-import i from './i'
+import $home from './home'
+import $i from './i'
+import $parseString from './parseString'
+import $root from './root'
 import kleur from 'kleur'
-import parseString from './parseString'
-import root from './root'
 
 // interface
 
@@ -20,8 +20,8 @@ class M {
   }
   isFrozen = false
   isSilent = false
-  regHome = new RegExp(`^${home().replace(/\\/g, '\\\\')}`, 'g')
-  regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
+  regHome = new RegExp(`^${$home().replace(/\\/g, '\\\\')}`, 'g')
+  regRoot = new RegExp(`^${$root().replace(/\\/g, '\\\\')}`, 'g')
   separator = `${kleur.gray('›')} `
 
   execute(): this
@@ -38,27 +38,32 @@ class M {
 
     if (this.isSilent) return message
 
-    const msg = parseString(message)
+    const msg = $parseString(message)
       .trim()
     if (!msg) return message
 
-    i(this.render(type, msg))
+    $i(this.render(type, msg))
     return message
   }
 
-  async freeze_<T>(
-    fn_: () => Promise<T>,
+  async freeze<T>(
+    fn: Promise<T> | (() => Promise<T>),
   ): Promise<T> {
 
     Object.assign(this, {
       isFrozen: true,
       isSilent: true,
     })
-    const result = await fn_()
+
+    const result = typeof fn === 'function'
+      ? await fn()
+      : await fn
+
     Object.assign(this, {
       isFrozen: false,
       isSilent: false,
     })
+
     return result
   }
 
@@ -152,12 +157,17 @@ class M {
   }
 
   async whisper_<T>(
-    fn_: () => Promise<T>,
+    fn: Promise<T> | (() => Promise<T>),
   ): Promise<T> {
 
     this.pause()
-    const result = await fn_()
+
+    const result = typeof fn === 'function'
+      ? await fn()
+      : await fn
+
     this.resume()
+
     return result
   }
 }

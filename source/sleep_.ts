@@ -2,7 +2,7 @@ import info from './info'
 
 // function
 
-const main_ = async (
+const main = async (
   delay = 0,
 ): Promise<void> => {
 
@@ -11,4 +11,4 @@ const main_ = async (
 }
 
 // export
-export default main_
+export default main

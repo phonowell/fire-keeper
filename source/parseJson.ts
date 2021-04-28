@@ -1,4 +1,4 @@
-import type from './type'
+import $type from './type'
 
 // interface
 
@@ -20,7 +20,7 @@ const main: Main = (
   if (typeof input === 'string') return JSON.parse(input)
   if (input instanceof Array) return input
   if (input instanceof Uint8Array) return JSON.parse(input.toString())
-  const _type = type(input)
+  const _type = $type(input)
   if (_type === 'object') return input
   throw new Error(`parseJson/error: invalid type '${_type}'`)
 }

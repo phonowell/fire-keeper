@@ -3,7 +3,7 @@ import { $, temp } from '.'
 
 // function
 
-async function a_(): Promise<void> {
+const a_ = async (): Promise<void> => {
 
   $.i(temp)
 

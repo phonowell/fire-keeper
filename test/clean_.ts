@@ -2,7 +2,7 @@ import { $, temp } from './index'
 
 // function
 
-async function a_(): Promise<void> {
+const a_ = async (): Promise<void> => {
   const source = `${temp}/a.txt`
   await $.write_(source, 'text')
   await $.clean_(source)
@@ -12,7 +12,7 @@ async function a_(): Promise<void> {
 }
 a_.description = 'normal'
 
-async function b_(): Promise<void> {
+const b_ = async (): Promise<void> => {
   const listSource = [
     `${temp}/a.txt`,
     `${temp}/b.txt`,
@@ -26,7 +26,7 @@ async function b_(): Promise<void> {
 }
 b_.description = 'file existed'
 
-async function c_(): Promise<void> {
+const c_ = async (): Promise<void> => {
   const listSource = [
     `${temp}/a.txt`,
     `${temp}/b/b.txt`,

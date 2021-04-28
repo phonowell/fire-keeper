@@ -2,17 +2,17 @@ import $ from '../source'
 
 // function
 
-async function compile_(): Promise<void> {
+const compile = async (): Promise<void> => {
   await $.compile_('./source/**/*.ts', '.', {
     base: './source',
     minify: false,
   })
 }
 
-async function main_(): Promise<void> {
+const main = async (): Promise<void> => {
   await $.exec_('npm run clean')
-  await compile_()
+  await compile()
 }
 
 // export
-export default main_
+export default main

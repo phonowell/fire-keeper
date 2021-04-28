@@ -1,7 +1,7 @@
+import $info from './info'
+import $normalizePath from './normalizePath'
+import $parseString from './parseString'
 import download from 'download'
-import info from './info'
-import normalizePath from './normalizePath'
-import parseString from './parseString'
 
 // interface
 
@@ -24,7 +24,7 @@ const format = (
     : source
 
   if (!target) throw new Error('download_/error: empty target')
-  const _target = normalizePath(target)
+  const _target = $normalizePath(target)
 
   const _option = typeof option === 'string'
     ? { filename: option }
@@ -38,16 +38,16 @@ const format = (
   return [_source, _target, optionX]
 }
 
-const main_ = async (
+const main = async (
   source: string,
   target: string,
   option: string | Partial<Option> = {},
 ): Promise<void> => {
 
   await download(...format(source, target, option))
-  info('download', `downloaded '${source}' to '${target}', as '${parseString(option)}'`)
+  $info('download', `downloaded '${source}' to '${target}', as '${$parseString(option)}'`)
 }
 
 // export
 export type { Option }
-export default main_
+export default main

@@ -1,15 +1,15 @@
+import $getBasename from './getBasename'
+import $getDirname from './getDirname'
+import $info from './info'
+import $normalizePath from './normalizePath'
+import $normalizePathToArray from './normalizePathToArray'
+import $source from './source_'
+import $wrapList from './wrapList'
+import _trim from 'lodash/trim'
 import archiver from 'archiver'
 import fs from 'fs'
-import getBasename from './getBasename'
-import getDirname from './getDirname'
-import info from './info'
 import kleur from 'kleur'
-import normalizePath from './normalizePath'
-import normalizePathToArray from './normalizePathToArray'
 import ora from 'ora'
-import source_ from './source_'
-import trim from 'lodash/trim'
-import wrapList from './wrapList'
 
 // interface
 
@@ -18,18 +18,20 @@ type Option = {
   filename?: string
 }
 
+type OptionRequired = Required<Option>
+
 // function
 
-const archive_ = async (
+const execute = async (
   listSource: string[],
   target: string,
-  option: Required<Option>
+  option: OptionRequired,
 ): Promise<void> => {
 
   const { base, filename } = option
   const spinner = ora().start()
 
-  const listResource = await source_(listSource)
+  const listResource = await $source(listSource)
 
   await new Promise(resolve => {
 
@@ -47,12 +49,12 @@ const archive_ = async (
     })
 
     archive.on('entry', e => {
-      message = info().renderPath(`${e.name}`)
+      message = $info().renderPath(`${e.name}`)
     })
 
     archive.on('error', e => {
       spinner.fail(e.message)
-      throw (e)
+      throw e
     })
 
     archive.on('progress', e => {
@@ -85,12 +87,12 @@ const archive_ = async (
 const formatArgument = (
   source: string | string[],
   target: string,
-  option: string | Option
-): [string[], string, Required<Option>] => {
+  option: string | Option,
+): [string[], string, OptionRequired] => {
 
-  const listSource = normalizePathToArray(source)
-  const pathTarget = normalizePath(
-    target || getDirname(listSource[0]).replace(/\*/g, '')
+  const listSource = $normalizePathToArray(source)
+  const pathTarget = $normalizePath(
+    target || $getDirname(listSource[0]).replace(/\*/g, '')
   )
 
   let [base, filename] = typeof option === 'string'
@@ -100,8 +102,8 @@ const formatArgument = (
       option.filename || '',
     ]
 
-  base = normalizePath(base || getBase(listSource))
-  if (!filename) filename = `${getBasename(pathTarget)}.zip`
+  base = $normalizePath(base || getBase(listSource))
+  if (!filename) filename = `${$getBasename(pathTarget)}.zip`
 
   return [
     listSource,
@@ -114,26 +116,26 @@ const formatArgument = (
 }
 
 const getBase = (
-  listSource: string[]
+  listSource: string[],
 ): string => {
 
   const [source] = listSource
 
   if (source.includes('*'))
-    return trim(source.replace(/\*.*/u, ''), '/')
+    return _trim(source.replace(/\*.*/u, ''), '/')
 
-  return getDirname(source)
+  return $getDirname(source)
 }
 
-const main_ = async (
+const main = async (
   source: string | string[],
   target = '',
-  option: string | Option = ''
+  option: string | Option = '',
 ): Promise<void> => {
 
-  await archive_(...formatArgument(source, target, option))
-  info('zip', `zipped ${wrapList(source)} to '${target}', as '${option.toString()}'`)
+  await execute(...formatArgument(source, target, option))
+  $info('zip', `zipped ${$wrapList(source)} to '${target}', as '${option.toString()}'`)
 }
 
 // export
-export default main_
+export default main

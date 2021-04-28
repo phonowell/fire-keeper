@@ -1,7 +1,7 @@
-import exec_ from './exec_'
-import formatArgument from './formatArgument'
-import info from './info'
-import os from './os'
+import $exec from './exec_'
+import $formatArgument from './formatArgument'
+import $info from './info'
+import $os from './os'
 
 // interface
 
@@ -23,15 +23,15 @@ const Lang = {
 
 // function
 
-const main_ = async (
+const main = async (
   text: string,
-  option: Option = {}
+  option: Option = {},
 ): Promise<void> => {
 
-  for (let message of formatArgument(text)) {
-    info('say', message)
+  for (let message of $formatArgument(text)) {
+    $info('say', message)
 
-    if (!os('macos')) continue
+    if (!$os('macos')) continue
 
     message = message
       .replace(/[#()-]/g, '')
@@ -41,18 +41,15 @@ const main_ = async (
 
     const listCmd = ['say']
 
-    if (option.lang)
-      listCmd.push(`--voice=${Lang[option.lang]}`)
-
-    if (option.voice)
-      listCmd.push(`--voice=${option.voice}`)
+    if (option.lang) listCmd.push(`--voice=${Lang[option.lang]}`)
+    if (option.voice) listCmd.push(`--voice=${option.voice}`)
 
     listCmd.push(message)
 
     // eslint-disable-next-line no-await-in-loop
-    await exec_(listCmd.join(' '), { silent: true })
+    await $exec(listCmd.join(' '), { silent: true })
   }
 }
 
 // export
-export default main_
+export default main

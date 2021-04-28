@@ -3,12 +3,12 @@ import camelCase from 'lodash/camelCase'
 
 // function
 
-async function main_(): Promise<void> {
-  await replace_()
-  await replaceTest_()
+const main = async (): Promise<void> => {
+  await replace()
+  await replaceTest()
 }
 
-async function pickModule_(): Promise<string> {
+const pickModule = async (): Promise<string> => {
 
   const listModule = (await $.source_([
     './source/*.ts',
@@ -24,19 +24,19 @@ async function pickModule_(): Promise<string> {
   ].join('\n')
 }
 
-async function replace_(): Promise<void> {
+const replace = async (): Promise<void> => {
 
   const content = [
-    await pickModule_(),
+    await pickModule(),
     '',
     '// ---',
   ]
-  const cont = (await $.read_('./source/index.ts') as string)
+  const cont = (await $.read_<string>('./source/index.ts'))
     .replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
   await $.write_('./source/index.ts', cont)
 }
 
-async function replaceTest_(): Promise<void> {
+const replaceTest = async (): Promise<void> => {
 
   const listModule = await $.source_([
     './test/*.ts',
@@ -74,4 +74,4 @@ async function replaceTest_(): Promise<void> {
 }
 
 // export
-export default main_
+export default main

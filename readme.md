@@ -5,7 +5,7 @@
 ## 安装
 
 ```shell
-npm install --save-dev fire-keeper
+npm i fire-keeper
 ```
 
 ## 使用
@@ -19,22 +19,17 @@ import $ from 'fire-keeper'
 之后就可以愉快地玩耍啦。
 
 ```typescript
-$.task('build', async () => await $.compile_('./source/index.ts'))
+$.task('build', $.compile_('./source/index.ts'))
 ```
 
 ## 方法
 
 注意，以`_`结尾的方法均为`async function`，需要加`await`调用。
 
-~~详情请查阅文档。~~
-
-详情请查阅[index.d.ts](./dist/index.d.ts)。
-
 ## 编译
 
 ```shell
-npm run alice build // 构建到.ts
-npm run alice compile // 编译到.js
+npm run build
 ```
 
 ## 测试
@@ -47,6 +42,4 @@ npm run test
 
 该项目**可能并不稳定**。
 
-新版本由于从`coffeescript`迁徙到`typescript`的缘故，可能**更加不稳定**了。
-
-**最后更新于`2020/8/26`。**
+**最后更新于`2021/4/28`。**

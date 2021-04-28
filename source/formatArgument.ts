@@ -1,4 +1,4 @@
-import type from './type'
+import $type from './type'
 
 // interface
 
@@ -19,7 +19,7 @@ const main: Main = (
   if (typeof input === 'boolean') return [input]
   if (typeof input === 'number') return [input]
   if (typeof input === 'string') return [input]
-  throw new Error(`formatArgument/error: invalid type '${type(input)}'`)
+  throw new Error(`formatArgument/error: invalid type '${$type(input)}'`)
 }
 
 // export

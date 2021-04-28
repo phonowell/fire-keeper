@@ -5,7 +5,7 @@ import wrapList from './wrapList'
 
 // function
 
-const main_ = async (
+const main = async (
   source: string | string[],
 ): Promise<void> => {
 
@@ -14,16 +14,16 @@ const main_ = async (
 
   const msg = `removed ${wrapList(source)}`
 
-  async function sub_(
-    src: string
-  ): Promise<void> {
+  const sub = async (
+    src: string,
+  ): Promise<void> => {
 
     await fse.remove(src)
   }
-  await Promise.all(listSource.map(sub_))
+  await Promise.all(listSource.map(sub))
 
   info('remove', msg)
 }
 
 // export
-export default main_
+export default main
