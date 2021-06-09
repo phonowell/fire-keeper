@@ -2,7 +2,11 @@ import yargs from 'yargs'
 
 // interface
 
-type Argv = typeof yargs.argv
+type Argv = {
+  [x: string]: unknown
+  _: (string | number)[]
+  $0: string
+}
 
 // function
 
