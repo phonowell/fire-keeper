@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual'
 
 // function
 
-function a(): void {
+const a = () => {
 
   const question = 'test/a'
   const answer = ['test/a']
@@ -11,7 +11,7 @@ function a(): void {
 }
 a.description = 'string -> string[]'
 
-function b(): void {
+const b = () => {
 
   const question = ['test/b']
   const answer = ['test/b']

@@ -2,7 +2,7 @@ import { $ } from './index'
 
 // function
 
-function a(): void {
+const a = () => {
   if ($.type($.getBasename) !== 'function') throw new Error('0')
 }
 

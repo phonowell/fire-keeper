@@ -3,7 +3,7 @@ import path from 'path'
 
 // function
 
-function a(): void {
+const a = () => {
 
   const question = './source'
   const answer = `${$.root()}/source`
@@ -11,21 +11,21 @@ function a(): void {
     throw new Error(`${$.normalizePath(question)} !== ${answer}`)
 }
 
-function b(): void {
+const b = () => {
 
   const question = '~/opt'
   const answer = `${$.home()}/opt`
   if ($.normalizePath(question) !== answer) throw new Error('0')
 }
 
-function c(): void {
+const c = () => {
 
   const question = './a/b/../c'
   const answer = `${$.root()}/a/c`
   if ($.normalizePath(question) !== answer) throw new Error('0')
 }
 
-function d(): void {
+const d = () => {
 
   const question = '../a'
   const answer = path.normalize(`${$.root()}/../a`)

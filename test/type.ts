@@ -36,7 +36,7 @@ const listQuestion = [
 
 // function
 
-const a = (): void => {
+const a = () => {
   for (let i = 0; i < listQuestion.length; i++) {
     const question = listQuestion[i]
     const answer = listAnswer[i]

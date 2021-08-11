@@ -1,5 +1,4 @@
-import $ from '../source'
-import camelCase from 'lodash/camelCase'
+import $ from '../source/index'
 
 // function
 
@@ -10,16 +9,16 @@ const main = async (): Promise<void> => {
 
 const pickModule = async (): Promise<string> => {
 
-  const listModule = (await $.source_([
+  const listModule = (await $.source([
     './source/*.ts',
     '!**/index.ts',
   ]))
     .map(it => $.getBasename(it))
 
   return [
-    ...listModule.map(it => `import ${camelCase(`m-${it}`)} from './${it}'`),
+    ...listModule.map(it => `import ${it} from './${it}'`),
     'export default {',
-    ...listModule.map(it => `  ${it}: ${camelCase(`m-${it}`)},`),
+    ...listModule.map(it => `  ${it},`),
     '}',
   ].join('\n')
 }
@@ -31,14 +30,14 @@ const replace = async (): Promise<void> => {
     '',
     '// ---',
   ]
-  const cont = (await $.read_<string>('./source/index.ts'))
+  const cont = (await $.read<string>('./source/index.ts'))
     .replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
-  await $.write_('./source/index.ts', cont)
+  await $.write('./source/index.ts', cont)
 }
 
 const replaceTest = async (): Promise<void> => {
 
-  const listModule = await $.source_([
+  const listModule = await $.source([
     './test/*.ts',
     '!**/index.ts',
   ])
@@ -47,25 +46,25 @@ const replaceTest = async (): Promise<void> => {
   const listTest = listModule
     .map(it => $.getBasename(it))
   const content = [
-    ...listTest.map(it => `import * as ${camelCase(`m-${it}`)} from './${it}'`),
+    ...listTest.map(it => `import * as ${it} from './${it}'`),
     'const mapModule = {',
-    ...listTest.map(it => `  ${it}: ${camelCase(`m-${it}`)},`),
+    ...listTest.map(it => `  ${it},`),
     '}',
     '',
     '// ---',
   ]
-  let cont = $.parseString(await $.read_('./test/index.ts'))
+  let cont = $.parseString(await $.read('./test/index.ts'))
   cont = cont
     .replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
-  await $.write_('./test/index.ts', cont)
+  await $.write('./test/index.ts', cont)
 
   // module/*.ts
-  await Promise.all(listModule.map(
-    source => (async () => {
+  await Promise.all(listModule.map(source => (
+    async () => {
 
-      const _cont = $.parseString(await $.read_(source))
+      const _cont = $.parseString(await $.read(source))
       if (!~_cont.search(/throw\s\d/u)) return
-      await $.write_(source, _cont
+      await $.write(source, _cont
         // throw 0 -> throw new Error('0')
         .replace(/throw\s(\d+)/g, "throw new Error('$1')")
       )

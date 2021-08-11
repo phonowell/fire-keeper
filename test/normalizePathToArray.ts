@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual'
 
 // function
 
-function a(): void {
+const a = () => {
 
   const question = [
     './source',

@@ -1,7 +1,7 @@
 import $argv from '../source/argv'
 import $getBasename from '../source/getBasename'
-import $prompt_ from '../source/prompt_'
-import $source_ from '../source/source_'
+import $prompt from '../source/prompt'
+import $source from '../source/source'
 import _compact from 'lodash/compact'
 
 // interface
@@ -14,7 +14,7 @@ const ask = async (
   list: string[],
 ): Promise<string> => {
 
-  const answer = await $prompt_({
+  const answer = await $prompt({
     id: 'default-task',
     list,
     message: 'select a task',
@@ -27,7 +27,7 @@ const ask = async (
 
 const load = async (): Promise<string[]> => {
 
-  const listSource = await $source_([
+  const listSource = await $source([
     './task/*.js',
     './task/*.ts',
     '!*.d.ts',
@@ -57,7 +57,7 @@ const run = async (
   task: string,
 ): Promise<void> => {
 
-  const [source] = await $source_([
+  const [source] = await $source([
     `./task/${task}.js`,
     `./task/${task}.ts`,
   ])

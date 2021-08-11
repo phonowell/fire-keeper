@@ -1,13 +1,13 @@
-import $ from '../source'
+import $ from '../source/index'
 
 // function
 
 const main = async (): Promise<void> => {
 
-  await Promise.all((await $.source_('./source/*.ts')).map(
+  await Promise.all((await $.source('./source/*.ts')).map(
     source => (async () => {
       const basename = $.getBasename(source)
-      await $.remove_([
+      await $.remove([
         `./${basename}.js`,
         `./${basename}.d.ts`,
       ])

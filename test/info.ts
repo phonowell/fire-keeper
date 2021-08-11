@@ -2,7 +2,7 @@ import { $ } from './index'
 
 // function
 
-const a = (): void => {
+const a = () => {
 
   if ($.info() !== $.info()) throw new Error('0')
 

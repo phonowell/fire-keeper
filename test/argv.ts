@@ -2,7 +2,7 @@ import { $ } from './index'
 
 // function
 
-const a = (): void => {
+const a = () => {
   if ($.type($.argv) !== 'function') throw new Error('0')
 }
 

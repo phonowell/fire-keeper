@@ -2,7 +2,7 @@ import { $ } from './index'
 
 // function
 
-function a(): void {
+const a = () => {
 
   const string = 'a little message'
   const object = { message: string }

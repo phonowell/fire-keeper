@@ -1,12 +1,12 @@
-import $copy_ from '../source/copy_'
+import $copy from '../source/copy'
 import $getName from '../source/getName'
 import $info from '../source/info'
-import $isExisted_ from '../source/isExisted_'
-import $isSame_ from '../source/isSame_'
-import $prompt_ from '../source/prompt_'
-import $read_ from '../source/read_'
-import $source_ from '../source/source_'
-import $stat_ from '../source/stat_'
+import $isExisted from '../source/isExisted'
+import $isSame from '../source/isSame'
+import $prompt from '../source/prompt'
+import $read from '../source/read'
+import $source from '../source/source'
+import $stat from '../source/stat'
 import _uniq from 'lodash/uniq'
 
 // interface
@@ -24,19 +24,19 @@ const ask = async (
 ): Promise<string> => {
 
   const isExisted = [
-    await $isExisted_(source),
-    await $isExisted_(target),
+    await $isExisted(source),
+    await $isExisted(target),
   ]
 
   const mtime: [number, number] = [0, 0]
   if (isExisted[0]) {
-    const stat = await $stat_(source)
+    const stat = await $stat(source)
     mtime[0] = stat
       ? stat.mtimeMs
       : 0
   }
   if (isExisted[1]) {
-    const stat = await $stat_(target)
+    const stat = await $stat(target)
     mtime[1] = stat
       ? stat.mtimeMs
       : 0
@@ -79,7 +79,7 @@ const ask = async (
     value: 'skip',
   })
 
-  return $prompt_({
+  return $prompt({
     default: indexDefault,
     list: listChoice,
     message: 'and you decide to...',
@@ -91,8 +91,8 @@ const load = async (): Promise<string[]> => {
 
   $info().pause()
   const listData = await Promise.all<string[]>(
-    (await $source_('./data/sync/**/*.yaml'))
-      .map(source => $read_(source)),
+    (await $source('./data/sync/**/*.yaml'))
+      .map(source => $read(source)),
   )
   $info().resume()
 
@@ -129,7 +129,7 @@ const main = async (): Promise<void> => {
     target = `${dirname}/${basename}-${namespace}-${version}${extname}`
 
     // eslint-disable-next-line no-await-in-loop
-    if (await $isSame_([source, target])) continue
+    if (await $isSame([source, target])) continue
 
     $info(`'${source}' is different from '${target}'`)
 
@@ -150,12 +150,12 @@ const overwrite = async (
 
   if (value === 'export') {
     const { dirname, filename } = $getName(target)
-    await $copy_(source, dirname, filename)
+    await $copy(source, dirname, filename)
   }
 
   if (value === 'import') {
     const { dirname, filename } = $getName(source)
-    await $copy_(target, dirname, filename)
+    await $copy(target, dirname, filename)
   }
 }
 

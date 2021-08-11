@@ -19,7 +19,7 @@ type ListQuestion = [
 
 // function
 
-function a(): void {
+const a = () => {
 
   const listQuestion: ListQuestion = [
     42, // number

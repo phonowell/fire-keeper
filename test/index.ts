@@ -1,88 +1,86 @@
-import * as mArgv from './argv'
-import * as mBackup from './backup_'
-import * as mClean from './clean_'
-import * as mCompile from './compile_'
-import * as mCopy from './copy_'
-import * as mDownload from './download_'
-import * as mExec from './exec_'
-import * as mFormatArgument from './formatArgument'
-import * as mGetBasename from './getBasename'
-import * as mGetDirname from './getDirname'
-import * as mGetExtname from './getExtname'
-import * as mGetFilename from './getFilename'
-import * as mGetName from './getName'
-import * as mHome from './home'
-import * as mI from './i'
-import * as mInfo from './info'
-import * as mIsExisted from './isExisted_'
-import * as mIsSame from './isSame_'
-import * as mLink from './link_'
-import * as mMkdir from './mkdir_'
-import * as mMove from './move_'
-import * as mNormalizePath from './normalizePath'
-import * as mNormalizePathToArray from './normalizePathToArray'
-import * as mOs from './os'
-import * as mParseJson from './parseJson'
-import * as mParseString from './parseString'
-import * as mPrompt from './prompt_'
-import * as mRead from './read_'
-import * as mRecover from './recover_'
-import * as mRemove from './remove_'
-import * as mRename from './rename_'
-import * as mRequire from './require'
-import * as mRoot from './root'
-import * as mSay from './say_'
-import * as mSleep from './sleep_'
-import * as mSource from './source_'
-import * as mStat from './stat_'
-import * as mType from './type'
-import * as mWatch from './watch'
-import * as mWrapList from './wrapList'
-import * as mWrite from './write_'
-import * as mZip from './zip_'
+import * as argv from './argv'
+import * as backup from './backup'
+import * as clean from './clean'
+import * as compile from './compile'
+import * as copy from './copy'
+import * as download from './download'
+import * as exec from './exec'
+import * as formatArgument from './formatArgument'
+import * as getBasename from './getBasename'
+import * as getDirname from './getDirname'
+import * as getExtname from './getExtname'
+import * as getFilename from './getFilename'
+import * as getName from './getName'
+import * as home from './home'
+import * as i from './i'
+import * as info from './info'
+import * as isExisted from './isExisted'
+import * as isSame from './isSame'
+import * as link from './link'
+import * as mkdir from './mkdir'
+import * as move from './move'
+import * as normalizePath from './normalizePath'
+import * as normalizePathToArray from './normalizePathToArray'
+import * as os from './os'
+import * as parseJson from './parseJson'
+import * as parseString from './parseString'
+import * as prompt from './prompt'
+import * as read from './read'
+import * as recover from './recover'
+import * as remove from './remove'
+import * as rename from './rename'
+import * as root from './root'
+import * as say from './say'
+import * as sleep from './sleep'
+import * as source from './source'
+import * as stat from './stat'
+import * as type from './type'
+import * as watch from './watch'
+import * as wrapList from './wrapList'
+import * as write from './write'
+import * as zip from './zip'
 const mapModule = {
-  argv: mArgv,
-  backup_: mBackup,
-  clean_: mClean,
-  compile_: mCompile,
-  copy_: mCopy,
-  download_: mDownload,
-  exec_: mExec,
-  formatArgument: mFormatArgument,
-  getBasename: mGetBasename,
-  getDirname: mGetDirname,
-  getExtname: mGetExtname,
-  getFilename: mGetFilename,
-  getName: mGetName,
-  home: mHome,
-  i: mI,
-  info: mInfo,
-  isExisted_: mIsExisted,
-  isSame_: mIsSame,
-  link_: mLink,
-  mkdir_: mMkdir,
-  move_: mMove,
-  normalizePath: mNormalizePath,
-  normalizePathToArray: mNormalizePathToArray,
-  os: mOs,
-  parseJson: mParseJson,
-  parseString: mParseString,
-  prompt_: mPrompt,
-  read_: mRead,
-  recover_: mRecover,
-  remove_: mRemove,
-  rename_: mRename,
-  require: mRequire,
-  root: mRoot,
-  say_: mSay,
-  sleep_: mSleep,
-  source_: mSource,
-  stat_: mStat,
-  type: mType,
-  watch: mWatch,
-  wrapList: mWrapList,
-  write_: mWrite,
-  zip_: mZip,
+  argv,
+  backup,
+  clean,
+  compile,
+  copy,
+  download,
+  exec,
+  formatArgument,
+  getBasename,
+  getDirname,
+  getExtname,
+  getFilename,
+  getName,
+  home,
+  i,
+  info,
+  isExisted,
+  isSame,
+  link,
+  mkdir,
+  move,
+  normalizePath,
+  normalizePathToArray,
+  os,
+  parseJson,
+  parseString,
+  prompt,
+  read,
+  recover,
+  remove,
+  rename,
+  root,
+  say,
+  sleep,
+  source,
+  stat,
+  type,
+  watch,
+  wrapList,
+  write,
+  zip,
 }
 
 // ---
@@ -100,8 +98,8 @@ const temp = $.normalizePath('./temp')
 
 // function
 
-const clean = async (): Promise<void> => {
-  await $.info().whisper_($.remove_(temp))
+const clear = async (): Promise<void> => {
+  await $.info().whisper_($.remove(temp))
 }
 
 // execute
@@ -117,11 +115,11 @@ for (const name of listModule)
     for (const key of listIt) {
       const fn_ = mapModule[name][key] as FnAsync & { description?: string }
       it(fn_.description || (listIt.length === 1 ? 'default' : key), async () => {
-        await clean()
+        await clear()
         await $.info().freeze(fn_)
       })
     }
   })
 
 // export
-export { $, clean, temp }
+export { $, clear, temp }
