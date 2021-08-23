@@ -31,7 +31,4 @@ const b = async () => {
 b.description = 'out of project'
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

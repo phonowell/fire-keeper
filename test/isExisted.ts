@@ -126,15 +126,4 @@ const j = async () => {
 j.description = 'file & fold/not existed'
 
 // export
-export {
-  a,
-  b,
-  c,
-  d,
-  e,
-  f,
-  g,
-  h,
-  i,
-  j,
-}
+export { a, b, c, d, e, f, g, h, i, j }

@@ -10,15 +10,15 @@ const main = async (
   const group = $normalizePathToArray(source)
   if (!group.length) return false
 
-  const sub = async (
-    src: string,
-  ): Promise<boolean> => {
-    if (src.includes('*')) throw new Error(`invalid path '${src}'`)
-    return fse.pathExists(src)
-  }
-
   const listResult = await Promise.all(group.map(sub))
   return !listResult.includes(false)
+}
+
+const sub = async (
+  src: string,
+): Promise<boolean> => {
+  if (src.includes('*')) throw new Error(`invalid path '${src}'`)
+  return fse.pathExists(src)
 }
 
 // export

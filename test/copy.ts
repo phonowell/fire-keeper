@@ -60,14 +60,9 @@ const d = async () => {
   await $.copy(source, '', 'b.txt')
   if (!await $.isExisted(target)) throw new Error('0')
 
-  const cont = await $.read(target)
+  const cont = await $.read<string>(target)
   if (cont !== content) throw new Error('1')
 }
 
 // export
-export {
-  a,
-  b,
-  c,
-  d,
-}
+export { a, b, c, d }

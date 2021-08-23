@@ -23,7 +23,4 @@ const b = async () => {
 b.description = '.json'
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

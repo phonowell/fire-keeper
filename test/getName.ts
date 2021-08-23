@@ -27,7 +27,4 @@ const b = () => {
 b.description = '@windows'
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

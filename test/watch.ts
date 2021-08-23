@@ -7,6 +7,4 @@ const a = () => {
 }
 
 // export
-export {
-  a,
-}
+export { a }

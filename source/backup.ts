@@ -9,21 +9,17 @@ import $wrapList from './wrapList'
 const main = async (
   source: string | string[],
 ): Promise<void> => {
-
   const msg = `backed up ${$wrapList(source)}`
-
-  const sub = async (
-    src: string,
-  ): Promise<void> => {
-
-    const suffix = $getExtname(src)
-    const extname = '.bak'
-
-    await $info().whisper_(async () => await $copy(src, '', { extname, suffix }))
-  }
   await Promise.all((await $source(source)).map(sub))
-
   $info('backup', msg)
+}
+
+const sub = async (
+  src: string,
+): Promise<void> => {
+  const suffix = $getExtname(src)
+  const extname = '.bak'
+  await $info().whisper_(async () => await $copy(src, '', { extname, suffix }))
 }
 
 // export

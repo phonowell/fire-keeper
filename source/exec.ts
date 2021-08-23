@@ -40,7 +40,7 @@ const main = async (
 ): Promise<Result> => {
 
   const stringCmd = cmd instanceof Array
-    ? cmd.join(';')
+    ? cmd.join('; ')
     : cmd
 
   const [cmder, arg] = $os('macos')

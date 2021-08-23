@@ -8,7 +8,7 @@ const a = async () => {
   const content = 'a little message'
   await $.write(source, content)
 
-  if (await $.read(source) !== content) throw new Error('0')
+  if (await $.read<string>(source) !== content) throw new Error('0')
 }
 a.description = '.txt'
 
@@ -56,10 +56,4 @@ const e = async () => {
 e.description = '.yaml'
 
 // export
-export {
-  a,
-  b,
-  c,
-  d,
-  e,
-}
+export { a, b, c, d, e }

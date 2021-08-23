@@ -20,7 +20,4 @@ const b = () => {
 b.description = 'string[] -> string[]'
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

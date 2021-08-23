@@ -35,9 +35,4 @@ const d = () => {
 }
 
 // export
-export {
-  a,
-  b,
-  c,
-  d,
-}
+export { a, b, c, d }

@@ -18,6 +18,4 @@ const a = async () => {
 }
 
 // export
-export {
-  a,
-}
+export { a }

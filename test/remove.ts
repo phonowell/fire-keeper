@@ -45,8 +45,4 @@ const c = async () => {
 c.description = 'file(s) only'
 
 // export
-export {
-  a,
-  b,
-  c,
-}
+export { a, b, c }

@@ -1,17 +1,17 @@
 // interface
 
-type OS = 'linux' | 'macos' | 'unknown' | 'windows'
+type Os = 'macos' | 'unknown' | 'windows'
 
 // variable
 
-let cache: OS
+let cache: Os
 
 // function
 
-function main(): OS
-function main(os: OS): boolean
+function main(): Os
+function main(os: Os | Os[]): boolean
 function main(
-  os?: OS,
+  os?: Os | Os[],
 ) {
 
   if (!cache) {
@@ -21,8 +21,16 @@ function main(
     else cache = 'unknown'
   }
 
-  if (os) return os === cache
-  return cache
+  if (!os) return cache
+
+  const listOs = os instanceof Array
+    ? os
+    : [os]
+
+  for (let item of listOs) {
+    if (cache === item) return true
+  }
+  return false
 }
 
 // export

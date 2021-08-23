@@ -41,8 +41,4 @@ const c = async () => {
 c.description = 'folder existed'
 
 // export
-export {
-  a,
-  b,
-  c,
-}
+export { a, b, c }

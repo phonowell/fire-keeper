@@ -27,7 +27,4 @@ const b = async () => {
 }
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

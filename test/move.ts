@@ -81,12 +81,4 @@ const g = async () => {
 g.description = 'other/move & rename'
 
 // export
-export {
-  a,
-  b,
-  c,
-  d,
-  e,
-  f,
-  g,
-}
+export { a, b, c, d, e, f, g }

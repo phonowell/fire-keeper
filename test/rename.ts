@@ -15,7 +15,7 @@ const check = async (
   if (!await $.isExisted(target))
     return false
 
-  if (contSource !== await $.read(target))
+  if (contSource !== await $.read<string>(target))
     return false
 
   return true
@@ -72,8 +72,4 @@ const c = async () => {
 }
 
 // export
-export {
-  a,
-  b,
-  c,
-}
+export { a, b, c }

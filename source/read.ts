@@ -7,46 +7,57 @@ import fs from 'fs'
 
 // interface
 
-type Main = {
-  <T>(source: string): Promise<T>
-  (source: string, option: Option): Promise<Buffer | undefined>
-}
+type ItemExtObject = typeof listExtObject[number]
+
+type ItemExtString = typeof listExtString[number]
 
 type Option = {
   raw: boolean
 }
 
+type Result<U = undefined, T extends string = string> = U extends undefined
+  ? ((T extends `${string}${ItemExtString}`
+    ? string
+    : T extends `${string}${ItemExtObject}`
+    ? { [x: string]: unknown }
+    : Buffer) | undefined)
+  : U
+
 // variable
 
-const listExtnameOfString = [
-  '.css',
+const listExtString = [
+  '.ahk',
+  '.bat',
+  '.coffee', '.css',
   '.html',
   '.js',
   '.md',
   '.pug',
-  '.sh',
-  '.styl',
-  '.ts',
-  '.txt',
+  '.sh', '.styl',
+  '.ts', '.tsx', '.txt',
   '.xml',
-  '.coffee',
-]
+] as const
+
+const listExtObject = [
+  '.json',
+  '.yaml', '.yml'
+] as const
 
 // function
 
-const main: Main = async (
-  source: string,
+const main = async <U = undefined, T extends string = string>(
+  source: T,
   option?: Option,
-) => {
+): Promise<Result<U, T>> => {
 
   let _source = source
   const listSource = await $source(_source)
 
   if (!listSource.length) {
     $info('file', `'${source}' not existed`)
-    return undefined
+    return undefined as Result<U, T>
   }
-  _source = listSource[0]
+  _source = listSource[0] as T
 
   const content = await new Promise<Buffer>(resolve => {
     fs.readFile(_source, (err, data) => {
@@ -56,18 +67,18 @@ const main: Main = async (
   })
   $info('file', `read '${source}'`)
 
-  if (option?.raw) return content
+  if (option?.raw) return content as Result<U, T>
 
   const extname = $getExtname(_source)
 
-  if (listExtnameOfString.includes(extname)) return $parseString(content)
+  if (listExtString.includes(extname as ItemExtString)) return $parseString(content) as Result<U, T>
   if (extname === '.json') return $parseJson(content)
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
-    return jsYaml.load(content)
+    return jsYaml.load(content) as Result<U, T>
   }
 
-  return content
+  return content as Result<U, T>
 }
 
 // export

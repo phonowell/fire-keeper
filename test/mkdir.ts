@@ -25,7 +25,4 @@ const b = async () => {
 b.description = 'multiple'
 
 // export
-export {
-  a,
-  b,
-}
+export { a, b }

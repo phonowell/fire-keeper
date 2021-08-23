@@ -28,7 +28,7 @@
     "lodash": "^4.17.21",
     "ora": "^5.4.1",
     "prompts": "^2.4.1",
-    "yargs": "^17.1.0"
+    "yargs": "^17.1.1"
   },
   "description": "A little helper to make gulpfile(s) simple.",
   "devDependencies": {
@@ -46,15 +46,15 @@
     "@types/gulp-watch": "^4.1.35",
     "@types/lodash": "^4.14.172",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^16.4.13",
+    "@types/node": "^16.7.1",
     "@types/prompts": "^2.0.14",
     "@types/pug": "^2.0.5",
     "@types/yargs": "^17.0.2",
-    "@typescript-eslint/eslint-plugin": "^4.29.1",
-    "@typescript-eslint/parser": "^4.29.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
-    "mocha": "^9.0.3",
-    "ts-node": "^10.2.0",
+    "mocha": "^9.1.0",
+    "ts-node": "^10.2.1",
     "typescript": "^4.3.5"
   },
   "homepage": "https://github.com/phonowell/fire-keeper",
@@ -75,5 +75,5 @@
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.192"
+  "version": "0.0.193"
 }
