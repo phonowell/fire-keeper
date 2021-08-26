@@ -26,8 +26,6 @@ type Result<U = undefined, T extends string = string> = U extends undefined
 // variable
 
 const listExtString = [
-  '.ahk',
-  '.bat',
   '.coffee', '.css',
   '.html',
   '.js',
