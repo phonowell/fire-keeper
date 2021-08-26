@@ -13,6 +13,12 @@ type Option = {
 
 type Result = [boolean, string]
 
+// variable
+
+const separator = $os() === 'windows'
+  ? ' && '
+  : '; '
+
 // function
 
 const info = (
@@ -40,7 +46,7 @@ const main = async (
 ): Promise<Result> => {
 
   const stringCmd = cmd instanceof Array
-    ? cmd.join('; ')
+    ? cmd.join(separator)
     : cmd
 
   const [cmder, arg] = $os('macos')
