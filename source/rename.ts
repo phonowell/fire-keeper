@@ -16,11 +16,19 @@ declare global {
   function using(): NodeJS.ReadWriteStream
 }
 
+type OptionRename = {
+  dirname?: string | undefined
+  basename?: string | undefined
+  extname?: string | undefined
+  prefix?: string | undefined
+  suffix?: string | undefined
+}
+
 // function
 
 const main = async (
   source: string | string[],
-  option: string | rename.Options,
+  option: string | OptionRename,
 ): Promise<void> => {
 
   const listSource: string[] = $normalizePathToArray(source)
@@ -30,7 +38,7 @@ const main = async (
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
       .pipe(gulpIf(!$info().isSilent, using()))
-      .pipe(rename(option as rename.ParsedPath | rename.Options))
+      .pipe(rename(option as rename.ParsedPath | OptionRename))
       .pipe(gulp.dest((e): string => {
         listHistory.push([...e.history])
         return e.base

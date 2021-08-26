@@ -4,12 +4,20 @@ import $parseString from './parseString'
 import $wrapList from './wrapList'
 import fse from 'fs-extra'
 
+// interface
+
+type OptionWrite = {
+  encoding?: string | null | undefined
+  flag?: string | undefined
+  mode?: number | undefined
+}
+
 // function
 
 const main = async (
   source: string,
   content: unknown,
-  option?: string | fse.WriteFileOptions,
+  option?: string | OptionWrite,
 ): Promise<boolean> => {
 
   const _source = $normalizePath(source)

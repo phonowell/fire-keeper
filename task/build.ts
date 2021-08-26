@@ -17,9 +17,10 @@ const pickModule = async (): Promise<string> => {
 
   return [
     ...listModule.map(it => `import ${it} from './${it}'`),
-    'export default {',
+    'const $ = {',
     ...listModule.map(it => `  ${it},`),
     '}',
+    'export default $',
   ].join('\n')
 }
 

@@ -86,7 +86,7 @@ const mapModule = {
 // ---
 
 import { describe, it } from 'mocha'
-import $ from '../source'
+import $ from '../source/index'
 
 // interface
 

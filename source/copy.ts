@@ -16,12 +16,20 @@ declare global {
   function using(): NodeJS.ReadWriteStream
 }
 
+type OptionRename = {
+  dirname?: string | undefined
+  basename?: string | undefined
+  extname?: string | undefined
+  prefix?: string | undefined
+  suffix?: string | undefined
+}
+
 // function
 
 const main = async (
   source: string | string[],
   target: string,
-  option?: string | rename.Options,
+  option?: string | OptionRename,
 ): Promise<void> => {
 
   const listSource = $normalizePathToArray(source)
@@ -36,7 +44,7 @@ const main = async (
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
       .pipe(gulpIf(!$info().isSilent, using()))
-      .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | rename.Options)))
+      .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | OptionRename)))
       .pipe(gulp.dest(e => _target || e.base))
       .on('end', () => resolve(true))
   })

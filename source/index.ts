@@ -39,7 +39,7 @@ import watch from './watch'
 import wrapList from './wrapList'
 import write from './write'
 import zip from './zip'
-export default {
+const $ = {
   argv,
   backup,
   clean,
@@ -82,5 +82,6 @@ export default {
   write,
   zip,
 }
+export default $
 
 // ---
