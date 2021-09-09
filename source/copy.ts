@@ -12,7 +12,6 @@ import using from 'gulp-using'
 // interface
 
 declare global {
-  // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
 }
 

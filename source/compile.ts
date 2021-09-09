@@ -11,7 +11,6 @@ import using from 'gulp-using'
 // interface
 
 declare global {
-  // eslint-disable-next-line no-shadow
   function using(): NodeJS.ReadWriteStream
 }
 
@@ -265,7 +264,6 @@ const main: Main = async (
     ]
     if (!fn) throw new Error(`compile_/error: invalid extname '${extname}'`)
 
-    // eslint-disable-next-line no-await-in-loop
     await fn(
       src,
       target ? $normalizePath(target) : dirname,

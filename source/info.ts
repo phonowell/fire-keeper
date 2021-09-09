@@ -7,7 +7,7 @@ import kleur from 'kleur'
 // interface
 
 type CacheType = {
-  [key: string]: string
+  [x: string]: string
 }
 
 // function

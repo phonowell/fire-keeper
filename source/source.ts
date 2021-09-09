@@ -3,7 +3,6 @@ import $normalizePathToArray from './normalizePathToArray'
 
 // interface
 
-// eslint-disable-next-line camelcase
 type ListSource = string[] & { __is_listed_as_source__?: boolean }
 
 // variable
