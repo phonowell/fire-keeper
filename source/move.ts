@@ -1,5 +1,5 @@
-import $info, { whisper } from './info'
 import $copy from './copy'
+import $info from './info'
 import $parseString from './parseString'
 import $remove from './remove'
 import $source from './source'
@@ -20,7 +20,7 @@ const main = async (
   const listSource = await $source(source)
   if (!listSource.length) return
 
-  await whisper(async () => {
+  await $info.whisper(async () => {
     await $copy(listSource, target, option)
     await $remove(listSource)
   })

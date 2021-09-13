@@ -1,8 +1,8 @@
+import $info from './info'
 import $normalizePathToArray from './normalizePathToArray'
 import $parseString from './parseString'
 import $read from './read'
 import $stat from './stat'
-import { whisper } from './info'
 
 // function
 
@@ -33,7 +33,7 @@ const main = async (
   // content
   let cacheCont = ''
   for (const src of listSource) {
-    let cont = await whisper<string>($read(src))
+    let cont = await $info.whisper<string>($read(src))
     if (!cont) return false
 
     cont = $parseString(cont)

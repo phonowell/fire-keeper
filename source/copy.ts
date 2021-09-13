@@ -1,5 +1,5 @@
-import $info, { status } from './info'
 import $normalizePath from './normalizePath'
+import $info from './info'
 import $normalizePathToArray from './normalizePathToArray'
 import $parseString from './parseString'
 import $wrapList from './wrapList'
@@ -42,7 +42,7 @@ const main = async (
   await new Promise(resolve => {
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
-      .pipe(gulpIf(!status.isSilent, using()))
+      .pipe(gulpIf(!$info.isSilent, using()))
       .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | OptionRename)))
       .pipe(gulp.dest(e => _target || e.base))
       .on('end', () => resolve(true))

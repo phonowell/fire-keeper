@@ -1,4 +1,4 @@
-import { pause, resume } from './info'
+import $info from './info'
 import $parseString from './parseString'
 import $read from './read'
 import $type from './type'
@@ -228,13 +228,13 @@ const main: Main = async (
 
   if (!option) throw new Error('prompt_/error: empty option')
 
-  pause()
+  $info.pause()
 
   const opt = await formatOption(option)
   const result = (await prompts(opt as prompts.PromptObject))[opt.name]
   await setCache(opt, result)
 
-  resume()
+  $info.resume()
 
   return result
 }

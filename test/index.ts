@@ -86,7 +86,6 @@ const mapModule = {
 // ---
 
 import { describe, it } from 'mocha'
-import { freeze, whisper } from '../source/info'
 import $ from '../source/index'
 
 // interface
@@ -99,7 +98,7 @@ const temp = $.normalizePath('./temp')
 
 // function
 
-const clear = () => whisper($.remove(temp))
+const clear = () => $.info.whisper($.remove(temp))
 
 // execute
 
@@ -115,7 +114,7 @@ for (const name of listModule)
       const fn = mapModule[name][key] as FnAsync & { description?: string }
       it(fn.description || (listIt.length === 1 ? 'default' : key), async () => {
         await clear()
-        await freeze(fn)
+        await $.info.freeze(fn)
       })
     }
   })

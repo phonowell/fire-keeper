@@ -18,26 +18,21 @@ const regRoot = new RegExp(`^${$root().replace(/\\/g, '\\\\')}`, 'g')
 
 const separator = `${kleur.gray('›')} `
 
-const status = {
-  isFrozen: false,
-  isSilent: false,
-}
-
 // function
 
 const freeze = async<T>(
   callback: Promise<T> | (() => Promise<T>),
 ): Promise<T> => {
 
-  status.isFrozen = true
-  status.isSilent = true
+  main.isFrozen = true
+  main.isSilent = true
 
   const result = typeof callback === 'function'
     ? await callback()
     : await callback
 
-  status.isFrozen = false
-  status.isSilent = false
+  main.isFrozen = false
+  main.isSilent = false
 
   return result
 }
@@ -50,7 +45,7 @@ const main = <T>(
     ? ['default', args[0]]
     : args
 
-  if (!status.isSilent) return message
+  if (!main.isSilent) return message
 
   const msg = $parseString(message).trim()
   if (!msg) return message
@@ -71,8 +66,8 @@ const makeTime = () => {
 }
 
 const pause = () => {
-  if (status.isFrozen) return
-  status.isSilent = true
+  if (main.isFrozen) return
+  main.isSilent = true
 }
 
 const render = (
@@ -126,8 +121,8 @@ const renderType = (
 }
 
 const resume = () => {
-  if (status.isFrozen) return
-  status.isSilent = false
+  if (main.isFrozen) return
+  main.isSilent = false
 }
 
 const whisper = async <T>(
@@ -146,5 +141,11 @@ const whisper = async <T>(
 }
 
 // export
-export { freeze, pause, renderPath, resume, status, whisper }
+main.freeze = freeze
+main.isFrozen = false
+main.isSilent = false
+main.pause = pause
+main.resume = resume
+main.whisper = whisper
+export { renderPath }
 export default main
