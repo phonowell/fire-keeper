@@ -45,7 +45,7 @@ const main = <T>(
     ? ['default', args[0]]
     : args
 
-  if (!main.isSilent) return message
+  if (main.isSilent) return message
 
   const msg = $parseString(message).trim()
   if (!msg) return message

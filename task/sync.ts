@@ -89,12 +89,12 @@ const ask = async (
 
 const load = async (): Promise<string[]> => {
 
-  $info().pause()
+  $info.pause()
   const listData = await Promise.all<string[]>(
     (await $source('./data/sync/**/*.yaml'))
       .map(source => $read(source)),
   )
-  $info().resume()
+  $info.resume()
 
   let result: string[] = []
 
