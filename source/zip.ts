@@ -1,15 +1,15 @@
+import $info, { renderPath } from './info'
 import $getBasename from './getBasename'
 import $getDirname from './getDirname'
-import $info from './info'
 import $normalizePath from './normalizePath'
 import $normalizePathToArray from './normalizePathToArray'
+import $parseString from './parseString'
 import $source from './source'
 import $wrapList from './wrapList'
 import _trim from 'lodash/trim'
 import archiver from 'archiver'
 import fs from 'fs'
 import kleur from 'kleur'
-import ora from 'ora'
 
 // interface
 
@@ -29,7 +29,6 @@ const execute = async (
 ): Promise<void> => {
 
   const { base, filename } = option
-  const spinner = ora().start()
 
   const listResource = await $source(listSource)
 
@@ -43,17 +42,12 @@ const execute = async (
     })
     let message = ''
 
-    archive.on('end', () => {
-      spinner.succeed()
-      resolve(true)
-    })
+    archive.on('end', () => resolve(true))
 
-    archive.on('entry', e => {
-      message = $info().renderPath(`${e.name}`)
-    })
+    archive.on('entry', e => message = renderPath(`${e.name}`))
 
     archive.on('error', e => {
-      spinner.fail(e.message)
+      $info(kleur.red(e.message))
       throw e
     })
 
@@ -63,12 +57,12 @@ const execute = async (
       const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
       const magenta = kleur.magenta(message)
 
-      spinner.text = `${gray} ${magenta}`
+      $info(`${gray} ${magenta}`)
       message = ''
     })
 
     archive.on('warning', e => {
-      spinner.warn(e.message)
+      $info(kleur.red(e.message))
       throw (e)
     })
 
@@ -129,7 +123,7 @@ const main = async (
   option: string | Option = '',
 ): Promise<void> => {
   await execute(...formatArgument(source, target, option))
-  $info('zip', `zipped ${$wrapList(source)} to '${target}', as '${option.toString()}'`)
+  $info('zip', `zipped ${$wrapList(source)} to '${target}', as '${$parseString(option)}'`)
 }
 
 // export

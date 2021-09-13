@@ -1,4 +1,4 @@
-import $info from './info'
+import $info, { pause, resume, status } from './info'
 import $isExisted from './isExisted'
 import $normalizePathToArray from './normalizePathToArray'
 import $parseString from './parseString'
@@ -37,7 +37,7 @@ const main = async (
   await new Promise(resolve => {
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(rename(option as rename.ParsedPath | OptionRename))
       .pipe(gulp.dest((e): string => {
         listHistory.push([...e.history])
@@ -46,14 +46,14 @@ const main = async (
       .on('end', (): void => resolve(true))
   })
 
-  $info().pause()
+  pause()
 
   await Promise.all(listHistory.map(async item => {
     if (!await $isExisted(item[1])) return
     await $remove(item[0])
   }))
 
-  $info().resume()
+  resume()
 
   $info('file', `renamed ${$wrapList(source)} as '${$parseString(option)}'`)
 }

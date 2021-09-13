@@ -1,6 +1,6 @@
+import $info, { pause, resume } from './info'
 import $copy from './copy'
 import $getFilename from './getFilename'
-import $info from './info'
 import $isExisted from './isExisted'
 import $normalizePathToArray from './normalizePathToArray'
 import $remove from './remove'
@@ -28,11 +28,11 @@ const sub = async (
 
   const filename: string = $getFilename(src)
 
-  $info().pause()
+  pause()
   await $remove(src)
   await $copy(pathBak, '', filename)
   await $remove(pathBak)
-  $info().resume()
+  resume()
 }
 
 // export

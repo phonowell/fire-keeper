@@ -1,6 +1,6 @@
+import $info, { whisper } from './info'
 import $copy from './copy'
 import $getExtname from './getExtname'
-import $info from './info'
 import $source from './source'
 import $wrapList from './wrapList'
 
@@ -19,7 +19,7 @@ const sub = async (
 ): Promise<void> => {
   const suffix = $getExtname(src)
   const extname = '.bak'
-  await $info().whisper_(async () => await $copy(src, '', { extname, suffix }))
+  await whisper($copy(src, '', { extname, suffix }))
 }
 
 // export

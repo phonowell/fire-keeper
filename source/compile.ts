@@ -1,4 +1,4 @@
-import $info from './info'
+import $info, { status } from './info'
 import $normalizePath from './normalizePath'
 import $source from './source'
 import $wrapList from './wrapList'
@@ -49,7 +49,7 @@ const compileCoffee = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(coffee({ bare }))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
@@ -72,7 +72,7 @@ const compileHtml = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(target))
@@ -94,7 +94,7 @@ const compileCss = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(gulpIf(!!minify, cleanCss()))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
@@ -115,7 +115,7 @@ const compileJs = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(gulpIf(!!minify, terser({ safari10: true })))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
@@ -138,7 +138,7 @@ const compileMd = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(markdown({ sanitize: true }))
       .pipe(rename({ extname: '.html' }))
       .pipe(gulpIf(!!minify, htmlmin({ collapseWhitespace: true })))
@@ -161,7 +161,7 @@ const compilePug = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(pug({ pretty: !minify }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))
@@ -182,7 +182,7 @@ const compileStyl = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(stylus({ compress: minify }))
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
@@ -204,7 +204,7 @@ const compileTs = async (
 
     gulp.src(source, { base, sourcemaps })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(tsProject())
       .pipe(gulp.dest(target, returnSourcemaps(sourcemaps)))
       .on('end', () => resolve(true))
@@ -225,7 +225,7 @@ const compileYaml = async (
 
     gulp.src(source, { base })
       .pipe(plumber())
-      .pipe(gulpIf(!$info().isSilent, using()))
+      .pipe(gulpIf(!status.isSilent, using()))
       .pipe(yaml({ safe: true }))
       .pipe(gulp.dest(target))
       .on('end', () => resolve(true))

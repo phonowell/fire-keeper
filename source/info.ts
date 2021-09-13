@@ -1,178 +1,150 @@
-import $home from './home'
+import kleur from 'kleur'
 import $i from './i'
 import $parseString from './parseString'
+import $home from './home'
 import $root from './root'
-import kleur from 'kleur'
 
 // interface
 
-type CacheType = {
-  [x: string]: string
+type CacheTime = [number, string]
+
+// variable
+
+const cahceTime: CacheTime = [0, '']
+const cacheType = new Map<string, string>()
+
+const regHome = new RegExp(`^${$home().replace(/\\/g, '\\\\')}`, 'g')
+const regRoot = new RegExp(`^${$root().replace(/\\/g, '\\\\')}`, 'g')
+
+const separator = `${kleur.gray('›')} `
+
+const status = {
+  isFrozen: false,
+  isSilent: false,
 }
 
 // function
 
-class M {
+const freeze = async<T>(
+  callback: Promise<T> | (() => Promise<T>),
+): Promise<T> => {
 
-  cacheTime: [number, string] = [0, '']
-  cacheType: CacheType = {
-    default: '',
-  }
-  isFrozen = false
-  isSilent = false
-  regHome = new RegExp(`^${$home().replace(/\\/g, '\\\\')}`, 'g')
-  regRoot = new RegExp(`^${$root().replace(/\\/g, '\\\\')}`, 'g')
-  separator = `${kleur.gray('›')} `
+  status.isFrozen = true
+  status.isSilent = true
 
-  execute(): this
-  execute<T>(input: T): T
-  execute<T>(type: string, input: T): T
-  execute(
-    ...args: [string] | [string, unknown]
-  ) {
+  const result = typeof callback === 'function'
+    ? await callback()
+    : await callback
 
-    if (!args.length) return this
-    const [type, message] = args.length > 1
-      ? args
-      : ['default', args[0]]
+  status.isFrozen = false
+  status.isSilent = false
 
-    if (this.isSilent) return message
+  return result
+}
 
-    const msg = $parseString(message)
-      .trim()
-    if (!msg) return message
+const main = <T>(
+  ...args: [T] | [string, T]
+): T => {
 
-    $i(this.render(type, msg))
-    return message
-  }
+  const [type, message] = args.length === 1
+    ? ['default', args[0]]
+    : args
 
-  async freeze<T>(
-    fn: Promise<T> | (() => Promise<T>),
-  ): Promise<T> {
+  if (!status.isSilent) return message
 
-    Object.assign(this, {
-      isFrozen: true,
-      isSilent: true,
-    })
+  const msg = $parseString(message).trim()
+  if (!msg) return message
 
-    const result = typeof fn === 'function'
-      ? await fn()
-      : await fn
+  $i(render(type, msg))
+  return message
+}
 
-    Object.assign(this, {
-      isFrozen: false,
-      isSilent: false,
-    })
+const makeTime = () => {
+  const date = new Date()
+  return [
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds(),
+  ]
+    .map(it => it.toString().padStart(2, '0'))
+    .join(':')
+}
 
-    return result
-  }
+const pause = () => {
+  if (status.isFrozen) return
+  status.isSilent = true
+}
 
-  static makeTextOfTime(): string {
+const render = (
+  type: string,
+  message: string,
+) => [
+  renderTime(),
+  separator,
+  renderType(type),
+  renderContent(message),
+].join('')
 
-    const date = new Date()
-    const listTime = [
-      date.getHours(),
-      date.getMinutes(),
-      date.getSeconds(),
-    ]
-    return listTime
-      .map(it => it.toString().padStart(2, '0'))
-      .join(':')
-  }
+const renderContent = (
+  input: string,
+) => renderPath(input)
+  // 'xxx'
+  .replace(/'.*?'/g, text => kleur.magenta(text.replace(/'/g, '') || "''"))
 
-  pause(): void {
-    if (this.isFrozen) return
-    this.isSilent = true
-  }
+const renderPath = (
+  input: string,
+) => input
+  .replace(regRoot, '.')
+  .replace(regHome, '~')
 
-  render(
-    type: string,
-    message: string,
-  ): string {
+const renderTime = () => {
 
-    return [
-      this.renderTime(),
-      this.separator,
-      this.renderType(type),
-      this.renderContent(message),
-    ].join('')
-  }
+  const ts = Math.floor(Date.now() / 1e3)
+  if (ts === cahceTime[0]) return cahceTime[1]
 
-  renderContent(
-    message: string,
-  ): string {
+  const result = `${kleur.gray(`[${makeTime()}]`)} `
+  cahceTime[0] = ts
+  cahceTime[1] = result
+  return result
+}
 
-    return this.renderPath(message)
-      // 'xxx'
-      .replace(/'.*?'/g, text => {
-        const cont = text.replace(/'/g, '')
-        return cont
-          ? kleur.magenta(cont)
-          : "''"
-      })
-  }
+const renderType = (
+  type: string,
+) => {
 
-  renderPath(
-    message: string,
-  ): string {
+  const key = type.trim().toLowerCase()
+  if (key === 'default') return ''
+  if (cacheType.has(key)) return cacheType.get(key)
 
-    return message
-      .replace(this.regRoot, '.')
-      .replace(this.regHome, '~')
-  }
+  const content = [
+    kleur.cyan().underline(key),
+    ' '.repeat(Math.max(10 - key.length, 0)),
+  ].join('')
 
-  renderTime(): string {
+  cacheType.set(key, content)
+  return content
+}
 
-    const cache = this.cacheTime
-    const ts = Math.floor(new Date().getTime() / 1e3)
+const resume = () => {
+  if (status.isFrozen) return
+  status.isSilent = false
+}
 
-    if (ts === cache[0]) return cache[1]
+const whisper = async <T>(
+  callback: Promise<T> | (() => Promise<T>),
+): Promise<T> => {
 
-    cache[0] = ts
-    cache[1] = `${kleur.gray(`[${M.makeTextOfTime()}]`)} `
-    return cache[1]
-  }
+  pause()
 
-  renderType(
-    type: string,
-  ): string {
+  const result = typeof callback === 'function'
+    ? await callback()
+    : await callback
 
-    const cache = this.cacheType
-    const _type = type
-      .trim()
-      .toLowerCase()
-    if (typeof cache[_type] === 'string') return cache[_type]
+  resume()
 
-    const content = kleur.cyan().underline(_type)
-    const padding = ' '.repeat(Math.max(10 - _type.length, 0))
-
-    cache[_type] = `${content}${padding}`
-    return cache[_type]
-  }
-
-  resume(): void {
-
-    if (this.isFrozen) return
-    this.isSilent = false
-  }
-
-  async whisper_<T>(
-    fn: Promise<T> | (() => Promise<T>),
-  ): Promise<T> {
-
-    this.pause()
-
-    const result = typeof fn === 'function'
-      ? await fn()
-      : await fn
-
-    this.resume()
-
-    return result
-  }
+  return result
 }
 
 // export
-const m = new M()
-export { M }
-export default m.execute.bind(m)
+export { freeze, pause, renderPath, resume, status, whisper }
+export default main
