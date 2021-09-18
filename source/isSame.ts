@@ -17,6 +17,7 @@ const main = async (
   let cacheSize = 0
 
   for (const src of listSource) {
+    // eslint-disable-next-line no-await-in-loop
     const stat = await $stat(src)
     if (!stat) return false
 
@@ -33,6 +34,7 @@ const main = async (
   // content
   let cacheCont = ''
   for (const src of listSource) {
+    // eslint-disable-next-line no-await-in-loop
     let cont = await $info.whisper<string>($read(src))
     if (!cont) return false
 

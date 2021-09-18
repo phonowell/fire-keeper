@@ -1,5 +1,5 @@
-import $normalizePath from './normalizePath'
 import $info from './info'
+import $normalizePath from './normalizePath'
 import $normalizePathToArray from './normalizePathToArray'
 import $parseString from './parseString'
 import $wrapList from './wrapList'

@@ -1,18 +1,18 @@
 // interface
 
-type Os = 'macos' | 'unknown' | 'windows'
+type Os = 'macos' | 'unknown' | 'windows' | ''
+
+type Result<T> = T extends void ? Os : boolean
 
 // variable
 
-let cache: Os
+let cache: Os = ''
 
 // function
 
-function main(): Os
-function main(os: Os | Os[]): boolean
-function main(
-  os?: Os | Os[],
-) {
+const main = <T extends Os | Os[] | void = void>(
+  os?: T,
+): Result<T> => {
 
   if (!cache) {
     const { platform } = process
@@ -21,16 +21,22 @@ function main(
     else cache = 'unknown'
   }
 
-  if (!os) return cache
-
-  const listOs = os instanceof Array
-    ? os
-    : [os]
-
-  for (let item of listOs) {
-    if (cache === item) return true
+  if (!os) {
+    const result: Result<void> = cache
+    return result as Result<T>
   }
-  return false
+
+  const listOs = os instanceof Array ? os : [os]
+
+  for (const item of listOs) {
+    if (cache === item) {
+      const result: Result<Os> = true
+      return result as Result<T>
+    }
+  }
+
+  const result: Result<Os> = false
+  return result as Result<T>
 }
 
 // export

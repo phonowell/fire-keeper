@@ -40,7 +40,7 @@ const info = (
   console.log(msg)
 }
 
-const main = async (
+const main = (
   cmd: string | string[],
   option: Option = {},
 ): Promise<Result> => {

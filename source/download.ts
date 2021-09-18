@@ -18,12 +18,12 @@ const format = (
   option: string | Partial<Option>,
 ): [string, string, Option] => {
 
-  if (!source) throw new Error('download_/error: empty source')
+  if (!source) throw new Error('download/error: empty source')
   const _source = source.startsWith('//')
     ? `https:${source}`
     : source
 
-  if (!target) throw new Error('download_/error: empty target')
+  if (!target) throw new Error('download/error: empty target')
   const _target = $normalizePath(target)
 
   const _option = typeof option === 'string'

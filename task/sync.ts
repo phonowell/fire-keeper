@@ -128,13 +128,16 @@ const main = async (): Promise<void> => {
     const { basename, dirname, extname } = $getName(target)
     target = `${dirname}/${basename}-${namespace}-${version}${extname}`
 
+    // eslint-disable-next-line no-await-in-loop
     if (await $isSame([source, target])) continue
 
     $info(`'${source}' is different from '${target}'`)
 
+    // eslint-disable-next-line no-await-in-loop
     const value = await ask(source, target)
     if (!value) break
 
+    // eslint-disable-next-line no-await-in-loop
     await overwrite(value, source, target)
   }
 }

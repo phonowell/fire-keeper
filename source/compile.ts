@@ -262,12 +262,13 @@ const main: Main = async (
     const fn = mapFn[
       extname as keyof typeof mapFn
     ]
-    if (!fn) throw new Error(`compile_/error: invalid extname '${extname}'`)
+    if (!fn) throw new Error(`compile/error: invalid extname '${extname}'`)
 
+    // eslint-disable-next-line no-await-in-loop
     await fn(
       src,
       target ? $normalizePath(target) : dirname,
-      option
+      option,
     )
   }
 
@@ -320,7 +321,7 @@ const formatArgument = async (
 
 const returnSourcemaps = (
   sourcemaps: boolean | undefined,
-): { sourcemaps: true } | undefined => sourcemaps === true ? { sourcemaps } : undefined
+): { sourcemaps: true } | undefined => (sourcemaps === true ? { sourcemaps } : undefined)
 
 // export
 export default main

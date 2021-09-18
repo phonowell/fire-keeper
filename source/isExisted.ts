@@ -14,7 +14,7 @@ const main = async (
   return !listResult.includes(false)
 }
 
-const sub = async (
+const sub = (
   src: string,
 ): Promise<boolean> => {
   if (src.includes('*')) throw new Error(`invalid path '${src}'`)

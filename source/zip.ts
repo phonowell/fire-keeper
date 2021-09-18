@@ -44,7 +44,7 @@ const execute = async (
 
     archive.on('end', () => resolve(true))
 
-    archive.on('entry', e => message = renderPath(`${e.name}`))
+    archive.on('entry', e => (message = renderPath(`${e.name}`)))
 
     archive.on('error', e => {
       $info(kleur.red(e.message))
@@ -85,9 +85,7 @@ const formatArgument = (
 ): [string[], string, OptionRequired] => {
 
   const listSource = $normalizePathToArray(source)
-  const pathTarget = $normalizePath(
-    target || $getDirname(listSource[0]).replace(/\*/g, '')
-  )
+  const pathTarget = $normalizePath(target || $getDirname(listSource[0]).replace(/\*/g, ''))
 
   let [base, filename] = typeof option === 'string'
     ? ['', option]

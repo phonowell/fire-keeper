@@ -1,96 +1,154 @@
+import $findIndex from 'lodash/findIndex'
 import $info from './info'
 import $parseString from './parseString'
 import $read from './read'
-import $type from './type'
 import $write from './write'
-import _findIndex from 'lodash/findIndex'
-import _get from 'lodash/get'
 import prompts from 'prompts'
 
 // interface
 
-type Choice<T = Value> = {
+type Choice<T = string> = {
   title: string
+  description?: string
   value: T
+  disabled?: boolean
 }
 
 type File = {
-  [key: string]: Save
+  [id: string]: Save
 }
 
-type Main = {
-  (option: OptionConfirm): Promise<boolean>
-  (option: OptionNumber): Promise<number>
-  (option: OptionText): Promise<string>
-  (option: OptionToggle): Promise<boolean>
-  <T = string>(option: OptionSelect<T>): Promise<T>
-}
+type Option<T extends Type = Type> =
+  T extends 'confirm'
+  ? OptionConfirm
+  : T extends 'number'
+  ? OptionNumber
+  : T extends 'auto' | 'multi' | 'select'
+  ? OptionSelect
+  : T extends 'text'
+  ? OptionText
+  : T extends 'toggle'
+  ? OptionToggle
+  : never
 
-type Option = OptionConfirm
-  | OptionNumber
-  | OptionText
-  | OptionToggle
-  | OptionSelect
+type OP<T extends Type = Type> =
+  T extends 'confirm'
+  ? OPConfirm
+  : T extends 'number'
+  ? OPNumber
+  : T extends 'auto' | 'multi' | 'select'
+  ? OPSelect
+  : T extends 'text'
+  ? OPText
+  : T extends 'toggle'
+  ? OPToggle
+  : never
 
-type OptionConfirm = {
-  default?: boolean
-  id?: string
-  message?: string
+type OptionConfirm = OptionGeneral & {
   type: 'confirm'
+  default?: boolean
 }
 
-type OptionNumber = {
-  default?: number
-  id?: string
-  max?: number
-  message?: string
-  min?: number
-  type: 'number'
+type OPConfirm = OPGeneral & {
+  type: 'confirm'
+  initial: boolean
 }
 
-type OptionPrompt = Option & {
-  active: string
-  choices: Choice[]
-  inactive: string
-  initial: Option['default']
-  name: string
+type OptionGeneral = {
   type: Type
+  id?: string
+  message?: string
 }
 
-type OptionSelect<T = string> = {
+type OPGeneral = {
+  type: typeof listTypePrompt[number]
+  name: 'value'
+  message: string
+}
+
+type OptionNumber = OptionGeneral & {
+  type: 'number'
+  default?: number
+  max: number
+  min: number
+}
+
+type OPNumber = OPGeneral & {
+  type: 'number'
+  initial: number
+  min?: number
+  max?: number
+}
+
+type OptionSelect = OptionGeneral & {
+  type: 'auto' | 'multi' | 'select'
   default?: number | string
-  id?: string
-  list: Choice<T>[] | T[]
-  message?: string
-  type: 'auto' | 'autocomplete' | 'multi' | 'multiselect' | 'select'
+  list: string[] | Choice[]
 }
 
-type OptionText = {
-  default?: string
-  id?: string
-  message?: string
+type OPSelect = OPGeneral & {
+  type: 'autocomplete' | 'multiselect' | 'select'
+  choices: Choice[]
+  initial: number
+  hint?: string
+  warn?: string
+}
+
+type OptionText = OptionGeneral & {
   type: 'text'
+  default?: string
 }
 
-type OptionToggle = {
-  default?: boolean | string
-  id?: string
-  message?: string
+type OPText = OPGeneral & {
+  type: 'text'
+  initial: string
+}
+
+type OptionToggle = OptionGeneral & {
+  type: 'toggle'
+  default?: boolean
   off?: string
   on?: string
+}
+
+type OPToggle = OPGeneral & {
   type: 'toggle'
+  initial: boolean
+  active: string
+  inactive: string
+}
+
+type Result<T extends Type = Type> =
+  T extends 'confirm'
+  ? boolean
+  : T extends 'number'
+  ? number
+  : T extends 'auto' | 'multi' | 'select'
+  ? string
+  : T extends 'text'
+  ? string
+  : T extends 'toggle'
+  ? boolean
+  : never
+
+type Save = {
+  type: Omit<Type, 'multi'>
+  value: unknown
 }
 
 type Type = typeof listType[number]
 
-type Save = {
-  type: Type
-  value: Value
-}
-
-type Value = Option['default']
-
 // variable
+
+const listType = [
+  'auto',
+  'confirm',
+  'multi',
+  'number',
+  'select',
+  'text',
+  'toggle',
+] as const
 
 const listTypePrompt = [
   'autocomplete',
@@ -102,22 +160,7 @@ const listTypePrompt = [
   'toggle',
 ] as const
 
-const listType = [
-  ...listTypePrompt,
-  'auto',
-  'multi',
-] as const
-
-const listTypeCache = [
-  'autocomplete',
-  'confirm',
-  'number',
-  'select',
-  'text',
-  'toggle',
-] as const
-
-const mapMessage = {
+const mapMessageDefault = {
   autocomplete: 'input',
   confirm: 'confirm',
   multiselect: 'select',
@@ -131,121 +174,129 @@ const pathCache = './temp/cache-prompt.json' as const
 
 // function
 
-const formatOption = async (
-  option: Option,
-): Promise<OptionPrompt> => {
+const formatOption = async <T extends Type>(
+  option: Option<T>,
+): Promise<OP<T>> => {
 
-  const opt: OptionPrompt = {
-    active: 'on',
-    choices: [],
-    inactive: 'off',
-    initial: undefined,
-    name: '',
-    ...option,
+  if (option.type === 'confirm') {
+    const result: OP<'confirm'> = {
+      initial: option.default || await getCache(option) || false,
+      message: option.message || mapMessageDefault.confirm || '',
+      name: 'value',
+      type: 'confirm',
+    }
+    return result as OP<T>
   }
 
-  // type alias
-  if (opt.type === 'auto') opt.type = 'autocomplete'
-  if (opt.type === 'multi') opt.type = 'multiselect'
-
-  // check type
-  if (!listTypePrompt.includes(opt.type))
-    throw new Error(`prompt_/error: invalid type '${opt.type}'`)
-
-  // default value
-  if (!opt.message) opt.message = mapMessage[opt.type]
-  if (!opt.name) opt.name = 'value'
-
-  // list -> choices
-  if (validateAsSelect(opt)) {
-    if (!opt.list) throw new Error('prompt_/error: empty list')
-    opt.choices = [...opt.list].map(it => validateAsChoice(it)
-      ? it
-      : {
-        title: $parseString(it),
-        value: it,
-      })
-    opt.initial = typeof opt.default === 'number'
-      ? (() => {
-        let result = opt.default >= 0
-          ? opt.default
-          : opt.list.length + opt.default
-        if (result < 0) result = 0
-        if (result >= opt.list.length) result = opt.list.length - 1
-        return result
-      })()
-      : _findIndex(opt.choices, it => opt.default === it.value)
-    opt.list = []
+  if (option.type === 'number') {
+    const result: OP<'number'> = {
+      initial: option.default || await getCache(option) || option.min || 0,
+      max: option.max,
+      message: option.message || mapMessageDefault.number || '',
+      min: option.min,
+      name: 'value',
+      type: 'number',
+    }
+    return result as OP<T>
   }
 
-  // on -> active, off -> inactive
-  if (opt.type === 'toggle') {
-    if (opt.on) opt.active = opt.on
-    if (opt.off) opt.inactive = opt.off
-    opt.initial = opt.default === opt.on
-    opt.on = undefined
-    opt.off = undefined
+  if (
+    option.type === 'auto'
+    || option.type === 'multi'
+    || option.type === 'select'
+  ) {
+    const list = transChoice(option.list)
+    const result: OP<'select'> = {
+      choices: list,
+      initial: pickDefault(list, option.default || await getCache(option)) || 0,
+      message: option.message || mapMessageDefault[option.type] || '',
+      name: 'value',
+      type: transType(option.type),
+    }
+    return result as OP<T>
   }
 
-  // have to be here
-  // behind option.choices
-  if (opt.initial === undefined || opt.initial === null)
-    opt.initial = opt.default || await getCache(opt)
-  opt.default = undefined
+  if (option.type === 'text') {
+    const result: OP<'text'> = {
+      initial: option.default || await getCache(option) || '',
+      message: option.message || mapMessageDefault.text || '',
+      name: 'value',
+      type: 'text',
+    }
+    return result as OP<T>
+  }
 
-  return opt
+  if (option.type === 'toggle') {
+    const result: OP<'toggle'> = {
+      active: option.on || 'on',
+      inactive: option.off || 'off',
+      initial: option.default || await getCache(option) || false,
+      message: option.message || mapMessageDefault.toggle || '',
+      name: 'value',
+      type: 'toggle',
+    }
+    return result as OP<T>
+  }
+
+  throw new Error(`invalid type '${option.type}'`)
 }
 
-const getCache = async (
-  option: OptionPrompt,
-): Promise<Value> => {
+const getCache = async <T extends unknown>(
+  option: Option,
+): Promise<T | undefined> => {
 
-  if (!option.id) return undefined
-  if (!listTypeCache.includes(
-    option.type as typeof listTypeCache[number],
-  )) return undefined
+  const { id, type } = option
+  if (!id) return undefined
+  if (type === 'multi') return undefined
 
   const cache = await $read<File>(pathCache)
-  const item = _get(cache, option.id)
-  if (!item) return undefined
-
-  const { type, value } = item
-  if (type !== option.type) return undefined
-
-  if (type === 'select') {
-    const index = _findIndex(option.choices, { value })
-    return ~index
-      ? index
-      : undefined
-  }
-
-  return value
+  if (!cache) return undefined
+  const data = cache[id]
+  if (!data) return undefined
+  if (type !== data.type) return undefined
+  return data.value as T
 }
 
-const main: Main = async (
-  option: Option,
-) => {
+const main = async <T = void, U extends Type = Type>(
+  option: Option<U> & { type: U },
+): Promise<T extends void ? Result<U> : T> => {
 
-  if (!option) throw new Error('prompt_/error: empty option')
+  if (!option) throw new Error('prompt/error: empty option')
 
   $info.pause()
 
-  const opt = await formatOption(option)
+  const opt = await formatOption<U>(option)
   const result = (await prompts(opt as prompts.PromptObject))[opt.name]
-  await setCache(opt, result)
+  await setCache(option, result)
 
   $info.resume()
 
   return result
 }
 
+const pickDefault = (
+  list: Choice[],
+  value: unknown = 0,
+): number => {
+  if (typeof value === 'number') {
+    if (value >= 0) {
+      if (value > list.length - 1) return list.length - 1
+      return value
+    }
+    if (0 - value - 1 < 0) return 0
+    return list.length + value
+  }
+  return $findIndex(list, it => value === it.value)
+}
+
 const setCache = async (
-  option: OptionPrompt,
-  value: Value,
+  option: Option,
+  value: unknown,
 ): Promise<void> => {
 
   const { id, type } = option
   if (!id) return
+  if (type === 'multi') return
 
   const cache = await $read<File>(pathCache) || {}
   cache[id] = { type, value }
@@ -253,13 +304,22 @@ const setCache = async (
   await $write(pathCache, cache)
 }
 
-const validateAsChoice = (
-  input: unknown,
-): input is Choice => $type(input) === 'object'
+const transChoice = (
+  list: (string | Choice)[],
+) => list.map(it => (typeof it === 'string'
+  ? {
+    title: $parseString(it),
+    value: it,
+  }
+  : it))
 
-const validateAsSelect = (
-  option: Option,
-): option is OptionSelect => ['autocomplete', 'multiselect', 'select'].includes(option.type)
+const transType = (
+  type: 'auto' | 'multi' | 'select',
+): 'autocomplete' | 'multiselect' | 'select' => {
+  if (type === 'auto') return 'autocomplete'
+  if (type === 'multi') return 'multiselect'
+  return 'select'
+}
 
 // export
 export default main

@@ -46,6 +46,7 @@ const main = async (
 
     listCmd.push(message)
 
+    // eslint-disable-next-line no-await-in-loop
     await $exec(listCmd.join(' '), { silent: true })
   }
 }

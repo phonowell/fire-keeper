@@ -8,7 +8,7 @@ import fse from 'fs-extra'
 const main = async (
   source: string | string[],
 ): Promise<void> => {
-  if (!source) throw new Error('mkdir_/error: empty source')
+  if (!source) throw new Error('mkdir/error: empty source')
 
   const listSource = $normalizePathToArray(source)
   await Promise.all(listSource.map(it => fse.ensureDir(it)))

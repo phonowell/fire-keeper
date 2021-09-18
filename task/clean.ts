@@ -11,7 +11,7 @@ const main = async (): Promise<void> => {
         `./${basename}.js`,
         `./${basename}.d.ts`,
       ])
-    })()
+    })(),
   ))
 }
 

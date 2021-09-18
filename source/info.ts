@@ -1,8 +1,8 @@
-import kleur from 'kleur'
+import $home from './home'
 import $i from './i'
 import $parseString from './parseString'
-import $home from './home'
 import $root from './root'
+import kleur from 'kleur'
 
 // interface
 
@@ -88,7 +88,7 @@ const renderContent = (
 
 const renderPath = (
   input: string,
-) => input
+): string => input
   .replace(regRoot, '.')
   .replace(regHome, '~')
 

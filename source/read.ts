@@ -38,7 +38,7 @@ const listExtString = [
 
 const listExtObject = [
   '.json',
-  '.yaml', '.yml'
+  '.yaml', '.yml',
 ] as const
 
 // function

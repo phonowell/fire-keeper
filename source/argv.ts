@@ -10,7 +10,7 @@ type Argv = {
 
 // function
 
-const main = <T = {}>(): T & Argv => yargs.argv as T & Argv
+const main = <T = { [x: string]: unknown }>(): T & Argv => yargs.argv as T & Argv
 
 // export
 export default main

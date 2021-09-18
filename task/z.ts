@@ -1,9 +1,11 @@
-import $ from '../source'
+import $ from '../source/index'
+
+// variable
 
 // function
 
-const main = () => {
-  $.info(1)
+const main = (): void => {
+  $.i($.os())
 }
 
 // export
