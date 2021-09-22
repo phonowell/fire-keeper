@@ -8,7 +8,7 @@ type Main = {
 }
 
 type ObjectX = {
-  [key: string]: unknown
+  [x: string]: unknown
 }
 
 // function

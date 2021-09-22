@@ -1,6 +1,7 @@
 import $info, { renderPath } from './info'
 import $getBasename from './getBasename'
 import $getDirname from './getDirname'
+import $i from './i'
 import $normalizePath from './normalizePath'
 import $normalizePathToArray from './normalizePathToArray'
 import $parseString from './parseString'
@@ -47,7 +48,7 @@ const execute = async (
     archive.on('entry', e => (message = renderPath(`${e.name}`)))
 
     archive.on('error', e => {
-      $info(kleur.red(e.message))
+      $i(kleur.red(e.message))
       throw e
     })
 
@@ -57,12 +58,12 @@ const execute = async (
       const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
       const magenta = kleur.magenta(message)
 
-      $info(`${gray} ${magenta}`)
+      $i(`${gray} ${magenta}`)
       message = ''
     })
 
     archive.on('warning', e => {
-      $info(kleur.red(e.message))
+      $i(kleur.red(e.message))
       throw (e)
     })
 
