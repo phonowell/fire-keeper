@@ -265,7 +265,7 @@ const isChoice = <T>(
 
 const main = async <T, U extends Type = Type>(
   option: Option<U, T> & { list?: List<T>, type: U },
-): Promise<Result<U, T>> => {
+): Promise<T extends undefined ? Result<U, T> : T> => {
 
   if (!option) throw new Error('prompt/error: empty option')
 
