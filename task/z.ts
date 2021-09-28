@@ -7,11 +7,15 @@ const list = [1, 2, 3, 4]
 // function
 
 const main = async (): Promise<void> => {
-  const result = await $.prompt({
+
+  const a = await $.prompt({
     list,
     type: 'select',
   })
-  console.log(result)
+  console.log(a)
+
+  const b = await $.prompt({ type: 'text' })
+  console.log(b)
 }
 
 // export
