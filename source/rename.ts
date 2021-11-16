@@ -31,15 +31,16 @@ const main = async (
   option: string | OptionRename,
 ): Promise<void> => {
 
-  const listSource: string[] = $normalizePathToArray(source)
+  const listSource = $normalizePathToArray(source)
   const listHistory: string[][] = []
 
   await new Promise(resolve => {
     gulp.src(listSource, { allowEmpty: true })
       .pipe(plumber())
       .pipe(gulpIf(!$info.isSilent, using()))
+      .pipe(using())
       .pipe(rename(option as rename.ParsedPath | OptionRename))
-      .pipe(gulp.dest((e): string => {
+      .pipe(gulp.dest(e => {
         listHistory.push([...e.history])
         return e.base
       }))

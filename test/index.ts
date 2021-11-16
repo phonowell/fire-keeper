@@ -39,54 +39,13 @@ import * as watch from './watch'
 import * as wrapList from './wrapList'
 import * as write from './write'
 import * as zip from './zip'
+import { describe, it } from 'mocha'
+import $ from '../source/index'
 const mapModule = {
-  argv,
-  backup,
-  clean,
-  compile,
-  copy,
-  download,
-  exec,
-  formatArgument,
-  getBasename,
-  getDirname,
-  getExtname,
-  getFilename,
-  getName,
-  home,
-  i,
-  info,
-  isExisted,
-  isSame,
-  link,
-  mkdir,
-  move,
-  normalizePath,
-  normalizePathToArray,
-  os,
-  parseJson,
-  parseString,
-  prompt,
-  read,
-  recover,
-  remove,
-  rename,
-  root,
-  say,
-  sleep,
-  source,
-  stat,
-  type,
-  watch,
-  wrapList,
-  write,
-  zip,
+  argv, backup, clean, compile, copy, download, exec, formatArgument, getBasename, getDirname, getExtname, getFilename, getName, home, i, info, isExisted, isSame, link, mkdir, move, normalizePath, normalizePathToArray, os, parseJson, parseString, prompt, read, recover, remove, rename, root, say, sleep, source, stat, type, watch, wrapList, write, zip,
 }
 
 // ---
-
-import { describe, it } from 'mocha'
-import $ from '../source/index'
 
 // interface
 
@@ -100,15 +59,15 @@ const temp = $.normalizePath('./temp')
 
 const clear = () => $.info.whisper($.remove(temp))
 
-// execute
+const main = () => {
 
-const { target } = $.argv<{ target?: string }>()
-const listModule = target
-  ? [target]
-  : Object.keys(mapModule)
+  const target = $.argv<{ _: string[] }>()._[1] || ''
 
-for (const name of listModule)
-  describe(name, () => {
+  const listModule = target
+    ? [target]
+    : Object.keys(mapModule)
+
+  for (const name of listModule) describe(name, () => {
     const listIt = Object.keys(mapModule[name])
     for (const key of listIt) {
       const fn = mapModule[name][key] as FnAsync & { description?: string }
@@ -118,6 +77,10 @@ for (const name of listModule)
       })
     }
   })
+}
+
+// execute
+main()
 
 // export
 export { $, clear, temp }

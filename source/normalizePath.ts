@@ -1,7 +1,7 @@
 import $home from './home'
 import $path from 'path'
 import $root from './root'
-import _trimEnd from 'lodash/trimEnd'
+import $trimEnd from 'lodash/trimEnd'
 
 // function
 
@@ -33,13 +33,12 @@ const main = (
     .replace(/\\/g, '/')
 
   // absolute
-  if (!$path.isAbsolute(_source))
-    _source = `${$root()}/${_source}`
+  if (!$path.isAbsolute(_source)) _source = `${$root()}/${_source}`
 
   // ignore?
   if (isIgnored) _source = `!${_source}`
 
-  return _trimEnd(_source, '/')
+  return $trimEnd(_source, '/')
 }
 
 // export
