@@ -1,38 +1,31 @@
-import $copy from './copy'
-import $getFilename from './getFilename'
-import $info from './info'
-import $isExisted from './isExisted'
-import $normalizePathToArray from './normalizePathToArray'
-import $remove from './remove'
-import $wrapList from './wrapList'
+import glob from './glob'
+import log from './log'
+import read from './read'
+import remove from './remove'
+import toArray from './toArray'
+import wrapList from './wrapList'
+import write from './write'
 
 // function
 
 const main = async (
   source: string | string[],
-): Promise<void> => {
-  const msg = `recovered ${$wrapList(source)}`
-  await Promise.all($normalizePathToArray(source).map(sub))
-  $info('recover', msg)
-}
+) => {
+  const listSource = await glob(toArray(source).map(src => `${src}.bak`))
 
-const sub = async (
-  src: string,
-): Promise<void> => {
-
-  const pathBak = `${src}.bak`
-  if (!await $isExisted(pathBak)) {
-    $info('recover', `'${pathBak}' not found`)
-    return
+  for (const src of listSource) {
+    await recover(src)
   }
 
-  const filename: string = $getFilename(src)
+  log('recover', `recovered ${wrapList(source)}`)
+}
 
-  $info.pause()
-  await $remove(src)
-  await $copy(pathBak, '', filename)
-  await $remove(pathBak)
-  $info.resume()
+const recover = async (
+  source: string,
+) => {
+  const content = await read(source)
+  await write(source.replace('.bak', ''), content)
+  await remove(source)
 }
 
 // export

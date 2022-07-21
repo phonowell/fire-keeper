@@ -1,8 +1,8 @@
-import $info from './info'
-import $os from './os'
-import _trimEnd from 'lodash/trimEnd'
 import child from 'child_process'
 import kleur from 'kleur'
+import log from './log'
+import os from './os'
+import trimEnd from 'lodash/trimEnd'
 
 // interface
 
@@ -15,7 +15,7 @@ type Result = [boolean, string]
 
 // variable
 
-const separator = $os() === 'windows'
+const separator = os() === 'windows'
   ? ' && '
   : '; '
 
@@ -49,11 +49,11 @@ const main = (
     ? cmd.join(separator)
     : cmd
 
-  const [cmder, arg] = $os('macos')
+  const [cmder, arg] = os() === 'macos'
     ? ['/bin/sh', ['-c', stringCmd]]
     : ['cmd.exe', ['/s', '/c', stringCmd]]
 
-  if (!option.silent) $info('exec', stringCmd)
+  if (!option.silent) log('exec', stringCmd)
 
   return new Promise(resolve => {
 
@@ -80,7 +80,7 @@ const main = (
 
 const parseMessage = (
   buffer: Uint8Array,
-): string => _trimEnd(buffer.toString(), '\n')
+): string => trimEnd(buffer.toString(), '\n')
 
 // export
 export default main

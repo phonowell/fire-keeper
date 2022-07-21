@@ -52,8 +52,8 @@ const a = () => {
   for (let i = 0; i < listQuestion.length; i++) {
     const question = listQuestion[i]
     const answer = listAnswer[i]
-    if ($.parseString(question) !== answer)
-      throw new Error(`$.parseString(${question}) !== ${answer}`)
+    if ($.toString(question) !== answer)
+      throw new Error(`$.toString(${question}) !== ${answer}`)
   }
 }
 

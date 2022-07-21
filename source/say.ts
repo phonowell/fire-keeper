@@ -1,7 +1,7 @@
-import $exec from './exec'
-import $formatArgument from './formatArgument'
-import $info from './info'
-import $os from './os'
+import exec from './exec'
+import log from './log'
+import os from './os'
+import toArray from './toArray'
 
 // interface
 
@@ -26,12 +26,12 @@ const Lang = {
 const main = async (
   text: string,
   option: Option = {},
-): Promise<void> => {
+) => {
 
-  for (let message of $formatArgument(text)) {
-    $info('say', message)
+  for (let message of toArray(text)) {
+    log('say', message)
 
-    if (!$os('macos')) continue
+    if (os() !== 'macos') continue
 
     message = message
       .replace(/[#()-]/g, '')
@@ -47,7 +47,7 @@ const main = async (
     listCmd.push(message)
 
     // eslint-disable-next-line no-await-in-loop
-    await $exec(listCmd.join(' '), { silent: true })
+    await exec(listCmd.join(' '), { silent: true })
   }
 }
 

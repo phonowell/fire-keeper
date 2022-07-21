@@ -13,6 +13,5 @@ const main = (
     : type
 }
 
-
 // export
 export default main

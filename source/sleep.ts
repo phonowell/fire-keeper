@@ -1,13 +1,13 @@
-import info from './info'
+import log from './log'
 
 // function
 
 const main = async (
   delay = 0,
-): Promise<void> => {
+) => {
 
   await new Promise(resolve => setTimeout(resolve, delay))
-  if (delay) info('sleep', `slept '${delay} ms'`)
+  if (delay) log('sleep', `slept '${delay} ms'`)
 }
 
 // export

@@ -1,25 +1,28 @@
-import $copy from './copy'
-import $getExtname from './getExtname'
-import $info from './info'
-import $source from './source'
-import $wrapList from './wrapList'
+import glob from './glob'
+import log from './log'
+import read from './read'
+import wrapList from './wrapList'
+import write from './write'
+
 
 // function
 
-const main = async (
-  source: string | string[],
-): Promise<void> => {
-  const msg = `backed up ${$wrapList(source)}`
-  await Promise.all((await $source(source)).map(sub))
-  $info('backup', msg)
+const backup = async (
+  src: string,
+) => {
+  const target = `${src}.bak`
+  const content = await read(src)
+  await write(target, content)
 }
 
-const sub = async (
-  src: string,
-): Promise<void> => {
-  const suffix = $getExtname(src)
-  const extname = '.bak'
-  await $info.whisper($copy(src, '', { extname, suffix }))
+const main = async (
+  source: string | string[],
+) => {
+  const listSource = await glob(source)
+  for (const src of listSource) {
+    await backup(src)
+  }
+  log('backup', `backed up ${wrapList(source)}`)
 }
 
 // export

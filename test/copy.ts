@@ -34,7 +34,7 @@ const b = async () => {
 
 const c = async () => {
 
-  if (!$.os('macos')) return
+  if ($.os() !== 'macos') return
   const source = './license.md'
   const target = '~/Downloads/temp/license.md'
 

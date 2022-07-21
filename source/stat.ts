@@ -1,8 +1,8 @@
-import $info from './info'
-import $isExisted from './isExisted'
-import $normalizePath from './normalizePath'
-import $wrapList from './wrapList'
 import fs from 'fs'
+import isExisted from './isExisted'
+import log from './log'
+import normalizePath from './normalizePath'
+import wrapList from './wrapList'
 
 // function
 
@@ -10,10 +10,10 @@ const main = async (
   source: string,
 ): Promise<fs.Stats | null> => {
 
-  const _source = $normalizePath(source)
+  const _source = normalizePath(source)
 
-  if (!await $isExisted(_source)) {
-    $info('file', `${$wrapList(_source)} not existed`)
+  if (!await isExisted(_source)) {
+    log('file', `${wrapList(_source)} not existed`)
     return null
   }
 

@@ -1,19 +1,20 @@
-import $info from './info'
-import $normalizePathToArray from './normalizePathToArray'
-import $wrapList from './wrapList'
 import fse from 'fs-extra'
+import log from './log'
+import normalizePath from './normalizePath'
+import toArray from './toArray'
+import wrapList from './wrapList'
 
 // function
 
 const main = async (
   source: string | string[],
-): Promise<void> => {
+) => {
   if (!source) throw new Error('mkdir/error: empty source')
 
-  const listSource = $normalizePathToArray(source)
+  const listSource = toArray(source).map(normalizePath)
   await Promise.all(listSource.map(it => fse.ensureDir(it)))
 
-  $info('file', `created ${$wrapList(source)}`)
+  log('file', `created ${wrapList(source)}`)
 }
 
 // export

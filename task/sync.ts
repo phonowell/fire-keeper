@@ -107,7 +107,7 @@ const load = async (): Promise<string[]> => {
   return _uniq(result)
 }
 
-const main = async (): Promise<void> => {
+const main = async () => {
 
   const data = await load()
 
@@ -146,7 +146,7 @@ const overwrite = async (
   value: string,
   source: string,
   target: string,
-): Promise<void> => {
+) => {
 
   if (value === 'export') {
     const { dirname, filename } = $getName(target)

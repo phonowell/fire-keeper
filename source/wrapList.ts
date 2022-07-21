@@ -1,11 +1,11 @@
-import $formatArgument from './formatArgument'
+import toArray from './toArray'
 
 // function
 
 const main = (
   input: unknown,
 ): string => (input
-  ? $formatArgument(input)
+  ? toArray(input)
     .map(it => `'${it}'`)
     .join(', ')
   : '')

@@ -1,8 +1,7 @@
-import $home from './home'
-import $i from './i'
-import $parseString from './parseString'
-import $root from './root'
+import home from './home'
 import kleur from 'kleur'
+import root from './root'
+import toString from './toString'
 
 // interface
 
@@ -13,8 +12,8 @@ type CacheTime = [number, string]
 const cahceTime: CacheTime = [0, '']
 const cacheType = new Map<string, string>()
 
-const regHome = new RegExp(`^${$home().replace(/\\/g, '\\\\')}`, 'g')
-const regRoot = new RegExp(`^${$root().replace(/\\/g, '\\\\')}`, 'g')
+const regHome = new RegExp(`^${home().replace(/\\/g, '\\\\')}`, 'g')
+const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 
 const separator = `${kleur.gray('›')} `
 
@@ -47,10 +46,10 @@ const main = <T>(
 
   if (main.isSilent) return message
 
-  const msg = $parseString(message).trim()
+  const msg = toString(message).trim()
   if (!msg) return message
 
-  $i(render(type, msg))
+  console.log(render(type, msg))
   return message
 }
 

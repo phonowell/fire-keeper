@@ -1,9 +1,9 @@
-import $findIndex from 'lodash/findIndex'
-import $info from './info'
-import $parseString from './parseString'
-import $read from './read'
-import $write from './write'
+import findIndex from 'lodash/findIndex'
+import log from './log'
 import prompts from 'prompts'
+import read from './read'
+import toString from './toString'
+import write from './write'
 
 // interface
 
@@ -251,7 +251,7 @@ const getCache = async <T extends unknown, U>(
   if (!id) return undefined
   if (type === 'multi') return undefined
 
-  const cache = await $read<File>(pathCache)
+  const cache = await read<File>(pathCache)
   if (!cache) return undefined
   const data = cache[id]
   if (!data) return undefined
@@ -269,13 +269,13 @@ const main = async <T, U extends Type = Type>(
 
   if (!option) throw new Error('prompt/error: empty option')
 
-  $info.pause()
+  log.pause()
 
   const opt = await formatOption<U, T>(option)
   const result = (await prompts(opt as prompts.PromptObject))[opt.name]
   await setCache(option, result)
 
-  $info.resume()
+  log.resume()
 
   return result
 }
@@ -292,22 +292,22 @@ const pickDefault = <T>(
     if (0 - value - 1 < 0) return 0
     return list.length + value
   }
-  return $findIndex(list, it => value === it.value)
+  return findIndex(list, it => value === it.value)
 }
 
 const setCache = async <T>(
   option: Option<Type, T>,
   value: unknown,
-): Promise<void> => {
+) => {
 
   const { id, type } = option
   if (!id) return
   if (type === 'multi') return
 
-  const cache = await $read<File>(pathCache) || {}
+  const cache = await read<File>(pathCache) || {}
   cache[id] = { type, value }
 
-  await $write(pathCache, cache)
+  await write(pathCache, cache)
 }
 
 const transChoice = <T>(
@@ -315,7 +315,7 @@ const transChoice = <T>(
 ): Choice<T>[] => list.map(it => (isChoice<T>(it)
   ? it
   : {
-    title: $parseString(it),
+    title: toString(it),
     value: it,
   }))
 

@@ -1,9 +1,9 @@
-import $getExtname from './getExtname'
-import $info from './info'
-import $parseJson from './parseJson'
-import $parseString from './parseString'
-import $source from './source'
 import fs from 'fs'
+import getExtname from './getExtname'
+import glob from './glob'
+import log from './log'
+import toJson from './toJson'
+import toString from './toString'
 
 // interface
 
@@ -11,17 +11,19 @@ type ItemExtObject = typeof listExtObject[number]
 
 type ItemExtString = typeof listExtString[number]
 
-type Option = {
-  raw: boolean
+type Options<R extends boolean> = {
+  raw: R
 }
 
-type Result<U = undefined, T extends string = string> = U extends undefined
-  ? ((T extends `${string}${ItemExtString}`
+type Result<T = undefined, S extends string = string, R extends boolean = false> = T extends undefined
+  ? R extends true
+  ? Buffer | undefined
+  : ((S extends `${string}${ItemExtString}`
     ? string
-    : T extends `${string}${ItemExtObject}`
+    : S extends `${string}${ItemExtObject}`
     ? { [x: string]: unknown }
     : Buffer) | undefined)
-  : U
+  : T
 
 // variable
 
@@ -43,40 +45,40 @@ const listExtObject = [
 
 // function
 
-const main = async <U = undefined, T extends string = string>(
-  source: T,
-  option?: Option,
-): Promise<Result<U, T>> => {
+const main = async <T = undefined, S extends string = string, R extends boolean = false>(
+  source: S,
+  options?: Options<R>,
+): Promise<Result<T, S, R>> => {
 
-  let _source = source
-  const listSource = await $source(_source)
+  let src = source
+  const listSource = await glob(src)
 
   if (!listSource.length) {
-    $info('file', `'${source}' not existed`)
-    return undefined as Result<U, T>
+    log('file', `'${source}' not existed`)
+    return undefined as Result<T, S, R>
   }
-  _source = listSource[0] as T
+  src = listSource[0] as S
 
   const content = await new Promise<Buffer>(resolve => {
-    fs.readFile(_source, (err, data) => {
+    fs.readFile(src, (err, data) => {
       if (err) throw err
       resolve(data)
     })
   })
-  $info('file', `read '${source}'`)
+  log('file', `read '${source}'`)
 
-  if (option?.raw) return content as Result<U, T>
+  if (options?.raw) return content as Result<T, S, R>
 
-  const extname = $getExtname(_source)
+  const extname = getExtname(src)
 
-  if (listExtString.includes(extname as ItemExtString)) return $parseString(content) as Result<U, T>
-  if (extname === '.json') return $parseJson(content)
+  if (listExtString.includes(extname as ItemExtString)) return toString(content) as Result<T, S, R>
+  if (extname === '.json') return toJson(content) as Result<T, S, R>
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
-    return jsYaml.load(content) as Result<U, T>
+    return jsYaml.load(content.toString()) as Result<T, S, R>
   }
 
-  return content as Result<U, T>
+  return content as Result<T, S, R>
 }
 
 // export

@@ -13,7 +13,7 @@
       "dom.iterable",
       "scripthost"
     ],
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,

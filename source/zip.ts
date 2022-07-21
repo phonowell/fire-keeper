@@ -1,16 +1,15 @@
-import $info, { renderPath } from './info'
-import $getBasename from './getBasename'
-import $getDirname from './getDirname'
-import $i from './i'
-import $normalizePath from './normalizePath'
-import $normalizePathToArray from './normalizePathToArray'
-import $parseString from './parseString'
-import $source from './source'
-import $wrapList from './wrapList'
-import _trim from 'lodash/trim'
 import archiver from 'archiver'
+import convertToArray from './toArray'
 import fs from 'fs'
+import getBasename from './getBasename'
+import getDirname from './getDirname'
+import glob from './glob'
 import kleur from 'kleur'
+import log, { renderPath } from './log'
+import normalizePath from './normalizePath'
+import toString from './toString'
+import trim from 'lodash/trim'
+import wrapList from './wrapList'
 
 // interface
 
@@ -27,11 +26,11 @@ const execute = async (
   listSource: string[],
   target: string,
   option: OptionRequired,
-): Promise<void> => {
+) => {
 
   const { base, filename } = option
 
-  const listResource = await $source(listSource)
+  const listResource = await glob(listSource)
 
   await new Promise(resolve => {
 
@@ -48,7 +47,7 @@ const execute = async (
     archive.on('entry', e => (message = renderPath(`${e.name}`)))
 
     archive.on('error', e => {
-      $i(kleur.red(e.message))
+      console.log(kleur.red(e.message))
       throw e
     })
 
@@ -58,12 +57,12 @@ const execute = async (
       const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
       const magenta = kleur.magenta(message)
 
-      $i(`${gray} ${magenta}`)
+      console.log(`${gray} ${magenta}`)
       message = ''
     })
 
     archive.on('warning', e => {
-      $i(kleur.red(e.message))
+      console.log(kleur.red(e.message))
       throw (e)
     })
 
@@ -79,14 +78,14 @@ const execute = async (
   })
 }
 
-const formatArgument = (
+const toArray = (
   source: string | string[],
   target: string,
   option: string | Option,
 ): [string[], string, OptionRequired] => {
 
-  const listSource = $normalizePathToArray(source)
-  const pathTarget = $normalizePath(target || $getDirname(listSource[0]).replace(/\*/g, ''))
+  const listSource = convertToArray(source).map(normalizePath)
+  const pathTarget = normalizePath(target || getDirname(listSource[0]).replace(/\*/g, ''))
 
   let [base, filename] = typeof option === 'string'
     ? ['', option]
@@ -95,8 +94,8 @@ const formatArgument = (
       option.filename || '',
     ]
 
-  base = $normalizePath(base || getBase(listSource))
-  if (!filename) filename = `${$getBasename(pathTarget)}.zip`
+  base = normalizePath(base || getBase(listSource))
+  if (!filename) filename = `${getBasename(pathTarget)}.zip`
 
   return [
     listSource,
@@ -112,17 +111,17 @@ const getBase = (
   listSource: string[],
 ): string => {
   const [source] = listSource
-  if (source.includes('*')) return _trim(source.replace(/\*.*/u, ''), '/')
-  return $getDirname(source)
+  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
+  return getDirname(source)
 }
 
 const main = async (
   source: string | string[],
   target = '',
   option: string | Option = '',
-): Promise<void> => {
-  await execute(...formatArgument(source, target, option))
-  $info('zip', `zipped ${$wrapList(source)} to '${target}', as '${$parseString(option)}'`)
+) => {
+  await execute(...toArray(source, target, option))
+  log('zip', `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`)
 }
 
 // export

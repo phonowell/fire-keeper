@@ -1,11 +1,11 @@
-/* eslint-disable no-await-in-loop */
+
 import { $, temp } from '.'
 
 // function
 
 const a = async () => {
 
-  $.i(temp)
+  console.log(temp)
 
   for (const key of ['a', 'b', 'c'])
     await $.write(`${temp}/${key}.txt`, 'a little message')

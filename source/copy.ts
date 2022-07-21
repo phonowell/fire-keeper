@@ -1,56 +1,29 @@
-import $info from './info'
-import $normalizePath from './normalizePath'
-import $normalizePathToArray from './normalizePathToArray'
-import $parseString from './parseString'
-import $wrapList from './wrapList'
-import gulp from 'gulp'
-import gulpIf from 'gulp-if'
-import plumber from 'gulp-plumber'
-import rename from 'gulp-rename'
-import using from 'gulp-using'
-
-// interface
-
-declare global {
-  function using(): NodeJS.ReadWriteStream
-}
-
-type OptionRename = {
-  dirname?: string | undefined
-  basename?: string | undefined
-  extname?: string | undefined
-  prefix?: string | undefined
-  suffix?: string | undefined
-}
+import fse from 'fs-extra'
+import getDirname from './getDirname'
+import getFilename from './getFilename'
+import glob from './glob'
+import log from './log'
+import normalizePath from './normalizePath'
+import wrapList from './wrapList'
 
 // function
 
 const main = async (
   source: string | string[],
   target: string,
-  option?: string | OptionRename,
-): Promise<void> => {
+  name?: string,
+) => {
+  const listSource = await glob(source)
 
-  const listSource = $normalizePathToArray(source)
+  for (const src of listSource) {
+    const t = `${normalizePath(target || getDirname(src))}/${name || getFilename(src)}`
+    await fse.copy(src, t)
+  }
 
-  const _target = target
-    ? $normalizePath(target)
-    : ''
-
-  if (!listSource.length) return
-
-  await new Promise(resolve => {
-    gulp.src(listSource, { allowEmpty: true })
-      .pipe(plumber())
-      .pipe(gulpIf(!$info.isSilent, using()))
-      .pipe(gulpIf(!!option, rename(option as rename.ParsedPath | OptionRename)))
-      .pipe(gulp.dest(e => _target || e.base))
-      .on('end', () => resolve(true))
-  })
-
-  let msg = `copied ${$wrapList(source)} to '${_target}'`
-  if (option) msg += `, as '${$parseString(option)}'`
-  $info('file', msg)
+  log('file', [
+    `copied ${wrapList(source)} to '${target}'`,
+    name ? ` as '${name}'` : '',
+  ].join(''))
 }
 
 // export

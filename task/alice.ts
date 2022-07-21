@@ -1,8 +1,8 @@
-import $argv from '../source/argv'
-import $getBasename from '../source/getBasename'
-import $prompt from '../source/prompt'
-import $source from '../source/source'
-import _compact from 'lodash/compact'
+import argv from '../source/argv'
+import compact from 'lodash/compact'
+import getBasename from '../source/getBasename'
+import glob from '../source/glob'
+import prompt from '../source/prompt'
 
 // interface
 
@@ -14,7 +14,7 @@ const ask = async (
   list: string[],
 ): Promise<string> => {
 
-  const answer = await $prompt({
+  const answer = await prompt({
     id: 'default-task',
     list,
     message: 'select a task',
@@ -27,26 +27,26 @@ const ask = async (
 
 const load = async (): Promise<string[]> => {
 
-  const listSource = await $source([
+  const listSource = await glob([
     './task/*.js',
     './task/*.ts',
     '!*.d.ts',
   ])
 
   const listResult = listSource.map((source) => {
-    const basename = $getBasename(source)
+    const basename = getBasename(source)
     return basename === 'alice'
       ? ''
       : basename
   })
 
-  return _compact(listResult)
+  return compact(listResult)
 }
 
-const main = async (): Promise<void> => {
+const main = async () => {
 
-  const task = $argv()._[0]
-    ? $argv()._[0].toString()
+  const task = argv()._[0]
+    ? argv()._[0].toString()
     : await (async () => ask(await load()))()
 
   if (!task) return
@@ -55,9 +55,9 @@ const main = async (): Promise<void> => {
 
 const run = async (
   task: string,
-): Promise<void> => {
+) => {
 
-  const [source] = await $source([
+  const [source] = await glob([
     `./task/${task}.js`,
     `./task/${task}.ts`,
   ])

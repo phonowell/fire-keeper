@@ -1,22 +1,18 @@
 import fse from 'fs-extra'
-import info from './info'
-import source_ from './source'
+import glob from './glob'
+import log from './log'
 import wrapList from './wrapList'
 
 // function
 
 const main = async (
   source: string | string[],
-): Promise<void> => {
-
-  const listSource = await source_(source)
-  if (!listSource.length) return
-
-  const msg = `removed ${wrapList(source)}`
-
-  await Promise.all(listSource.map(src => fse.remove(src)))
-
-  info('remove', msg)
+) => {
+  const listSource = await glob(source, { onlyFiles: false })
+  for (const src of listSource) {
+    await fse.remove(src)
+  }
+  log('remove', `removed ${wrapList(source)}`)
 }
 
 // export

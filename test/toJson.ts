@@ -6,9 +6,9 @@ const a = () => {
 
   const string = 'a little message'
   const object = { message: string }
-  const buffer = Buffer.from($.parseString(object))
+  const buffer = Buffer.from($.toString(object))
 
-  const result = $.parseJson<{ [key: string]: unknown }>(buffer)
+  const result = $.toJson(buffer) as { message: string }
   if (result.message !== string) throw new Error('0')
 }
 

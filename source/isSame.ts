@@ -1,8 +1,9 @@
-import $info from './info'
-import $normalizePathToArray from './normalizePathToArray'
-import $parseString from './parseString'
-import $read from './read'
-import $stat from './stat'
+import log from './log'
+import normalizePath from './normalizePath'
+import read from './read'
+import stat from './stat'
+import toArray from './toArray'
+import toString from './toString'
 
 // function
 
@@ -10,7 +11,7 @@ const main = async (
   source: string | string[],
 ): Promise<boolean> => {
 
-  const listSource = $normalizePathToArray(source)
+  const listSource = toArray(source).map(normalizePath)
   if (listSource.length < 2) return false
 
   // size
@@ -18,10 +19,10 @@ const main = async (
 
   for (const src of listSource) {
     // eslint-disable-next-line no-await-in-loop
-    const stat = await $stat(src)
-    if (!stat) return false
+    const stats = await stat(src)
+    if (!stats) return false
 
-    const { size } = stat
+    const { size } = stats
 
     if (!cacheSize) {
       cacheSize = size
@@ -35,10 +36,10 @@ const main = async (
   let cacheCont = ''
   for (const src of listSource) {
     // eslint-disable-next-line no-await-in-loop
-    let cont = await $info.whisper<string>($read(src))
+    let cont = await log.whisper<string>(read(src))
     if (!cont) return false
 
-    cont = $parseString(cont)
+    cont = toString(cont)
 
     if (!cacheCont) {
       cacheCont = cont

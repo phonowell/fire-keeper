@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { $, temp } from './index'
 import isEqual from 'lodash/isEqual'
 

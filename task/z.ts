@@ -1,21 +1,13 @@
-import $ from '../source/index'
+import $ from '../source/'
 
 // variable
 
-const list = [1, 2, 3, 4]
+const temp = './temp'
 
 // function
 
-const main = async (): Promise<void> => {
-
-  const a = await $.prompt({
-    list,
-    type: 'select',
-  })
-  console.log(a)
-
-  const b = await $.prompt({ type: 'text' })
-  console.log(b)
+const main = async () => {
+  const a = await $.read('a.css', { raw: true })
 }
 
 // export
