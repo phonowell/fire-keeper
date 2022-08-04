@@ -1,13 +1,12 @@
 import $ from '../source/'
 
-// variable
-
-const temp = './temp'
-
 // function
 
-const main = async () => {
-  const a = await $.read('a.css', { raw: true })
+const main = () => {
+  $.watch([
+    './source/**/*.ts',
+    '!**/test/**/*.ts',
+  ], path => console.log(path))
 }
 
 // export
