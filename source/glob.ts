@@ -19,7 +19,11 @@ const main = async (
 
   if (isListedAsSource(input)) return input
 
-  const result = await glob(toArray(input).map(normalizePath), { absolute: true, ...options }) as ListSource
+  const result = await glob(toArray(input).map(normalizePath), {
+    absolute: true,
+    suppressErrors: true,
+    ...options,
+  }) as ListSource
   result.__is_listed_as_source__ = true
 
   return result

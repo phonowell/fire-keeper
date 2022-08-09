@@ -28,6 +28,7 @@ import say from './say'
 import sleep from './sleep'
 import stat from './stat'
 import toArray from './toArray'
+import toDate from './toDate'
 import toJson from './toJson'
 import toString from './toString'
 import type from './type'
@@ -36,7 +37,7 @@ import wrapList from './wrapList'
 import write from './write'
 import zip from './zip'
 const $ = {
-  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, glob, home, isExisted, isSame, link, log, mkdir, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toJson, toString, type, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, glob, home, isExisted, isSame, link, log, mkdir, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, type, watch, wrapList, write, zip,
 }
 export default $
 
