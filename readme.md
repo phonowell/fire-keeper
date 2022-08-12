@@ -5,7 +5,7 @@
 ## 安装
 
 ```shell
-npm i fire-keeper
+pnpm i fire-keeper
 ```
 
 ## 使用
@@ -19,14 +19,10 @@ import $ from 'fire-keeper'
 之后就可以愉快地玩耍啦。
 
 ```typescript
-$.task('build', $.compile_('./source/index.ts'))
+$.log('hello world')
 ```
 
-## 方法
-
-注意，以`_`结尾的方法均为`async function`，需要加`await`调用。
-
-## 编译
+## 构建
 
 ```shell
 npm run build
@@ -42,4 +38,4 @@ npm run test
 
 该项目**可能并不稳定**。
 
-**最后更新于`2021/4/28`。**
+**最后更新于`2022/08/12`。**
