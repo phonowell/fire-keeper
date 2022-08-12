@@ -13,9 +13,9 @@ type Option = {
 // variable
 
 const Lang = {
-  'ja': 'kyoko',
+  ja: 'kyoko',
   'ja-jp': 'kyoko',
-  'zh': 'ting-ting',
+  zh: 'ting-ting',
   'zh-cn': 'ting-ting',
   'zh-hk': 'sin-ji',
   'zh-tw': 'mei-jia',
@@ -23,19 +23,13 @@ const Lang = {
 
 // function
 
-const main = async (
-  text: string,
-  option: Option = {},
-) => {
-
+const main = async (text: string, option: Option = {}) => {
   for (let message of toArray(text)) {
     log('say', message)
 
     if (os() !== 'macos') continue
 
-    message = message
-      .replace(/[#()-]/g, '')
-      .trim()
+    message = message.replace(/[#()-]/g, '').trim()
 
     if (!message) continue
 

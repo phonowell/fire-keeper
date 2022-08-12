@@ -15,48 +15,31 @@ type Result = [boolean, string]
 
 // variable
 
-const separator = os() === 'windows'
-  ? ' && '
-  : '; '
+const separator = os() === 'windows' ? ' && ' : '; '
 
 // function
 
-const info = (
-  type: string,
-  message: string,
-): void => {
-
+const info = (type: string, message: string) => {
   let msg = message.trim()
   if (!msg) return
 
-  msg = msg
-    .replace(/\r/g, '\n')
-    .replace(/\n{2,}/g, '')
-
-  msg = type === 'error'
-    ? kleur.red(msg)
-    : kleur.gray(msg)
+  msg = msg.replace(/\r/g, '\n').replace(/\n{2,}/g, '')
+  msg = type === 'error' ? kleur.red(msg) : kleur.gray(msg)
 
   console.log(msg)
 }
 
-const main = (
-  cmd: string | string[],
-  option: Option = {},
-): Promise<Result> => {
+const main = (cmd: string | string[], option: Option = {}): Promise<Result> => {
+  const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
 
-  const stringCmd = cmd instanceof Array
-    ? cmd.join(separator)
-    : cmd
-
-  const [cmder, arg] = os() === 'macos'
-    ? ['/bin/sh', ['-c', stringCmd]]
-    : ['cmd.exe', ['/s', '/c', stringCmd]]
+  const [cmder, arg] =
+    os() === 'macos'
+      ? ['/bin/sh', ['-c', stringCmd]]
+      : ['cmd.exe', ['/s', '/c', stringCmd]]
 
   if (!option.silent) log('exec', stringCmd)
 
   return new Promise(resolve => {
-
     let result = ''
 
     const process = child.spawn(cmder, arg, {})
@@ -78,9 +61,7 @@ const main = (
   })
 }
 
-const parseMessage = (
-  buffer: Uint8Array,
-): string => trimEnd(buffer.toString(), '\n')
+const parseMessage = (buffer: Uint8Array) => trimEnd(buffer.toString(), '\n')
 
 // export
 export default main

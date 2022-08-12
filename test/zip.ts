@@ -1,10 +1,8 @@
-
 import { $, temp } from '.'
 
 // function
 
 const a = async () => {
-
   console.log(temp)
 
   for (const key of ['a', 'b', 'c'])
@@ -14,7 +12,7 @@ const a = async () => {
     base: temp,
   })
 
-  if (!await $.isExisted(`${temp}/temp.zip`)) throw new Error('0')
+  if (!(await $.isExisted(`${temp}/temp.zip`))) throw new Error('0')
 }
 
 // export

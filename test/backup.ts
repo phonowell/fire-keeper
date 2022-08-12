@@ -4,24 +4,14 @@ import isEqual from 'lodash/isEqual'
 // function
 
 const a = async () => {
+  await $.copy(['./license.md', './readme.md'], temp)
 
-  await $.copy([
-    './license.md',
-    './readme.md',
-  ], temp)
+  const listSource = [`${temp}/license.md`, `${temp}/readme.md`]
 
-  const listSource = [
-    `${temp}/license.md`,
-    `${temp}/readme.md`,
-  ]
-
-  const listTarget = [
-    `${temp}/license.md.bak`,
-    `${temp}/readme.md.bak`,
-  ]
+  const listTarget = [`${temp}/license.md.bak`, `${temp}/readme.md.bak`]
 
   await $.backup(listSource)
-  if (!await $.isExisted(listTarget)) throw new Error('0')
+  if (!(await $.isExisted(listTarget))) throw new Error('0')
 
   const listDataSource: Buffer[] = []
   for (const it of listSource) {

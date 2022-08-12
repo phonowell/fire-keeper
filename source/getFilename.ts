@@ -2,9 +2,7 @@ import getName from './getName'
 
 // function
 
-const main = (
-  input: string,
-): string => getName(input).filename
+const main = (input: string) => getName(input).filename
 
 // export
 export default main

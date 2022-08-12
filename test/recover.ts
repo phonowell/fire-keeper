@@ -3,7 +3,6 @@ import { $, temp } from './index'
 // function
 
 const a = async () => {
-
   const source = `${temp}/readme.md`
 
   await $.copy('./readme.md', temp)
@@ -12,7 +11,7 @@ const a = async () => {
 
   await $.recover(source)
 
-  if (!await $.isExisted(source)) throw new Error('0')
+  if (!(await $.isExisted(source))) throw new Error('0')
 }
 
 // export

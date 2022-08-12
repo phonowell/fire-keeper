@@ -3,7 +3,6 @@ import { $ } from './index'
 // function
 
 const a = () => {
-
   const string = '2021-1-1'
 
   const result = $.toDate(string)

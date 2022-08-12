@@ -25,15 +25,13 @@ type OptionRequired = Required<Option>
 const execute = async (
   listSource: string[],
   target: string,
-  option: OptionRequired,
+  option: OptionRequired
 ) => {
-
   const { base, filename } = option
 
   const listResource = await glob(listSource)
 
   await new Promise(resolve => {
-
     const output = fs.createWriteStream(`${target}/${filename}`)
     const archive = archiver('zip', {
       zlib: {
@@ -54,7 +52,9 @@ const execute = async (
     archive.on('progress', e => {
       if (!message) return
 
-      const gray = kleur.gray(`${Math.round(e.fs.processedBytes * 100 / e.fs.totalBytes)}%`)
+      const gray = kleur.gray(
+        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`
+      )
       const magenta = kleur.magenta(message)
 
       console.log(`${gray} ${magenta}`)
@@ -63,7 +63,7 @@ const execute = async (
 
     archive.on('warning', e => {
       console.log(kleur.red(e.message))
-      throw (e)
+      throw e
     })
 
     // execute
@@ -81,18 +81,17 @@ const execute = async (
 const toArray = (
   source: string | string[],
   target: string,
-  option: string | Option,
+  option: string | Option
 ): [string[], string, OptionRequired] => {
-
   const listSource = convertToArray(source).map(normalizePath)
-  const pathTarget = normalizePath(target || getDirname(listSource[0]).replace(/\*/g, ''))
+  const pathTarget = normalizePath(
+    target || getDirname(listSource[0]).replace(/\*/g, '')
+  )
 
-  let [base, filename] = typeof option === 'string'
-    ? ['', option]
-    : [
-      option.base || '',
-      option.filename || '',
-    ]
+  let [base, filename] =
+    typeof option === 'string'
+      ? ['', option]
+      : [option.base || '', option.filename || '']
 
   base = normalizePath(base || getBase(listSource))
   if (!filename) filename = `${getBasename(pathTarget)}.zip`
@@ -107,9 +106,7 @@ const toArray = (
   ]
 }
 
-const getBase = (
-  listSource: string[],
-): string => {
+const getBase = (listSource: string[]): string => {
   const [source] = listSource
   if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
   return getDirname(source)
@@ -118,10 +115,13 @@ const getBase = (
 const main = async (
   source: string | string[],
   target = '',
-  option: string | Option = '',
+  option: string | Option = ''
 ) => {
   await execute(...toArray(source, target, option))
-  log('zip', `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`)
+  log(
+    'zip',
+    `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`
+  )
 }
 
 // export

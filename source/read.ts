@@ -15,41 +15,51 @@ type Options<R extends boolean> = {
   raw: R
 }
 
-type Result<T = undefined, S extends string = string, R extends boolean = false> = T extends undefined
+type Result<
+  T = undefined,
+  S extends string = string,
+  R extends boolean = false
+> = T extends undefined
   ? R extends true
-  ? Buffer | undefined
-  : ((S extends `${string}${ItemExtString}`
-    ? string
-    : S extends `${string}${ItemExtObject}`
-    ? { [x: string]: unknown }
-    : Buffer) | undefined)
+    ? Buffer | undefined
+    :
+        | (S extends `${string}${ItemExtString}`
+            ? string
+            : S extends `${string}${ItemExtObject}`
+            ? { [x: string]: unknown }
+            : Buffer)
+        | undefined
   : T
 
 // variable
 
 const listExtString = [
-  '.coffee', '.css',
+  '.coffee',
+  '.css',
   '.html',
   '.js',
   '.md',
   '.pug',
-  '.sh', '.styl',
-  '.ts', '.tsx', '.txt',
+  '.sh',
+  '.styl',
+  '.ts',
+  '.tsx',
+  '.txt',
   '.xml',
 ] as const
 
-const listExtObject = [
-  '.json',
-  '.yaml', '.yml',
-] as const
+const listExtObject = ['.json', '.yaml', '.yml'] as const
 
 // function
 
-const main = async <T = undefined, S extends string = string, R extends boolean = false>(
+const main = async <
+  T = undefined,
+  S extends string = string,
+  R extends boolean = false
+>(
   source: S,
-  options?: Options<R>,
+  options?: Options<R>
 ): Promise<Result<T, S, R>> => {
-
   let src = source
   const listSource = await glob(src)
 
@@ -71,7 +81,8 @@ const main = async <T = undefined, S extends string = string, R extends boolean 
 
   const extname = getExtname(src)
 
-  if (listExtString.includes(extname as ItemExtString)) return toString(content) as Result<T, S, R>
+  if (listExtString.includes(extname as ItemExtString))
+    return toString(content) as Result<T, S, R>
   if (extname === '.json') return toJson(content) as Result<T, S, R>
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default

@@ -4,6 +4,7 @@
     "url": "https://github.com/phonowell/fire-keeper/issues"
   },
   "dependencies": {
+    "@swc/core": "^1.2.224",
     "archiver": "^5.3.1",
     "chokidar": "^3.5.3",
     "download": "^8.0.0",
@@ -62,7 +63,7 @@
     "url": "https://github.com/phonowell/fire-keeper.git"
   },
   "scripts": {
-    "alice": "ts-node task/alice",
+    "alice": "ts-node --swc task/alice",
     "build": "npm run alice build && rollup -c",
     "clean": "npm run alice clean",
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"

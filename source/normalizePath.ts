@@ -5,19 +5,14 @@ import trimEnd from 'lodash/trimEnd'
 
 // function
 
-const main = (
-  source: string,
-): string => {
-
+const main = (source: string) => {
   // validate
   if (typeof source !== 'string') return ''
   if (!source) return ''
 
   // ignore?
   const isIgnored = source[0] === '!'
-  let _source = isIgnored
-    ? source.slice(1)
-    : source
+  let _source = isIgnored ? source.slice(1) : source
 
   // replace . & ~
   _source = _source.replace(/\.{2}/g, '__parent_directory__')
@@ -29,8 +24,7 @@ const main = (
   if (_source.startsWith('..')) _source = `${root()}/${_source}`
 
   // normalize
-  _source = path.normalize(_source)
-    .replace(/\\/g, '/')
+  _source = path.normalize(_source).replace(/\\/g, '/')
 
   // absolute
   if (!path.isAbsolute(_source)) _source = `${root()}/${_source}`

@@ -13,30 +13,24 @@ const a = async () => {
 a.description = 'normal'
 
 const b = async () => {
-  const listSource = [
-    `${temp}/a.txt`,
-    `${temp}/b.txt`,
-  ]
+  const listSource = [`${temp}/a.txt`, `${temp}/b.txt`]
   await $.write(listSource[0], 'text')
   await $.write(listSource[1], 'text')
   await $.clean(listSource[0])
 
   if (await $.isExisted(listSource[0])) throw new Error('0')
-  if (!await $.isExisted($.getDirname(listSource[0]))) throw new Error('1')
+  if (!(await $.isExisted($.getDirname(listSource[0])))) throw new Error('1')
 }
 b.description = 'file existed'
 
 const c = async () => {
-  const listSource = [
-    `${temp}/a.txt`,
-    `${temp}/b/b.txt`,
-  ]
+  const listSource = [`${temp}/a.txt`, `${temp}/b/b.txt`]
   await $.write(listSource[0], 'text')
   await $.write(listSource[1], 'text')
   await $.clean(listSource[0])
 
   if (await $.isExisted(listSource[0])) throw new Error('0')
-  if (!await $.isExisted($.getDirname(listSource[0]))) throw new Error('1')
+  if (!(await $.isExisted($.getDirname(listSource[0])))) throw new Error('1')
 }
 c.description = 'folder existed'
 

@@ -10,7 +10,8 @@ type Argv = {
 
 // function
 
-const main = <T extends Record<string, unknown>>(): T & Argv => yargs.argv as T & Argv
+const main = <T extends Record<string, unknown>>() =>
+  yargs.argv as T & Argv
 
 // export
 export default main

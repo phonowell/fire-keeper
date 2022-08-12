@@ -5,9 +5,7 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (
-  source: string | string[],
-) => {
+const main = async (source: string | string[]) => {
   const listSource = await glob(source, { onlyFiles: false })
   for (const src of listSource) {
     await fse.remove(src)

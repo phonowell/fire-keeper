@@ -3,7 +3,6 @@ import { $, temp } from './index'
 // function
 
 const a = async () => {
-
   await $.copy('./package.json', temp)
   const stat = await $.stat('./package.json')
   if (!stat) throw new Error('0')
@@ -12,7 +11,6 @@ const a = async () => {
 }
 
 const b = async () => {
-
   const stat = await $.stat(`${temp}/null.txt`)
   if (stat) throw new Error('0')
 }

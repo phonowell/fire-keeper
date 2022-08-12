@@ -3,7 +3,6 @@ import { $ } from './index'
 // function
 
 const a = () => {
-
   const source = '~/Downloads/test.txt'
   const { basename, dirname, extname, filename } = $.getName(source)
 
@@ -15,7 +14,6 @@ const a = () => {
 a.description = 'default'
 
 const b = () => {
-
   const source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
   const { basename, dirname, extname, filename } = $.getName(source)
 

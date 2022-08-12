@@ -19,16 +19,14 @@ const separator = `${kleur.gray('›')} `
 
 // function
 
-const freeze = async<T>(
-  callback: Promise<T> | (() => Promise<T>),
+const freeze = async <T>(
+  callback: Promise<T> | (() => Promise<T>)
 ): Promise<T> => {
-
   main.isFrozen = true
   main.isSilent = true
 
-  const result = typeof callback === 'function'
-    ? await callback()
-    : await callback
+  const result =
+    typeof callback === 'function' ? await callback() : await callback
 
   main.isFrozen = false
   main.isSilent = false
@@ -36,13 +34,8 @@ const freeze = async<T>(
   return result
 }
 
-const main = <T>(
-  ...args: [T] | [string, T]
-): T => {
-
-  const [type, message] = args.length === 1
-    ? ['default', args[0]]
-    : args
+const main = <T>(...args: [T] | [string, T]): T => {
+  const [type, message] = args.length === 1 ? ['default', args[0]] : args
 
   if (main.isSilent) return message
 
@@ -55,11 +48,7 @@ const main = <T>(
 
 const makeTime = () => {
   const date = new Date()
-  return [
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-  ]
+  return [date.getHours(), date.getMinutes(), date.getSeconds()]
     .map(it => it.toString().padStart(2, '0'))
     .join(':')
 }
@@ -69,30 +58,18 @@ const pause = () => {
   main.isSilent = true
 }
 
-const render = (
-  type: string,
-  message: string,
-) => [
-  renderTime(),
-  separator,
-  renderType(type),
-  renderContent(message),
-].join('')
+const render = (type: string, message: string) =>
+  [renderTime(), separator, renderType(type), renderContent(message)].join('')
 
-const renderContent = (
-  input: string,
-) => renderPath(input)
-  // 'xxx'
-  .replace(/'.*?'/g, text => kleur.magenta(text.replace(/'/g, '') || "''"))
+const renderContent = (input: string) =>
+  renderPath(input)
+    // 'xxx'
+    .replace(/'.*?'/g, text => kleur.magenta(text.replace(/'/g, '') || "''"))
 
-const renderPath = (
-  input: string,
-): string => input
-  .replace(regRoot, '.')
-  .replace(regHome, '~')
+const renderPath = (input: string) =>
+  input.replace(regRoot, '.').replace(regHome, '~')
 
 const renderTime = () => {
-
   const ts = Math.floor(Date.now() / 1e3)
   if (ts === cahceTime[0]) return cahceTime[1]
 
@@ -102,10 +79,7 @@ const renderTime = () => {
   return result
 }
 
-const renderType = (
-  type: string,
-) => {
-
+const renderType = (type: string) => {
   const key = type.trim().toLowerCase()
   if (key === 'default') return ''
   if (cacheType.has(key)) return cacheType.get(key)
@@ -125,14 +99,12 @@ const resume = () => {
 }
 
 const whisper = async <T>(
-  callback: Promise<T> | (() => Promise<T>),
+  callback: Promise<T> | (() => Promise<T>)
 ): Promise<T> => {
-
   pause()
 
-  const result = typeof callback === 'function'
-    ? await callback()
-    : await callback
+  const result =
+    typeof callback === 'function' ? await callback() : await callback
 
   resume()
 

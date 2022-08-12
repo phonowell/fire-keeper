@@ -9,7 +9,6 @@ let cache: Os = ''
 // function
 
 const main = (): Os => {
-
   if (cache) return cache
 
   const { platform } = process

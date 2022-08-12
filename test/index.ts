@@ -57,23 +57,24 @@ const temp = $.normalizePath('./temp')
 const clear = () => $.log.whisper($.remove(temp))
 
 const main = () => {
-
   const target = $.argv<{ _: string[] }>()._[1] || ''
 
-  const listModule = target
-    ? [target]
-    : Object.keys(mapModule)
+  const listModule = target ? [target] : Object.keys(mapModule)
 
-  for (const name of listModule) describe(name, () => {
-    const listIt = Object.keys(mapModule[name])
-    for (const key of listIt) {
-      const fn = mapModule[name][key] as FnAsync & { description?: string }
-      it(fn.description || (listIt.length === 1 ? 'default' : key), async () => {
-        await clear()
-        await $.log.freeze(fn)
-      })
-    }
-  })
+  for (const name of listModule)
+    describe(name, () => {
+      const listIt = Object.keys(mapModule[name])
+      for (const key of listIt) {
+        const fn = mapModule[name][key] as FnAsync & { description?: string }
+        it(
+          fn.description || (listIt.length === 1 ? 'default' : key),
+          async () => {
+            await clear()
+            await $.log.freeze(fn)
+          }
+        )
+      }
+    })
 }
 
 // execute

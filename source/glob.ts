@@ -10,20 +10,23 @@ type ListSource = string[] & {
 
 // function
 
-const isListedAsSource = (input: string | string[] | ListSource): input is ListSource => input instanceof Array && (input as ListSource).__is_listed_as_source__ === true
+const isListedAsSource = (
+  input: string | string[] | ListSource
+): input is ListSource =>
+  input instanceof Array &&
+  (input as ListSource).__is_listed_as_source__ === true
 
 const main = async (
   input: string | string[] | ListSource,
-  options?: Options,
-): Promise<ListSource> => {
-
+  options?: Options
+) => {
   if (isListedAsSource(input)) return input
 
-  const result = await glob(toArray(input).map(normalizePath), {
+  const result = (await glob(toArray(input).map(normalizePath), {
     absolute: true,
     suppressErrors: true,
     ...options,
-  }) as ListSource
+  })) as ListSource
   result.__is_listed_as_source__ = true
 
   return result

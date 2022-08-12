@@ -11,19 +11,24 @@ import wrapList from './wrapList'
 const main = async (
   source: string | string[],
   target: string,
-  name?: string,
+  name?: string
 ) => {
   const listSource = await glob(source)
 
   for (const src of listSource) {
-    const t = `${normalizePath(target || getDirname(src))}/${name || getFilename(src)}`
+    const t = `${normalizePath(target || getDirname(src))}/${
+      name || getFilename(src)
+    }`
     await fse.copy(src, t)
   }
 
-  log('file', [
-    `copied ${wrapList(source)} to '${target}'`,
-    name ? ` as '${name}'` : '',
-  ].join(''))
+  log(
+    'file',
+    [
+      `copied ${wrapList(source)} to '${target}'`,
+      name ? ` as '${name}'` : '',
+    ].join('')
+  )
 }
 
 // export

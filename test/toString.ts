@@ -14,13 +14,12 @@ type ListQuestion = [
   Buffer,
   null,
   undefined,
-  typeof NaN,
+  typeof NaN
 ]
 
 // function
 
 const a = () => {
-
   const listQuestion: ListQuestion = [
     42, // number
     'Aloha', // string

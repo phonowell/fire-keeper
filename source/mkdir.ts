@@ -6,9 +6,7 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (
-  source: string | string[],
-) => {
+const main = async (source: string | string[]) => {
   if (!source) throw new Error('mkdir/error: empty source')
 
   const listSource = toArray(source).map(normalizePath)

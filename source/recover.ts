@@ -8,9 +8,7 @@ import write from './write'
 
 // function
 
-const main = async (
-  source: string | string[],
-) => {
+const main = async (source: string | string[]) => {
   const listSource = await glob(toArray(source).map(src => `${src}.bak`))
 
   for (const src of listSource) {
@@ -20,9 +18,7 @@ const main = async (
   log('recover', `recovered ${wrapList(source)}`)
 }
 
-const recover = async (
-  source: string,
-) => {
+const recover = async (source: string) => {
   const content = await read(source)
   await write(source.replace('.bak', ''), content)
   await remove(source)

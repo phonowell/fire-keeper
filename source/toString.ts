@@ -8,14 +8,11 @@ type HasToString = {
 
 // function
 
-const main = (
-  input: unknown,
-): string => {
-
+const main = (input: unknown) => {
   if (typeof input === 'string') return input
 
   if (input instanceof Array)
-    return (JSON.stringify({ __container__: input }))
+    return JSON.stringify({ __container__: input })
       .replace(/\{(.*)\}/u, '$1')
       .replace(/"__container__":/u, '')
 
@@ -24,9 +21,8 @@ const main = (
   return String(input)
 }
 
-const validateAsHasToString = (
-  input: unknown,
-): input is HasToString => typeof (input as HasToString)?.toString === 'function'
+const validateAsHasToString = (input: unknown): input is HasToString =>
+  typeof (input as HasToString)?.toString === 'function'
 
 // export
 export default main

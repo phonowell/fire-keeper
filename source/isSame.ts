@@ -7,10 +7,7 @@ import toString from './toString'
 
 // function
 
-const main = async (
-  source: string | string[],
-): Promise<boolean> => {
-
+const main = async (source: string | string[]) => {
   const listSource = toArray(source).map(normalizePath)
   if (listSource.length < 2) return false
 

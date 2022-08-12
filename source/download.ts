@@ -5,7 +5,7 @@ import toString from './toString'
 
 // interface
 
-interface Option {
+interface Options {
   filename: string
   timeout: number
 }
@@ -15,39 +15,35 @@ interface Option {
 const format = (
   source: string,
   target: string,
-  option: string | Partial<Option>,
-): [string, string, Option] => {
-
+  options: string | Partial<Options>
+) => {
   if (!source) throw new Error('download/error: empty source')
-  const _source = source.startsWith('//')
-    ? `https:${source}`
-    : source
+  const url = source.startsWith('//') ? `https:${source}` : source
 
   if (!target) throw new Error('download/error: empty target')
-  const _target = normalizePath(target)
+  const path = normalizePath(target)
 
-  const _option = typeof option === 'string'
-    ? { filename: option }
-    : { ...option }
-  const optionX = {
+  const options2: Options = {
     filename: '',
     timeout: 10e3,
-    ..._option,
+    ...(typeof options === 'string' ? { filename: options } : { ...options }),
   }
 
-  return [_source, _target, optionX]
+  return [url, path, options2] as const
 }
 
 const main = async (
   source: string,
   target: string,
-  option: string | Partial<Option> = {},
+  option: string | Partial<Options> = {}
 ) => {
-
   await download(...format(source, target, option))
-  log('download', `downloaded '${source}' to '${target}', as '${toString(option)}'`)
+  log(
+    'download',
+    `downloaded '${source}' to '${target}', as '${toString(option)}'`
+  )
 }
 
 // export
-export type { Option }
+export type { Options }
 export default main

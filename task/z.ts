@@ -3,10 +3,7 @@ import $ from '../source/'
 // function
 
 const main = () => {
-  $.watch([
-    './source/**/*.ts',
-    '!**/test/**/*.ts',
-  ], path => console.log(path))
+  $.watch(['./source/**/*.ts', '!**/test/**/*.ts'], path => console.log(path))
 }
 
 // export

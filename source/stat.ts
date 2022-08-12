@@ -6,13 +6,10 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (
-  source: string,
-): Promise<fs.Stats | null> => {
-
+const main = async (source: string): Promise<fs.Stats | null> => {
   const _source = normalizePath(source)
 
-  if (!await isExisted(_source)) {
+  if (!(await isExisted(_source))) {
     log('file', `${wrapList(_source)} not existed`)
     return null
   }

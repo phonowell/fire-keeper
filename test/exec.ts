@@ -3,7 +3,6 @@ import { $ } from './index'
 // function
 
 const a = async () => {
-
   const [status, result] = await $.exec('npm -v')
 
   if (!status) throw new Error('0')
@@ -11,7 +10,6 @@ const a = async () => {
 }
 
 const b = async () => {
-
   const [status] = await $.exec('fire-keeper-error')
   if (status) throw new Error('0')
 }

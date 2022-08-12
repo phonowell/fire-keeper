@@ -9,11 +9,10 @@ import wrapList from './wrapList'
 const main = async (
   source: string,
   content: unknown,
-  options?: fse.WriteFileOptions,
-): Promise<boolean> => {
+  options?: fse.WriteFileOptions
+) => {
   await fse.outputFile(normalizePath(source), toString(content), options)
   log('file', `wrote ${wrapList(source)}`)
-  return true
 }
 
 // export

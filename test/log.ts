@@ -4,7 +4,6 @@ import { $ } from './index'
 // function
 
 const a = () => {
-
   let type = ''
 
   type = $.type(renderPath)

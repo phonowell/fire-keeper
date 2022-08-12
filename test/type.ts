@@ -40,7 +40,8 @@ const a = () => {
   for (let i = 0; i < listQuestion.length; i++) {
     const question = listQuestion[i]
     const answer = listAnswer[i]
-    if ($.type(question) === answer) console.log(`$.type(${question}) === ${answer}`)
+    if ($.type(question) === answer)
+      console.log(`$.type(${question}) === ${answer}`)
     else throw new Error(`$.type(${question}) !== ${answer}`)
   }
 }

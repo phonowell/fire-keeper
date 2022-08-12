@@ -5,12 +5,11 @@ import normalizePath from './normalizePath'
 
 // function
 
-const main = async (
-  source: string,
-  target: string,
-) => {
+const main = async (source: string, target: string) => {
   const src = normalizePath(source)
-  await new Promise(resolve => fs.rename(src, `${getDirname(src)}/${target}`, resolve))
+  await new Promise(resolve =>
+    fs.rename(src, `${getDirname(src)}/${target}`, resolve)
+  )
   log('file', `renamed '${source}' as '${target}'`)
 }
 

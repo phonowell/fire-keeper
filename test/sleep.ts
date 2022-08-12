@@ -3,7 +3,6 @@ import { $ } from './index'
 // function
 
 const a = async () => {
-
   const start = new Date().getTime()
   await $.sleep(200)
   const diff = new Date().getTime() - start

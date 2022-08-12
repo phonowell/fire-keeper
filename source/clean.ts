@@ -4,9 +4,7 @@ import remove from './remove'
 
 // function
 
-const main = async (
-  source: string | string[],
-) => {
+const main = async (source: string | string[]) => {
   const listSource = await glob(source, { onlyFiles: false })
   await remove(source)
   const dirname = getDirname(listSource[0])

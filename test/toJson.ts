@@ -3,7 +3,6 @@ import { $ } from './index'
 // function
 
 const a = () => {
-
   const string = 'a little message'
   const object = { message: string }
   const buffer = Buffer.from($.toString(object))
