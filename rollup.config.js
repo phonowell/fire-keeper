@@ -14,6 +14,11 @@ const config = [
         dir: 'dist',
         format: 'cjs',
       },
+      {
+        exports: 'named',
+        dir: 'dist/esm',
+        format: 'esm',
+      },
     ],
     plugins: [
       del({ targets: 'dist' }),

@@ -32,7 +32,7 @@ const replace = async () => {
 }
 
 const replaceRollup = async () => {
-  const listModule = await (await $.glob('./source/*.ts')).map($.getBasename)
+  const listModule = (await $.glob('./source/*.ts')).map($.getBasename)
   const source = './rollup.config.js'
   const cont = await $.read(source)
   if (!cont) return
@@ -64,13 +64,11 @@ const replaceTest = async () => {
   // module/*.ts
   await Promise.all(
     listModule.map(async source => {
-      const _cont = $.toString(await $.read(source))
-      if (!~_cont.search(/throw\s\d/u)) return
+      const cont2 = $.toString(await $.read(source))
+      if (!~cont2.search(/throw\s\d/u)) return
       await $.write(
         source,
-        _cont
-          // throw 0 -> throw new Error('0')
-          .replace(/throw\s(\d+)/g, "throw new Error('$1')")
+        cont2.replace(/throw\s(\d+)/g, "throw new Error('$1')")
       )
     })
   )
