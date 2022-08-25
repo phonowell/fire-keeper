@@ -1,22 +1,21 @@
+import flatten from 'lodash/flatten'
 import log from './log'
 import normalizePath from './normalizePath'
 import read from './read'
 import stat from './stat'
-import toArray from './toArray'
 import toString from './toString'
 
 // function
 
-const main = async (source: string | string[]) => {
-  const listSource = toArray(source).map(normalizePath)
-  if (listSource.length < 2) return false
+const main = async (...args: (string | string[])[]) => {
+  const group = flatten(args).map(normalizePath)
+  if (group.length < 2) return false
 
   // size
   let cacheSize = 0
 
-  for (const src of listSource) {
-    // eslint-disable-next-line no-await-in-loop
-    const stats = await stat(src)
+  for (const source of group) {
+    const stats = await stat(source)
     if (!stats) return false
 
     const { size } = stats
@@ -31,9 +30,8 @@ const main = async (source: string | string[]) => {
 
   // content
   let cacheCont = ''
-  for (const src of listSource) {
-    // eslint-disable-next-line no-await-in-loop
-    let cont = await log.whisper<string>(read(src))
+  for (const source of group) {
+    let cont = await log.whisper<string>(read(source))
     if (!cont) return false
 
     cont = toString(cont)

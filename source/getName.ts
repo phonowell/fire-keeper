@@ -5,11 +5,11 @@ import path from 'path'
 const main = (input: string) => {
   if (!input) throw new Error(`getName/error: empty input`)
 
-  const _input = input.replace(/\\/g, '/')
+  const ipt = input.replace(/\\/g, '/')
 
-  const extname = path.extname(_input)
-  const basename = path.basename(_input, extname)
-  const dirname = path.dirname(_input)
+  const extname = path.extname(ipt)
+  const basename = path.basename(ipt, extname)
+  const dirname = path.dirname(ipt)
   const filename = `${basename}${extname}`
 
   return { basename, dirname, extname, filename }

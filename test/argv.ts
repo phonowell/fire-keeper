@@ -3,7 +3,7 @@ import { $ } from './index'
 // function
 
 const a = () => {
-  if ($.type($.argv) !== 'function') throw new Error('0')
+  if ($.getType($.argv) !== 'function') throw new Error('0')
 }
 
 // export

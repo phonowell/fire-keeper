@@ -6,8 +6,8 @@ const a = async () => {
   await $.copy('./package.json', temp)
   const stat = await $.stat('./package.json')
   if (!stat) throw new Error('0')
-  if ($.type(stat.atime) !== 'date') throw new Error('1')
-  if ($.type(stat.size) !== 'number') throw new Error('2')
+  if ($.getType(stat.atime) !== 'date') throw new Error('1')
+  if ($.getType(stat.size) !== 'number') throw new Error('2')
 }
 
 const b = async () => {

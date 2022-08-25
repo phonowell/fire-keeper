@@ -3,7 +3,7 @@ import { $ } from './index'
 // function
 
 const a = () => {
-  if ($.type($.getExtname) !== 'function') throw new Error('0')
+  if ($.getType($.getExtname) !== 'function') throw new Error('0')
 }
 
 // export

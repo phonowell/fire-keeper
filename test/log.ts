@@ -6,10 +6,10 @@ import { $ } from './index'
 const a = () => {
   let type = ''
 
-  type = $.type(renderPath)
+  type = $.getType(renderPath)
   if (type !== 'function') throw new Error('1')
 
-  type = $.type($.log.whisper)
+  type = $.getType($.log.whisper)
   if (type !== 'function') throw new Error(`2: ${type}`)
 
   if ($.log('test') !== 'test') throw new Error('3')

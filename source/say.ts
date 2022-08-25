@@ -40,7 +40,6 @@ const main = async (text: string, option: Option = {}) => {
 
     listCmd.push(message)
 
-    // eslint-disable-next-line no-await-in-loop
     await exec(listCmd.join(' '), { silent: true })
   }
 }

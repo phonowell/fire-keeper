@@ -9,6 +9,7 @@ import * as getDirname from './getDirname'
 import * as getExtname from './getExtname'
 import * as getFilename from './getFilename'
 import * as getName from './getName'
+import * as getType from './getType'
 import * as glob from './glob'
 import * as home from './home'
 import * as isExisted from './isExisted'
@@ -16,6 +17,7 @@ import * as isSame from './isSame'
 import * as link from './link'
 import * as log from './log'
 import * as mkdir from './mkdir'
+import * as move from './move'
 import * as normalizePath from './normalizePath'
 import * as os from './os'
 import * as prompt from './prompt'
@@ -31,7 +33,6 @@ import * as toArray from './toArray'
 import * as toDate from './toDate'
 import * as toJson from './toJson'
 import * as toString from './toString'
-import * as type from './type'
 import * as watch from './watch'
 import * as wrapList from './wrapList'
 import * as write from './write'
@@ -39,7 +40,7 @@ import * as zip from './zip'
 import { describe, it } from 'mocha'
 import $ from '../source/index'
 const mapModule = {
-  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, glob, home, isExisted, isSame, link, log, mkdir, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, type, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExisted, isSame, link, log, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
 
 // ---

@@ -9,13 +9,17 @@ import getDirname from './getDirname'
 import getExtname from './getExtname'
 import getFilename from './getFilename'
 import getName from './getName'
+import getType from './getType'
 import glob from './glob'
 import home from './home'
+import isAsyncFunction from './isAsyncFunction'
 import isExisted from './isExisted'
+import isFunction from './isFunction'
 import isSame from './isSame'
 import link from './link'
 import log from './log'
 import mkdir from './mkdir'
+import move from './move'
 import normalizePath from './normalizePath'
 import os from './os'
 import prompt from './prompt'
@@ -31,13 +35,12 @@ import toArray from './toArray'
 import toDate from './toDate'
 import toJson from './toJson'
 import toString from './toString'
-import type from './type'
 import watch from './watch'
 import wrapList from './wrapList'
 import write from './write'
 import zip from './zip'
 const $ = {
-  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, glob, home, isExisted, isSame, link, log, mkdir, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, type, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isAsyncFunction, isExisted, isFunction, isSame, link, log, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
 export default $
 
