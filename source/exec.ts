@@ -7,11 +7,10 @@ import trimEnd from 'lodash/trimEnd'
 // interface
 
 type Option = {
-  ignoreError?: boolean
   silent?: boolean
 }
 
-type Result = [boolean, string]
+type Result = [number, string, string[]]
 
 // variable
 
@@ -20,48 +19,48 @@ const separator = os() === 'windows' ? ' && ' : '; '
 // function
 
 const info = (type: string, message: string) => {
-  let msg = message.trim()
-  if (!msg) return
-
-  msg = msg.replace(/\r/g, '\n').replace(/\n{2,}/g, '')
-  msg = type === 'error' ? kleur.red(msg) : kleur.gray(msg)
-
-  console.log(msg)
+  if (!message) return
+  console.log(type === 'error' ? kleur.red(message) : kleur.gray(message))
 }
 
 const main = (cmd: string | string[], option: Option = {}): Promise<Result> => {
   const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
 
   const [cmder, arg] =
-    os() === 'macos'
-      ? ['/bin/sh', ['-c', stringCmd]]
-      : ['cmd.exe', ['/s', '/c', stringCmd]]
+    os() === 'windows'
+      ? ['cmd.exe', ['/s', '/c', stringCmd]]
+      : ['/bin/sh', ['-c', stringCmd]]
 
   if (!option.silent) log('exec', stringCmd)
 
   return new Promise(resolve => {
-    let result = ''
+    const cacheAll: string[] = []
+    let cacheLast = ''
 
     const process = child.spawn(cmder, arg, {})
 
     process.stderr.on('data', (data: Uint8Array) => {
-      result = parseMessage(data)
-      if (!option.silent) info('error', data.toString())
+      const message = parseMessage(data)
+      cacheAll.push(message)
+      cacheLast = message
+      if (!option.silent) info('error', message)
     })
 
     process.stdout.on('data', (data: Uint8Array) => {
-      result = parseMessage(data)
-      if (!option.silent) info('default', data.toString())
+      const message = parseMessage(data)
+      cacheAll.push(message)
+      cacheLast = message
+      if (!option.silent) info('default', message)
     })
 
-    process.on('close', (code: number) => {
-      if (code === 0 || option.ignoreError) resolve([true, result])
-      resolve([false, result])
-    })
+    process.on('close', (code: number) => resolve([code, cacheLast, cacheAll]))
   })
 }
 
-const parseMessage = (buffer: Uint8Array) => trimEnd(buffer.toString(), '\n')
+const parseMessage = (buffer: Uint8Array) =>
+  trimEnd(buffer.toString().trim(), '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\n{2,}/g, '')
 
 // export
 export default main

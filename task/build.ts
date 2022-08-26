@@ -1,5 +1,9 @@
 import $ from '../source/index'
 
+// interface
+
+type ListTs = `${string}.ts`[]
+
 // function
 
 const main = async () => {
@@ -44,9 +48,9 @@ const replaceRollup = async () => {
 }
 
 const replaceTest = async () => {
-  const listModule = await $.glob(['./test/*.ts', '!**/index.ts'])
+  const listModule = (await $.glob(['./test/*.ts', '!**/index.ts'])) as ListTs
 
-  const listTest = listModule.map($.getBasename)
+  const listTest = listModule.map($.getBasename) as ListTs
   const content = [
     ...listTest.map(it => `import * as ${it} from './${it}'`),
     "import { describe, it } from 'mocha'",
@@ -57,21 +61,11 @@ const replaceTest = async () => {
     '',
     '// ---',
   ]
-  let cont = $.toString(await $.read('./test/index.ts'))
-  cont = cont.replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
-  await $.write('./test/index.ts', cont)
 
-  // module/*.ts
-  await Promise.all(
-    listModule.map(async source => {
-      const cont2 = $.toString(await $.read(source))
-      if (!~cont2.search(/throw\s\d/u)) return
-      await $.write(
-        source,
-        cont2.replace(/throw\s(\d+)/g, "throw new Error('$1')")
-      )
-    })
-  )
+  const contIndex = await $.read('./test/index.ts')
+  if (!contIndex) return
+  const contIndex2 = contIndex.replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
+  await $.write('./test/index.ts', contIndex2)
 }
 
 // export

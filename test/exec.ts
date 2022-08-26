@@ -3,15 +3,15 @@ import { $ } from './index'
 // function
 
 const a = async () => {
-  const [status, result] = await $.exec('npm -v')
+  const [code, result] = await $.exec('npm -v')
 
-  if (!status) throw new Error('0')
+  if (code) throw new Error(code.toString())
   if (!~result.search(/\d+\.\d+\.\d+/u)) throw new Error('1')
 }
 
 const b = async () => {
-  const [status] = await $.exec('fire-keeper-error')
-  if (status) throw new Error('0')
+  const [code] = await $.exec('fire-keeper-error')
+  if (!code) throw new Error('0')
 }
 
 // export

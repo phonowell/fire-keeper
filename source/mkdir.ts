@@ -10,7 +10,9 @@ const main = async (source: string | string[]) => {
   if (!source) throw new Error('mkdir/error: empty source')
 
   const listSource = toArray(source).map(normalizePath)
-  await Promise.all(listSource.map(it => fse.ensureDir(it)))
+  for (const src of listSource) {
+    await fse.ensureDir(src)
+  }
 
   log('file', `created ${wrapList(source)}`)
 }
