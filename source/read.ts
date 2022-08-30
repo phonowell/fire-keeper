@@ -11,7 +11,7 @@ type ItemExtObject = typeof listExtObject[number]
 
 type ItemExtString = typeof listExtString[number]
 
-type Options<R extends boolean> = {
+type Option<R extends boolean> = {
   raw: R
 }
 
@@ -55,10 +55,10 @@ const listExtObject = ['.json', '.yaml', '.yml'] as const
 const main = async <
   T = undefined,
   S extends string = string,
-  R extends boolean = false
+  R extends boolean = boolean
 >(
   source: S,
-  options?: Options<R>
+  option?: Option<R>
 ): Promise<Result<T, S, R>> => {
   let src = source
   const listSource = await glob(src)
@@ -77,7 +77,7 @@ const main = async <
   })
   log('file', `read '${source}'`)
 
-  if (options?.raw) return content as Result<T, S, R>
+  if (option?.raw) return content as Result<T, S, R>
 
   const extname = getExtname(src)
 

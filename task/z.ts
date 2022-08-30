@@ -7,10 +7,7 @@ const temp = './temp'
 // function
 
 const main = async () => {
-  await $.exec([
-    '1',
-    'pnpm -v'
-  ])
+  const pkg = await $.read('./readme.md', { raw: true })
 }
 
 // export
