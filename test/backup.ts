@@ -21,7 +21,11 @@ const a = async () => {
   }
 
   const listDataTarget: Buffer[] = []
-  for (const it of listTarget) listDataTarget.push(await $.read<Buffer>(it))
+  for (const it of listTarget) {
+    const buffer = await $.read(it)
+    if (!buffer) throw new Error('2')
+    listDataTarget.push(buffer)
+  }
 
   if (!isEqual(listDataSource, listDataTarget)) throw new Error('2')
 }

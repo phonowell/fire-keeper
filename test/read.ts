@@ -17,7 +17,7 @@ const b = async () => {
   const content = { message }
   await $.write(source, content)
 
-  if ((await $.read<{ message: string }>(source)).message !== message)
+  if ((await $.read<{ message: string }>(source))?.message !== message)
     throw new Error('0')
 }
 b.description = '.json'
@@ -47,7 +47,7 @@ const e = async () => {
   await $.write(source, `- value: ${content}`)
 
   const cont = await $.read<[{ value: string }]>(source)
-  if (cont[0].value !== content) throw new Error('0')
+  if (cont?.[0].value !== content) throw new Error('0')
 }
 e.description = '.yaml'
 

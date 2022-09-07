@@ -31,7 +31,7 @@ const main = async (...args: (string | string[])[]) => {
   // content
   let cacheCont = ''
   for (const source of group) {
-    let cont = await log.whisper<string>(read(source))
+    let cont = await log.whisper<string | undefined>(read(source))
     if (!cont) return false
 
     cont = toString(cont)

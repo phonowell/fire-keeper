@@ -28,11 +28,10 @@ const pickModule = async (): Promise<string> => {
 
 const replace = async () => {
   const content = [await pickModule(), '', '// ---']
-  const cont = (await $.read<string>('./source/index.ts')).replace(
-    /[\s\S]*\/\/\s---/u,
-    content.join('\n')
-  )
-  await $.write('./source/index.ts', cont)
+  const cont = await $.read<string>('./source/index.ts')
+  if (!cont) throw new Error('no content')
+  const c = cont.replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
+  await $.write('./source/index.ts', c)
 }
 
 const replaceRollup = async () => {

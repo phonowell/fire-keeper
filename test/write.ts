@@ -18,7 +18,7 @@ const b = async () => {
   await $.write(source, content)
 
   const cont = await $.read<{ message: string }>(source)
-  if (cont.message !== message) throw new Error('0')
+  if (cont?.message !== message) throw new Error('0')
 }
 b.description = '.json'
 

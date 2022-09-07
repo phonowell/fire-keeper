@@ -11,24 +11,14 @@ type ItemExtObject = typeof listExtObject[number]
 
 type ItemExtString = typeof listExtString[number]
 
-type Option<R extends boolean> = {
-  raw: R
-}
-
-type Result<
-  T = undefined,
-  S extends string = string,
-  R extends boolean = false
-> = T extends undefined
+type Result<T, S extends string, R extends boolean> = T extends undefined
   ? R extends true
-    ? Buffer | undefined
-    :
-        | (S extends `${string}${ItemExtString}`
-            ? string
-            : S extends `${string}${ItemExtObject}`
-            ? { [x: string]: unknown }
-            : Buffer)
-        | undefined
+    ? Buffer
+    : S extends `${string}${ItemExtString}`
+    ? string
+    : S extends `${string}${ItemExtObject}`
+    ? { [x: string]: unknown }
+    : Buffer
   : T
 
 // variable
@@ -55,17 +45,19 @@ const listExtObject = ['.json', '.yaml', '.yml'] as const
 const main = async <
   T = undefined,
   S extends string = string,
-  R extends boolean = boolean
+  R extends boolean = false
 >(
   source: S,
-  option?: Option<R>
-): Promise<Result<T, S, R>> => {
+  option?: {
+    raw?: R
+  }
+): Promise<Result<T, S, R> | undefined> => {
   let src = source
   const listSource = await glob(src)
 
   if (!listSource.length) {
     log('file', `'${source}' not existed`)
-    return undefined as Result<T, S, R>
+    return undefined
   }
   src = listSource[0] as S
 

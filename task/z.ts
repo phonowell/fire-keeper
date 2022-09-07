@@ -7,7 +7,7 @@ const temp = './temp'
 // function
 
 const main = async () => {
-  const pkg = await $.read('./readme.md', { raw: true })
+  const content = await $.read<Buffer>('./readme.txt', { raw: false })
 }
 
 // export
