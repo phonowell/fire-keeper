@@ -1,5 +1,5 @@
+import echo from './echo'
 import flatten from 'lodash/flatten'
-import log from './log'
 import normalizePath from './normalizePath'
 import read from './read'
 import stat from './stat'
@@ -31,7 +31,7 @@ const main = async (...args: (string | string[])[]) => {
   // content
   let cacheCont = ''
   for (const source of group) {
-    let cont = await log.whisper<string | undefined>(read(source))
+    let cont = await echo.whisper<string | undefined>(read(source))
     if (!cont) return false
 
     cont = toString(cont)

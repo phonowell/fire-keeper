@@ -4,7 +4,7 @@ import { $, temp } from './index'
 
 const a = async () => {
   await $.download('//www.baidu.com', temp, 'baidu.html')
-  if (!(await $.isExisted(`${temp}/baidu.html`))) throw new Error('0')
+  if (!(await $.isExist(`${temp}/baidu.html`))) throw new Error('0')
 }
 
 const b = async () => {
@@ -12,7 +12,7 @@ const b = async () => {
     filename: 'baidu.html',
     timeout: 1e4,
   })
-  if (!(await $.isExisted(`${temp}/baidu.html`))) throw new Error('0')
+  if (!(await $.isExist(`${temp}/baidu.html`))) throw new Error('0')
 }
 
 // export

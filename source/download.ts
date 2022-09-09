@@ -1,5 +1,5 @@
 import download from 'download'
-import log from './log'
+import echo from './echo'
 import normalizePath from './normalizePath'
 import toString from './toString'
 
@@ -38,7 +38,7 @@ const main = async (
   option: string | Partial<Options> = {}
 ) => {
   await download(...format(source, target, option))
-  log(
+  echo(
     'download',
     `downloaded '${source}' to '${target}', as '${toString(option)}'`
   )

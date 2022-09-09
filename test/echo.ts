@@ -1,4 +1,4 @@
-import { renderPath } from '../source/log'
+import { renderPath } from '../source/echo'
 import { $ } from './index'
 
 // function
@@ -9,10 +9,10 @@ const a = () => {
   type = $.getType(renderPath)
   if (type !== 'function') throw new Error('1')
 
-  type = $.getType($.log.whisper)
+  type = $.getType($.echo.whisper)
   if (type !== 'function') throw new Error(`2: ${type}`)
 
-  if ($.log('test') !== 'test') throw new Error('3')
+  if ($.echo('test') !== 'test') throw new Error('3')
 }
 
 // export

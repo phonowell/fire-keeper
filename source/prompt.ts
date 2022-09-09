@@ -1,5 +1,5 @@
+import echo from './echo'
 import findIndex from 'lodash/findIndex'
-import log from './log'
 import prompts from 'prompts'
 import read from './read'
 import toString from './toString'
@@ -263,13 +263,13 @@ const main = async <T, U extends Type = Type>(
 ): Promise<T & Result<U, T>> => {
   if (!option) throw new Error('prompt/error: empty option')
 
-  log.pause()
+  echo.pause()
 
   const opt = await formatOption<U, T>(option)
   const result = (await prompts(opt as prompts.PromptObject))[opt.name]
   await setCache(option, result)
 
-  log.resume()
+  echo.resume()
 
   return result
 }

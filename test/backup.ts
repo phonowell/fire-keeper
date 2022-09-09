@@ -11,7 +11,7 @@ const a = async () => {
   const listTarget = [`${temp}/license.md.bak`, `${temp}/readme.md.bak`]
 
   await $.backup(listSource)
-  if (!(await $.isExisted(listTarget))) throw new Error('0')
+  if (!(await $.isExist(listTarget))) throw new Error('0')
 
   const listDataSource: Buffer[] = []
   for (const it of listSource) {

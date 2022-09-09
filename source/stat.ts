@@ -1,6 +1,6 @@
+import echo from './echo'
 import fs from 'fs'
-import isExisted from './isExisted'
-import log from './log'
+import isExist from './isExist'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'
 
@@ -9,8 +9,8 @@ import wrapList from './wrapList'
 const main = async (source: string): Promise<fs.Stats | null> => {
   const _source = normalizePath(source)
 
-  if (!(await isExisted(_source))) {
-    log('file', `${wrapList(_source)} not existed`)
+  if (!(await isExist(_source))) {
+    echo('file', `${wrapList(_source)} not existed`)
     return null
   }
 

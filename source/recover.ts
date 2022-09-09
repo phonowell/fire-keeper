@@ -1,5 +1,5 @@
+import echo from './echo'
 import glob from './glob'
-import log from './log'
 import read from './read'
 import remove from './remove'
 import toArray from './toArray'
@@ -15,7 +15,7 @@ const main = async (source: string | string[]) => {
     await recover(src)
   }
 
-  log('recover', `recovered ${wrapList(source)}`)
+  echo('recover', `recovered ${wrapList(source)}`)
 }
 
 const recover = async (source: string) => {

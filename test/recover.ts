@@ -11,7 +11,7 @@ const a = async () => {
 
   await $.recover(source)
 
-  if (!(await $.isExisted(source))) throw new Error('0')
+  if (!(await $.isExist(source))) throw new Error('0')
 }
 
 // export

@@ -1,5 +1,5 @@
+import echo from './echo'
 import fse from 'fs-extra'
-import log from './log'
 import normalizePath from './normalizePath'
 import toArray from './toArray'
 import wrapList from './wrapList'
@@ -14,7 +14,7 @@ const main = async (source: string | string[]) => {
     await fse.ensureDir(src)
   }
 
-  log('file', `created ${wrapList(source)}`)
+  echo('file', `created ${wrapList(source)}`)
 }
 
 // export

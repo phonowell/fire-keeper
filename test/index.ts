@@ -3,6 +3,7 @@ import * as backup from './backup'
 import * as clean from './clean'
 import * as copy from './copy'
 import * as download from './download'
+import * as echo from './echo'
 import * as exec from './exec'
 import * as getBasename from './getBasename'
 import * as getDirname from './getDirname'
@@ -12,10 +13,9 @@ import * as getName from './getName'
 import * as getType from './getType'
 import * as glob from './glob'
 import * as home from './home'
-import * as isExisted from './isExisted'
+import * as isExist from './isExist'
 import * as isSame from './isSame'
 import * as link from './link'
-import * as log from './log'
 import * as mkdir from './mkdir'
 import * as move from './move'
 import * as normalizePath from './normalizePath'
@@ -40,7 +40,7 @@ import * as zip from './zip'
 import { describe, it } from 'mocha'
 import $ from '../source/index'
 const mapModule = {
-  argv, backup, clean, copy, download, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExisted, isSame, link, log, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
 
 // ---
@@ -55,7 +55,7 @@ const temp = $.normalizePath('./temp')
 
 // function
 
-const clear = () => $.log.whisper($.remove(temp))
+const clear = () => $.echo.whisper($.remove(temp))
 
 const main = () => {
   const target = $.argv<{ _: string[] }>()._[1] || ''
@@ -71,7 +71,7 @@ const main = () => {
           fn.description || (listIt.length === 1 ? 'default' : key),
           async () => {
             await clear()
-            await $.log.freeze(fn)
+            await $.echo.freeze(fn)
           }
         )
       }

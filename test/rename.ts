@@ -7,8 +7,8 @@ const check = async (
   target: string,
   content: string
 ): Promise<boolean> => {
-  if (await $.isExisted(source)) return false
-  if (!(await $.isExisted(target))) return false
+  if (await $.isExist(source)) return false
+  if (!(await $.isExist(target))) return false
   if (content !== (await $.read<string>(target))) return false
   return true
 }

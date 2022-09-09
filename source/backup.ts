@@ -1,6 +1,6 @@
 import copy from './copy'
+import echo from './echo'
 import glob from './glob'
-import log from './log'
 import wrapList from './wrapList'
 
 // function
@@ -10,7 +10,7 @@ const main = async (source: string | string[]) => {
   for (const src of listSource) {
     await copy(src, '', filename => `${filename}.bak`)
   }
-  log('backup', `backed up ${wrapList(source)}`)
+  echo('backup', `backed up ${wrapList(source)}`)
 }
 
 // export

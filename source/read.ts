@@ -1,7 +1,7 @@
+import echo from './echo'
 import fs from 'fs'
 import getExtname from './getExtname'
 import glob from './glob'
-import log from './log'
 import toJson from './toJson'
 import toString from './toString'
 
@@ -56,7 +56,7 @@ const main = async <
   const listSource = await glob(src)
 
   if (!listSource.length) {
-    log('file', `'${source}' not existed`)
+    echo('file', `'${source}' not existed`)
     return undefined
   }
   src = listSource[0] as S
@@ -67,7 +67,7 @@ const main = async <
       resolve(data)
     })
   })
-  log('file', `read '${source}'`)
+  echo('file', `read '${source}'`)
 
   if (option?.raw) return content as Result<T, S, R>
 

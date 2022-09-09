@@ -1,5 +1,5 @@
+import echo from './echo'
 import exec from './exec'
-import log from './log'
 import os from './os'
 import toArray from './toArray'
 
@@ -25,7 +25,7 @@ const Lang = {
 
 const main = async (text: string, option: Option = {}) => {
   for (let message of toArray(text)) {
-    log('say', message)
+    echo('say', message)
 
     if (os() !== 'macos') continue
 

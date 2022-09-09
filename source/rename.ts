@@ -1,6 +1,6 @@
+import echo from './echo'
 import fs from 'fs'
 import getDirname from './getDirname'
-import log from './log'
 import normalizePath from './normalizePath'
 
 // function
@@ -10,7 +10,7 @@ const main = async (source: string, target: string) => {
   await new Promise(resolve =>
     fs.rename(src, `${getDirname(src)}/${target}`, resolve)
   )
-  log('file', `renamed '${source}' as '${target}'`)
+  echo('file', `renamed '${source}' as '${target}'`)
 }
 
 // export

@@ -12,7 +12,7 @@ const a = async () => {
     base: temp,
   })
 
-  if (!(await $.isExisted(`${temp}/temp.zip`))) throw new Error('0')
+  if (!(await $.isExist(`${temp}/temp.zip`))) throw new Error('0')
 }
 
 // export

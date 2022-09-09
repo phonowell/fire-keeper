@@ -1,3 +1,4 @@
+import echo from './echo'
 import fse from 'fs-extra'
 import getBasename from './getBasename'
 import getDirname from './getDirname'
@@ -6,7 +7,6 @@ import getFilename from './getFilename'
 import glob from './glob'
 import isAsyncFunction from './isAsyncFunction'
 import isFunction from './isFunction'
-import log from './log'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'
 
@@ -52,7 +52,7 @@ const main = async (
     await fse.copy(src, normalizePath(`${dirname}/${filename}`))
   }
 
-  log(
+  echo(
     'file',
     [
       `copied ${wrapList(source)}`,

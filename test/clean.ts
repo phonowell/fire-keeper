@@ -7,8 +7,8 @@ const a = async () => {
   await $.write(source, 'text')
   await $.clean(source)
 
-  if (await $.isExisted(source)) throw new Error('0')
-  if (await $.isExisted($.getDirname(source))) throw new Error('1')
+  if (await $.isExist(source)) throw new Error('0')
+  if (await $.isExist($.getDirname(source))) throw new Error('1')
 }
 a.description = 'normal'
 
@@ -18,8 +18,8 @@ const b = async () => {
   await $.write(listSource[1], 'text')
   await $.clean(listSource[0])
 
-  if (await $.isExisted(listSource[0])) throw new Error('0')
-  if (!(await $.isExisted($.getDirname(listSource[0])))) throw new Error('1')
+  if (await $.isExist(listSource[0])) throw new Error('0')
+  if (!(await $.isExist($.getDirname(listSource[0])))) throw new Error('1')
 }
 b.description = 'file existed'
 
@@ -29,8 +29,8 @@ const c = async () => {
   await $.write(listSource[1], 'text')
   await $.clean(listSource[0])
 
-  if (await $.isExisted(listSource[0])) throw new Error('0')
-  if (!(await $.isExisted($.getDirname(listSource[0])))) throw new Error('1')
+  if (await $.isExist(listSource[0])) throw new Error('0')
+  if (!(await $.isExist($.getDirname(listSource[0])))) throw new Error('1')
 }
 c.description = 'folder existed'
 

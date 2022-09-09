@@ -7,7 +7,7 @@ const a = async () => {
   const target = `${temp}/test.md`
 
   await $.copy(source, temp, 'test.md')
-  if (!(await $.isExisted(target))) throw new Error('0')
+  if (!(await $.isExist(target))) throw new Error('0')
 
   if (!(await $.isSame(source, target))) throw new Error('1')
 }
@@ -17,7 +17,7 @@ const b = async () => {
   const target = `${temp}/new/license.md`
 
   await $.copy(source, `${temp}/new`)
-  if (!(await $.isExisted(target))) throw new Error('0')
+  if (!(await $.isExist(target))) throw new Error('0')
 
   if (!(await $.isSame(source, target))) throw new Error('1')
 }
@@ -28,7 +28,7 @@ const c = async () => {
   const target = '~/Downloads/temp/license.md'
 
   await $.copy(source, '~/Downloads/temp')
-  if (!(await $.isExisted(target))) throw new Error('0')
+  if (!(await $.isExist(target))) throw new Error('0')
 
   if (!(await $.isSame(source, target))) throw new Error('1')
 

@@ -1,11 +1,11 @@
 import archiver from 'archiver'
 import convertToArray from './toArray'
+import echo, { renderPath } from './echo'
 import fs from 'fs'
 import getBasename from './getBasename'
 import getDirname from './getDirname'
 import glob from './glob'
 import kleur from 'kleur'
-import log, { renderPath } from './log'
 import normalizePath from './normalizePath'
 import toString from './toString'
 import trim from 'lodash/trim'
@@ -118,7 +118,7 @@ const main = async (
   option: string | Option = ''
 ) => {
   await execute(...toArray(source, target, option))
-  log(
+  echo(
     'zip',
     `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`
   )

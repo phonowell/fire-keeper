@@ -1,6 +1,6 @@
 import child from 'child_process'
+import echo from './echo'
 import kleur from 'kleur'
-import log from './log'
 import os from './os'
 import trimEnd from 'lodash/trimEnd'
 
@@ -31,7 +31,7 @@ const main = (cmd: string | string[], option: Option = {}): Promise<Result> => {
       ? ['cmd.exe', ['/s', '/c', stringCmd]]
       : ['/bin/sh', ['-c', stringCmd]]
 
-  if (!option.silent) log('exec', stringCmd)
+  if (!option.silent) echo('exec', stringCmd)
 
   return new Promise(resolve => {
     const cacheAll: string[] = []
