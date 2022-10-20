@@ -65,7 +65,7 @@
   },
   "scripts": {
     "alice": "ts-node --swc task/alice",
-    "build": "npm run alice build && rollup -c",
+    "build": "npm run alice build && rollup -c --bundleConfigAsCjs",
     "clean": "npm run alice clean",
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
