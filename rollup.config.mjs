@@ -2,7 +2,6 @@ import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import autoExternal from 'rollup-plugin-auto-external'
 import del from 'rollup-plugin-delete'
-import filesize from 'rollup-plugin-filesize'
 import typescript from 'rollup-plugin-typescript2'
 
 const config = [
@@ -33,7 +32,6 @@ const config = [
       }),
       resolve(),
       commonjs(),
-      filesize(),
     ],
   },
 ]
