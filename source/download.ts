@@ -1,4 +1,5 @@
 import download from 'download'
+
 import echo from './echo'
 import normalizePath from './normalizePath'
 import toString from './toString'
@@ -15,7 +16,7 @@ interface Options {
 const format = (
   source: string,
   target: string,
-  options: string | Partial<Options>
+  options: string | Partial<Options>,
 ) => {
   if (!source) throw new Error('download/error: empty source')
   const url = source.startsWith('//') ? `https:${source}` : source
@@ -35,12 +36,12 @@ const format = (
 const main = async (
   source: string,
   target: string,
-  option: string | Partial<Options> = {}
+  option: string | Partial<Options> = {},
 ) => {
   await download(...format(source, target, option))
   echo(
     'download',
-    `downloaded '${source}' to '${target}', as '${toString(option)}'`
+    `downloaded '${source}' to '${target}', as '${toString(option)}'`,
   )
 }
 

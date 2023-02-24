@@ -1,5 +1,6 @@
-import { $ } from './index'
 import path from 'path'
+
+import { $ } from './index'
 
 // function
 

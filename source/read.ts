@@ -1,5 +1,6 @@
-import echo from './echo'
 import fs from 'fs'
+
+import echo from './echo'
 import getExtname from './getExtname'
 import glob from './glob'
 import toJson from './toJson'
@@ -7,9 +8,9 @@ import toString from './toString'
 
 // interface
 
-type ItemExtObject = typeof listExtObject[number]
+type ItemExtObject = (typeof listExtObject)[number]
 
-type ItemExtString = typeof listExtString[number]
+type ItemExtString = (typeof listExtString)[number]
 
 type Result<T, S extends string, R extends boolean> = T extends undefined
   ? R extends true
@@ -45,12 +46,12 @@ const listExtObject = ['.json', '.yaml', '.yml'] as const
 const main = async <
   T = undefined,
   S extends string = string,
-  R extends boolean = false
+  R extends boolean = false,
 >(
   source: S,
   option?: {
     raw?: R
-  }
+  },
 ): Promise<Result<T, S, R> | undefined> => {
   let src = source
   const listSource = await glob(src)

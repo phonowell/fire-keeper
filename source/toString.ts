@@ -11,10 +11,7 @@ type HasToString = {
 const main = (input: unknown) => {
   if (typeof input === 'string') return input
 
-  if (input instanceof Array)
-    return JSON.stringify({ __container__: input })
-      .replace(/\{(.*)\}/u, '$1')
-      .replace(/"__container__":/u, '')
+  if (input instanceof Array) return JSON.stringify(input)
 
   if ($type(input) === 'object') return JSON.stringify(input)
   if (validateAsHasToString(input)) return input.toString()

@@ -1,5 +1,6 @@
-import echo from './echo'
 import flatten from 'lodash/flatten'
+
+import echo from './echo'
 import normalizePath from './normalizePath'
 import read from './read'
 import stat from './stat'

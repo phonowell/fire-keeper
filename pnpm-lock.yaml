@@ -34,6 +34,7 @@ specifiers:
   kleur: ^4.1.5
   lodash: ^4.17.21
   mocha: ^10.2.0
+  prettier: ^2.8.4
   prompts: ^2.4.2
   rollup: ^3.17.2
   rollup-plugin-auto-external: ^2.0.0
@@ -57,7 +58,7 @@ dependencies:
   yargs: 17.7.1
 
 devDependencies:
-  '@llc1123/eslint-config': 1.5.0_wjticflnfc776cqipjpglv4bx4
+  '@llc1123/eslint-config': 1.5.0_it5uy63goqw62ov6bn7z2pzdji
   '@rollup/plugin-commonjs': 23.0.7_rollup@3.17.2
   '@rollup/plugin-node-resolve': 15.0.1_rollup@3.17.2
   '@swc/core': 1.3.36
@@ -78,10 +79,11 @@ devDependencies:
   eslint-config-react-app: 7.0.1_7kw3g6rralp5ps6mg3uyzz6azm
   eslint-plugin-import: 2.27.5_dbs2zxbe2aiqaiiio3svelvkai
   eslint-plugin-jsx-a11y: 6.7.1_eslint@8.34.0
-  eslint-plugin-prettier: 4.2.1_eglaixygsk7cbmkras5yrnnona
+  eslint-plugin-prettier: 4.2.1_u5wnrdwibbfomslmnramz52buy
   eslint-plugin-react: 7.32.2_eslint@8.34.0
   eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
   mocha: 10.2.0
+  prettier: 2.8.4
   rollup: 3.17.2
   rollup-plugin-auto-external: 2.0.0_rollup@3.17.2
   rollup-plugin-delete: 2.0.0
@@ -1521,7 +1523,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@llc1123/eslint-config/1.5.0_wjticflnfc776cqipjpglv4bx4:
+  /@llc1123/eslint-config/1.5.0_it5uy63goqw62ov6bn7z2pzdji:
     resolution: {integrity: sha512-gqb2xpZoTYVRP7BPQxFs2pnVFPANUM7VR52zDsjTfMNWTSkn17XJVYv5evh7xpv7Wrlu+GYvevfIwoQW7ZW0mA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.13.0
@@ -1541,9 +1543,10 @@ packages:
       eslint: 8.34.0
       eslint-config-prettier: 8.6.0_eslint@8.34.0
       eslint-plugin-import: 2.27.5_dbs2zxbe2aiqaiiio3svelvkai
-      eslint-plugin-prettier: 4.2.1_eglaixygsk7cbmkras5yrnnona
+      eslint-plugin-prettier: 4.2.1_u5wnrdwibbfomslmnramz52buy
       eslint-plugin-react: 7.32.2_eslint@8.34.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
+      prettier: 2.8.4
       typescript: 4.9.5
     dev: true
 
@@ -3101,7 +3104,7 @@ packages:
       semver: 6.3.0
     dev: true
 
-  /eslint-plugin-prettier/4.2.1_eglaixygsk7cbmkras5yrnnona:
+  /eslint-plugin-prettier/4.2.1_u5wnrdwibbfomslmnramz52buy:
     resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -3114,6 +3117,7 @@ packages:
     dependencies:
       eslint: 8.34.0
       eslint-config-prettier: 8.6.0_eslint@8.34.0
+      prettier: 2.8.4
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -4656,6 +4660,12 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       fast-diff: 1.2.0
+    dev: true
+
+  /prettier/2.8.4:
+    resolution: {integrity: sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /process-nextick-args/2.0.1:

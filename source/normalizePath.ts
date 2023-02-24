@@ -1,7 +1,9 @@
-import home from './home'
 import path from 'path'
-import root from './root'
+
 import trimEnd from 'lodash/trimEnd'
+
+import home from './home'
+import root from './root'
 
 // function
 

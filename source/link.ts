@@ -1,5 +1,6 @@
-import echo from './echo'
 import fse from 'fs-extra'
+
+import echo from './echo'
 import normalizePath from './normalizePath'
 
 // function

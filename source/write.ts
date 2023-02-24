@@ -1,5 +1,6 @@
-import echo from './echo'
 import fse from 'fs-extra'
+
+import echo from './echo'
 import normalizePath from './normalizePath'
 import toString from './toString'
 import wrapList from './wrapList'
@@ -9,7 +10,7 @@ import wrapList from './wrapList'
 const main = async (
   source: string,
   content: unknown,
-  options?: fse.WriteFileOptions
+  options?: fse.WriteFileOptions,
 ) => {
   await fse.outputFile(normalizePath(source), toString(content), options)
   echo('file', `wrote ${wrapList(source)}`)

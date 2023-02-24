@@ -42,6 +42,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "mocha": "^10.2.0",
+    "prettier": "^2.8.4",
     "rollup": "^3.17.2",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -68,11 +69,10 @@
   "scripts": {
     "alice": "ts-node --swc task/alice",
     "build": "pnpm alice build && rollup -c --bundleConfigAsCjs",
-    "clean": "pnpm alice clean",
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "sideEffects": false,
   "types": "./dist/index.d.ts",
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.208"
+  "version": "0.0.209"
 }

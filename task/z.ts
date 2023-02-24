@@ -1,13 +1,13 @@
 import $ from '../source/'
 
-// variable
-
-const temp = './temp'
-
 // function
 
 const main = async () => {
-  $.watch('./source/**/*', (path) => $.echo(path))
+  const target = new Error('ok')
+  $.echo(typeof target, target instanceof Date)
+  $.echo(target.toString())
+  $.echo(String(target))
+  $.echo($.toString(target))
 }
 
 // export

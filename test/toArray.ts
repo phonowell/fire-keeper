@@ -1,5 +1,6 @@
-import { $ } from './index'
 import isEqual from 'lodash/isEqual'
+
+import { $ } from './index'
 
 // function
 

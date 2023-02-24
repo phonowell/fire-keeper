@@ -1,6 +1,7 @@
-import echo from './echo'
 import findIndex from 'lodash/findIndex'
 import prompts from 'prompts'
+
+import echo from './echo'
 import read from './read'
 import toString from './toString'
 import write from './write'
@@ -61,7 +62,7 @@ type OptionGeneral = {
 }
 
 type OPGeneral = {
-  type: typeof listTypePrompt[number]
+  type: (typeof listTypePrompt)[number]
   name: 'value'
   message: string
 }
@@ -135,7 +136,7 @@ type Save = {
   value: unknown
 }
 
-type Type = typeof listType[number]
+type Type = (typeof listType)[number]
 
 // variable
 
@@ -174,7 +175,7 @@ const pathCache = './temp/cache-prompt.json' as const
 // function
 
 const formatOption = async <T extends Type, U>(
-  option: Option<T, U>
+  option: Option<T, U>,
 ): Promise<OP<T, U>> => {
   if (option.type === 'confirm') {
     const result: OP<'confirm', U> = {
@@ -240,8 +241,8 @@ const formatOption = async <T extends Type, U>(
   throw new Error(`invalid type '${option.type}'`)
 }
 
-const getCache = async <T extends unknown, U>(
-  option: Option<Type, U>
+const getCache = async <T, U>(
+  option: Option<Type, U>,
 ): Promise<T | undefined> => {
   const { id, type } = option
   if (!id) return undefined
@@ -259,7 +260,7 @@ const isChoice = <T>(input: unknown): input is Choice<T> =>
   typeof input === 'object'
 
 const main = async <T, U extends Type = Type>(
-  option: Option<U, T> & { list?: List<T>; type: U }
+  option: Option<U, T> & { list?: List<T>; type: U },
 ): Promise<T & Result<U, T>> => {
   if (!option) throw new Error('prompt/error: empty option')
 
@@ -304,12 +305,10 @@ const transChoice = <T>(list: List<T>): Choice<T>[] =>
       : {
           title: toString(it),
           value: it,
-        }
+        },
   )
 
-const transType = (
-  type: 'auto' | 'multi' | 'select'
-) => {
+const transType = (type: 'auto' | 'multi' | 'select') => {
   if (type === 'auto') return 'autocomplete'
   if (type === 'multi') return 'multiselect'
   return 'select'

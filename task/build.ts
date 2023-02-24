@@ -14,7 +14,7 @@ const main = async () => {
 
 const pickModule = async (): Promise<string> => {
   const listModule = (await $.glob(['./source/*.ts', '!**/index.ts'])).map(
-    $.getBasename
+    $.getBasename,
   )
 
   return [
@@ -41,7 +41,7 @@ const replaceRollup = async () => {
   if (!cont) return
   const content = cont.replace(
     /input: {.*?}/,
-    `input: { ${listModule.map(it => `${it}: 'source/${it}.ts'`).join(', ')} }`
+    `input: { ${listModule.map(it => `${it}: 'source/${it}.ts'`).join(', ')} }`,
   )
   await $.write(source, content)
 }

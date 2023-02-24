@@ -1,5 +1,6 @@
-import home from './home'
 import kleur from 'kleur'
+
+import home from './home'
 import root from './root'
 import toString from './toString'
 
@@ -20,7 +21,7 @@ const separator = `${kleur.gray('›')} `
 // function
 
 const freeze = async <T>(
-  callback: Promise<T> | (() => Promise<T>)
+  callback: Promise<T> | (() => Promise<T>),
 ): Promise<T> => {
   main.isFrozen = true
   main.isSilent = true
@@ -99,7 +100,7 @@ const resume = () => {
 }
 
 const whisper = async <T>(
-  callback: Promise<T> | (() => Promise<T>)
+  callback: Promise<T> | (() => Promise<T>),
 ): Promise<T> => {
   pause()
 

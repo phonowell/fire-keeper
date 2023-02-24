@@ -1,5 +1,6 @@
 import chokidar from 'chokidar'
 import debounce from 'lodash/debounce'
+
 import normalizePath from './normalizePath'
 
 // interface
@@ -15,7 +16,7 @@ const main = (
   callback: (path: string) => void,
   options: Options = {
     debounce: 1e3,
-  }
+  },
 ) => {
   const cb =
     options.debounce !== undefined && options.debounce > 0

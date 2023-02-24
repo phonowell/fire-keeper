@@ -1,5 +1,6 @@
-import echo from './echo'
 import fs from 'fs'
+
+import echo from './echo'
 import isExist from './isExist'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'

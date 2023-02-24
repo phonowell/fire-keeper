@@ -5,7 +5,7 @@ import { $, temp } from './index'
 const check = async (
   source: string | string[],
   target: string,
-  content: string
+  content: string,
 ): Promise<boolean> => {
   if (await $.isExist(source)) return false
   if (!(await $.isExist(target))) return false

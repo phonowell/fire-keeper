@@ -28,7 +28,6 @@ import recover from './recover'
 import remove from './remove'
 import rename from './rename'
 import root from './root'
-import say from './say'
 import sleep from './sleep'
 import stat from './stat'
 import toArray from './toArray'
@@ -40,7 +39,7 @@ import wrapList from './wrapList'
 import write from './write'
 import zip from './zip'
 const $ = {
-  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isAsyncFunction, isExist, isFunction, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isAsyncFunction, isExist, isFunction, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
 export default $
 

@@ -1,5 +1,6 @@
-import flatten from 'lodash/flatten'
 import fse from 'fs-extra'
+import flatten from 'lodash/flatten'
+
 import normalizePath from './normalizePath'
 
 // function

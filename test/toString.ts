@@ -14,7 +14,7 @@ type ListQuestion = [
   Buffer,
   null,
   undefined,
-  typeof NaN
+  typeof NaN,
 ]
 
 // function
@@ -52,7 +52,7 @@ const a = () => {
     const question = listQuestion[i]
     const answer = listAnswer[i]
     if ($.toString(question) !== answer)
-      throw new Error(`$.toString(${question}) !== ${answer}`)
+      throw new Error(`${$.toString(question)} !== ${answer}`)
   }
 }
 

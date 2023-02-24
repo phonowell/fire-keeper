@@ -1,4 +1,5 @@
 import glob, { Options } from 'fast-glob'
+
 import normalizePath from './normalizePath'
 import toArray from './toArray'
 
@@ -11,14 +12,14 @@ type ListSource = string[] & {
 // function
 
 const isListedAsSource = (
-  input: string | string[] | ListSource
+  input: string | string[] | ListSource,
 ): input is ListSource =>
   input instanceof Array &&
   (input as ListSource).__is_listed_as_source__ === true
 
 const main = async (
   input: string | string[] | ListSource,
-  options?: Options
+  options?: Options,
 ) => {
   if (isListedAsSource(input)) return input
 

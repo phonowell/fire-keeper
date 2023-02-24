@@ -1,5 +1,6 @@
-import echo from './echo'
 import fse from 'fs-extra'
+
+import echo from './echo'
 import getBasename from './getBasename'
 import getDirname from './getDirname'
 import getExtname from './getExtname'
@@ -18,7 +19,7 @@ type Input = string | ((input: string) => string | Promise<string>)
 
 const execute = async (
   fn: (input: string) => string | Promise<string>,
-  input: string
+  input: string,
 ) => {
   if (isAsyncFunction(fn)) return await fn(input)
   return fn(input)
@@ -27,7 +28,7 @@ const execute = async (
 const main = async (
   source: string | string[],
   target?: Input,
-  name?: Input
+  name?: Input,
 ) => {
   const listSource = await glob(source)
 
@@ -60,7 +61,7 @@ const main = async (
       name && typeof name === 'string' ? ` as '${name}'` : '',
     ]
       .filter(it => !!it)
-      .join('')
+      .join(''),
   )
 }
 

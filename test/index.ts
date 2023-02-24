@@ -26,7 +26,6 @@ import * as recover from './recover'
 import * as remove from './remove'
 import * as rename from './rename'
 import * as root from './root'
-import * as say from './say'
 import * as sleep from './sleep'
 import * as stat from './stat'
 import * as toArray from './toArray'
@@ -40,7 +39,7 @@ import * as zip from './zip'
 import { describe, it } from 'mocha'
 import $ from '../source/index'
 const mapModule = {
-  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, say, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
+  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
 
 // ---

@@ -1,14 +1,16 @@
-import archiver from 'archiver'
-import convertToArray from './toArray'
-import echo, { renderPath } from './echo'
 import fs from 'fs'
+
+import archiver from 'archiver'
+import kleur from 'kleur'
+import trim from 'lodash/trim'
+
+import echo, { renderPath } from './echo'
 import getBasename from './getBasename'
 import getDirname from './getDirname'
 import glob from './glob'
-import kleur from 'kleur'
 import normalizePath from './normalizePath'
+import convertToArray from './toArray'
 import toString from './toString'
-import trim from 'lodash/trim'
 import wrapList from './wrapList'
 
 // interface
@@ -25,7 +27,7 @@ type OptionRequired = Required<Option>
 const execute = async (
   listSource: string[],
   target: string,
-  option: OptionRequired
+  option: OptionRequired,
 ) => {
   const { base, filename } = option
 
@@ -53,7 +55,7 @@ const execute = async (
       if (!message) return
 
       const gray = kleur.gray(
-        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`
+        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`,
       )
       const magenta = kleur.magenta(message)
 
@@ -81,11 +83,11 @@ const execute = async (
 const toArray = (
   source: string | string[],
   target: string,
-  option: string | Option
+  option: string | Option,
 ): [string[], string, OptionRequired] => {
   const listSource = convertToArray(source).map(normalizePath)
   const pathTarget = normalizePath(
-    target || getDirname(listSource[0]).replace(/\*/g, '')
+    target || getDirname(listSource[0]).replace(/\*/g, ''),
   )
 
   let [base, filename] =
@@ -115,12 +117,12 @@ const getBase = (listSource: string[]): string => {
 const main = async (
   source: string | string[],
   target = '',
-  option: string | Option = ''
+  option: string | Option = '',
 ) => {
   await execute(...toArray(source, target, option))
   echo(
     'zip',
-    `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`
+    `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`,
   )
 }
 
