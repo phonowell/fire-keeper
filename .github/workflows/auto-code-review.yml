@@ -1,0 +1,9 @@
+name: Auto Code Review
+on: [push]
+
+jobs:
+  Auto-Code-Review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: reviewdog/action-setup@v1
+      - run: reviewdog -version
