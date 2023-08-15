@@ -5,6 +5,7 @@ import echo from './echo'
 import read from './read'
 import toString from './toString'
 import write from './write'
+import at from './at'
 
 // interface
 
@@ -15,9 +16,7 @@ type Choice<T> = {
   disabled?: boolean
 }
 
-type File = {
-  [id: string]: Save
-}
+type File = Record<string, Save>
 
 type List<T> = (T | Choice<T>)[]
 
@@ -179,8 +178,8 @@ const formatOption = async <T extends Type, U>(
 ): Promise<OP<T, U>> => {
   if (option.type === 'confirm') {
     const result: OP<'confirm', U> = {
-      initial: option.default || (await getCache(option)) || false,
-      message: option.message || mapMessageDefault.confirm || '',
+      initial: option.default ?? (await getCache(option)) ?? false,
+      message: option.message ?? mapMessageDefault.confirm,
       name: 'value',
       type: 'confirm',
     }
@@ -189,9 +188,9 @@ const formatOption = async <T extends Type, U>(
 
   if (option.type === 'number') {
     const result: OP<'number', U> = {
-      initial: option.default || (await getCache(option)) || option.min || 0,
+      initial: option.default ?? (await getCache(option)) ?? option.min,
       max: option.max,
-      message: option.message || mapMessageDefault.number || '',
+      message: option.message ?? mapMessageDefault.number,
       min: option.min,
       name: 'value',
       type: 'number',
@@ -208,8 +207,8 @@ const formatOption = async <T extends Type, U>(
     const result: OP<'select', U> = {
       choices: list,
       initial:
-        pickDefault(list, option.default || (await getCache(option))) || 0,
-      message: option.message || mapMessageDefault[option.type] || '',
+        pickDefault(list, option.default ?? (await getCache(option))) || 0,
+      message: option.message ?? mapMessageDefault[option.type],
       name: 'value',
       type: transType(option.type),
     }
@@ -218,26 +217,28 @@ const formatOption = async <T extends Type, U>(
 
   if (option.type === 'text') {
     const result: OP<'text', U> = {
-      initial: option.default || (await getCache(option)) || '',
-      message: option.message || mapMessageDefault.text || '',
+      initial: option.default ?? (await getCache(option)) ?? '',
+      message: option.message ?? mapMessageDefault.text,
       name: 'value',
       type: 'text',
     }
     return result as OP<T, U>
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (option.type === 'toggle') {
     const result: OP<'toggle', U> = {
-      active: option.on || 'on',
-      inactive: option.off || 'off',
-      initial: option.default || (await getCache(option)) || false,
-      message: option.message || mapMessageDefault.toggle || '',
+      active: option.on ?? 'on',
+      inactive: option.off ?? 'off',
+      initial: option.default ?? (await getCache(option)) ?? false,
+      message: option.message ?? mapMessageDefault.toggle,
       name: 'value',
       type: 'toggle',
     }
     return result as OP<T, U>
   }
 
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   throw new Error(`invalid type '${option.type}'`)
 }
 
@@ -250,8 +251,10 @@ const getCache = async <T, U>(
 
   const cache = await read<File>(pathCache)
   if (!cache) return undefined
-  const data = cache[id]
+
+  const data = at(cache, id)
   if (!data) return undefined
+
   if (type !== data.type) return undefined
   return data.value as T
 }
@@ -262,12 +265,10 @@ const isChoice = <T>(input: unknown): input is Choice<T> =>
 const main = async <T, U extends Type = Type>(
   option: Option<U, T> & { list?: List<T>; type: U },
 ): Promise<T & Result<U, T>> => {
-  if (!option) throw new Error('prompt/error: empty option')
-
   echo.pause()
 
-  const opt = await formatOption<U, T>(option)
-  const result = (await prompts(opt as prompts.PromptObject))[opt.name]
+  const opt: prompts.PromptObject = await formatOption<U, T>(option)
+  const result = (await prompts(opt))[opt.name as string] as T & Result<U, T>
   await setCache(option, result)
 
   echo.resume()
@@ -292,7 +293,7 @@ const setCache = async <T>(option: Option<Type, T>, value: unknown) => {
   if (!id) return
   if (type === 'multi') return
 
-  const cache = (await read<File>(pathCache)) || {}
+  const cache = (await read<File>(pathCache)) ?? {}
   cache[id] = { type, value }
 
   await write(pathCache, cache)

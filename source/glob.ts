@@ -15,7 +15,7 @@ const isListedAsSource = (
   input: string | string[] | ListSource,
 ): input is ListSource =>
   input instanceof Array &&
-  (input as ListSource).__is_listed_as_source__ === true
+  (input as ListSource & object).__is_listed_as_source__
 
 const main = async (
   input: string | string[] | ListSource,

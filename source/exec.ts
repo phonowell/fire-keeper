@@ -25,7 +25,7 @@ const info = (type: string, message: string) => {
   console.log(type === 'error' ? kleur.red(message) : kleur.gray(message))
 }
 
-const main = (cmd: string | string[], option: Option = {}): Promise<Result> => {
+const main = (cmd: string | string[], option: Option = {}) => {
   const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
 
   const [cmder, arg] =
@@ -35,7 +35,7 @@ const main = (cmd: string | string[], option: Option = {}): Promise<Result> => {
 
   if (!option.silent) echo('exec', stringCmd)
 
-  return new Promise(resolve => {
+  return new Promise<Result>(resolve => {
     const cacheAll: string[] = []
     let cacheLast = ''
 

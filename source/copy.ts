@@ -7,9 +7,9 @@ import getExtname from './getExtname'
 import getFilename from './getFilename'
 import glob from './glob'
 import isAsyncFunction from './isAsyncFunction'
-import isFunction from './isFunction'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'
+import run from './run'
 
 // interface
 
@@ -17,11 +17,11 @@ type Input = string | ((input: string) => string | Promise<string>)
 
 // function
 
-const execute = async (
+const execute = (
   fn: (input: string) => string | Promise<string>,
   input: string,
 ) => {
-  if (isAsyncFunction(fn)) return await fn(input)
+  if (isAsyncFunction(fn)) return fn(input)
   return fn(input)
 }
 
@@ -33,22 +33,22 @@ const main = async (
   const listSource = await glob(source)
 
   for (const src of listSource) {
-    const dirname = await (async () => {
-      const dirname = getDirname(src)
-      if (!target) return dirname
-      if (isFunction(target)) return await execute(target, dirname)
+    const dirname = await run(() => {
+      const dname = getDirname(src)
+      if (!target) return dname
+      if (typeof target === 'function') return execute(target, dname)
       return target
-    })()
+    })
 
-    const filename = await (async () => {
-      const filename = getFilename(src)
+    const filename = await run(() => {
+      const fname = getFilename(src)
       if (!name)
         return dirname === getDirname(src)
           ? `${getBasename(src)}.copy${getExtname(src)}`
-          : filename
-      if (isFunction(name)) return await execute(name, filename)
+          : fname
+      if (typeof name === 'function') return execute(name, fname)
       return name
-    })()
+    })
 
     await fse.copy(src, normalizePath(`${dirname}/${filename}`))
   }

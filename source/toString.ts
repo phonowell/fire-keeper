@@ -19,7 +19,7 @@ const main = (input: unknown) => {
 }
 
 const validateAsHasToString = (input: unknown): input is HasToString =>
-  typeof (input as HasToString)?.toString === 'function'
+  typeof (input as HasToString | undefined)?.toString === 'function'
 
 // export
 export default main

@@ -20,9 +20,7 @@ const separator = `${kleur.gray('›')} `
 
 // function
 
-const freeze = async <T>(
-  callback: Promise<T> | (() => Promise<T>),
-): Promise<T> => {
+const freeze = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
   main.isFrozen = true
   main.isSilent = true
 
@@ -35,7 +33,7 @@ const freeze = async <T>(
   return result
 }
 
-const main = <T>(...args: [T] | [string, T]): T => {
+const main = <T>(...args: [T] | [string, T]) => {
   const [type, message] = args.length === 1 ? ['default', args[0]] : args
 
   if (main.isSilent) return message
@@ -99,9 +97,7 @@ const resume = () => {
   main.isSilent = false
 }
 
-const whisper = async <T>(
-  callback: Promise<T> | (() => Promise<T>),
-): Promise<T> => {
+const whisper = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
   pause()
 
   const result =

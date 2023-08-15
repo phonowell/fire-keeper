@@ -93,7 +93,7 @@ const toArray = (
   let [base, filename] =
     typeof option === 'string'
       ? ['', option]
-      : [option.base || '', option.filename || '']
+      : [option.base ?? '', option.filename ?? '']
 
   base = normalizePath(base || getBase(listSource))
   if (!filename) filename = `${getBasename(pathTarget)}.zip`
