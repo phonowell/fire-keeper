@@ -13,13 +13,13 @@ const main = (source: string) => {
   if (!source) return ''
 
   // ignore?
-  const isIgnored = source[0] === '!'
+  const isIgnored = source.startsWith('!')
   let _source = isIgnored ? source.slice(1) : source
 
   // replace . & ~
   _source = _source.replace(/\.{2}/g, '__parent_directory__')
-  if (_source[0] === '.') _source = _source.replace(/\./u, root())
-  else if (_source[0] === '~') _source = _source.replace(/~/u, home())
+  if (_source.startsWith('.')) _source = _source.replace(/\./u, root())
+  else if (_source.startsWith('~')) _source = _source.replace(/~/u, home())
   _source = _source.replace(/__parent_directory__/g, '..')
 
   // replace ../ to ./../ at start

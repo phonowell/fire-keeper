@@ -6,7 +6,7 @@ import toString from './toString'
 
 // interface
 
-interface Options {
+type Options = {
   filename: string
   timeout: number
 }

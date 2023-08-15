@@ -1,6 +1,7 @@
 // function
 
-const main = (input: unknown): input is Function => input instanceof Function
+const main = (input: unknown): input is (...args: unknown[]) => unknown =>
+  input instanceof Function
 
 // export
 export default main

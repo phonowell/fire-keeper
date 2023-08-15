@@ -1,22 +1,10 @@
-// interface
-
-type Os = 'macos' | 'unknown' | 'windows' | ''
-
-// variable
-
-let cache: Os = ''
-
 // function
 
-const main = (): Os => {
-  if (cache) return cache
-
+const main = () => {
   const { platform } = process
-  if (platform.includes('darwin')) cache = 'macos'
-  else if (platform.includes('win')) cache = 'windows'
-  else cache = 'unknown'
-
-  return cache
+  if (platform.includes('darwin')) return 'macos'
+  if (platform.includes('win')) return 'windows'
+  return 'unknown'
 }
 
 // export
