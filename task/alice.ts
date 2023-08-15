@@ -1,9 +1,6 @@
 import compact from 'lodash/compact'
 
-import argv from '../source/argv'
-import getBasename from '../source/getBasename'
-import glob from '../source/glob'
-import prompt from '../source/prompt'
+import { argv, getBasename, glob, prompt } from '../source'
 
 // interface
 

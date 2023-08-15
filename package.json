@@ -46,6 +46,7 @@
     "rollup": "^3.28.0",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-dts": "^5.3.1",
     "rollup-plugin-typescript2": "^0.35.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.1",
@@ -68,12 +69,12 @@
   },
   "scripts": {
     "alice": "ts-node --swc task/alice",
-    "build": "pnpm alice build && rollup -c --bundleConfigAsCjs",
+    "build": "pnpm alice build 0 && rollup -c --bundleConfigAsCjs && pnpm alice build 1",
     "lint": "eslint source --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "sideEffects": false,
   "types": "./dist/index.d.ts",
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.210"
+  "version": "0.0.211"
 }

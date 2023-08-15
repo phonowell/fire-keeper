@@ -1,4 +1,4 @@
-import $ from '../source/index'
+import { exec } from '../source/index'
 
 // interface
 
@@ -13,7 +13,7 @@ type Result = {
 // function
 
 const main = async () => {
-  const [, raw] = await $.exec('pnpm outdated --json')
+  const [, raw] = await exec('pnpm outdated --json')
   const result = JSON.parse(raw) as Record<string, Result>
 
   const listName = Object.entries(result)
@@ -26,7 +26,7 @@ const main = async () => {
   if (!listName.length) return
 
   const listCmd = listName.map(name => `pnpm i ${name}@latest`)
-  await $.exec(listCmd)
+  await exec(listCmd)
 }
 
 // export

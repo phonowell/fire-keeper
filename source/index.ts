@@ -40,9 +40,48 @@ import watch from './watch'
 import wrapList from './wrapList'
 import write from './write'
 import zip from './zip'
-const $ = {
-  argv, at, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isAsyncFunction, isExist, isFunction, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, run, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
-}
-export default $
 
-// ---
+export {
+  argv,
+  at,
+  backup,
+  clean,
+  copy,
+  download,
+  echo,
+  exec,
+  getBasename,
+  getDirname,
+  getExtname,
+  getFilename,
+  getName,
+  getType,
+  glob,
+  home,
+  isAsyncFunction,
+  isExist,
+  isFunction,
+  isSame,
+  link,
+  mkdir,
+  move,
+  normalizePath,
+  os,
+  prompt,
+  read,
+  recover,
+  remove,
+  rename,
+  root,
+  run,
+  sleep,
+  stat,
+  toArray,
+  toDate,
+  toJson,
+  toString,
+  watch,
+  wrapList,
+  write,
+  zip,
+}
