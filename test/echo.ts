@@ -1,4 +1,4 @@
-import { renderPath } from '../source/echo'
+import { renderPath } from '../src/echo'
 
 import { $ } from './index'
 

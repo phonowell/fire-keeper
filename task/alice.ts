@@ -1,9 +1,6 @@
 import compact from 'lodash/compact'
 
-import argv from '../source/argv'
-import getBasename from '../source/getBasename'
-import glob from '../source/glob'
-import prompt from '../source/prompt'
+import { argv, getBasename, glob, prompt } from '../src'
 
 // interface
 
@@ -46,7 +43,7 @@ const main = async () => {
 const run = async (task: string) => {
   const [source] = await glob([`./task/${task}.js`, `./task/${task}.ts`])
 
-  const fn: FnAsync = (await import(source)).default
+  const fn = ((await import(source)) as { default: FnAsync }).default
   await fn()
 }
 

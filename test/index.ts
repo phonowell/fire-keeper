@@ -37,7 +37,7 @@ import * as wrapList from './wrapList'
 import * as write from './write'
 import * as zip from './zip'
 import { describe, it } from 'mocha'
-import $ from '../source/index'
+import * as $ from '../src/index'
 const mapModule = {
   argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
 }
@@ -71,7 +71,7 @@ const main = () => {
           async () => {
             await clear()
             await $.echo.freeze(fn)
-          }
+          },
         )
       }
     })

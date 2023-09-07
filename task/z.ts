@@ -1,10 +1,9 @@
-import $ from '../source/'
+import { echo } from '../src'
 
 // function
 
-const main = async () => {
-  const listSource = await $.glob('./.gitignore')
-  $.zip(listSource, './', 'test.zip')
+const main = () => {
+  echo('zzz')
 }
 
 // export
