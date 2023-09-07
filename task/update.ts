@@ -1,4 +1,4 @@
-import { exec } from '../source/index'
+import { exec } from '../src/index'
 
 // interface
 

@@ -1,4 +1,4 @@
-import { echo } from '../source'
+import { echo } from '../src'
 
 // function
 

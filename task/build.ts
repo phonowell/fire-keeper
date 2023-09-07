@@ -1,4 +1,4 @@
-import { argv, getBasename, glob, move, read, remove, write } from '../source'
+import { argv, getBasename, glob, move, read, remove, write } from '../src'
 
 // function
 
@@ -9,11 +9,11 @@ const main = async () => {
     await makeIndex()
     await replaceRollup()
     await replaceTest()
+    return
   }
 
-  if (step === 1) {
-    await moveType()
-  }
+  // step: 1
+  await moveType()
 }
 
 const makeIndex = async () => {
@@ -28,21 +28,21 @@ const makeIndex = async () => {
     '',
   ].join('\n')
 
-  await write('./source/index.ts', content)
+  await write('./src/index.ts', content)
 }
 
 const makeListModule = async () =>
-  (await glob(['./source/*.ts', '!**/index.ts'])).map(getBasename)
+  (await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename)
 
 const moveType = async () => {
-  await move('./dist/source/*.d.ts', './dist')
-  await move('./dist/esm/source/*.d.ts', './dist/esm')
+  await move('./dist/src/*.d.ts', './dist')
+  await move('./dist/esm/src/*.d.ts', './dist/esm')
   await remove([
-    './dist/source',
+    './dist/src',
     './dist/task',
     './dist/test',
     './dist/rollup.config.d.ts',
-    './dist/esm/source',
+    './dist/esm/src',
     './dist/esm/task',
     './dist/esm/test',
     './dist/esm/rollup.config.d.ts',
@@ -60,7 +60,7 @@ const replaceRollup = async () => {
   const content = cont.replace(
     /const input = {[\s\S]*?}/,
     `const input = {\n${listModule
-      .map(it => `  ${it}: 'source/${it}.ts',`)
+      .map(it => `  ${it}: 'src/${it}.ts',`)
       .join('\n')}\n}`,
   )
   await write(source, content)
@@ -75,7 +75,7 @@ const replaceTest = async () => {
   const content = [
     ...listTest.map(it => `import * as ${it} from './${it}'`),
     "import { describe, it } from 'mocha'",
-    "import * as $ from '../source/index'",
+    "import * as $ from '../src/index'",
     'const mapModule = {',
     `  ${listTest.join(', ')},`,
     '}',

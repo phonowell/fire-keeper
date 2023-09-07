@@ -3,12 +3,11 @@ module.exports = {
     browser: true,
     es2020: true
   },
-  extends: ['@llc1123/eslint-config/prettier', '@llc1123', '@llc1123/eslint-config/react'],
+  extends: ['@llc1123/eslint-config/prettier', '@llc1123'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true
   },
-  plugins: ['react-refresh'],
   rules: {
     '@typescript-eslint/ban-ts-comment': ['error', {
       'ts-ignore': 'allow-with-description'
@@ -94,8 +93,6 @@ module.exports = {
     'prefer-numeric-literals': 'error',
     'prefer-object-spread': 'error',
     'prefer-template': 'error',
-    'react-hooks/exhaustive-deps': 'error',
-    'react/self-closing-comp': 'error',
     'require-await': 'error'
   }
 }

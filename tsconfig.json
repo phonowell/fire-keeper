@@ -23,9 +23,9 @@
     "strictBindCallApply": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "es5",
+    "target": "ESNext",
     "types": ["node"]
   },
   "exclude": ["node_modules"],
-  "include": ["source", "task", "test", "rollup.config.ts"]
+  "include": ["src", "task", "test", "rollup.config.ts"]
 }
