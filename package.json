@@ -15,7 +15,7 @@
     "prompts": "^2.4.2",
     "yargs": "^17.7.2"
   },
-  "description": "A little helper to make gulpfile(s) simple.",
+  "description": "A little helper for automate works.",
   "devDependencies": {
     "@llc1123/eslint-config": "^1.8.5",
     "@rollup/plugin-commonjs": "^25.0.4",
@@ -42,8 +42,8 @@
     "rollup": "^3.29.0",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-dts": "^6.0.1",
-    "rollup-plugin-typescript2": "^0.35.0",
+    "rollup-plugin-ts": "^3.4.5",
+    "rollup-plugin-visualizer": "^5.9.2",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
@@ -65,7 +65,7 @@
   },
   "scripts": {
     "alice": "ts-node task/alice",
-    "build": "pnpm alice build 0 && rollup -c --bundleConfigAsCjs && pnpm alice build 1",
+    "build": "pnpm alice build && rollup -c --bundleConfigAsCjs",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
   },

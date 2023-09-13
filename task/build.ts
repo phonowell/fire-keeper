@@ -1,19 +1,12 @@
-import { argv, getBasename, glob, move, read, remove, write } from '../src'
+import { exec, getBasename, glob, read, write } from '../src'
 
 // function
 
 const main = async () => {
-  const step = argv()._[1] as 0 | 1
-
-  if (step === 0) {
-    await makeIndex()
-    await replaceRollup()
-    await replaceTest()
-    return
-  }
-
-  // step: 1
-  await moveType()
+  await makeIndex()
+  await replaceRollup()
+  await replaceTest()
+  await exec('open ./stats.html')
 }
 
 const makeIndex = async () => {
@@ -33,21 +26,6 @@ const makeIndex = async () => {
 
 const makeListModule = async () =>
   (await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename)
-
-const moveType = async () => {
-  await move('./dist/src/*.d.ts', './dist')
-  await move('./dist/esm/src/*.d.ts', './dist/esm')
-  await remove([
-    './dist/src',
-    './dist/task',
-    './dist/test',
-    './dist/rollup.config.d.ts',
-    './dist/esm/src',
-    './dist/esm/task',
-    './dist/esm/test',
-    './dist/esm/rollup.config.d.ts',
-  ])
-}
 
 const replaceRollup = async () => {
   const listModule = await makeListModule()
