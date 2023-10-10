@@ -18,8 +18,9 @@ const main = async () => {
 
   const listName = Object.entries(result)
     .filter(it => {
-      const [, data] = it
+      const [name, data] = it
       if (data.isDeprecated) return false
+      if (name === '@swc/core') return false
       return true
     })
     .map(it => it[0])
