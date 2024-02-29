@@ -16,10 +16,10 @@ type Result<T, S extends string, R extends boolean> = T extends undefined
   ? R extends true
     ? Buffer
     : S extends `${string}${ItemExtString}`
-    ? string
-    : S extends `${string}${ItemExtObject}`
-    ? Record<string, unknown>
-    : Buffer
+      ? string
+      : S extends `${string}${ItemExtObject}`
+        ? Record<string, unknown>
+        : Buffer
   : T
 
 // variable

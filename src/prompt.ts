@@ -23,26 +23,26 @@ type List<T> = (T | Choice<T>)[]
 type Option<T extends Type, U> = T extends 'confirm'
   ? OptionConfirm
   : T extends 'number'
-  ? OptionNumber
-  : T extends 'auto' | 'multi' | 'select'
-  ? OptionSelect<U>
-  : T extends 'text'
-  ? OptionText
-  : T extends 'toggle'
-  ? OptionToggle
-  : never
+    ? OptionNumber
+    : T extends 'auto' | 'multi' | 'select'
+      ? OptionSelect<U>
+      : T extends 'text'
+        ? OptionText
+        : T extends 'toggle'
+          ? OptionToggle
+          : never
 
 type OP<T extends Type, U> = T extends 'confirm'
   ? OPConfirm
   : T extends 'number'
-  ? OPNumber
-  : T extends 'auto' | 'multi' | 'select'
-  ? OPSelect<U>
-  : T extends 'text'
-  ? OPText
-  : T extends 'toggle'
-  ? OPToggle
-  : never
+    ? OPNumber
+    : T extends 'auto' | 'multi' | 'select'
+      ? OPSelect<U>
+      : T extends 'text'
+        ? OPText
+        : T extends 'toggle'
+          ? OPToggle
+          : never
 
 type OptionConfirm = OptionGeneral & {
   type: 'confirm'
@@ -121,14 +121,14 @@ type OPToggle = OPGeneral & {
 type Result<T extends Type = Type, U = unknown> = T extends 'confirm'
   ? boolean
   : T extends 'number'
-  ? number
-  : T extends 'auto' | 'multi' | 'select'
-  ? U
-  : T extends 'text'
-  ? string
-  : T extends 'toggle'
-  ? boolean
-  : never
+    ? number
+    : T extends 'auto' | 'multi' | 'select'
+      ? U
+      : T extends 'text'
+        ? string
+        : T extends 'toggle'
+          ? boolean
+          : never
 
 type Save = {
   type: Omit<Type, 'multi'>

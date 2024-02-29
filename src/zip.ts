@@ -44,7 +44,7 @@ const execute = async (
 
     archive.on('end', () => resolve(true))
 
-    archive.on('entry', e => (message = renderPath(`${e.name}`)))
+    archive.on('entry', e => (message = renderPath(e.name)))
 
     archive.on('error', e => {
       console.log(kleur.red(e.message))
