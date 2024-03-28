@@ -31,6 +31,9 @@ module.exports = {
     }],
     '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/prefer-optional-chain': 'error',
+    '@typescript-eslint/restrict-template-expressions': ['error', {
+      allowNumber: true
+    }],
     eqeqeq: 'error',
     'func-style': ['warn', 'expression'],
     'import/newline-after-import': 'error',

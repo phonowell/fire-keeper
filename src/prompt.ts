@@ -169,7 +169,7 @@ const mapMessageDefault = {
   toggle: 'toggle',
 } as const
 
-const pathCache = './temp/cache-prompt.json' as const
+const pathCache = './temp/cache-prompt.json'
 
 // function
 
