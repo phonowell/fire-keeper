@@ -27,5 +27,5 @@
     "types": ["node"]
   },
   "exclude": ["node_modules"],
-  "include": ["src", "task", "test", "rollup.config.ts"]
+  "include": ["src", "task", "test", "rollup.config.ts", ".eslintrc.js"]
 }
