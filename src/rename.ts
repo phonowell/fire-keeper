@@ -6,7 +6,17 @@ import normalizePath from './normalizePath'
 
 // function
 
-const main = async (source: string, target: string) => {
+/**
+ * Rename a file or directory.
+ * @param source A source file or directory.
+ * @param target A target file or directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await rename('file.txt', 'file.bak')
+ * ```
+ */
+const rename = async (source: string, target: string) => {
   const src = normalizePath(source)
   await new Promise(resolve =>
     fs.rename(src, `${getDirname(src)}/${target}`, resolve),
@@ -15,4 +25,4 @@ const main = async (source: string, target: string) => {
 }
 
 // export
-export default main
+export default rename

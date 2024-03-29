@@ -13,23 +13,23 @@ import convertToArray from './toArray'
 import toString from './toString'
 import wrapList from './wrapList'
 
-// interface
+// interfaces
 
-type Option = {
+type Options = {
   base?: string
   filename?: string
 }
 
-type OptionRequired = Required<Option>
+type OptionsRequired = Required<Options>
 
 // function
 
 const execute = async (
   listSource: string[],
   target: string,
-  option: OptionRequired,
+  options: OptionsRequired,
 ) => {
-  const { base, filename } = option
+  const { base, filename } = options
 
   const listResource = await glob(listSource)
 
@@ -83,8 +83,8 @@ const execute = async (
 const toArray = (
   source: string | string[],
   target: string,
-  option: string | Option,
-): [string[], string, OptionRequired] => {
+  option: string | Options,
+): [string[], string, OptionsRequired] => {
   const listSource = convertToArray(source).map(normalizePath)
   const pathTarget = normalizePath(
     target || getDirname(listSource[0]).replace(/\*/g, ''),
@@ -114,10 +114,23 @@ const getBase = (listSource: string[]): string => {
   return getDirname(source)
 }
 
-const main = async (
+/**
+ * Zip the source to the target.
+ * @param source The source file or directory.
+ * @param target The target directory.
+ * @param option The option.
+ * @example
+ * ```
+ * zip('src', 'dist', 'archive.zip')
+ * zip('src', 'dist', { base: 'src', filename: 'archive.zip' })
+ * zip(['src', 'public'], 'dist', 'archive.zip')
+ * zip(['src', 'public'], 'dist', { base: 'src', filename: 'archive.zip' })
+ * ```
+ */
+const zip = async (
   source: string | string[],
   target = '',
-  option: string | Option = '',
+  option: string | Options = '',
 ) => {
   await execute(...toArray(source, target, option))
   echo(
@@ -127,4 +140,4 @@ const main = async (
 }
 
 // export
-export default main
+export default zip

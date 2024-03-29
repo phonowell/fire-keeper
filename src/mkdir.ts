@@ -7,7 +7,17 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (source: string | string[]) => {
+/**
+ * Create directories.
+ * @param source The source directories.
+ * @returns The promise.
+ * @example
+ * ```
+ * await mkdir('dir')
+ * await mkdir(['dir1', 'dir2'])
+ * ```
+ */
+const mkdir = async (source: string | string[]) => {
   if (!source) throw new Error('mkdir/error: empty source')
 
   const listSource = toArray(source).map(normalizePath)
@@ -19,4 +29,4 @@ const main = async (source: string | string[]) => {
 }
 
 // export
-export default main
+export default mkdir

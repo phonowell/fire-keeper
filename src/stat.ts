@@ -7,7 +7,16 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (source: string): Promise<fs.Stats | null> => {
+/**
+ * Get the file status.
+ * @param source A source file or directory.
+ * @returns The promise with the file status.
+ * @example
+ * ```
+ * await stat('file.txt')
+ * ```
+ */
+const stat = async (source: string): Promise<fs.Stats | null> => {
   const _source = normalizePath(source)
 
   if (!(await isExist(_source))) {
@@ -24,4 +33,4 @@ const main = async (source: string): Promise<fs.Stats | null> => {
 }
 
 // export
-export default main
+export default stat

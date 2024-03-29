@@ -2,7 +2,17 @@ import getName from './getName'
 
 // function
 
-const main = (input: string) => getName(input).filename
+/**
+ * Get filename from path
+ * @param input string
+ * @returns string
+ * @example
+ * ```
+ * const filename = getFilename('./src/file.txt')
+ * //=> 'file.txt'
+ * ```
+ */
+const getFilename = (input: string) => getName(input).filename
 
 // export
-export default main
+export default getFilename

@@ -1,3 +1,5 @@
+import { basename } from 'path'
+
 import { exec, getBasename, glob, read, write } from '../src'
 
 // function

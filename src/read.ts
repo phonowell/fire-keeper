@@ -3,7 +3,7 @@ import fs from 'fs'
 import echo from './echo'
 import getExtname from './getExtname'
 import glob from './glob'
-import toJson from './toJson'
+import toJSON from './toJSON'
 import toString from './toString'
 
 // interface
@@ -43,7 +43,17 @@ const listExtObject = ['.json', '.yaml', '.yml'] as const
 
 // function
 
-const main = async <
+/**
+ * Read a file.
+ * @param source The source file.
+ * @param option The option.
+ * @returns The promise.
+ * @example
+ * ```
+ * const content = await read('file.txt')
+ * ```
+ */
+const read = async <
   T = undefined,
   S extends string = string,
   R extends boolean = false,
@@ -76,7 +86,7 @@ const main = async <
 
   if (listExtString.includes(extname as ItemExtString))
     return toString(content) as Result<T, S, R>
-  if (extname === '.json') return toJson(content) as Result<T, S, R>
+  if (extname === '.json') return toJSON(content) as Result<T, S, R>
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
     return jsYaml.load(content.toString()) as Result<T, S, R>
@@ -86,4 +96,4 @@ const main = async <
 }
 
 // export
-export default main
+export default read

@@ -2,7 +2,17 @@ import getName from './getName'
 
 // function
 
-const main = (input: string) => getName(input).dirname
+/**
+ * Get dirname from path
+ * @param input string
+ * @returns string
+ * @example
+ * ```
+ * const dirname = getDirname('./src/file.txt')
+ * //=> 'src'
+ * ```
+ */
+const getDirname = (input: string) => getName(input).dirname
 
 // export
-export default main
+export default getDirname

@@ -2,7 +2,17 @@ import path from 'path'
 
 // function
 
-const main = (input: string) => {
+/**
+ * Get name from path
+ * @param input string
+ * @returns object
+ * @example
+ * ```
+ * const name = getName('./src/file.txt')
+ * //=> { basename: 'file', dirname: 'src', extname: '.txt', filename: 'file.txt' }
+ * ```
+ */
+const getName = (input: string) => {
   if (!input) throw new Error(`getName/error: empty input`)
 
   const ipt = input.replace(/\\/g, '/')
@@ -16,4 +26,4 @@ const main = (input: string) => {
 }
 
 // export
-export default main
+export default getName

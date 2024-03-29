@@ -2,7 +2,6 @@ import * as argv from './argv'
 import * as backup from './backup'
 import * as clean from './clean'
 import * as copy from './copy'
-import * as download from './download'
 import * as echo from './echo'
 import * as exec from './exec'
 import * as getBasename from './getBasename'
@@ -30,7 +29,7 @@ import * as sleep from './sleep'
 import * as stat from './stat'
 import * as toArray from './toArray'
 import * as toDate from './toDate'
-import * as toJson from './toJson'
+import * as toJSON from './toJSON'
 import * as toString from './toString'
 import * as watch from './watch'
 import * as wrapList from './wrapList'
@@ -39,7 +38,7 @@ import * as zip from './zip'
 import { describe, it } from 'mocha'
 import * as $ from '../src/index'
 const mapModule = {
-  argv, backup, clean, copy, download, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, sleep, stat, toArray, toDate, toJson, toString, watch, wrapList, write, zip,
+  argv, backup, clean, copy, echo, exec, getBasename, getDirname, getExtname, getFilename, getName, getType, glob, home, isExist, isSame, link, mkdir, move, normalizePath, os, prompt, read, recover, remove, rename, root, sleep, stat, toArray, toDate, toJSON, toString, watch, wrapList, write, zip,
 }
 
 // ---
@@ -52,14 +51,18 @@ type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 const temp = $.normalizePath('./temp')
 
-// function
+// functions
 
 const clear = () => $.echo.whisper($.remove(temp))
 
 const main = () => {
-  const target = $.argv<{ _: string[] }>()._[1] || ''
+  const target = ($.argv<{ _: string[] }>()._[1] || '') as
+    | keyof typeof mapModule
+    | undefined
 
-  const listModule = target ? [target] : Object.keys(mapModule)
+  const listModule = target
+    ? [target]
+    : (Object.keys(mapModule) as (keyof typeof mapModule)[])
 
   for (const name of listModule)
     describe(name, () => {
@@ -67,7 +70,7 @@ const main = () => {
       for (const key of listIt) {
         const fn = mapModule[name][key] as FnAsync & { description?: string }
         it(
-          fn.description || (listIt.length === 1 ? 'default' : key),
+          fn.description ?? (listIt.length === 1 ? 'default' : key),
           async () => {
             await clear()
             await $.echo.freeze(fn)

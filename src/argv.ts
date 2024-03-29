@@ -10,7 +10,16 @@ type Argv = {
 
 // function
 
-const main = <T extends Record<string, unknown>>() => yargs.argv as T & Argv
+/**
+ * Get the arguments.
+ * @returns The arguments.
+ * @example
+ * ```
+ * const args = argv()
+ * console.log(args)
+ * ```
+ */
+const argv = <T extends Record<string, unknown>>() => yargs.argv as T & Argv
 
 // export
-export default main
+export default argv

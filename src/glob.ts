@@ -9,7 +9,7 @@ type ListSource = string[] & {
   __is_listed_as_source__: true
 }
 
-// function
+// functions
 
 const isListedAsSource = (
   input: string | string[] | ListSource,
@@ -17,6 +17,18 @@ const isListedAsSource = (
   input instanceof Array &&
   (input as ListSource & object).__is_listed_as_source__
 
+/**
+ * List files or directories.
+ * @param input - The input.
+ * @param options - The options.
+ * @returns The list source.
+ * @example
+ * ```
+ * const list = await glob('*.txt')
+ * console.log(list)
+ * //=> ['a.txt', 'b.txt']
+ * ```
+ */
 const main = async (
   input: string | string[] | ListSource,
   options?: Options,

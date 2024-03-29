@@ -1,6 +1,15 @@
 // function
 
-const main = () => {
+/**
+ * Get the current operating system.
+ * @returns The operating system.
+ * @example
+ * ```
+ * os()
+ * //=> 'macos'
+ * ```
+ */
+const os = () => {
   const { platform } = process
   if (platform.includes('darwin')) return 'macos'
   if (platform.includes('win')) return 'windows'
@@ -8,4 +17,4 @@ const main = () => {
 }
 
 // export
-export default main
+export default os

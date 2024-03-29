@@ -6,7 +6,17 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (source: string | string[]) => {
+/**
+ * Remove files or directories.
+ * @param source A source file or directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await remove('file.txt')
+ * await remove(['file1.txt', 'file2.txt'])
+ * ```
+ */
+const remove = async (source: string | string[]) => {
   const listSource = await glob(source, { onlyFiles: false })
   for (const src of listSource) {
     await fse.remove(src)
@@ -15,4 +25,4 @@ const main = async (source: string | string[]) => {
 }
 
 // export
-export default main
+export default remove

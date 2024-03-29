@@ -5,7 +5,17 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (source: string | string[]) => {
+/**
+ * Backup files or directories.
+ * @param source A source file or directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await backup('file.txt')
+ * await backup(['file1.txt', 'file2.txt'])
+ * ```
+ */
+const backup = async (source: string | string[]) => {
   const listSource = await glob(source)
   for (const src of listSource) {
     await copy(src, '', filename => `${filename}.bak`)
@@ -14,4 +24,4 @@ const main = async (source: string | string[]) => {
 }
 
 // export
-export default main
+export default backup

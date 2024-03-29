@@ -1,19 +1,39 @@
-import $type from './getType'
+import { isObject } from 'lodash'
+
+import getType from './getType'
+import isArray from './isArray'
 
 // interface
 
-type Result = Record<string, unknown> | unknown[]
+type Result<R, Input> = R extends undefined
+  ? Input extends string | Uint8Array
+    ? Record<string, unknown> | unknown[]
+    : Input extends unknown[] | Record<string, unknown>
+      ? Input
+      : never
+  : R
 
 // function
 
-const main = (input: unknown) => {
-  if (typeof input === 'string') return JSON.parse(input) as Result
-  if (input instanceof Array) return input as unknown[]
-  if (input instanceof Uint8Array) return JSON.parse(input.toString()) as Result
-  const type = $type(input)
-  if (type === 'object') return input as Record<string, unknown>
-  throw new Error(`toJson/error: invalid type '${type}'`)
+/**
+ * Convert input to JSON.
+ * @param input Input to convert.
+ * @returns The JSON.
+ * @example
+ * ```
+ * const json = toJson('{"key": "value"}')
+ * console.log(json)
+ * //=> { key: 'value' }
+ * ```
+ */
+const toJSON = <R = undefined, I = unknown>(input: I) => {
+  if (typeof input === 'string') return JSON.parse(input) as Result<R, I>
+  if (isArray(input)) return input as Result<R, I>
+  if (input instanceof Uint8Array)
+    return JSON.parse(input.toString()) as Result<R, I>
+  if (isObject(input)) return input as Result<R, I>
+  throw new Error(`toJSON/error: invalid type '${getType(input)}'`)
 }
 
 // export
-export default main
+export default toJSON

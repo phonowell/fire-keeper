@@ -3,7 +3,20 @@ import toString from './toString'
 
 // function
 
-const main = (input: unknown) =>
+/**
+ * Wrap list.
+ * @param input The input.
+ * @returns The wrapped list.
+ * @example
+ * ```
+ * wrapList([1, 2, 3])
+ * //=> '1, 2, 3'
+ *
+ * wrapList(123)
+ * //=> '123'
+ * ```
+ */
+const wrapList = (input: unknown) =>
   input
     ? toArray(input)
         .map(it => `'${toString(it)}'`)
@@ -11,4 +24,4 @@ const main = (input: unknown) =>
     : ''
 
 // export
-export default main
+export default wrapList

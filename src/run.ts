@@ -1,6 +1,11 @@
 // function
 
-const main = <T>(fn: (...args: unknown[]) => T) => fn()
+/**
+ * Run a function
+ * @param fn Function to run
+ * @returns Return value of the function
+ */
+const run = <T>(fn: (...args: unknown[]) => T) => fn()
 
 // export
-export default main
+export default run

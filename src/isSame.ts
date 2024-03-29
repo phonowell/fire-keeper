@@ -8,7 +8,16 @@ import toString from './toString'
 
 // function
 
-const main = async (...args: (string | string[])[]) => {
+/**
+ * Check if the content of the paths are the same.
+ * @param args The paths.
+ * @returns `true` if the content of the paths are the same, or `false` otherwise.
+ * @example
+ * ```
+ * await isSame('file1.txt', 'file2.txt')
+ * ```
+ */
+const isSame = async (...args: (string | string[])[]) => {
   const group = flatten(args).map(normalizePath)
   if (group.length < 2) return false
 
@@ -49,4 +58,4 @@ const main = async (...args: (string | string[])[]) => {
 }
 
 // export
-export default main
+export default isSame

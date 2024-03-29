@@ -1,7 +1,19 @@
 // function
 
-const main = (input: unknown): input is (...args: unknown[]) => unknown =>
-  input instanceof Function
+/**
+ * Check if input is a function
+ * @param input unknown
+ * @returns boolean
+ * @example
+ * ```
+ * if (isFunction(() => {})) {
+ *  console.log('Is function')
+ * }
+ * ```
+ */
+const isFunction = <T extends (...args: unknown[]) => unknown>(
+  input: unknown,
+): input is T => input instanceof Function
 
 // export
-export default main
+export default isFunction

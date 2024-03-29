@@ -262,6 +262,58 @@ const getCache = async <T, U>(
 const isChoice = <T>(input: unknown): input is Choice<T> =>
   typeof input === 'object'
 
+/**
+ * Prompt the user.
+ * @param option The option.
+ * @returns The result.
+ * @example
+ * ```
+ * // confirm
+ * const result = await prompt({
+ *   type: 'confirm',
+ *   message: 'Are you sure?',
+ * })
+ *
+ * // number
+ * const result = await prompt({
+ *   type: 'number',
+ *   message: 'Enter a number:',
+ *   min: 1,
+ *   max: 10,
+ * })
+ *
+ * // auto, multi, select
+ * const result = await prompt({
+ *   type: 'auto',
+ *   message: 'Select a fruit:',
+ *   list: ['Apple', 'Banana', 'Cherry'],
+ * })
+ *
+ * const result = await prompt({
+ *   type: 'multi',
+ *   message: 'Select fruits:',
+ *   list: ['Apple', 'Banana', 'Cherry'],
+ * })
+ *
+ * const result = await prompt({
+ *   type: 'select',
+ *   message: 'Select a fruit:',
+ *   list: ['Apple', 'Banana', 'Cherry'],
+ * })
+ *
+ * // text
+ * const result = await prompt({
+ *   type: 'text',
+ *   message: 'Enter your name:',
+ * })
+ *
+ * // toggle
+ * const result = await prompt({
+ *   type: 'toggle',
+ *   message: 'Enable feature?',
+ * })
+ * ```
+ */
 const main = async <T, U extends Type = Type>(
   option: Option<U, T> & { list?: List<T>; type: U },
 ): Promise<T & Result<U, T>> => {

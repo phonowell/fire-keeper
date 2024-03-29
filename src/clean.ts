@@ -4,7 +4,17 @@ import remove from './remove'
 
 // function
 
-const main = async (source: string | string[]) => {
+/**
+ * Clean files or directories.
+ * @param source A source file or directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await clean('file.txt')
+ * await clean(['file1.txt', 'file2.txt'])
+ * ```
+ */
+const clean = async (source: string | string[]) => {
   const listSource = await glob(source, { onlyFiles: false })
   await remove(source)
   const dirname = getDirname(listSource[0])
@@ -13,4 +23,4 @@ const main = async (source: string | string[]) => {
 }
 
 // export
-export default main
+export default clean

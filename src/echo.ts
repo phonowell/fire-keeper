@@ -18,31 +18,52 @@ const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 
 const separator = `${kleur.gray('›')} `
 
-// function
+// functions
 
-const freeze = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
-  main.isFrozen = true
-  main.isSilent = true
-
-  const result =
-    typeof callback === 'function' ? await callback() : await callback
-
-  main.isFrozen = false
-  main.isSilent = false
-
-  return result
-}
-
-const main = <T>(...args: [T] | [string, T]) => {
+/**
+ * Print the message.
+ * @param args The arguments.
+ * @returns The message.
+ * @example
+ * ```
+ * echo('Hello, world!')
+ * echo('info', 'Hello, world!')
+ * ```
+ */
+const echo = <T>(...args: [T] | [string, T]) => {
   const [type, message] = args.length === 1 ? ['default', args[0]] : args
 
-  if (main.isSilent) return message
+  if (echo.isSilent) return message
 
   const msg = toString(message).trim()
   if (!msg) return message
 
   console.log(render(type, msg))
   return message
+}
+
+/**
+ * Freeze the echo.
+ * @param callback The callback.
+ * @returns The promise.
+ * @example
+ * ```
+ * await echo.freeze(async () => {
+ *  console.log('Hello, world!')
+ * })
+ * ```
+ */
+const freeze = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
+  echo.isFrozen = true
+  echo.isSilent = true
+
+  const result =
+    typeof callback === 'function' ? await callback() : await callback
+
+  echo.isFrozen = false
+  echo.isSilent = false
+
+  return result
 }
 
 const makeTime = () => {
@@ -52,9 +73,16 @@ const makeTime = () => {
     .join(':')
 }
 
+/**
+ * Pause the echo.
+ * @example
+ * ```
+ * echo.pause()
+ * ```
+ */
 const pause = () => {
-  if (main.isFrozen) return
-  main.isSilent = true
+  if (echo.isFrozen) return
+  echo.isSilent = true
 }
 
 const render = (type: string, message: string) =>
@@ -92,11 +120,29 @@ const renderType = (type: string) => {
   return content
 }
 
+/**
+ * Resume the echo.
+ * @example
+ * ```
+ * echo.resume()
+ * ```
+ */
 const resume = () => {
-  if (main.isFrozen) return
-  main.isSilent = false
+  if (echo.isFrozen) return
+  echo.isSilent = false
 }
 
+/**
+ * Whisper the callback.
+ * @param callback The callback.
+ * @returns The promise.
+ * @example
+ * ```
+ * await echo.whisper(async () => {
+ *   console.log('Hello, world!')
+ * })
+ * ```
+ */
 const whisper = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
   pause()
 
@@ -109,11 +155,11 @@ const whisper = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
 }
 
 // export
-main.freeze = freeze
-main.isFrozen = false
-main.isSilent = false
-main.pause = pause
-main.resume = resume
-main.whisper = whisper
+echo.freeze = freeze
+echo.isFrozen = false
+echo.isSilent = false
+echo.pause = pause
+echo.resume = resume
+echo.whisper = whisper
 export { renderPath }
-export default main
+export default echo

@@ -1,6 +1,17 @@
 // function
 
-const main = (input: Date | number | string) => {
+/**
+ * Convert input to Date object
+ * @param input Date | number | string
+ * @returns Date
+ * @throws Error
+ * @example
+ * ```
+ * console.log(toDate(new Date(0)))
+ * //=> 1970-01-01T00:00:00.000Z
+ * ```
+ */
+const toDate = (input: Date | number | string) => {
   const result = (() => {
     if (input instanceof Date) return new Date(input)
     if (typeof input === 'number') return new Date(input)
@@ -12,4 +23,4 @@ const main = (input: Date | number | string) => {
 }
 
 // export
-export default main
+export default toDate

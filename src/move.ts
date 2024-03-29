@@ -7,10 +7,22 @@ type Input = string | ((input: string) => string | Promise<string>)
 
 // function
 
-const main = async (source: string | string[], target: Input) => {
+/**
+ * Move files or directories.
+ * @param source A source file or directory.
+ * @param target A target directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await move('file.txt', 'backup')
+ * await move(['file1.txt', 'file2.txt'], 'backup')
+ * await move('file.txt', name => `backup/${name}`)
+ * ```
+ */
+const move = async (source: string | string[], target: Input) => {
   await copy(source, target)
   await remove(source)
 }
 
 // export
-export default main
+export default move

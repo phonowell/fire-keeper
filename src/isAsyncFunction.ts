@@ -2,7 +2,20 @@ import isFunction from './isFunction'
 
 // function
 
-const main = (input: unknown): input is () => Promise<unknown> => {
+/**
+ * Check if the input is an async function.
+ *
+ * @param input The value to check.
+ * @returns Returns the result of the check.
+ * @example
+ * ```
+ * const isAsync = isAsyncFunction(async () => {})
+ * //=> true
+ * ```
+ */
+const isAsyncFunction = <T extends (...args: unknown[]) => Promise<unknown>>(
+  input: unknown,
+): input is T => {
   if (!isFunction(input)) return false
 
   const type = Object.prototype.toString
@@ -14,4 +27,4 @@ const main = (input: unknown): input is () => Promise<unknown> => {
 }
 
 // export
-export default main
+export default isAsyncFunction

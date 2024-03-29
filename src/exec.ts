@@ -18,14 +18,19 @@ type Result = [number, string, string[]]
 
 const separator = os() === 'windows' ? ' && ' : '; '
 
-// function
+// functions
 
-const info = (type: string, message: string) => {
-  if (!message) return
-  console.log(type === 'error' ? kleur.red(message) : kleur.gray(message))
-}
-
-const main = (cmd: string | string[], option: Option = {}) => {
+/**
+ * Execute the command.
+ * @param cmd The command.
+ * @param option The option.
+ * @returns The result.
+ * @example
+ * ```
+ * const [code, last, all] = await exec('echo "Hello, world!"')
+ * ```
+ */
+const exec = (cmd: string | string[], option: Option = {}) => {
   const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
 
   const [cmder, arg] =
@@ -59,10 +64,15 @@ const main = (cmd: string | string[], option: Option = {}) => {
   })
 }
 
+const info = (type: string, message: string) => {
+  if (!message) return
+  console.log(type === 'error' ? kleur.red(message) : kleur.gray(message))
+}
+
 const parseMessage = (buffer: Uint8Array) =>
   trimEnd(buffer.toString().trim(), '\n')
     .replace(/\r/g, '\n')
     .replace(/\n{2,}/g, '')
 
 // export
-export default main
+export default exec

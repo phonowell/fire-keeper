@@ -17,15 +17,22 @@ type Input = string | ((input: string) => string | Promise<string>)
 
 // function
 
-const execute = (
-  fn: (input: string) => string | Promise<string>,
-  input: string,
-) => {
-  if (isAsyncFunction(fn)) return fn(input)
-  return fn(input)
-}
-
-const main = async (
+/**
+ * Copy files or directories.
+ * @param source A source file or directory.
+ * @param target A target directory.
+ * @param name A new name.
+ * @returns The promise.
+ * @example
+ * ```
+ * await copy('file.txt')
+ * await copy(['file1.txt', 'file2.txt'])
+ * await copy('file.txt', 'backup')
+ * await copy('file.txt', 'backup', 'file.bak')
+ * await copy('file.txt', name => `backup/${name}`)
+ * ```
+ */
+const copy = async (
   source: string | string[],
   target?: Input,
   name?: Input,
@@ -65,5 +72,13 @@ const main = async (
   )
 }
 
+const execute = (
+  fn: (input: string) => string | Promise<string>,
+  input: string,
+) => {
+  if (isAsyncFunction(fn)) return fn(input)
+  return fn(input)
+}
+
 // export
-export default main
+export default copy

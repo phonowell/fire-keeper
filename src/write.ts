@@ -7,7 +7,17 @@ import wrapList from './wrapList'
 
 // function
 
-const main = async (
+/**
+ * Write the content to the file.
+ * @param source The source file.
+ * @param content The content to write.
+ * @param options The options.
+ * @example
+ * ```
+ * write('file.txt', 'content')
+ * ```
+ */
+const write = async (
   source: string,
   content: unknown,
   options?: fse.WriteFileOptions,
@@ -17,4 +27,4 @@ const main = async (
 }
 
 // export
-export default main
+export default write

@@ -2,7 +2,16 @@ import os from 'os'
 
 // function
 
-const main = () => os.homedir().replace(/\\/g, '/')
+/**
+ * Get the home directory.
+ * @returns The home directory.
+ * @example
+ * ```
+ * home()
+ * //=> '/home/runner'
+ * ```
+ */
+const home = () => os.homedir().replace(/\\/g, '/')
 
 // export
-export default main
+export default home

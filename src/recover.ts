@@ -6,8 +6,18 @@ import toArray from './toArray'
 import wrapList from './wrapList'
 import write from './write'
 
-// function
+// functions
 
+/**
+ * Recover files or directories.
+ * @param source A source file or directory.
+ * @returns The promise.
+ * @example
+ * ```
+ * await recover('file.txt')
+ * await recover(['file1.txt', 'file2.txt'])
+ * ```
+ */
 const main = async (source: string | string[]) => {
   const listSource = await glob(toArray(source).map(src => `${src}.bak`))
 

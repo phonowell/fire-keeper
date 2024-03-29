@@ -7,7 +7,17 @@ import root from './root'
 
 // function
 
-const main = (source: string) => {
+/**
+ * Normalize path
+ * @param source string
+ * @returns string
+ * @example
+ * ```
+ * const np = normalizePath('./src/file.txt')
+ * //=> '/home/runner/work/project/project/src/file.txt'
+ * ```
+ */
+const normalizePath = (source: string) => {
   // validate
   if (typeof source !== 'string') return ''
   if (!source) return ''
@@ -38,4 +48,4 @@ const main = (source: string) => {
 }
 
 // export
-export default main
+export default normalizePath

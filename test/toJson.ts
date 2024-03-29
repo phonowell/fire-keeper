@@ -7,7 +7,7 @@ const a = () => {
   const object = { message: string }
   const buffer = Buffer.from($.toString(object))
 
-  const result = $.toJson(buffer) as { message: string }
+  const result = $.toJSON(buffer) as { message: string }
   if (result.message !== string) throw new Error('0')
 }
 

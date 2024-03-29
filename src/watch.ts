@@ -11,7 +11,19 @@ type Options = {
 
 // function
 
-const main = (
+/**
+ * Watch the file or directory.
+ * @param listSource The file or directory to watch.
+ * @param callback The callback to execute.
+ * @param options The options.
+ * @example
+ * ```
+ * watch('src', path => {
+ *   console.log(path)
+ * })
+ * ```
+ */
+const watch = (
   listSource: string | string[],
   callback: (path: string) => void,
   options: Options = {
@@ -26,4 +38,4 @@ const main = (
 }
 
 // export
-export default main
+export default watch
