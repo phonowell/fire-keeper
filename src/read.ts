@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fse from 'fs-extra'
 
 import echo from './echo'
 import getExtname from './getExtname'
@@ -11,6 +11,10 @@ import toString from './toString'
 type ItemExtObject = (typeof listExtObject)[number]
 
 type ItemExtString = (typeof listExtString)[number]
+
+type Options = {
+  raw?: boolean
+}
 
 type Result<T, S extends string, R extends boolean> = T extends undefined
   ? R extends true
@@ -46,7 +50,7 @@ const listExtObject = ['.json', '.yaml', '.yml'] as const
 /**
  * Read a file.
  * @param source The source file.
- * @param option The option.
+ * @param options The option.
  * @returns The promise.
  * @example
  * ```
@@ -59,9 +63,7 @@ const read = async <
   R extends boolean = false,
 >(
   source: S,
-  option?: {
-    raw?: R
-  },
+  options?: Options,
 ): Promise<Result<T, S, R> | undefined> => {
   let src = source
   const listSource = await glob(src)
@@ -72,15 +74,10 @@ const read = async <
   }
   src = listSource[0] as S
 
-  const content = await new Promise<Buffer>(resolve => {
-    fs.readFile(src, (err, data) => {
-      if (err) throw err
-      resolve(data)
-    })
-  })
+  const content = await fse.readFile(src)
   echo('file', `read '${source}'`)
 
-  if (option?.raw) return content as Result<T, S, R>
+  if (options?.raw) return content as Result<T, S, R>
 
   const extname = getExtname(src)
 

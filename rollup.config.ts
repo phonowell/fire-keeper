@@ -11,6 +11,7 @@ const input = {
   backup: 'src/backup.ts',
   clean: 'src/clean.ts',
   copy: 'src/copy.ts',
+  download: 'src/download.ts',
   echo: 'src/echo.ts',
   exec: 'src/exec.ts',
   getBasename: 'src/getBasename.ts',

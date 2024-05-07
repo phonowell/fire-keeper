@@ -3,6 +3,7 @@ import at from './at'
 import backup from './backup'
 import clean from './clean'
 import copy from './copy'
+import download from './download'
 import echo from './echo'
 import exec from './exec'
 import getBasename from './getBasename'
@@ -48,6 +49,7 @@ export {
   backup,
   clean,
   copy,
+  download,
   echo,
   exec,
   getBasename,
