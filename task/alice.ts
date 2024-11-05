@@ -1,65 +1,62 @@
-import compact from 'lodash/compact'
+import { argv, getBasename, glob, prompt } from 'fire-keeper'
 
-import { argv, getBasename, glob, prompt } from '../src'
-
-// interface
-
-type FnAsync = <T>() => Promise<T>
+// 类型定义
+type AsyncFn = <T>() => Promise<T>
 
 /**
- * Prompts the user to select a task from a list of options.
- * @param list - The list of options to choose from.
- * @returns A Promise that resolves to the selected task as a string.
+ * 执行指定的任务
+ * @param taskName 任务名称
  */
-const ask = async (list: string[]): Promise<string> => {
+const executeTask = async (taskName: string) => {
+  const [taskPath] = await glob([
+    `./task/${taskName}.js`,
+    `./task/${taskName}.ts`,
+  ])
+
+  const taskFn = ((await import(taskPath)) as { default: AsyncFn }).default
+  await taskFn()
+}
+
+/**
+ * 加载可用的任务列表
+ * @returns 任务名称数组
+ */
+const loadTasks = async (): Promise<string[]> => {
+  const sources = await glob(['./task/*.js', './task/*.ts', '!*.d.ts'])
+  return sources
+    .filter((source) => getBasename(source) !== 'alice')
+    .map(getBasename)
+}
+
+/**
+ * 提示用户从列表中选择一个任务
+ * @param tasks 可选任务列表
+ * @returns 选中的任务名称
+ */
+const promptTask = async (tasks: string[]): Promise<string> => {
   const answer = await prompt({
     id: 'default-task',
-    list,
-    message: 'select a task',
+    list: tasks,
+    message: '选择一个任务',
     type: 'auto',
   })
   if (!answer) return ''
-  if (!list.includes(answer)) return ask(list)
+  if (!tasks.includes(answer)) return promptTask(tasks)
   return answer
 }
 
 /**
- * Finds all files in the `./task` directory with a `.js` or `.ts` extension, except for `.d.ts` files.
- * @returns A Promise that resolves to an array of file names as strings.
- */
-const load = async () => {
-  const listSource = await glob(['./task/*.js', './task/*.ts', '!*.d.ts'])
-
-  const listResult = listSource.map(source => {
-    const basename: string = getBasename(source)
-    return basename === 'alice' ? '' : basename
-  })
-
-  return compact(listResult)
-}
-
-/**
- * The main function that runs the program.
+ * 主函数：处理命令行参数或提示用户选择任务，然后执行任务
  */
 const main = async () => {
-  const task: string = argv()._[0]
-    ? argv()._[0].toString()
-    : await (async () => ask(await load()))()
+  const taskArg = argv()._[0]
+  const task = taskArg
+    ? taskArg.toString()
+    : await promptTask(await loadTasks())
 
   if (!task) return
-  await run(task)
+  await executeTask(task)
 }
 
-/**
- * Imports the file corresponding to the selected task and calls the default exported function.
- * @param task - The name of the task to run.
- */
-const run = async (task: string) => {
-  const [source] = await glob([`./task/${task}.js`, `./task/${task}.ts`])
-
-  const fn: FnAsync = ((await import(source)) as { default: FnAsync }).default
-  await fn()
-}
-
-// execute
+// 执行主函数
 main()

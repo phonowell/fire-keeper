@@ -1,8 +1,11 @@
-import { exec } from '../src/index'
+import { echo, exec, read } from 'fire-keeper'
 
-// interface
+type PackageJson = {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+}
 
-type Result = {
+type DependencyInfo = {
   current: string
   latest: string
   wanted: string
@@ -10,25 +13,55 @@ type Result = {
   dependencyType: 'dependencies' | 'devDependencies'
 }
 
-// function
+/**
+ * 获取锁定版本的依赖列表
+ * @returns 锁定版本的依赖名称数组
+ */
+const getLockedDependencies = async (): Promise<string[]> => {
+  const pkg = await read<PackageJson>('./package.json')
+  if (!pkg) return []
 
-const main = async () => {
-  const [, raw] = await exec('pnpm outdated --json')
-  const result = JSON.parse(raw) as Record<string, Result>
+  const lockedDeps = [
+    ...Object.entries(pkg.dependencies ?? {}),
+    ...Object.entries(pkg.devDependencies ?? {}),
+  ]
+    .filter((it) => !Number.isNaN(Number(it[1][0])))
+    .map((it) => it[0])
+    .sort()
 
-  const listName = Object.entries(result)
-    .filter(it => {
-      const [, data] = it
-      if (data.isDeprecated) return false
-      return true
-    })
-    .map(it => it[0])
-  if (!listName.length) return
-
-  const listCmd = listName.map(name => `pnpm i ${name}@latest`)
-  await exec(listCmd)
-  await exec('pnpm update')
+  return lockedDeps
 }
 
-// export
+/**
+ * 更新项目依赖
+ */
+const updateDependencies = async () => {
+  const [, raw] = await exec('pnpm outdated --json')
+  const result = JSON.parse(raw) as Record<string, DependencyInfo>
+
+  const lockedDeps = await getLockedDependencies()
+  const depsToUpdate = Object.entries(result)
+    .filter(([name, data]) => {
+      if (data.isDeprecated) return false
+      if (lockedDeps.includes(name)) return false
+      if (name.endsWith('react') || name.endsWith('react-dom')) return false
+      return true
+    })
+    .map(([name]) => name)
+
+  if (depsToUpdate.length) {
+    const updateCommands = depsToUpdate.map((name) => `pnpm i ${name}@latest`)
+    await exec([...updateCommands])
+  }
+
+  echo(['These dependencies have been locked:', ...lockedDeps].join('\n'))
+}
+
+/**
+ * 主函数：执行依赖更新
+ */
+const main = async () => {
+  await updateDependencies()
+}
+
 export default main

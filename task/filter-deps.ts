@@ -1,4 +1,4 @@
-import { echo, glob, read } from '../src/index'
+import { echo, glob, read } from 'fire-keeper'
 
 const LIST_EXCLUDE_EXACT = [
   '@bilibili-firebird/activity-utils',
@@ -22,11 +22,11 @@ const LIST_EXCLUDE_EXACT = [
   'dayjs',
   'fire-compiler',
   'fire-keeper',
-  'lodash',
   'nib',
   'page-lifecycle',
   'postcss',
   'prettier',
+  'radash',
   'react',
   'react-dom',
   'rollup',
@@ -35,6 +35,7 @@ const LIST_EXCLUDE_EXACT = [
   'swr',
   'terser',
   'ts-node',
+  'tslib',
   'typescript',
   'vite',
 ]
@@ -50,13 +51,13 @@ const LIST_EXCLUDE_INCLUDE = [
 const fetchFileContents = () =>
   echo.whisper(async () => {
     const filePaths = await glob([
+      '!./node_modules/**',
       './rollup.config.ts',
       './src/**/*.js',
       './src/**/*.jsx',
       './src/**/*.ts',
       './src/**/*.tsx',
       './task/**/*.ts',
-      '!./node_modules/**',
     ])
 
     const fileContents: string[] = []
@@ -83,14 +84,14 @@ const fetchDependencies = async () => {
 
   const filteredDependencies = dependencies
     .filter(
-      dep =>
+      (dep) =>
         !(
           dep.startsWith('@types/') &&
           dependencies.includes(dep.replace('@types/', ''))
         ),
     )
-    .filter(dep => !LIST_EXCLUDE_EXACT.includes(dep))
-    .filter(dep => !LIST_EXCLUDE_INCLUDE.some(it => dep.includes(it)))
+    .filter((dep) => !LIST_EXCLUDE_EXACT.includes(dep))
+    .filter((dep) => !LIST_EXCLUDE_INCLUDE.some((it) => dep.includes(it)))
 
   return filteredDependencies
 }
@@ -100,12 +101,17 @@ const main = async () => {
   const dependencies = await fetchDependencies()
 
   const unusedDependencies = dependencies.filter(
-    dep =>
+    (dep) =>
       !allFileContents.includes(` from '${dep}`) &&
-      !allFileContents.includes(` from "${dep}`),
+      !allFileContents.includes(` from "${dep}`) &&
+      !allFileContents.includes(`import('${dep}`),
   )
 
-  echo(unusedDependencies.join('\n'))
+  if (!unusedDependencies.length) {
+    console.log('No unused dependencies found')
+    return
+  }
+  console.log(`pnpm rm ${unusedDependencies.join(' ')}`)
 }
 
 export default main
