@@ -27,5 +27,12 @@
     "types": ["node"]
   },
   "exclude": ["node_modules"],
-  "include": ["src", "task", "test", "rollup.config.ts", ".eslintrc.js"]
+  "include": [
+    ".eslintrc.js",
+    "rolldown.config.js",
+    "rollup.config.ts",
+    "src",
+    "task",
+    "test"
+  ]
 }

@@ -37,7 +37,10 @@ const download = async (
   dir = normalizePath(dir)
   await fse.ensureDir(dir)
 
-  await pipeline(readableStream, fse.createWriteStream(path.join(dir, filename)))
+  await pipeline(
+    readableStream,
+    fse.createWriteStream(path.join(dir, filename)),
+  )
   echo('download', `downloaded '${url}' to '${dir}', as '${filename}'`)
 }
 

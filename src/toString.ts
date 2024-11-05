@@ -1,13 +1,3 @@
-import $type from './getType'
-
-// interface
-
-type HasToString = {
-  toString: () => string
-}
-
-// functions
-
 /**
  * Convert input to string.
  * @param input The input.
@@ -23,17 +13,18 @@ type HasToString = {
  * ```
  */
 const toString = <R extends string>(input: unknown) => {
+  // string
   if (typeof input === 'string') return input as R
 
+  // array
   if (input instanceof Array) return JSON.stringify(input) as R
 
-  if ($type(input) === 'object') return JSON.stringify(input) as R
-  if (validateAsHasToString(input)) return input.toString() as R
+  // object
+  if (typeof input === 'object') return JSON.stringify(input) as R
+
+  // others
   return String(input) as R
 }
-
-const validateAsHasToString = (input: unknown): input is HasToString =>
-  typeof (input as HasToString | undefined)?.toString === 'function'
 
 // export
 export default toString

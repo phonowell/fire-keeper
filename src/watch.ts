@@ -1,4 +1,4 @@
-import chokidar from 'chokidar'
+import { watch as w } from 'chokidar'
 import debounce from 'lodash/debounce'
 
 import normalizePath from './normalizePath'
@@ -34,7 +34,7 @@ const watch = (
     options.debounce !== undefined && options.debounce > 0
       ? debounce(callback, options.debounce)
       : callback
-  chokidar.watch(listSource).on('change', path => cb(normalizePath(path)))
+  w(listSource).on('change', (path: string) => cb(normalizePath(path)))
 }
 
 // export

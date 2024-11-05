@@ -1,11 +1,10 @@
 import child from 'child_process'
 
 import kleur from 'kleur'
-
+import trimEnd from 'lodash/trimEnd'
 
 import echo from './echo'
 import os from './os'
-import trimEnd from 'lodash/trimEnd'
 
 // interface
 

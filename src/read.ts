@@ -8,9 +8,9 @@ import toString from './toString'
 
 // interface
 
-type ItemExtObject = (typeof listExtObject)[number]
+type ItemExtObject = '.json' | '.yaml' | '.yml'
 
-type ItemExtString = (typeof listExtString)[number]
+type ItemExtString = (typeof EXTNAMES)[number]
 
 type Options = {
   raw?: boolean
@@ -28,7 +28,7 @@ type Result<T, S extends string, R extends boolean> = T extends undefined
 
 // variable
 
-const listExtString = [
+const EXTNAMES = [
   '.coffee',
   '.css',
   '.html',
@@ -42,8 +42,6 @@ const listExtString = [
   '.txt',
   '.xml',
 ] as const
-
-const listExtObject = ['.json', '.yaml', '.yml'] as const
 
 // function
 
@@ -81,7 +79,7 @@ const read = async <
 
   const extname = getExtname(src)
 
-  if (listExtString.includes(extname as ItemExtString))
+  if (EXTNAMES.includes(extname as ItemExtString))
     return toString(content) as Result<T, S, R>
   if (extname === '.json') return toJSON(content) as Result<T, S, R>
   if (['.yaml', '.yml'].includes(extname)) {

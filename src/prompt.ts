@@ -61,7 +61,14 @@ type OptionGeneral = {
 }
 
 type OPGeneral = {
-  type: (typeof listTypePrompt)[number]
+  type:
+    | 'autocomplete'
+    | 'confirm'
+    | 'multiselect'
+    | 'number'
+    | 'select'
+    | 'text'
+    | 'toggle'
   name: 'value'
   message: string
 }
@@ -135,31 +142,18 @@ type Save = {
   value: unknown
 }
 
-type Type = (typeof listType)[number]
+type Type =
+  | 'auto'
+  | 'confirm'
+  | 'multi'
+  | 'number'
+  | 'select'
+  | 'text'
+  | 'toggle'
 
-// variable
+// variables
 
-const listType = [
-  'auto',
-  'confirm',
-  'multi',
-  'number',
-  'select',
-  'text',
-  'toggle',
-] as const
-
-const listTypePrompt = [
-  'autocomplete',
-  'confirm',
-  'multiselect',
-  'number',
-  'select',
-  'text',
-  'toggle',
-] as const
-
-const mapMessageDefault = {
+const DEFAULT_MESSAGE_MAP = {
   auto: 'input',
   confirm: 'confirm',
   multi: 'select',
@@ -169,9 +163,9 @@ const mapMessageDefault = {
   toggle: 'toggle',
 } as const
 
-const pathCache = './temp/cache-prompt.json'
+const CACHE_PATH = './temp/cache-prompt.json'
 
-// function
+// functions
 
 const formatOption = async <T extends Type, U>(
   option: Option<T, U>,
@@ -179,7 +173,7 @@ const formatOption = async <T extends Type, U>(
   if (option.type === 'confirm') {
     const result: OP<'confirm', U> = {
       initial: option.default ?? (await getCache(option)) ?? false,
-      message: option.message ?? mapMessageDefault.confirm,
+      message: option.message ?? DEFAULT_MESSAGE_MAP.confirm,
       name: 'value',
       type: 'confirm',
     }
@@ -190,7 +184,7 @@ const formatOption = async <T extends Type, U>(
     const result: OP<'number', U> = {
       initial: option.default ?? (await getCache(option)) ?? option.min,
       max: option.max,
-      message: option.message ?? mapMessageDefault.number,
+      message: option.message ?? DEFAULT_MESSAGE_MAP.number,
       min: option.min,
       name: 'value',
       type: 'number',
@@ -208,7 +202,7 @@ const formatOption = async <T extends Type, U>(
       choices: list,
       initial:
         pickDefault(list, option.default ?? (await getCache(option))) || 0,
-      message: option.message ?? mapMessageDefault[option.type],
+      message: option.message ?? DEFAULT_MESSAGE_MAP[option.type],
       name: 'value',
       type: transType(option.type),
     }
@@ -218,7 +212,7 @@ const formatOption = async <T extends Type, U>(
   if (option.type === 'text') {
     const result: OP<'text', U> = {
       initial: option.default ?? (await getCache(option)) ?? '',
-      message: option.message ?? mapMessageDefault.text,
+      message: option.message ?? DEFAULT_MESSAGE_MAP.text,
       name: 'value',
       type: 'text',
     }
@@ -231,7 +225,7 @@ const formatOption = async <T extends Type, U>(
       active: option.on ?? 'on',
       inactive: option.off ?? 'off',
       initial: option.default ?? (await getCache(option)) ?? false,
-      message: option.message ?? mapMessageDefault.toggle,
+      message: option.message ?? DEFAULT_MESSAGE_MAP.toggle,
       name: 'value',
       type: 'toggle',
     }
@@ -249,7 +243,7 @@ const getCache = async <T, U>(
   if (!id) return undefined
   if (type === 'multi') return undefined
 
-  const cache = await read<File>(pathCache)
+  const cache = await read<File>(CACHE_PATH)
   if (!cache) return undefined
 
   const data = at(cache, id)
@@ -345,10 +339,10 @@ const setCache = async <T>(option: Option<Type, T>, value: unknown) => {
   if (!id) return
   if (type === 'multi') return
 
-  const cache = (await read<File>(pathCache)) ?? {}
+  const cache = (await read<File>(CACHE_PATH)) ?? {}
   cache[id] = { type, value }
 
-  await write(pathCache, cache)
+  await write(CACHE_PATH, cache)
 }
 
 const transChoice = <T>(list: List<T>): Choice<T>[] =>

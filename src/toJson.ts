@@ -1,9 +1,6 @@
 import { isObject } from 'lodash'
 
-import getType from './getType'
 import isArray from './isArray'
-
-// interface
 
 type Result<R, Input> = R extends undefined
   ? Input extends string | Uint8Array
@@ -12,8 +9,6 @@ type Result<R, Input> = R extends undefined
       ? Input
       : never
   : R
-
-// function
 
 /**
  * Convert input to JSON.
@@ -32,7 +27,7 @@ const toJSON = <R = undefined, I = unknown>(input: I) => {
   if (input instanceof Uint8Array)
     return JSON.parse(input.toString()) as Result<R, I>
   if (isObject(input)) return input as Result<R, I>
-  throw new Error(`toJSON/error: invalid type '${getType(input)}'`)
+  throw new Error(`toJSON/error: invalid type '${typeof input}'`)
 }
 
 // export

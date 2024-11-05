@@ -32,6 +32,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-unnecessary-condition': 'warn',
+    '@typescript-eslint/no-unnecessary-type-parameters': 'off',
     // use [, , , ...rest] for arrays,
     // as [a, b, c, ...rest] will be warned
     '@typescript-eslint/no-unused-vars': [

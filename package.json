@@ -49,9 +49,13 @@
     "tslib": "^2.8.1",
     "typescript": "5.4.5"
   },
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "homepage": "https://github.com/phonowell/fire-keeper",
-  "keywords": ["fire-keeper"],
+  "keywords": [
+    "fire-keeper"
+  ],
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/esm/index.js",
