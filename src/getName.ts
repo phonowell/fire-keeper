@@ -1,7 +1,5 @@
 import path from 'path'
 
-// function
-
 /**
  * Get name from path
  * @param input string
@@ -25,5 +23,4 @@ const getName = (input: string) => {
   return { basename, dirname, extname, filename }
 }
 
-// export
 export default getName

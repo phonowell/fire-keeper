@@ -6,16 +6,11 @@ import getDirname from './getDirname'
 import getExtname from './getExtname'
 import getFilename from './getFilename'
 import glob from './glob'
-import isAsyncFunction from './isAsyncFunction'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'
 import run from './run'
 
-// interface
-
 type Input = string | ((input: string) => string | Promise<string>)
-
-// function
 
 /**
  * Copy files or directories.
@@ -76,9 +71,7 @@ const execute = (
   fn: (input: string) => string | Promise<string>,
   input: string,
 ) => {
-  if (isAsyncFunction(fn)) return fn(input)
   return fn(input)
 }
 
-// export
 export default copy

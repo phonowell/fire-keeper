@@ -1,7 +1,5 @@
 import { $ } from './index'
 
-// function
-
 const a = () => {
   const source = '~/Downloads/test.txt'
   const { basename, dirname, extname, filename } = $.getName(source)
@@ -24,5 +22,4 @@ const b = () => {
 }
 b.description = '@windows'
 
-// export
 export { a, b }

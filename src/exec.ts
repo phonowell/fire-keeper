@@ -1,12 +1,10 @@
 import child from 'child_process'
 
 import kleur from 'kleur'
-import trimEnd from 'lodash/trimEnd'
 
 import echo from './echo'
 import os from './os'
-
-// interface
+import trimEnd from './trimEnd'
 
 type Option = {
   silent?: boolean
@@ -17,8 +15,6 @@ type Result = [number, string, string[]]
 // variable
 
 const separator = os() === 'windows' ? ' && ' : '; '
-
-// functions
 
 /**
  * Execute the command.
@@ -74,5 +70,4 @@ const parseMessage = (buffer: Uint8Array) =>
     .replace(/\r/g, '\n')
     .replace(/\n{2,}/g, '')
 
-// export
 export default exec

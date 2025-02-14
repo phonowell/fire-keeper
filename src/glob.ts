@@ -3,13 +3,9 @@ import glob, { Options } from 'fast-glob'
 import normalizePath from './normalizePath'
 import toArray from './toArray'
 
-// interface
-
 type ListSource = string[] & {
   __is_listed_as_source__: true
 }
-
-// functions
 
 const isListedAsSource = (
   input: string | string[] | ListSource,
@@ -45,5 +41,4 @@ const main = async (
   return result
 }
 
-// export
 export default main

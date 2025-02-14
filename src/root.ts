@@ -1,5 +1,3 @@
-// function
-
 /**
  * Get the root path of the project
  * @returns - The root path of the project
@@ -11,5 +9,4 @@
  */
 const root = () => process.cwd().replace(/\\/g, '/')
 
-// export
 export default root

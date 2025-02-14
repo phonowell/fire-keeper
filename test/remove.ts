@@ -1,7 +1,5 @@
 import { $, temp } from './index'
 
-// function
-
 const a = async () => {
   const source = `${temp}/re/move.txt`
   await $.write(source, 'a little message')
@@ -33,5 +31,4 @@ const c = async () => {
 }
 c.description = 'file(s) only'
 
-// export
 export { a, b, c }

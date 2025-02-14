@@ -1,8 +1,6 @@
-import isEqual from 'lodash/isEqual'
+import { isEqual } from 'radash'
 
 import { $ } from './index'
-
-// function
 
 const a = () => {
   const question = 'test/a'
@@ -18,5 +16,4 @@ const b = () => {
 }
 b.description = 'string[] -> string[]'
 
-// export
 export { a, b }

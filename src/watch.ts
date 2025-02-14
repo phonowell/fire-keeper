@@ -1,15 +1,11 @@
 import { watch as w } from 'chokidar'
-import debounce from 'lodash/debounce'
+import { debounce } from 'radash'
 
 import normalizePath from './normalizePath'
-
-// interface
 
 type Options = {
   debounce?: number
 }
-
-// function
 
 /**
  * Watch the file or directory.
@@ -32,10 +28,14 @@ const watch = (
 ) => {
   const cb =
     options.debounce !== undefined && options.debounce > 0
-      ? debounce(callback, options.debounce)
+      ? debounce(
+          {
+            delay: options.debounce,
+          },
+          callback,
+        )
       : callback
   w(listSource).on('change', (path: string) => cb(normalizePath(path)))
 }
 
-// export
 export default watch

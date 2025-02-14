@@ -1,11 +1,8 @@
 import path from 'path'
 
-import trimEnd from 'lodash/trimEnd'
-
 import home from './home'
 import root from './root'
-
-// function
+import trimEnd from './trimEnd'
 
 /**
  * Normalize path
@@ -47,5 +44,4 @@ const normalizePath = (source: string) => {
   return trimEnd(_source, '/')
 }
 
-// export
 export default normalizePath

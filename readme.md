@@ -54,7 +54,6 @@ npm run test
 - [getExtname](#getExtname)
 - [getFilename](#getFilename)
 - [getName](#getName)
-- [getType](#getType)
 - [glob](#glob)
 - [home](#home)
 - [isExist](#isExist)
@@ -74,8 +73,6 @@ npm run test
 - [stat](#stat)
 - [toArray](#toArray)
 - [toDate](#toDate)
-- [toJson](#toJson)
-- [toString](#toString)
 - [watch](#watch)
 - [write](#write)
 - [zip](#zip)
@@ -167,14 +164,6 @@ const filename = $.getFilename('./readme.md') // `readme.md`
 
 ```typescript
 const name = $.getName('./readme.md')
-```
-
-### getType
-
-获取类型。
-
-```typescript
-const type = $.getType(42) // number
 ```
 
 ### glob
@@ -333,28 +322,12 @@ const list = $.toArray('hello world') // `['hello world']`
 const date = $.toDate('2020-01-01') // `new Date('2020-01-01')`
 ```
 
-### toJson
-
-转换为`JSON`。
-
-```typescript
-const json = $.toJson('{"a":1}') // `{a:1}`
-```
-
-### toString
-
-转换为字符串。
-
-```typescript
-const string = $.toString(42) // `'42'`
-```
-
 ### watch
 
 监听文件变化。
 
 ```typescript
-$.watch('./source/**/*', (path) => $.echo(path))
+$.watch('./source/**/*', path => $.echo(path))
 ```
 
 ### write

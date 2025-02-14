@@ -24,7 +24,7 @@ const executeTask = async (taskName: string) => {
 const loadTasks = async (): Promise<string[]> => {
   const sources = await glob(['./task/*.js', './task/*.ts', '!*.d.ts'])
   return sources
-    .filter((source) => getBasename(source) !== 'alice')
+    .filter(source => getBasename(source) !== 'alice')
     .map(getBasename)
 }
 

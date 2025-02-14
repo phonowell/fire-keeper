@@ -1,7 +1,4 @@
 import toArray from './toArray'
-import toString from './toString'
-
-// function
 
 /**
  * Wrap list.
@@ -19,9 +16,16 @@ import toString from './toString'
 const wrapList = (input: unknown) =>
   input
     ? toArray(input)
-        .map(it => `'${toString(it)}'`)
+        .map((it): string => {
+          if (
+            typeof it === 'string' ||
+            typeof it === 'number' ||
+            typeof it === 'boolean'
+          )
+            return `'${it}'`
+          return `'${JSON.stringify(it)}'`
+        })
         .join(', ')
     : ''
 
-// export
 export default wrapList

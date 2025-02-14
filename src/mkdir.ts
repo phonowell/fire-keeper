@@ -5,8 +5,6 @@ import normalizePath from './normalizePath'
 import toArray from './toArray'
 import wrapList from './wrapList'
 
-// function
-
 /**
  * Create directories.
  * @param source The source directories.
@@ -28,5 +26,4 @@ const mkdir = async (source: string | string[]) => {
   echo('file', `created ${wrapList(source)}`)
 }
 
-// export
 export default mkdir

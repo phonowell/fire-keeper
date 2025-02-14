@@ -1,7 +1,5 @@
 import getName from './getName'
 
-// function
-
 /**
  * Get basename from path
  * @param input string
@@ -14,5 +12,4 @@ import getName from './getName'
  */
 const getBasename = (input: string) => getName(input).basename
 
-// export
 export default getBasename

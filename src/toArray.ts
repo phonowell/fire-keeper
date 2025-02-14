@@ -1,5 +1,3 @@
-// function
-
 /**
  * Convert a value to an array if it is not already an array.
  * @param input - The value to convert to an array.
@@ -16,5 +14,4 @@
 const toArray = <T>(input: T | T[]): T[] =>
   input instanceof Array ? input : [input]
 
-// export
 export default toArray

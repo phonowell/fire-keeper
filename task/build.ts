@@ -1,7 +1,5 @@
 import { exec, getBasename, glob, read, write } from '../src'
 
-// function
-
 /**
  * The main function that runs the build process.
  */
@@ -83,5 +81,4 @@ const replaceTest = async () => {
   await write('./test/index.ts', contIndex2)
 }
 
-// export
 export default main

@@ -25,8 +25,8 @@ const getLockedDependencies = async (): Promise<string[]> => {
     ...Object.entries(pkg.dependencies ?? {}),
     ...Object.entries(pkg.devDependencies ?? {}),
   ]
-    .filter((it) => !Number.isNaN(Number(it[1][0])))
-    .map((it) => it[0])
+    .filter(it => !Number.isNaN(Number(it[1][0])))
+    .map(it => it[0])
     .sort()
 
   return lockedDeps
@@ -50,7 +50,7 @@ const updateDependencies = async () => {
     .map(([name]) => name)
 
   if (depsToUpdate.length) {
-    const updateCommands = depsToUpdate.map((name) => `pnpm i ${name}@latest`)
+    const updateCommands = depsToUpdate.map(name => `pnpm i ${name}@latest`)
     await exec([...updateCommands])
   }
 

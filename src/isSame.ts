@@ -1,12 +1,8 @@
-import flatten from 'lodash/flatten'
-
 import echo from './echo'
+import flatten from './flatten'
 import normalizePath from './normalizePath'
 import read from './read'
 import stat from './stat'
-import toString from './toString'
-
-// function
 
 /**
  * Check if the content of the paths are the same.
@@ -44,9 +40,9 @@ const isSame = async (...args: (string | string[])[]) => {
     let cont = await echo.whisper<string | undefined>(read(source))
     if (!cont) return false
 
-    cont = toString(cont)
+    cont = String(cont)
 
-    if (!cacheCont) {
+    if (cacheCont === '') {
       cacheCont = cont
       continue
     }
@@ -57,5 +53,4 @@ const isSame = async (...args: (string | string[])[]) => {
   return true
 }
 
-// export
 export default isSame

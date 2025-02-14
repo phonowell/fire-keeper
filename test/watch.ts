@@ -1,10 +1,8 @@
 import { $ } from './index'
 
-// function
-
 const a = () => {
-  if (typeof $.watch !== 'function') throw new Error('0')
+  if (typeof $.watch !== 'function') throw new Error('watch function not found')
 }
+a.description = 'watch exists'
 
-// export
 export { a }

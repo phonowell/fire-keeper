@@ -3,8 +3,6 @@ import fse from 'fs-extra'
 import echo from './echo'
 import normalizePath from './normalizePath'
 
-// function
-
 /**
  * Create a symbolic link.
  * @param source A source file or directory.
@@ -23,5 +21,4 @@ const link = async (source: string, target: string) => {
   echo('file', `linked '${source}' to '${target}'`)
 }
 
-// export
 export default link

@@ -1,7 +1,5 @@
 import echo from './echo'
 
-// function
-
 /**
  * Sleep for a while.
  * @param delay The delay in milliseconds.
@@ -16,5 +14,4 @@ const sleep = async (delay = 0) => {
   if (delay) echo('sleep', `slept '${delay} ms'`)
 }
 
-// export
 export default sleep

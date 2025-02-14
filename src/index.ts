@@ -6,19 +6,16 @@ import copy from './copy'
 import download from './download'
 import echo from './echo'
 import exec from './exec'
+import findIndex from './findIndex'
+import flatten from './flatten'
 import getBasename from './getBasename'
 import getDirname from './getDirname'
 import getExtname from './getExtname'
 import getFilename from './getFilename'
 import getName from './getName'
-import getType from './getType'
 import glob from './glob'
 import home from './home'
-import isArray from './isArray'
-import isAsyncFunction from './isAsyncFunction'
 import isExist from './isExist'
-import isFunction from './isFunction'
-import isObject from './isObject'
 import isSame from './isSame'
 import link from './link'
 import mkdir from './mkdir'
@@ -36,8 +33,7 @@ import sleep from './sleep'
 import stat from './stat'
 import toArray from './toArray'
 import toDate from './toDate'
-import toJSON from './toJSON'
-import toString from './toString'
+import trimEnd from './trimEnd'
 import watch from './watch'
 import wrapList from './wrapList'
 import write from './write'
@@ -52,19 +48,16 @@ export {
   download,
   echo,
   exec,
+  findIndex,
+  flatten,
   getBasename,
   getDirname,
   getExtname,
   getFilename,
   getName,
-  getType,
   glob,
   home,
-  isArray,
-  isAsyncFunction,
   isExist,
-  isFunction,
-  isObject,
   isSame,
   link,
   mkdir,
@@ -82,8 +75,7 @@ export {
   stat,
   toArray,
   toDate,
-  toJSON,
-  toString,
+  trimEnd,
   watch,
   wrapList,
   write,

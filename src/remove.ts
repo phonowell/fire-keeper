@@ -4,8 +4,6 @@ import echo from './echo'
 import glob from './glob'
 import wrapList from './wrapList'
 
-// function
-
 /**
  * Remove files or directories.
  * @param source A source file or directory.
@@ -24,5 +22,4 @@ const remove = async (source: string | string[]) => {
   echo('remove', `removed ${wrapList(source)}`)
 }
 
-// export
 export default remove

@@ -84,14 +84,14 @@ const fetchDependencies = async () => {
 
   const filteredDependencies = dependencies
     .filter(
-      (dep) =>
+      dep =>
         !(
           dep.startsWith('@types/') &&
           dependencies.includes(dep.replace('@types/', ''))
         ),
     )
-    .filter((dep) => !LIST_EXCLUDE_EXACT.includes(dep))
-    .filter((dep) => !LIST_EXCLUDE_INCLUDE.some((it) => dep.includes(it)))
+    .filter(dep => !LIST_EXCLUDE_EXACT.includes(dep))
+    .filter(dep => !LIST_EXCLUDE_INCLUDE.some(it => dep.includes(it)))
 
   return filteredDependencies
 }
@@ -101,7 +101,7 @@ const main = async () => {
   const dependencies = await fetchDependencies()
 
   const unusedDependencies = dependencies.filter(
-    (dep) =>
+    dep =>
       !allFileContents.includes(` from '${dep}`) &&
       !allFileContents.includes(` from "${dep}`) &&
       !allFileContents.includes(`import('${dep}`),

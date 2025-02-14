@@ -1,8 +1,6 @@
-import isEqual from 'lodash/isEqual'
+import { isEqual } from 'radash'
 
 import { $, temp } from './index'
-
-// function
 
 const a = async () => {
   await $.copy(['./license.md', './readme.md'], temp)
@@ -31,5 +29,4 @@ const a = async () => {
   if (!isEqual(listDataSource, listDataTarget)) throw new Error('2')
 }
 
-// export
 export { a }

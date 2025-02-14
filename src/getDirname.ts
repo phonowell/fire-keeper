@@ -1,7 +1,5 @@
 import getName from './getName'
 
-// function
-
 /**
  * Get dirname from path
  * @param input string
@@ -14,5 +12,4 @@ import getName from './getName'
  */
 const getDirname = (input: string) => getName(input).dirname
 
-// export
 export default getDirname

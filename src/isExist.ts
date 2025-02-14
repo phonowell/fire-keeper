@@ -1,9 +1,7 @@
 import fse from 'fs-extra'
-import flatten from 'lodash/flatten'
 
 import normalizePath from './normalizePath'
-
-// function
+import flatten from './flatten'
 
 /**
  * Check if the path exists.
@@ -26,5 +24,4 @@ const isExist = async (...args: (string | string[])[]) => {
   return true
 }
 
-// export
 export default isExist

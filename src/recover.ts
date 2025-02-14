@@ -6,8 +6,6 @@ import toArray from './toArray'
 import wrapList from './wrapList'
 import write from './write'
 
-// functions
-
 /**
  * Recover files or directories.
  * @param source A source file or directory.
@@ -34,5 +32,4 @@ const recover = async (source: string) => {
   await remove(source)
 }
 
-// export
 export default main

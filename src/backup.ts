@@ -3,8 +3,6 @@ import echo from './echo'
 import glob from './glob'
 import wrapList from './wrapList'
 
-// function
-
 /**
  * Backup files or directories.
  * @param source A source file or directory.
@@ -23,5 +21,4 @@ const backup = async (source: string | string[]) => {
   echo('backup', `backed up ${wrapList(source)}`)
 }
 
-// export
 export default backup

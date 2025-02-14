@@ -1,5 +1,3 @@
-// function
-
 /**
  * Get the current operating system.
  * @returns The operating system.
@@ -16,5 +14,4 @@ const os = () => {
   return 'unknown'
 }
 
-// export
 export default os

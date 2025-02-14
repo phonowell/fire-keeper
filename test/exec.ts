@@ -1,7 +1,5 @@
 import { $ } from './index'
 
-// function
-
 const a = async () => {
   const [code, result] = await $.exec('npm -v')
 
@@ -14,5 +12,4 @@ const b = async () => {
   if (!code) throw new Error('0')
 }
 
-// export
 export { a, b }

@@ -1,7 +1,5 @@
 import { $, temp } from './index'
 
-// function
-
 const a = async () => {
   const source = `${temp}/m/k/d/i/r`
   await $.mkdir(source)

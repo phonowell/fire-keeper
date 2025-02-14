@@ -3,10 +3,6 @@ import fse from 'fs-extra'
 import echo from './echo'
 import getExtname from './getExtname'
 import glob from './glob'
-import toJSON from './toJSON'
-import toString from './toString'
-
-// interface
 
 type ItemExtObject = '.json' | '.yaml' | '.yml'
 
@@ -43,8 +39,6 @@ const EXTNAMES = [
   '.xml',
 ] as const
 
-// function
-
 /**
  * Read a file.
  * @param source The source file.
@@ -80,8 +74,8 @@ const read = async <
   const extname = getExtname(src)
 
   if (EXTNAMES.includes(extname as ItemExtString))
-    return toString(content) as Result<T, S, R>
-  if (extname === '.json') return toJSON(content) as Result<T, S, R>
+    return String(content) as Result<T, S, R>
+  if (extname === '.json') return JSON.parse(String(content)) as Result<T, S, R>
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
     return jsYaml.load(content.toString()) as Result<T, S, R>
@@ -90,5 +84,4 @@ const read = async <
   return content as Result<T, S, R>
 }
 
-// export
 export default read

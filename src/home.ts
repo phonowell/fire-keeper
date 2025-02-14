@@ -1,7 +1,5 @@
 import os from 'os'
 
-// function
-
 /**
  * Get the home directory.
  * @returns The home directory.
@@ -13,5 +11,4 @@ import os from 'os'
  */
 const home = () => os.homedir().replace(/\\/g, '/')
 
-// export
 export default home

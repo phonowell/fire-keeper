@@ -1,7 +1,5 @@
 import { $, temp } from './index'
 
-// function
-
 const a = async () => {
   const source = `${temp}/a.txt`
   await $.write(source, 'text')
@@ -10,7 +8,7 @@ const a = async () => {
   if (await $.isExist(source)) throw new Error('0')
   if (await $.isExist($.getDirname(source))) throw new Error('1')
 }
-a.description = 'normal'
+a.description = 'single file'
 
 const b = async () => {
   const listSource = [`${temp}/a.txt`, `${temp}/b.txt`]
@@ -21,7 +19,7 @@ const b = async () => {
   if (await $.isExist(listSource[0])) throw new Error('0')
   if (!(await $.isExist($.getDirname(listSource[0])))) throw new Error('1')
 }
-b.description = 'file existed'
+b.description = 'file with sibling'
 
 const c = async () => {
   const listSource = [`${temp}/a.txt`, `${temp}/b/b.txt`]
@@ -32,7 +30,41 @@ const c = async () => {
   if (await $.isExist(listSource[0])) throw new Error('0')
   if (!(await $.isExist($.getDirname(listSource[0])))) throw new Error('1')
 }
-c.description = 'folder existed'
+c.description = 'nested structure'
 
-// export
-export { a, b, c }
+const d = async () => {
+  // Test array input
+  const listSource = [`${temp}/d1.txt`, `${temp}/d2.txt`]
+  await Promise.all(listSource.map(f => $.write(f, 'text')))
+  await $.clean(listSource)
+
+  if (await $.isExist(listSource[0])) throw new Error('0')
+  if (await $.isExist(listSource[1])) throw new Error('1')
+  if (await $.isExist($.getDirname(listSource[0]))) throw new Error('2')
+}
+d.description = 'array input'
+
+const e = async () => {
+  // Test empty directory cleanup
+  const dir = `${temp}/empty`
+  const file = `${dir}/e.txt`
+  await $.mkdir(dir)
+  await $.write(file, 'text')
+  await $.clean(file)
+
+  if (await $.isExist(file)) throw new Error('0')
+  if (await $.isExist(dir)) throw new Error('1')
+}
+e.description = 'empty directory cleanup'
+
+const f = async () => {
+  // Test non-existent file
+  const nonExistent = `${temp}/non-existent.txt`
+  await $.clean(nonExistent)
+
+  if (await $.isExist(nonExistent)) throw new Error('0')
+  if (await $.isExist($.getDirname(nonExistent))) throw new Error('1')
+}
+f.description = 'non-existent file'
+
+export { a, b, c, d, e, f }

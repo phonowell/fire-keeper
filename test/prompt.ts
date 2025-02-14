@@ -1,10 +1,9 @@
 import { $ } from './index'
 
-// function
-
 const a = () => {
-  if ($.getType($.prompt) !== 'function') throw new Error('0')
+  // Test prompt type exists and is a function
+  if (typeof $.prompt !== 'function') throw new Error('prompt not found')
 }
+a.description = 'prompt exists'
 
-// export
 export { a }

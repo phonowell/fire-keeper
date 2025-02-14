@@ -1,11 +1,7 @@
 import copy from './copy'
 import remove from './remove'
 
-// interface
-
 type Input = string | ((input: string) => string | Promise<string>)
-
-// function
 
 /**
  * Move files or directories.
@@ -24,5 +20,4 @@ const move = async (source: string | string[], target: Input) => {
   await remove(source)
 }
 
-// export
 export default move

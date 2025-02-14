@@ -1,5 +1,3 @@
-// function
-
 /**
  * Run a function
  * @param fn Function to run
@@ -7,5 +5,4 @@
  */
 const run = <T>(fn: (...args: unknown[]) => T) => fn()
 
-// export
 export default run

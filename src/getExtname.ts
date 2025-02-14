@@ -1,7 +1,5 @@
 import getName from './getName'
 
-// function
-
 /**
  * Get extname from path
  * @param input string
@@ -14,5 +12,4 @@ import getName from './getName'
  */
 const getExtname = (input: string) => getName(input).extname
 
-// export
 export default getExtname

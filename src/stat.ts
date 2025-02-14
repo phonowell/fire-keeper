@@ -5,8 +5,6 @@ import isExist from './isExist'
 import normalizePath from './normalizePath'
 import wrapList from './wrapList'
 
-// function
-
 /**
  * Get the file status.
  * @param source A source file or directory.
@@ -32,5 +30,4 @@ const stat = async (source: string): Promise<fs.Stats | null> => {
   })
 }
 
-// export
 export default stat

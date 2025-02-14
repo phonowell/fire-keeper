@@ -1,7 +1,5 @@
 import { $, temp } from './index'
 
-// function
-
 const a = async () => {
   const source = `${temp}/source/test.txt`
   const target = `${temp}/target`
@@ -59,5 +57,4 @@ const f = async () => {
 }
 f.description = 'outer/not existed'
 
-// export
 export { a, b, c, d, e, f }

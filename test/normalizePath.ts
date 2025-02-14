@@ -2,8 +2,6 @@ import path from 'path'
 
 import { $ } from './index'
 
-// function
-
 const a = () => {
   const question = './source'
   const answer = `${$.root()}/source`
@@ -30,5 +28,4 @@ const d = () => {
     throw new Error(`${$.normalizePath(question)} !== ${answer}`)
 }
 
-// export
 export { a, b, c, d }

@@ -2,9 +2,6 @@ import kleur from 'kleur'
 
 import home from './home'
 import root from './root'
-import toString from './toString'
-
-// interface
 
 type CacheTime = [number, string]
 
@@ -17,8 +14,6 @@ const regHome = new RegExp(`^${home().replace(/\\/g, '\\\\')}`, 'g')
 const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 
 const separator = `${kleur.gray('›')} `
-
-// functions
 
 /**
  * Print the message.
@@ -35,7 +30,7 @@ const echo = <T>(...args: [T] | [string, T]) => {
 
   if (echo.isSilent) return message
 
-  const msg = toString(message).trim()
+  const msg = String(message).trim()
   if (!msg) return message
 
   console.log(render(type, msg))
@@ -154,7 +149,6 @@ const whisper = async <T>(callback: Promise<T> | (() => Promise<T>)) => {
   return result
 }
 
-// export
 echo.freeze = freeze
 echo.isFrozen = false
 echo.isSilent = false

@@ -1,7 +1,5 @@
 import { $, temp } from '.'
 
-// function
-
 const a = async () => {
   console.log(temp)
 
@@ -15,5 +13,4 @@ const a = async () => {
   if (!(await $.isExist(`${temp}/temp.zip`))) throw new Error('0')
 }
 
-// export
 export { a }

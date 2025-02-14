@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import archiver from 'archiver'
 import kleur from 'kleur'
-import trim from 'lodash/trim'
+import { trim } from 'radash'
 
 import echo, { renderPath } from './echo'
 import getBasename from './getBasename'
@@ -10,10 +10,7 @@ import getDirname from './getDirname'
 import glob from './glob'
 import normalizePath from './normalizePath'
 import convertToArray from './toArray'
-import toString from './toString'
 import wrapList from './wrapList'
-
-// interfaces
 
 type Options = {
   base?: string
@@ -21,8 +18,6 @@ type Options = {
 }
 
 type OptionsRequired = Required<Options>
-
-// function
 
 const execute = async (
   listSource: string[],
@@ -135,9 +130,8 @@ const zip = async (
   await execute(...toArray(source, target, option))
   echo(
     'zip',
-    `zipped ${wrapList(source)} to '${target}', as '${toString(option)}'`,
+    `zipped ${wrapList(source)} to '${target}', as '${typeof option === 'object' ? JSON.stringify(option) : String(option)}'`,
   )
 }
 
-// export
 export default zip

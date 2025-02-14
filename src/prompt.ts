@@ -1,13 +1,10 @@
-import findIndex from 'lodash/findIndex'
 import prompts from 'prompts'
 
 import echo from './echo'
 import read from './read'
-import toString from './toString'
 import write from './write'
 import at from './at'
-
-// interface
+import findIndex from './findIndex'
 
 type Choice<T> = {
   title: string
@@ -164,8 +161,6 @@ const DEFAULT_MESSAGE_MAP = {
 } as const
 
 const CACHE_PATH = './temp/cache-prompt.json'
-
-// functions
 
 const formatOption = async <T extends Type, U>(
   option: Option<T, U>,
@@ -350,7 +345,7 @@ const transChoice = <T>(list: List<T>): Choice<T>[] =>
     isChoice<T>(it)
       ? it
       : {
-          title: toString(it),
+          title: String(it),
           value: it,
         },
   )
@@ -361,5 +356,4 @@ const transType = (type: 'auto' | 'multi' | 'select') => {
   return 'select'
 }
 
-// export
 export default main

@@ -1,7 +1,5 @@
 import { $, temp } from './index'
 
-// function
-
 const a = async () => {
   const source = `${temp}/readme.md`
 
@@ -14,5 +12,4 @@ const a = async () => {
   if (!(await $.isExist(source))) throw new Error('0')
 }
 
-// export
 export { a }
