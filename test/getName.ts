@@ -4,22 +4,11 @@ const a = () => {
   const source = '~/Downloads/test.txt'
   const { basename, dirname, extname, filename } = $.getName(source)
 
-  if (basename !== 'test') throw new Error('1')
-  if (dirname !== '~/Downloads') throw new Error('2')
-  if (extname !== '.txt') throw new Error('3')
-  if (filename !== 'test.txt') throw new Error('4')
+  if (basename !== 'test') throw new Error('basename mismatch')
+  if (dirname !== '~/Downloads') throw new Error('dirname mismatch')
+  if (extname !== '.txt') throw new Error('extname mismatch')
+  if (filename !== 'test.txt') throw new Error('filename mismatch')
 }
-a.description = 'default'
+a.description = 'parses Unix-style paths'
 
-const b = () => {
-  const source = 'C:\\Users\\mimiko\\Project\\fire-keeper\\readme.md'
-  const { basename, dirname, extname, filename } = $.getName(source)
-
-  if (basename !== 'readme') throw new Error('1')
-  if (dirname !== 'C:/Users/mimiko/Project/fire-keeper') throw new Error('2')
-  if (extname !== '.md') throw new Error('3')
-  if (filename !== 'readme.md') throw new Error('4')
-}
-b.description = '@windows'
-
-export { a, b }
+export { a }

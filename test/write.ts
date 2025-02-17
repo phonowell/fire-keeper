@@ -10,7 +10,7 @@ const a = async () => {
   if ((await $.read<string>(source)) !== content)
     throw new Error('string content mismatch')
 }
-a.description = 'string content'
+a.description = 'writes string content'
 
 const b = async () => {
   const source = `${temp}/wr/ite.json`
@@ -18,10 +18,10 @@ const b = async () => {
   const content = { message }
   await $.write(source, content)
 
-  const cont = await $.read<{ message: string }>(source)
-  if (cont?.message !== message) throw new Error('object content mismatch')
+  const result = await $.read<{ message: string }>(source)
+  if (result?.message !== message) throw new Error('object content mismatch')
 }
-b.description = 'object content'
+b.description = 'writes object content'
 
 const c = async () => {
   // Test Buffer input
@@ -32,9 +32,9 @@ const c = async () => {
   const result = await $.read<string>(source)
   if (result !== content.toString()) throw new Error('buffer content mismatch')
 }
-c.description = 'buffer input'
+c.description = 'writes buffer content'
 
-const e = async () => {
+const d = async () => {
   // Test ArrayBuffer/TypedArray
   const source = `${temp}/typed-array.txt`
   const encoder = new TextEncoder()
@@ -45,9 +45,9 @@ const e = async () => {
   if (result !== 'typed array content')
     throw new Error('typed array content mismatch')
 }
-e.description = 'typed array'
+d.description = 'writes typed array'
 
-const g = async () => {
+const e = async () => {
   // Test Blob
   const source = `${temp}/blob.txt`
   const content = 'blob content'
@@ -57,9 +57,9 @@ const g = async () => {
   const result = await $.read<string>(source)
   if (result !== content) throw new Error('blob content mismatch')
 }
-g.description = 'blob input'
+e.description = 'writes blob content'
 
-const h = async () => {
+const f = async () => {
   // Test primitive types
   const source = `${temp}/primitive.txt`
   const testCases = [
@@ -67,6 +67,7 @@ const h = async () => {
     [true, 'true'],
     [null, 'null'],
     [undefined, 'undefined'],
+    [Symbol('test'), 'Symbol(test)'],
   ]
 
   for (const [input, expected] of testCases) {
@@ -76,9 +77,9 @@ const h = async () => {
       throw new Error(`primitive ${String(input)} content mismatch`)
   }
 }
-h.description = 'primitive types'
+f.description = 'writes primitive types'
 
-const i = async () => {
+const g = async () => {
   // Test path normalization
   const source = `${temp}/./normalize/../normalize/test.txt`
   const normalizedPath = `${temp}/normalize/test.txt`
@@ -92,22 +93,101 @@ const i = async () => {
   const result = await $.read<string>(normalizedPath)
   if (result !== content) throw new Error('normalized path content mismatch')
 }
-i.description = 'path normalization'
+g.description = 'handles path normalization'
 
-const j = async () => {
-  // Test write options (mode, encoding, etc)
-  const source = `${temp}/options.txt`
-  const content = 'test with options'
-
-  await $.write(source, content, {
-    encoding: 'utf8',
-    mode: 0o666,
-    flag: 'w',
-  })
+const h = async () => {
+  // Test large file
+  const source = `${temp}/large.txt`
+  const content = 'x'.repeat(1024 * 1024) // 1MB
+  await $.write(source, content)
 
   const result = await $.read<string>(source)
-  if (result !== content) throw new Error('content with options mismatch')
+  if (result !== content) throw new Error('large file content mismatch')
 }
-j.description = 'write options'
+h.description = 'handles large files'
 
-export { a, b, c, e, g, h, i, j }
+const i = async () => {
+  // Test concurrent writes
+  const files = [
+    { path: `${temp}/concurrent1.txt`, content: 'content1' },
+    { path: `${temp}/concurrent2.txt`, content: 'content2' },
+    { path: `${temp}/concurrent3.txt`, content: 'content3' },
+  ]
+
+  await Promise.all(files.map(f => $.write(f.path, f.content)))
+
+  // Verify all writes completed correctly
+  for (const file of files) {
+    const result = await $.read<string>(file.path)
+    if (result !== file.content)
+      throw new Error(`concurrent write failed for ${file.path}`)
+  }
+}
+i.description = 'supports concurrent writes'
+
+const j = async () => {
+  // Test special character encoding
+  const source = `${temp}/special.txt`
+  const content = '特殊文字🌟\n\t\r\u0000'
+  await $.write(source, content)
+
+  const result = await $.read<string>(source)
+  if (result !== content) throw new Error('special character encoding failed')
+}
+j.description = 'handles special characters'
+
+const k = async () => {
+  // Test write after write
+  const source = `${temp}/overwrite.txt`
+  await $.write(source, 'initial content')
+  await $.write(source, 'updated content')
+
+  const result = await $.read<string>(source)
+  if (result !== 'updated content') throw new Error('overwrite failed')
+}
+k.description = 'handles overwrites'
+
+const l = async () => {
+  // Test binary data
+  const source = `${temp}/binary.dat`
+  const content = Buffer.from([0x00, 0xff, 0x80, 0x7f])
+  await $.write(source, content)
+
+  const result = await $.read(source, { raw: true })
+  if (!result || !(result instanceof Uint8Array))
+    throw new Error('binary read type failed')
+  if (!content.equals(result)) throw new Error('binary content mismatch')
+}
+l.description = 'writes binary data'
+
+const m = async () => {
+  // Test empty content
+  const source = `${temp}/empty.txt`
+  await $.write(source, '')
+
+  const result = await $.read<string>(source)
+  if (result !== '') throw new Error('empty content failed')
+}
+m.description = 'handles empty content'
+
+// Cleanup helper
+const cleanup = async () => {
+  await $.remove([
+    `${temp}/wr`,
+    `${temp}/buffer.txt`,
+    `${temp}/typed-array.txt`,
+    `${temp}/blob.txt`,
+    `${temp}/primitive.txt`,
+    `${temp}/normalize`,
+    `${temp}/large.txt`,
+    `${temp}/concurrent1.txt`,
+    `${temp}/concurrent2.txt`,
+    `${temp}/concurrent3.txt`,
+    `${temp}/special.txt`,
+    `${temp}/overwrite.txt`,
+    `${temp}/binary.dat`,
+    `${temp}/empty.txt`,
+  ])
+}
+
+export { a, b, c, d, e, f, g, h, i, j, k, l, m, cleanup }

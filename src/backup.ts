@@ -15,6 +15,11 @@ import wrapList from './wrapList'
  */
 const backup = async (source: string | string[]) => {
   const listSource = await glob(source)
+  if (!listSource.length) {
+    echo('backup', `no file found for ${wrapList(source)}`)
+    return
+  }
+
   for (const src of listSource) {
     await copy(src, '', filename => `${filename}.bak`)
   }

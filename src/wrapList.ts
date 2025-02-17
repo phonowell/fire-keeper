@@ -14,18 +14,20 @@ import toArray from './toArray'
  * ```
  */
 const wrapList = (input: unknown) =>
-  input
-    ? toArray(input)
-        .map((it): string => {
-          if (
-            typeof it === 'string' ||
-            typeof it === 'number' ||
-            typeof it === 'boolean'
-          )
-            return `'${it}'`
-          return `'${JSON.stringify(it)}'`
-        })
-        .join(', ')
-    : ''
+  toArray(input)
+    .map((it): string => {
+      if (it === null) return ''
+      if (it === undefined) return ''
+
+      if (
+        typeof it === 'string' ||
+        typeof it === 'number' ||
+        typeof it === 'boolean'
+      )
+        return `'${it}'`
+
+      return `'${JSON.stringify(it)}'`
+    })
+    .join(', ')
 
 export default wrapList

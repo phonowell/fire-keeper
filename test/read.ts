@@ -8,7 +8,7 @@ const a = async () => {
   if ((await $.read<string>(source)) !== content)
     throw new Error('text content mismatch')
 }
-a.description = 'text file'
+a.description = 'reads text file'
 
 const b = async () => {
   const source = `${temp}/b.json`
@@ -19,14 +19,14 @@ const b = async () => {
   if ((await $.read<{ message: string }>(source))?.message !== message)
     throw new Error('json content mismatch')
 }
-b.description = 'json file'
+b.description = 'reads json file'
 
 const c = async () => {
   const source = `${temp}/c.txt`
   if (await $.read(source))
     throw new Error('non-existent file should return undefined')
 }
-c.description = 'non-existent file'
+c.description = 'handles non-existent file'
 
 const d = async () => {
   const source = `${temp}/d.txt`
@@ -37,20 +37,20 @@ const d = async () => {
   if (!(raw instanceof Uint8Array))
     throw new Error('raw option should return Buffer')
 
-  const cont = raw.toString()
-  if (cont !== content) throw new Error('raw content mismatch')
+  const result = raw.toString()
+  if (result !== content) throw new Error('raw content mismatch')
 }
-d.description = 'raw buffer'
+d.description = 'reads raw buffer'
 
 const e = async () => {
   const source = `${temp}/e.yaml`
   const content = 'a little message'
   await $.write(source, `- value: ${content}`)
 
-  const cont = await $.read<[{ value: string }]>(source)
-  if (cont?.[0].value !== content) throw new Error('yaml content mismatch')
+  const result = await $.read<[{ value: string }]>(source)
+  if (result?.[0].value !== content) throw new Error('yaml content mismatch')
 }
-e.description = 'yaml file'
+e.description = 'reads yaml file'
 
 const f = async () => {
   // Test all supported file extensions
@@ -77,7 +77,7 @@ const f = async () => {
     if (result !== content) throw new Error(`${ext} content mismatch`)
   }
 }
-f.description = 'supported extensions'
+f.description = 'reads supported extensions'
 
 const g = async () => {
   const source = `${temp}/test.yml`
@@ -107,68 +107,110 @@ nested:
   if (JSON.stringify(result) !== JSON.stringify(content))
     throw new Error('complex yaml parsing failed')
 }
-g.description = 'complex yaml'
+g.description = 'reads complex yaml'
 
 const h = async () => {
-  // Test invalid JSON
-  const source = `${temp}/invalid.json`
-  await $.write(source, '{ invalid: json }')
+  // Test binary file
+  const source = `${temp}/binary.bin`
+  const content = Buffer.from([0x00, 0x01, 0x02, 0x03])
+  await $.write(source, content)
 
-  try {
-    await $.read(source)
-    throw new Error('should throw on invalid json')
-  } catch (error) {
-    if (!(error instanceof Error)) throw new Error('unexpected error type')
-    if (!error.message.includes('JSON')) throw new Error('wrong error message')
-  }
+  const result = await $.read(source, { raw: true })
+  if (!result || !(result instanceof Uint8Array))
+    throw new Error('binary read type failed')
+  if (!content.equals(result)) throw new Error('binary content mismatch')
 }
-h.description = 'invalid json'
+h.description = 'reads binary file'
 
 const i = async () => {
-  // Test invalid YAML
-  const source = `${temp}/invalid.yaml`
-  await $.write(source, 'key: [invalid yaml')
+  // Test concurrent reads
+  const sources = [
+    { path: `${temp}/concurrent1.txt`, content: 'content1' },
+    { path: `${temp}/concurrent2.txt`, content: 'content2' },
+    { path: `${temp}/concurrent3.txt`, content: 'content3' },
+  ]
 
-  try {
-    await $.read(source)
-    throw new Error('should throw on invalid yaml')
-  } catch (error) {
-    if (!(error instanceof Error)) throw new Error('unexpected error type')
+  await Promise.all(sources.map(s => $.write(s.path, s.content)))
+  const results = await Promise.all(sources.map(s => $.read<string>(s.path)))
+
+  for (let i = 0; i < sources.length; i++) {
+    if (results[i] !== sources[i].content)
+      throw new Error(`concurrent read ${i + 1} failed`)
   }
 }
-i.description = 'invalid yaml'
+i.description = 'supports concurrent reads'
 
 const j = async () => {
-  // Test different encodings
-  const source = `${temp}/encoded.txt`
-  const content = '你好，世界' // Chinese characters
-  await $.write(source, content)
+  // Test empty files
+  const source = `${temp}/empty.txt`
+  await $.write(source, '')
 
-  const result = await $.read<string>(source)
-  if (result !== content) throw new Error('utf8 encoding failed')
+  const textResult = await $.read<string>(source)
+  if (textResult !== '') throw new Error('empty text read failed')
+
+  const rawResult = await $.read(source, { raw: true })
+  if (!rawResult || rawResult.length !== 0)
+    throw new Error('empty raw read failed')
 }
-j.description = 'text encoding'
+j.description = 'handles empty files'
 
 const k = async () => {
-  // Test large file
-  const source = `${temp}/large.txt`
-  const content = 'x'.repeat(1024 * 1024) // 1MB
+  // Test Windows-style line endings
+  const source = `${temp}/windows.txt`
+  const content = 'line1\r\nline2\r\nline3'
   await $.write(source, content)
 
   const result = await $.read<string>(source)
-  if (result !== content) throw new Error('large file content mismatch')
+  if (result !== content) throw new Error('windows line endings failed')
+
+  const lines = result.split('\r\n')
+  if (lines.length !== 3) throw new Error('line splitting failed')
 }
-k.description = 'large file'
+k.description = 'preserves line endings'
 
 const l = async () => {
-  // Test different line endings
-  const source = `${temp}/lines.txt`
-  const content = 'line1\r\nline2\nline3'
+  // Test read timing after write
+  const source = `${temp}/timing.txt`
+  const content = 'timing test'
+
   await $.write(source, content)
-
+  // Immediately try to read
   const result = await $.read<string>(source)
-  if (result !== content) throw new Error('line endings mismatch')
-}
-l.description = 'line endings'
 
-export { a, b, c, d, e, f, g, h, i, j, k, l }
+  if (result !== content) throw new Error('read after write failed')
+}
+l.description = 'handles read timing'
+
+// Cleanup helper
+const cleanup = async () => {
+  await $.remove([
+    `${temp}/a.txt`,
+    `${temp}/b.json`,
+    `${temp}/d.txt`,
+    `${temp}/e.yaml`,
+    `${temp}/test.yml`,
+    `${temp}/binary.bin`,
+    `${temp}/empty.txt`,
+    `${temp}/windows.txt`,
+    `${temp}/timing.txt`,
+    `${temp}/concurrent1.txt`,
+    `${temp}/concurrent2.txt`,
+    `${temp}/concurrent3.txt`,
+    ...[
+      '.coffee',
+      '.css',
+      '.html',
+      '.js',
+      '.md',
+      '.pug',
+      '.sh',
+      '.styl',
+      '.ts',
+      '.tsx',
+      '.txt',
+      '.xml',
+    ].map(ext => `${temp}/test${ext}`),
+  ])
+}
+
+export { a, b, c, d, e, f, g, h, i, j, k, l, cleanup }

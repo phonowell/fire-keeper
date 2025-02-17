@@ -32,6 +32,7 @@ import * as recover from './recover'
 import * as remove from './remove'
 import * as rename from './rename'
 import * as root from './root'
+import * as run from './run'
 import * as sleep from './sleep'
 import * as stat from './stat'
 import * as toArray from './toArray'
@@ -73,6 +74,7 @@ const mapModule = {
   remove,
   rename,
   root,
+  run,
   sleep,
   stat,
   toArray,
@@ -92,7 +94,7 @@ type FnAsync = (...args: unknown[]) => Promise<unknown>
 
 const temp = $.normalizePath('./temp')
 
-const clear = () => $.echo.whisper($.remove(temp))
+const clearup = () => $.echo.whisper($.remove(temp))
 
 const main = async () => {
   const target = ((await $.argv())._[1] || '') as
@@ -111,7 +113,7 @@ const main = async () => {
         it(
           fn.description ?? (listIt.length === 1 ? 'default' : key),
           async () => {
-            await clear()
+            await clearup()
             await $.echo.freeze(fn)
           },
         )
@@ -122,4 +124,4 @@ const main = async () => {
 // execute
 main()
 
-export { $, clear, temp }
+export { $, clearup, temp }

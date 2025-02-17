@@ -6,7 +6,7 @@ import trimEnd from './trimEnd'
 
 /**
  * Normalize path
- * @param source string
+ * @param input string
  * @returns string
  * @example
  * ```
@@ -14,14 +14,13 @@ import trimEnd from './trimEnd'
  * //=> '/home/runner/work/project/project/src/file.txt'
  * ```
  */
-const normalizePath = (source: string) => {
-  // validate
-  if (typeof source !== 'string') return ''
-  if (!source) return ''
+const normalizePath = (input: string) => {
+  if (typeof input !== 'string') return ''
+  if (!input.trim()) return ''
 
   // ignore?
-  const isIgnored = source.startsWith('!')
-  let _source = isIgnored ? source.slice(1) : source
+  const isIgnored = input.startsWith('!')
+  let _source = isIgnored ? input.slice(1) : input
 
   // replace . & ~
   _source = _source.replace(/\.{2}/g, '__parent_directory__')

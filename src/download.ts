@@ -25,6 +25,16 @@ const download = async (
   dir: string,
   filename = getFilename(url),
 ) => {
+  if (!url) {
+    echo('download', 'url is required')
+    return
+  }
+
+  if (!dir) {
+    echo('download', 'dir is required')
+    return
+  }
+
   const response = await fetch(url)
   if (!response.ok)
     throw new Error(`unexpected response ${response.statusText}`)

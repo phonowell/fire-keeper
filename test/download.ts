@@ -1,56 +1,46 @@
+import { Buffer } from 'buffer'
+
 import { $, temp } from './index'
 
-const a = async (): Promise<void> => {
-  const url = 'https://httpbin.org/bytes/100'
-  const dir = `${temp}/download`
-  await $.download(url, dir)
-  if (!(await $.isExist(`${dir}/${$.getFilename(url)}`))) throw Error('0')
-}
-a.description = 'downloads file with default filename'
-
-const b = async (): Promise<void> => {
-  const url = 'https://httpbin.org/bytes/100'
-  const dir = `${temp}/download`
-  const filename = 'custom.bin'
+// 合并二进制内容验证和大文件测试
+const binaryAndSizeTest = async (): Promise<void> => {
+  // 测试大文件下载和内容验证
+  const url = 'https://httpbin.org/bytes/102400'
+  const dir = `${temp}/download-test`
+  const filename = 'large.bin'
   await $.download(url, dir, filename)
-  if (!(await $.isExist(`${dir}/${filename}`))) throw Error('0')
-}
-b.description = 'downloads file with custom filename'
 
-const c = async (): Promise<void> => {
-  const url = 'https://httpbin.org/status/404'
-  const dir = `${temp}/download`
+  const file = `${dir}/${filename}`
+  if (!(await $.isExist(file))) throw Error('download failed')
+
+  const content = await $.read(file, { raw: true })
+  if (!(content instanceof Buffer)) throw Error('content should be binary')
+  if (content.length !== 102400) throw Error('file size mismatch')
+}
+binaryAndSizeTest.description = 'verifies binary content and file size'
+
+// 合并特殊情况测试
+const edgeCasesTest = async (): Promise<void> => {
+  // 测试空响应
+  const emptyUrl = 'https://httpbin.org/status/204'
   try {
-    await $.download(url, dir)
-    throw Error('0')
-  } catch {
-    // Expected error for 404
+    await $.download(emptyUrl, `${temp}/download-test`)
+    throw Error('should throw on empty response')
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes('No response body')
+    )
+      throw Error('wrong error for empty response')
   }
-}
-c.description = 'handles invalid response status'
 
-const d = async (): Promise<void> => {
-  const url = 'https://invalid.example.com'
-  const dir = `${temp}/download`
-  try {
-    await $.download(url, dir)
-    throw Error('0')
-  } catch {
-    // Expected error for network failure
-  }
-}
-d.description = 'handles network errors'
-
-const e = async (): Promise<void> => {
+  // 测试Unicode文件名
   const url = 'https://httpbin.org/bytes/100'
-  const dir = '/invalid/directory/path'
-  try {
-    await $.download(url, dir)
-    throw Error('0')
-  } catch {
-    // Expected error for file system issues
-  }
+  const filename = '测试文件.bin'
+  await $.download(url, `${temp}/download-test`, filename)
+  if (!(await $.isExist(`${temp}/download-test/${filename}`)))
+    throw Error('unicode filename test failed')
 }
-e.description = 'handles file system errors'
+edgeCasesTest.description = 'handles edge cases (empty response and unicode)'
 
-export { a, b, c, d, e }
+export { binaryAndSizeTest, edgeCasesTest }

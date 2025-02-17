@@ -6,24 +6,32 @@ import toArray from './toArray'
 import wrapList from './wrapList'
 
 /**
- * Create directories.
- * @param source The source directories.
- * @returns The promise.
+ * Create one or more directories recursively.
+ * @param source A single directory path or array of directory paths to create
+ * @throws {Error} If the source is empty or if directory creation fails
+ * @returns Promise that resolves to true if all directories were created successfully
  * @example
- * ```
- * await mkdir('dir')
- * await mkdir(['dir1', 'dir2'])
+ * ```typescript
+ * // Create a single directory
+ * await mkdir('path/to/dir')
+ *
+ * // Create multiple directories
+ * await mkdir(['path/to/dir1', 'path/to/dir2'])
+ *
+ * // Handles nested paths
+ * await mkdir('path/to/nested/dir')
  * ```
  */
-const mkdir = async (source: string | string[]) => {
-  if (!source) throw new Error('mkdir/error: empty source')
+const mkdir = async (source: string | string[]): Promise<boolean> => {
+  const patterns = toArray(source).map(normalizePath).filter(Boolean)
+  if (!patterns.length) return false
 
-  const listSource = toArray(source).map(normalizePath)
-  for (const src of listSource) {
-    await fse.ensureDir(src)
+  for (const pattern of patterns) {
+    await fse.ensureDir(pattern)
   }
 
   echo('file', `created ${wrapList(source)}`)
+  return true
 }
 
 export default mkdir

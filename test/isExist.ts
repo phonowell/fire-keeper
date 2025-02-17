@@ -1,3 +1,5 @@
+import os from '../src/os'
+
 import { $, temp } from './index'
 
 const a = async () => {
@@ -5,84 +7,186 @@ const a = async () => {
   const content = 'aloha'
   await $.write(source, content)
 
-  if (!(await $.isExist(source))) throw new Error('0')
+  if (!(await $.isExist(source))) throw new Error('existing file not found')
 }
-a.description = 'file/single/existed'
+a.description = 'checks single file existence'
 
 const b = async () => {
-  const source = `${temp}/a.txt`
-  if (await $.isExist(source)) throw new Error('0')
+  const source = `${temp}/not-exists.txt`
+  if (await $.isExist(source))
+    throw new Error('non-existent file reported as existing')
 }
-b.description = 'file/single/not existed'
+b.description = 'handles non-existent file'
 
 const c = async () => {
-  const listSource = [`${temp}/a.txt`, `${temp}/b.txt`, `${temp}/c.txt`]
+  const sources = [`${temp}/a.txt`, `${temp}/b.txt`, `${temp}/c.txt`]
   const content = 'aloha'
-  for (const source of listSource) await $.write(source, content)
+  await Promise.all(sources.map(source => $.write(source, content)))
 
-  if (!(await $.isExist(listSource))) throw new Error('0')
+  if (!(await $.isExist(sources)))
+    throw new Error('multiple existing files not found')
 }
-c.description = 'file/mutiple/existed'
+c.description = 'checks multiple files'
 
 const d = async () => {
-  const listSource = [`${temp}/a.txt`, `${temp}/b.txt`, `${temp}/c.txt`]
+  const sources = [`${temp}/a.txt`, `${temp}/b.txt`, `${temp}/c.txt`]
   const content = 'aloha'
-  for (const source of listSource) await $.write(source, content)
+  await Promise.all(sources.map(source => $.write(source, content)))
+  await $.remove(sources[0])
 
-  await $.remove(listSource[0])
-
-  if (await $.isExist(listSource)) throw new Error('0')
+  if (await $.isExist(sources))
+    throw new Error('should fail if any file missing')
 }
-d.description = 'file/mutiple/not existed'
+d.description = 'fails if any file missing'
 
 const e = async () => {
-  const source = `${temp}/a`
+  const source = `${temp}/dir`
   await $.mkdir(source)
 
-  if (!(await $.isExist(source))) throw new Error('0')
+  if (!(await $.isExist(source)))
+    throw new Error('existing directory not found')
 }
-e.description = 'folder/single/existed'
+e.description = 'checks directory existence'
 
 const f = async () => {
-  const source = `${temp}/a`
-  if (await $.isExist(source)) throw new Error('0')
+  const source = `${temp}/not-exists-dir`
+  if (await $.isExist(source))
+    throw new Error('non-existent directory reported as existing')
 }
-f.description = 'folder/single/not existed'
+f.description = 'handles non-existent directory'
 
 const g = async () => {
-  const listSource = [`${temp}/a`, `${temp}/b`, `${temp}/c`]
-  for (const source of listSource) await $.mkdir(source)
+  const sources = [`${temp}/dir1`, `${temp}/dir2`, `${temp}/dir3`]
+  await Promise.all(sources.map(source => $.mkdir(source)))
 
-  if (!(await $.isExist(listSource))) throw new Error('0')
+  if (!(await $.isExist(sources)))
+    throw new Error('multiple existing directories not found')
 }
-g.description = 'folder/mutiple/existed'
+g.description = 'checks multiple directories'
 
 const h = async () => {
-  const listSource = [`${temp}/a`, `${temp}/b`, `${temp}/c`]
-  for (const source of listSource) await $.mkdir(source)
-  await $.remove(listSource[0])
+  const sources = [`${temp}/dir1`, `${temp}/dir2`, `${temp}/dir3`]
+  await Promise.all(sources.map(source => $.mkdir(source)))
+  await $.remove(sources[0])
 
-  if (await $.isExist(listSource)) throw new Error('0')
+  if (await $.isExist(sources))
+    throw new Error('should fail if any directory missing')
 }
-h.description = 'folder/mutiple/not existed'
+h.description = 'fails if any directory missing'
 
 const i = async () => {
-  const listSource = [`${temp}/a`, `${temp}/b`, `${temp}/a/b.txt`]
-  await $.mkdir(listSource[0])
-  await $.mkdir(listSource[1])
-  await $.write(listSource[2], 'aloha')
+  const sources = [`${temp}/dir`, `${temp}/subdir`, `${temp}/dir/file.txt`]
+  await $.mkdir(sources[0])
+  await $.mkdir(sources[1])
+  await $.write(sources[2], 'content')
 
-  if (!(await $.isExist(listSource))) throw new Error('0')
+  if (!(await $.isExist(sources))) throw new Error('mixed paths not found')
 }
-i.description = 'file & fold/existed'
+i.description = 'checks mixed paths'
 
 const j = async () => {
-  const listSource = [`${temp}/a`, `${temp}/b`, `${temp}/a/b.txt`]
-  await $.write(listSource[2], 'aloha')
+  const sources = [`${temp}/dir`, `${temp}/subdir`, `${temp}/dir/file.txt`]
+  await $.write(sources[2], 'content')
 
-  if (await $.isExist(listSource)) throw new Error('0')
+  if (await $.isExist(sources))
+    throw new Error('should fail if any path missing')
 }
-j.description = 'file & fold/not existed'
+j.description = 'fails if any mixed path missing'
 
-// export
-export { a, b, c, d, e, f, g, h, i, j }
+const k = async () => {
+  // Test with wildcard paths
+  const source = `${temp}/*.txt`
+  try {
+    await $.isExist(source)
+    throw new Error('should throw on wildcard paths')
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes('invalid path'))
+      throw new Error('wrong error for wildcard path')
+  }
+}
+k.description = 'rejects wildcard paths'
+
+const l = async () => {
+  // Test path normalization
+  const source = `${temp}/./normalize/../normalize/test.txt`
+  const normalizedPath = `${temp}/normalize/test.txt`
+  await $.write(normalizedPath, 'content')
+
+  if (!(await $.isExist(source))) throw new Error('normalized path not found')
+}
+l.description = 'handles path normalization'
+
+const m = async () => {
+  // Test empty input
+  if (await $.isExist()) throw new Error('empty input should return false')
+  if (await $.isExist([])) throw new Error('empty array should return false')
+  if (await $.isExist('')) throw new Error('empty string should return false')
+}
+m.description = 'handles empty input'
+
+const n = async () => {
+  // Test symbolic links
+  if (os() === 'windows') return // Skip on Windows
+
+  const target = `${temp}/link-target.txt`
+  const link = `${temp}/test-link`
+  await $.write(target, 'content')
+  await $.link(target, link)
+
+  if (!(await $.isExist(link))) throw new Error('symlink not found')
+
+  await $.remove(target)
+  if (await $.isExist(link))
+    throw new Error('broken symlink should return false')
+}
+n.description = 'handles symbolic links'
+
+const o = async () => {
+  // Test deeply nested paths
+  const deep = `${temp}/a/b/c/d/e/f/g/h/i/j`
+  await $.mkdir(deep)
+  await $.write(`${deep}/test.txt`, 'content')
+
+  if (!(await $.isExist(`${deep}/test.txt`)))
+    throw new Error('deep path not found')
+}
+o.description = 'handles deep paths'
+
+const p = async () => {
+  // Test special characters in paths
+  const paths = [
+    `${temp}/special!@#$.txt`,
+    `${temp}/unicode文件.txt`,
+    `${temp}/space file.txt`,
+  ]
+
+  await Promise.all(paths.map(path => $.write(path, 'content')))
+
+  for (const path of paths) {
+    if (!(await $.isExist(path)))
+      throw new Error(`special character path not found: ${path}`)
+  }
+}
+p.description = 'handles special characters'
+
+// Cleanup helper
+const cleanup = async () => {
+  await $.remove([
+    `${temp}/a.txt`,
+    `${temp}/b.txt`,
+    `${temp}/c.txt`,
+    `${temp}/dir`,
+    `${temp}/dir1`,
+    `${temp}/dir2`,
+    `${temp}/dir3`,
+    `${temp}/normalize`,
+    `${temp}/link-target.txt`,
+    `${temp}/test-link`,
+    `${temp}/a`, // Deep path parent
+    `${temp}/special!@#$.txt`,
+    `${temp}/unicode文件.txt`,
+    `${temp}/space file.txt`,
+  ])
+}
+
+export { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, cleanup }

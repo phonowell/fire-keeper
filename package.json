@@ -38,6 +38,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.2.3",
     "mocha": "^11.1.0",
+    "nyc": "^17.1.0",
     "prettier": "^3.5.1",
     "rollup": "^4.34.6",
     "rollup-plugin-auto-external": "^2.0.0",
@@ -67,7 +68,7 @@
     "alice": "ts-node --swc task/alice",
     "build": "pnpm alice build && rollup -c rollup.config.js --bundleConfigAsCjs",
     "lint": "eslint src task test --report-unused-disable-directives --max-warnings 0 --fix",
-    "test": "mocha -r ts-node/register -t 10000 ./test/index.ts"
+    "test": "nyc mocha -r ts-node/register -t 10000 ./test/index.ts"
   },
   "sideEffects": false,
   "types": "./dist/index.d.ts",

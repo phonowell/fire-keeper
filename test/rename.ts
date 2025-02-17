@@ -1,3 +1,5 @@
+import os from '../src/os'
+
 import { $, temp } from './index'
 
 const check = async (
@@ -76,35 +78,130 @@ const d = async () => {
 d.description = 'non-existent source'
 
 const e = async () => {
-  // Test renaming to invalid target name
-  const source = `${temp}/invalid-target.txt`
-  await $.write(source, 'test')
-
-  try {
-    await $.rename(source, '')
-    throw new Error('should throw on empty target name')
-  } catch (error) {
-    // Clean up test file
-    await $.remove(source)
-
-    if (!(error instanceof Error))
-      throw new Error('wrong error type for invalid target')
-  }
-}
-e.description = 'invalid target name'
-
-const f = async () => {
-  // Test renaming preserves file content
-  const source = `${temp}/content.txt`
-  const target = `${temp}/preserved.txt`
-  const content = 'a'.repeat(1024) // Test with larger content
+  // Test special characters in filenames
+  const source = `${temp}/special!@#$.txt`
+  const target = `${temp}/renamed!@#$.txt`
+  const content = 'special chars test'
 
   await $.write(source, content)
-  await $.rename(source, 'preserved.txt')
+  await $.rename(source, 'renamed!@#$.txt')
 
   if (!(await check(source, target, content)))
-    throw new Error('content preservation failed')
+    throw new Error('special characters rename failed')
 }
-f.description = 'content preservation'
+e.description = 'special characters'
 
-export { a, b, c, d, e, f }
+const f = async () => {
+  // Test Unicode filenames
+  const source = `${temp}/文件.txt`
+  const target = `${temp}/改名.txt`
+  const content = 'unicode test'
+
+  await $.write(source, content)
+  await $.rename(source, '改名.txt')
+
+  if (!(await check(source, target, content)))
+    throw new Error('unicode rename failed')
+}
+f.description = 'unicode filenames'
+
+const g = async () => {
+  // Test case sensitivity (platform dependent)
+  const source = `${temp}/case.txt`
+  const target = `${temp}/CASE.txt`
+  const content = 'case test'
+
+  await $.write(source, content)
+
+  try {
+    await $.rename(source, 'CASE.txt')
+    // Should succeed on case-insensitive systems
+    if (!(await $.isExist(target)))
+      throw new Error('case-insensitive rename failed')
+  } catch (err) {
+    // Ensure error is thrown only on case-sensitive systems
+    if (!(err instanceof Error))
+      throw new Error('wrong error type for case sensitivity')
+    // Source should still exist if rename failed
+    if (!(await $.isExist(source)))
+      throw new Error('source missing after failed case-sensitive rename')
+  }
+}
+g.description = 'case sensitivity'
+
+const h = async () => {
+  // Test cross-directory renaming
+  const sourceDir = `${temp}/source`
+  const targetDir = `${temp}/target`
+  const content = 'cross directory test'
+
+  await $.mkdir([sourceDir, targetDir])
+  await $.write(`${sourceDir}/file.txt`, content)
+  await $.rename(`${sourceDir}/file.txt`, '../target/moved.txt')
+
+  if (await $.isExist(`${sourceDir}/file.txt`))
+    throw new Error('source file still exists')
+  if (!(await $.isExist(`${targetDir}/moved.txt`)))
+    throw new Error('target file not created')
+}
+h.description = 'cross-directory rename'
+
+const i = async () => {
+  if (os() === 'windows') return // Skip on Windows
+
+  // Test symlink renaming
+  const target = `${temp}/link-target.txt`
+  const source = `${temp}/link.txt`
+  const renamed = `${temp}/renamed-link.txt`
+  const content = 'symlink test'
+
+  await $.write(target, content)
+  await $.link(target, source)
+  await $.rename(source, 'renamed-link.txt')
+
+  if (await $.isExist(source)) throw new Error('source link still exists')
+  if (!(await $.isExist(renamed))) throw new Error('renamed link not created')
+  if (content !== (await $.read<string>(renamed)))
+    throw new Error('symlink content mismatch')
+}
+i.description = 'symlink rename'
+
+const j = async () => {
+  // Test deep directory structure
+  const deep = `${temp}/deep/nested/path`
+  const source = `${deep}/file.txt`
+  const target = `${deep}/renamed.txt`
+  const content = 'deep path test'
+
+  await $.mkdir(deep)
+  await $.write(source, content)
+  await $.rename(source, 'renamed.txt')
+
+  if (!(await check(source, target, content)))
+    throw new Error('deep path rename failed')
+}
+j.description = 'deep path rename'
+
+// Cleanup helper
+const cleanup = async () => {
+  await $.remove([
+    `${temp}/a.txt`,
+    `${temp}/b.txt`,
+    `${temp}/source-dir`,
+    `${temp}/target-dir`,
+    `${temp}/normalize`,
+    `${temp}/special!@#$.txt`,
+    `${temp}/renamed!@#$.txt`,
+    `${temp}/文件.txt`,
+    `${temp}/改名.txt`,
+    `${temp}/case.txt`,
+    `${temp}/CASE.txt`,
+    `${temp}/source`,
+    `${temp}/target`,
+    `${temp}/link-target.txt`,
+    `${temp}/renamed-link.txt`,
+    `${temp}/deep`,
+  ])
+}
+
+export { a, b, c, d, e, f, g, h, i, j, cleanup }

@@ -2,16 +2,22 @@ import glob, { Options } from 'fast-glob'
 
 import normalizePath from './normalizePath'
 import toArray from './toArray'
+import run from './run'
 
 type ListSource = string[] & {
-  __is_listed_as_source__: true
+  __IS_LISTED_AS_SOURCE__: true
 }
+
+const EMPTY_RESULT: ListSource = run(() => {
+  const result: ListSource = [] as unknown as ListSource
+  result.__IS_LISTED_AS_SOURCE__ = true
+  return result
+})
 
 const isListedAsSource = (
   input: string | string[] | ListSource,
 ): input is ListSource =>
-  input instanceof Array &&
-  (input as ListSource & object).__is_listed_as_source__
+  Array.isArray(input) && !!(input as ListSource).__IS_LISTED_AS_SOURCE__
 
 /**
  * List files or directories.
@@ -31,12 +37,17 @@ const main = async (
 ) => {
   if (isListedAsSource(input)) return input
 
-  const result = (await glob(toArray(input).map(normalizePath), {
+  if (!input) return EMPTY_RESULT
+  if (!input.length) return EMPTY_RESULT
+
+  const patterns = toArray(input).map(normalizePath).filter(Boolean)
+
+  const result = (await glob(patterns, {
     absolute: true,
-    suppressErrors: true,
+    dot: true,
     ...options,
   })) as ListSource
-  result.__is_listed_as_source__ = true
+  result.__IS_LISTED_AS_SOURCE__ = true
 
   return result
 }

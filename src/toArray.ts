@@ -12,6 +12,6 @@
  * ```
  */
 const toArray = <T>(input: T | T[]): T[] =>
-  input instanceof Array ? input : [input]
+  Array.isArray(input) ? input : [input]
 
 export default toArray
