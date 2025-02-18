@@ -1,12 +1,10 @@
-import { isExist, remove, write, zip } from '../src'
+import { isExist, write, zip } from '../src'
 
-import { TEMP } from '.'
+import { cleanup, TEMP } from '.'
 
-const prepare = async () => {
+const setup = async () => {
   // Clean previous files
-  await remove(`${TEMP}/*.zip`)
-  await remove(`${TEMP}/*.txt`)
-  await remove(`${TEMP}/sub`)
+  await cleanup()
 
   // Create test files
   await write(`${TEMP}/a.txt`, 'content a')
@@ -14,61 +12,109 @@ const prepare = async () => {
   await write(`${TEMP}/sub/c.txt`, 'content c')
 }
 
-export const a = async () => {
-  await prepare()
-
-  // Test single file zip
+const a = async () => {
+  await setup()
   await zip(`${TEMP}/a.txt`, TEMP, 'single.zip')
-  if (!(await isExist(`${TEMP}/single.zip`)))
-    throw new Error('single file zip failed')
+  if (!(await isExist(`${TEMP}/single.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+a.description = 'zips a single file'
 
-  // Test multiple files zip
+const b = async () => {
+  await setup()
   await zip([`${TEMP}/a.txt`, `${TEMP}/b.txt`], TEMP, 'multiple.zip')
-  if (!(await isExist(`${TEMP}/multiple.zip`)))
-    throw new Error('multiple files zip failed')
+  if (!(await isExist(`${TEMP}/multiple.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+b.description = 'zips multiple files'
 
-  // Test wildcard pattern
+const c = async () => {
+  await setup()
   await zip(`${TEMP}/*.txt`, TEMP, 'wild.zip')
-  if (!(await isExist(`${TEMP}/wild.zip`)))
-    throw new Error('wildcard pattern zip failed')
+  if (!(await isExist(`${TEMP}/wild.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+c.description = 'zips using wildcard pattern'
 
-  // Test custom base directory
+const d = async () => {
+  await setup()
+  await zip(`${TEMP}/**/*.txt`, TEMP, 'wild-recursive.zip')
+  if (!(await isExist(`${TEMP}/wild-recursive.zip`)))
+    throw new Error('Zip failed')
+  await cleanup()
+}
+d.description = 'uses wildcard base path correctly'
+
+const e = async () => {
+  await setup()
   await zip(`${TEMP}/sub/c.txt`, TEMP, {
     base: `${TEMP}/sub`,
     filename: 'base.zip',
   })
-  if (!(await isExist(`${TEMP}/base.zip`)))
-    throw new Error('custom base zip failed')
+  if (!(await isExist(`${TEMP}/base.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+e.description = 'uses custom base directory'
 
-  // Test default target directory
+const f = async () => {
+  await setup()
   await zip(`${TEMP}/a.txt`)
-  if (!(await isExist(`${TEMP}/temp.zip`)))
-    throw new Error('default target zip failed')
+  if (!(await isExist(`${TEMP}/temp.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+f.description = 'uses default target directory'
 
-  // Test default filename
-  await remove(`${TEMP}/temp.zip`)
+const g = async () => {
+  await setup()
   await zip(`${TEMP}/a.txt`, TEMP)
-  if (!(await isExist(`${TEMP}/temp.zip`)))
-    throw new Error('default filename zip failed')
+  if (!(await isExist(`${TEMP}/temp.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+g.description = 'uses default filename'
 
-  // Test custom options
+const h = async () => {
+  await setup()
   await zip(`${TEMP}/a.txt`, TEMP, { filename: 'custom.zip' })
-  if (!(await isExist(`${TEMP}/custom.zip`)))
-    throw new Error('custom options zip failed')
+  if (!(await isExist(`${TEMP}/custom.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+h.description = 'handles custom options'
 
-  // Test error handling
-  // Test error handling for empty source list
+const i = async () => {
+  await setup()
+  await zip(`${TEMP}/a.txt`, TEMP, '')
+  if (!(await isExist(`${TEMP}/temp.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+i.description = 'handles empty option string'
+
+const j = async () => {
+  await setup()
   let errorThrown = false
   try {
     await zip([], TEMP)
   } catch {
     errorThrown = true
   }
-  if (!errorThrown)
-    throw new Error('error handling failed - expected error was not thrown')
-
-  // Clean up
-  await remove(`${TEMP}/*.zip`)
-  await remove(`${TEMP}/*.txt`)
-  await remove(`${TEMP}/sub`)
+  if (!errorThrown) throw new Error('Expected error was not thrown')
+  await cleanup()
 }
+j.description = 'fails on empty source list'
+
+const k = async () => {
+  await setup()
+  await zip(`${TEMP}/nonexistent.txt`, TEMP, 'empty.zip')
+  if (!(await isExist(`${TEMP}/empty.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+k.description = 'returns successfully for nonexistent files'
+
+const l = async () => {
+  await setup()
+  await zip(`${TEMP}/no-matches-*.txt`, TEMP, 'no-matches.zip')
+  if (!(await isExist(`${TEMP}/no-matches.zip`))) throw new Error('Zip failed')
+  await cleanup()
+}
+l.description = 'handles glob with no matches'
+
+export { a, b, c, d, e, f, g, h, i, j, k, l }
