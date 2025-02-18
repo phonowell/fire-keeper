@@ -1,12 +1,52 @@
 import { Buffer } from 'buffer'
 
-import { download, isExist, read } from '../src'
+import { download, isExist, read, getFilename } from '../src'
 
 import { TEMP } from './index'
 
-// 合并二进制内容验证和大文件测试
+// Test parameter validation
+const validationTest = async (): Promise<void> => {
+  // Test missing URL
+  await download('', `${TEMP}/download-test`).catch((error: unknown) => {
+    if (!(error instanceof Error) || !error.message.includes('empty input')) {
+      throw error
+    }
+  })
+
+  // Test missing directory
+  await download('https://example.com/file', '').catch((error: unknown) => {
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes('dir is required')
+    ) {
+      throw error
+    }
+  })
+}
+validationTest.description = 'validates required parameters'
+
+// Test success cases with auto and custom filenames
+const successTest = async (): Promise<void> => {
+  const url = 'https://httpbin.org/bytes/100'
+  const dir = `${TEMP}/download-test`
+
+  // Test with auto filename from URL
+  const expectedFilename = getFilename(url)
+  await download(url, dir)
+  // Verify the exact file exists
+  if (!(await isExist(`${dir}/${expectedFilename}`)))
+    throw Error('download with auto filename failed')
+
+  // Test with custom filename
+  const customFilename = 'custom.bin'
+  await download(url, dir, customFilename)
+  if (!(await isExist(`${dir}/${customFilename}`)))
+    throw Error('download with custom filename failed')
+}
+successTest.description = 'handles successful downloads'
+
+// Test binary content and large file handling
 const binaryAndSizeTest = async (): Promise<void> => {
-  // 测试大文件下载和内容验证
   const url = 'https://httpbin.org/bytes/102400'
   const dir = `${TEMP}/download-test`
   const filename = 'large.bin'
@@ -21,9 +61,22 @@ const binaryAndSizeTest = async (): Promise<void> => {
 }
 binaryAndSizeTest.description = 'verifies binary content and file size'
 
-// 合并特殊情况测试
-const edgeCasesTest = async (): Promise<void> => {
-  // 测试空响应
+// Test error cases
+const errorTest = async (): Promise<void> => {
+  // Test invalid URL response
+  const badUrl = 'https://httpbin.org/status/404'
+  try {
+    await download(badUrl, `${TEMP}/download-test`)
+    throw Error('should throw on bad response')
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes('unexpected response')
+    )
+      throw Error('wrong error for bad response')
+  }
+
+  // Test empty response body
   const emptyUrl = 'https://httpbin.org/status/204'
   try {
     await download(emptyUrl, `${TEMP}/download-test`)
@@ -36,13 +89,13 @@ const edgeCasesTest = async (): Promise<void> => {
       throw Error('wrong error for empty response')
   }
 
-  // 测试Unicode文件名
+  // Test Unicode filename
   const url = 'https://httpbin.org/bytes/100'
   const filename = '测试文件.bin'
   await download(url, `${TEMP}/download-test`, filename)
   if (!(await isExist(`${TEMP}/download-test/${filename}`)))
     throw Error('unicode filename test failed')
 }
-edgeCasesTest.description = 'handles edge cases (empty response and unicode)'
+errorTest.description = 'handles error cases and special filenames'
 
-export { binaryAndSizeTest, edgeCasesTest }
+export { validationTest, successTest, binaryAndSizeTest, errorTest }

@@ -9,15 +9,22 @@ import normalizePath from './normalizePath'
 import getFilename from './getFilename'
 
 /**
- * Download a file.
- * @param url The URL of the file.
- * @param dir The directory to save the file.
- * @param filename The filename to save the file.
- * @returns The promise.
- * @example
- * ```
+ * Downloads a file from a URL and saves it to the specified directory.
+ * @param url The URL of the file to download.
+ * @param dir The target directory where the file will be saved.
+ * @param filename Optional custom filename. If not provided, extracts filename from URL.
+ * @returns Promise that resolves when download is complete.
+ * @throws {Error} If the URL response is not ok or has no body.
+ * @throws {TypeError} If URL or directory parameters are invalid.
+ *
+ * @example Download with auto-generated filename
+ * ```typescript
  * await download('https://example.com/file.txt', 'temp')
- * await download('https://example.com/file.txt', 'temp', 'file.txt')
+ * ```
+ *
+ * @example Download with custom filename
+ * ```typescript
+ * await download('https://example.com/file.txt', 'temp', 'custom.txt')
  * ```
  */
 const download = async (
