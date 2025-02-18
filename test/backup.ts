@@ -1,4 +1,5 @@
 import path from 'path'
+import { strict as assert } from 'assert'
 
 import { $, temp } from './index'
 
@@ -66,6 +67,31 @@ const directoryBackup = async () => {
   }
 }
 directoryBackup.description = 'backs up directory structure'
+
+const concurrentAndEmptyBackup = async () => {
+  // Test concurrent and non-concurrent backup
+  const source = `${temp}/concurrent.txt`
+  await $.write(source, 'test')
+
+  // Test with isConcurrent true
+  await $.backup(source, { isConcurrent: true })
+  const backupFile = `${source}.bak`
+  assert(await $.isExist(backupFile), 'backup file not created')
+
+  // Test with isConcurrent false
+  await $.write(source, 'test2')
+  await $.backup(source, { isConcurrent: false })
+  const newContent = await $.read(backupFile)
+  assert(newContent?.toString() === 'test2', 'content not updated')
+
+  // Test no matching files
+  const nonExistentPattern = `${temp}/non-existent-*.txt`
+  await $.backup(nonExistentPattern)
+  // The backup module should just return without creating any files
+  // for non-matching patterns, so no need to check for specific files
+}
+concurrentAndEmptyBackup.description =
+  'tests concurrent options and empty glob pattern'
 
 const edgeCases = async () => {
   // Test special characters and different file types
@@ -137,6 +163,7 @@ export {
   singleFileBackup,
   multipleFilesBackup,
   directoryBackup,
+  concurrentAndEmptyBackup,
   edgeCases,
   errorHandling,
   cleanup,

@@ -26,7 +26,10 @@ const asObject = <T>(input: Record<string, T>, key: string) =>
  * //=> undefined
  * ```
  */
-const at = <T>(input: T[] | Record<string, T>, key: number | string) => {
+const at = <T>(
+  input: T[] | Record<string, T>,
+  key: number | string,
+): T | undefined => {
   if (Array.isArray(input)) return asArray(input, key as number)
   return asObject(input, key as string)
 }

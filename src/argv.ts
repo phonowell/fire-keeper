@@ -10,7 +10,11 @@ import { hideBin } from 'yargs/helpers'
  * console.log(args)
  * ```
  */
-const argv = () =>
+const argv = (): Promise<{
+  [x: string]: unknown
+  _: (string | number)[]
+  $0: string
+}> =>
   yargs(hideBin(process.argv)).parse() as Promise<{
     [x: string]: unknown
     _: (string | number)[]

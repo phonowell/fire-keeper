@@ -1,5 +1,11 @@
 import { $, temp } from './index'
 
+const noMatch = async () => {
+  await $.copy('nonexistent-*.txt')
+  // No error should be thrown, just a message echoed
+}
+noMatch.description = 'no matching files'
+
 const a = async () => {
   const source = './license.md'
   const target = `${temp}/test.md`
@@ -91,4 +97,40 @@ const h = async () => {
 }
 h.description = 'copy with async function name'
 
-export { a, b, c, d, e, f, g, h }
+const i = async () => {
+  // Test options object - filename as string
+  const source = `${temp}/i.txt`
+  await $.write(source, 'content')
+
+  await $.copy(source, temp, { filename: 'renamed.txt' })
+  if (!(await $.isExist(`${temp}/renamed.txt`))) throw new Error('0')
+}
+i.description = 'copy with options.filename as string'
+
+const j = async () => {
+  // Test options object - filename as function
+  const source = `${temp}/j.txt`
+  await $.write(source, 'content')
+
+  await $.copy(source, temp, {
+    filename: name => `func-${name}`,
+    isConcurrent: false
+  })
+  if (!(await $.isExist(`${temp}/func-j.txt`))) throw new Error('0')
+}
+j.description = 'copy with options.filename as function and non-concurrent'
+
+const k = async () => {
+  // Test async function target
+  const source = `${temp}/k.txt`
+  await $.write(source, 'content')
+
+  await $.copy(source, async dirname => {
+    await $.sleep(10)
+    return `${dirname}/async-target`
+  })
+  if (!(await $.isExist(`${temp}/async-target/k.txt`))) throw new Error('0')
+}
+k.description = 'copy with async function target'
+
+export { noMatch, a, b, c, d, e, f, g, h, i, j, k }

@@ -4,20 +4,27 @@ import echo from './echo'
 import glob from './glob'
 import wrapList from './wrapList'
 
+type Options = {
+  isConcurrent?: boolean
+}
+
 /**
  * Remove files or directories recursively.
  * @param source A file/directory path or array of paths to remove.
- * @returns Promise that resolves to true if any files were removed, false otherwise.
- * @throws {Error} If removal operation fails.
+ * @param options Configuration options for removal.
+ * @param options.isConcurrent Whether to remove files concurrently. Defaults to true.
+ * @returns Promise that resolves when all files are removed.
+ * @throws {Error} If a file/directory cannot be accessed or removed.
+ * @throws {TypeError} If source parameter is invalid.
  *
  * @example Simple file removal
  * ```typescript
  * await remove('file.txt')
  * ```
  *
- * @example Multiple files removal
+ * @example Multiple files removal with options
  * ```typescript
- * await remove(['file1.txt', 'file2.txt'])
+ * await remove(['file1.txt', 'file2.txt'], { isConcurrent: false })
  * ```
  *
  * @example Directory removal
@@ -30,16 +37,22 @@ import wrapList from './wrapList'
  * await remove('temp/*.log')
  * ```
  */
-const remove = async (source: string | string[]): Promise<boolean> => {
-  const listSource = await glob(source, { onlyFiles: false })
-  if (!listSource.length) return false
-
-  for (const src of listSource) {
-    await fse.remove(src)
+const remove = async (
+  source: string | string[],
+  { isConcurrent = true }: Options = {},
+): Promise<void> => {
+  const listSource = await glob(source, {
+    onlyFiles: false,
+  })
+  if (!listSource.length) {
+    echo('remove', `no files found matching ${wrapList(source)}`)
+    return
   }
 
+  if (isConcurrent) await Promise.all(listSource.map(src => fse.remove(src)))
+  else for (const src of listSource) await fse.remove(src)
+
   echo('remove', `removed ${wrapList(source)}`)
-  return true
 }
 
 export default remove

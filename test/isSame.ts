@@ -100,4 +100,11 @@ const h = async () => {
 }
 h.description = 'array flattening'
 
-export { a, b, c, d, e, f, g, h }
+const i = async () => {
+  // Test empty array input
+  const result = await $.isSame([])
+  if (result) throw new Error('empty array should return false')
+}
+i.description = 'empty array input'
+
+export { a, b, c, d, e, f, g, h, i }
