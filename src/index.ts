@@ -29,6 +29,7 @@ import remove from './remove'
 import rename from './rename'
 import root from './root'
 import run from './run'
+import runConcurrent from './runConcurrent'
 import sleep from './sleep'
 import stat from './stat'
 import toArray from './toArray'
@@ -71,6 +72,7 @@ export {
   rename,
   root,
   run,
+  runConcurrent,
   sleep,
   stat,
   toArray,

@@ -2,19 +2,20 @@ import echo from './echo'
 import glob from './glob'
 import read from './read'
 import remove from './remove'
+import runConcurrent from './runConcurrent'
 import toArray from './toArray'
 import wrapList from './wrapList'
 import write from './write'
 
 type Options = {
-  isConcurrent?: boolean
+  concurrency?: number
 }
 
 /**
  * Recovers files from their backup versions (.bak files).
- * @param source - A single file/directory path or an array of paths to recover
+ * @param source - A single file path or an array of paths to recover
  * @param options - Recovery options
- * @param options.isConcurrent - Whether to process files concurrently (default: true)
+ * @param options.concurrency - Maximum number of concurrent file operations (default: 5)
  * @throws {Error} When file operations fail
  * @returns Promise<void>
  * @example
@@ -25,22 +26,29 @@ type Options = {
  * // Recover multiple files
  * await recover(['file1.txt', 'file2.txt'])
  *
- * // Recover files sequentially
- * await recover('file.txt', { isConcurrent: false })
+ * // Recover files with custom concurrency
+ * await recover('file.txt', { concurrency: 3 })
  * ```
  */
 const recover = async (
   source: string | string[],
-  { isConcurrent = true }: Options = {},
+  { concurrency = 5 }: Options = {},
 ): Promise<void> => {
-  const listSource = await glob(toArray(source).map(src => `${src}.bak`))
+  const listSource = await glob(
+    toArray(source).map(src => `${src}.bak`),
+    {
+      onlyFiles: true,
+    },
+  )
   if (!listSource.length) {
     echo('recover', `no files found matching ${wrapList(source)}`)
     return
   }
 
-  if (isConcurrent) await Promise.all(listSource.map(src => child(src)))
-  else for (const src of listSource) await child(src)
+  await runConcurrent(
+    concurrency,
+    listSource.map(src => () => child(src)),
+  )
 
   echo('recover', `recovered ${wrapList(source)}`)
 }

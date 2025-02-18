@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import run from '../src/run'
+import { run } from '../src'
 
 const a = () => {
   const result = run(() => 'test')

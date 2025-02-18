@@ -1,6 +1,5 @@
 import { renderPath } from '../src/echo'
-
-import { $ } from './index'
+import { home, root, echo } from '../src'
 
 const a = () => {
   // Test function existence
@@ -9,30 +8,30 @@ const a = () => {
   type = typeof renderPath
   if (type !== 'function') throw new Error('renderPath is not a function')
 
-  type = typeof $.echo.whisper
+  type = typeof echo.whisper
   if (type !== 'function') throw new Error('whisper is not a function')
 
-  type = typeof $.echo.freeze
+  type = typeof echo.freeze
   if (type !== 'function') throw new Error('freeze is not a function')
 
-  type = typeof $.echo.pause
+  type = typeof echo.pause
   if (type !== 'function') throw new Error('pause is not a function')
 
-  type = typeof $.echo.resume
+  type = typeof echo.resume
   if (type !== 'function') throw new Error('resume is not a function')
 }
 a.description = 'exposes required functions'
 
 const g = () => {
-  const home = $.home()
-  const root = $.root()
+  const homeString = home()
+  const rootString = root()
 
   const tests = [
-    [`${home}/test.txt`, '~/test.txt'],
-    [`${root}/src/test.txt`, './src/test.txt'],
+    [`${homeString}/test.txt`, '~/test.txt'],
+    [`${rootString}/src/test.txt`, './src/test.txt'],
     // 增加边界情况
-    [home, '~'],
-    [root, '.'],
+    [homeString, '~'],
+    [rootString, '.'],
     ['', ''],
   ]
 

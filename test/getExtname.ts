@@ -1,7 +1,7 @@
-import { $ } from './index'
+import { getExtname } from '../src'
 
 const a = () => {
-  if (typeof $.getExtname !== 'function')
+  if (typeof getExtname !== 'function')
     throw new Error('getExtname function not found')
 }
 a.description = 'function exists'
@@ -17,7 +17,7 @@ const b = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(
         `extension extraction failed for ${input}, got ${result}, expected ${expected}`,
@@ -37,7 +37,7 @@ const c = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(`no extension handling failed for ${input}`)
   }
@@ -55,7 +55,7 @@ const d = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(`multiple extension handling failed for ${input}`)
   }
@@ -73,7 +73,7 @@ const e = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(`hidden file handling failed for ${input}`)
   }
@@ -83,7 +83,7 @@ e.description = 'handles hidden files'
 const f = () => {
   // Test empty and invalid inputs
   try {
-    $.getExtname('')
+    getExtname('')
     throw new Error('empty input should throw')
   } catch (error) {
     if (!(error instanceof Error) || !error.message.includes('empty input'))
@@ -91,7 +91,7 @@ const f = () => {
   }
 
   // Whitespace is treated as a valid path by path.extname
-  const result = $.getExtname('   ')
+  const result = getExtname('   ')
   if (result !== '') throw new Error('whitespace should return empty extension')
 }
 f.description = 'handles invalid inputs'
@@ -107,7 +107,7 @@ const g = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(`case sensitivity failed for ${input}`)
   }
@@ -125,7 +125,7 @@ const h = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(`special extension handling failed for ${input}`)
   }
@@ -143,7 +143,7 @@ const i = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected) throw new Error(`dot handling failed for ${input}`)
   }
 }
@@ -160,7 +160,7 @@ const j = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getExtname(input)
+    const result = getExtname(input)
     if (result !== expected)
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,

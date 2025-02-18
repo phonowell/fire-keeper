@@ -1,6 +1,8 @@
 import type { Options } from 'fast-glob'
 
-import { $, temp } from './index'
+import { glob, write } from '../src'
+
+import { TEMP } from './index'
 
 type TestPattern = {
   pattern: string | string[]
@@ -35,46 +37,25 @@ const setupFiles = async () => {
     'dir2/deep/file.test.jsx',
   ]
 
-  await Promise.all(
-    files.map(file => $.write(`${temp}/${file}`, 'test content')),
-  )
-}
-
-const cleanup = async () => {
-  await $.remove([
-    `${temp}/file1.txt`,
-    `${temp}/file2.txt`,
-    `${temp}/test.js`,
-    `${temp}/dir1`,
-    `${temp}/dir2`,
-    `${temp}/.hidden.txt`,
-    `${temp}/special!@#$.txt`,
-    `${temp}/file with spaces.txt`,
-    `${temp}/dir with spaces`,
-    `${temp}/unicode文件.txt`,
-    `${temp}/single.txt`,
-    `${temp}/a.txt`,
-    `${temp}/b.txt`,
-    `${temp}/c.txt`,
-  ])
+  await Promise.all(files.map(file => write(`${TEMP}/${file}`, 'test content')))
 }
 
 const a = async () => {
   // 基础输入测试
-  const singleFile = `${temp}/single.txt`
-  await $.write(singleFile, 'single file content')
-  const singleResult = await $.glob(singleFile)
+  const singleFile = `${TEMP}/single.txt`
+  await write(singleFile, 'single file content')
+  const singleResult = await glob(singleFile)
   if (singleResult.length !== 1) throw new Error('single file test failed')
 
   // 空输入测试
-  const emptyResult = await $.glob('')
+  const emptyResult = await glob('')
   if (emptyResult.length !== 0) throw new Error('empty input test failed')
 
   // ListSource 类型测试
-  const listSource = [`${temp}/a.txt`, `${temp}/b.txt`]
-  await Promise.all(listSource.map(source => $.write(source, 'test content')))
-  const arrayResult = await $.glob(listSource)
-  const secondPass = await $.glob(arrayResult)
+  const listSource = [`${TEMP}/a.txt`, `${TEMP}/b.txt`]
+  await Promise.all(listSource.map(source => write(source, 'test content')))
+  const arrayResult = await glob(listSource)
+  const secondPass = await glob(arrayResult)
   if (secondPass !== arrayResult) throw new Error('ListSource test failed')
 }
 a.description = 'handles basic inputs and empty cases'
@@ -84,19 +65,19 @@ const b = async () => {
 
   // 组合全面的 glob 模式测试
   const tests: TestPattern[] = [
-    { pattern: `${temp}/*.txt`, count: 6 },
-    { pattern: `${temp}/*/*.txt`, count: 3 },
-    { pattern: `${temp}/**/*.txt`, count: 10 },
+    { pattern: `${TEMP}/*.txt`, count: 6 },
+    { pattern: `${TEMP}/*/*.txt`, count: 3 },
+    { pattern: `${TEMP}/**/*.txt`, count: 10 },
     {
-      pattern: [`${temp}/**/*.js`, `${temp}/**/*.ts`, `!${temp}/**/*.test.*`],
+      pattern: [`${TEMP}/**/*.js`, `${TEMP}/**/*.ts`, `!${TEMP}/**/*.test.*`],
       count: 3,
     },
-    { pattern: `${temp}/**/*文件*`, count: 1 },
-    { pattern: `${temp}/./dir1/../dir1/*.txt`, count: 2 },
+    { pattern: `${TEMP}/**/*文件*`, count: 1 },
+    { pattern: `${TEMP}/./dir1/../dir1/*.txt`, count: 2 },
   ]
 
   for (const { pattern, count } of tests) {
-    const results = await $.glob(pattern)
+    const results = await glob(pattern)
     if (results.length !== count) {
       throw new Error(
         `Pattern "${formatPattern(pattern)}" failed: expected ${count}, got ${results.length}`,
@@ -119,7 +100,7 @@ const c = async () => {
   ]
 
   for (const { options, count } of tests) {
-    const results = await $.glob(`${temp}/**/*`, options)
+    const results = await glob(`${TEMP}/**/*`, options)
     if (results.length !== count) {
       throw new Error(
         `Options ${JSON.stringify(options)} failed: expected ${count}, got ${results.length}`,
@@ -138,7 +119,7 @@ const d = async () => {
   ]
 
   for (const { input, description } of cases) {
-    const result = await $.glob(input)
+    const result = await glob(input)
     if (result.length !== 0) {
       throw new Error(`${description} should return empty array`)
     }
@@ -149,4 +130,4 @@ const d = async () => {
 }
 d.description = 'handles edge cases properly'
 
-export { a, b, c, d, cleanup }
+export { a, b, c, d }

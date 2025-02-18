@@ -1,9 +1,9 @@
-import { $ } from './index'
+import { wrapList } from '../src'
 
 const a = () => {
   const question = ['a', 'b', 'c']
   const answer = "'a', 'b', 'c'"
-  if ($.wrapList(question) !== answer) throw new Error('string array failed')
+  if (wrapList(question) !== answer) throw new Error('string array failed')
 }
 a.description = 'wraps string array'
 
@@ -17,7 +17,7 @@ const b = () => {
   ] as const
 
   for (const [input, expected] of tests) {
-    const result = $.wrapList(input)
+    const result = wrapList(input)
     if (result !== expected)
       throw new Error(
         `primitive ${typeof input} failed. Expected: ${expected}, Got: ${result}`,
@@ -30,7 +30,7 @@ const c = () => {
   // Test arrays of mixed primitives
   const input = ['hello', 42, true, false]
   const expected = "'hello', '42', 'true', 'false'"
-  if ($.wrapList(input) !== expected) throw new Error('mixed primitives failed')
+  if (wrapList(input) !== expected) throw new Error('mixed primitives failed')
 }
 c.description = 'wraps mixed primitives'
 
@@ -42,7 +42,7 @@ const d = () => {
   }
   const input = { name: 'test', value: 42 }
   // Let wrapList handle the JSON stringification
-  const result = $.wrapList(input)
+  const result = wrapList(input)
   // Verify it's a string wrapped in quotes containing JSON
   if (!result.startsWith("'") || !result.endsWith("'"))
     throw new Error('object quote wrapping failed')
@@ -64,7 +64,7 @@ const e = () => {
     { id: 1, name: 'first' },
     { id: 2, name: 'second' },
   ]
-  const result = $.wrapList(input)
+  const result = wrapList(input)
 
   // Split and parse each object to verify
   const parts = result
@@ -89,7 +89,7 @@ const f = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.wrapList(input)
+    const result = wrapList(input)
     if (result !== expected)
       throw new Error(
         `falsy value ${String(input)} failed. Expected: ${expected}, Got: ${result}`,
@@ -101,7 +101,7 @@ f.description = 'handles falsy values'
 const g = () => {
   // Test special characters
   const input = ["It's", 'a "quote"', '\\backslash\\']
-  const result = $.wrapList(input)
+  const result = wrapList(input)
   // Verify each part is properly wrapped and preserved
   const parts = result.split(', ').map(part => part.slice(1, -1))
 
@@ -121,7 +121,7 @@ const h = () => {
   type NestedItem = number[] | NestedObj
 
   const input = [[1, 2], { nested: { deep: true } }]
-  const result = $.wrapList(input)
+  const result = wrapList(input)
   const parts = result
     .split(', ')
     .map(part => JSON.parse(part.slice(1, -1)) as NestedItem)
@@ -138,15 +138,14 @@ const i = () => {
   // Test unicode characters
   const input = ['你好', '世界', '🌍']
   const expected = "'你好', '世界', '🌍'"
-  if ($.wrapList(input) !== expected)
-    throw new Error('unicode characters failed')
+  if (wrapList(input) !== expected) throw new Error('unicode characters failed')
 }
 i.description = 'handles unicode characters'
 
 const j = () => {
   // Test very long array
   const input = Array.from({ length: 1000 }, (_, i) => i)
-  const result = $.wrapList(input)
+  const result = wrapList(input)
   if (!result.startsWith("'0'") || !result.endsWith("'999'"))
     throw new Error('long array failed')
 
@@ -178,7 +177,7 @@ const k = () => {
     undefined,
   ]
 
-  const result = $.wrapList(input)
+  const result = wrapList(input)
   const parts = result.split(', ').filter(Boolean)
 
   // Verify each type is handled

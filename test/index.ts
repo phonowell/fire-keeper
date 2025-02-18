@@ -1,105 +1,103 @@
 import { describe, it } from 'mocha'
 
-import * as $ from '../src/index'
+import { argv, echo, normalizePath, remove } from '../src'
 
-import * as argv from './argv'
-import * as at from './at'
-import * as backup from './backup'
-import * as clean from './clean'
-import * as copy from './copy'
-import * as download from './download'
-import * as echo from './echo'
-import * as exec from './exec'
-import * as findIndex from './findIndex'
-import * as flatten from './flatten'
-import * as getBasename from './getBasename'
-import * as getDirname from './getDirname'
-import * as getExtname from './getExtname'
-import * as getFilename from './getFilename'
-import * as getName from './getName'
-import * as glob from './glob'
-import * as home from './home'
-import * as isExist from './isExist'
-import * as isSame from './isSame'
-import * as link from './link'
-import * as mkdir from './mkdir'
-import * as move from './move'
-import * as normalizePath from './normalizePath'
-import * as os from './os'
-import * as prompt from './prompt'
-import * as read from './read'
-import * as recover from './recover'
-import * as remove from './remove'
-import * as rename from './rename'
-import * as root from './root'
-import * as run from './run'
-import * as sleep from './sleep'
-import * as stat from './stat'
-import * as toArray from './toArray'
-import * as toDate from './toDate'
-import * as trimEnd from './trimEnd'
-import * as watch from './watch'
-import * as wrapList from './wrapList'
-import * as write from './write'
-import * as zip from './zip'
+import * as argvTests from './argv'
+import * as atTests from './at'
+import * as backupTests from './backup'
+import * as cleanTests from './clean'
+import * as copyTests from './copy'
+import * as downloadTests from './download'
+import * as echoTests from './echo'
+import * as execTests from './exec'
+import * as findIndexTests from './findIndex'
+import * as flattenTests from './flatten'
+import * as getBasenameTests from './getBasename'
+import * as getDirnameTests from './getDirname'
+import * as getExtnameTests from './getExtname'
+import * as getFilenameTests from './getFilename'
+import * as getNameTests from './getName'
+import * as globTests from './glob'
+import * as homeTests from './home'
+import * as isExistTests from './isExist'
+import * as isSameTests from './isSame'
+import * as linkTests from './link'
+import * as mkdirTests from './mkdir'
+import * as moveTests from './move'
+import * as normalizePathTests from './normalizePath'
+import * as osTests from './os'
+import * as promptTests from './prompt'
+import * as readTests from './read'
+import * as recoverTests from './recover'
+import * as removeTests from './remove'
+import * as renameTests from './rename'
+import * as rootTests from './root'
+import * as runTests from './run'
+import * as runConcurrentTests from './runConcurrent'
+import * as sleepTests from './sleep'
+import * as statTests from './stat'
+import * as toArrayTests from './toArray'
+import * as toDateTests from './toDate'
+import * as trimEndTests from './trimEnd'
+import * as watchTests from './watch'
+import * as wrapListTests from './wrapList'
+import * as writeTests from './write'
+import * as zipTests from './zip'
 
 const mapModule = {
-  argv,
-  at,
-  backup,
-  clean,
-  copy,
-  download,
-  echo,
-  exec,
-  findIndex,
-  flatten,
-  getBasename,
-  getDirname,
-  getExtname,
-  getFilename,
-  getName,
-  glob,
-  home,
-  isExist,
-  isSame,
-  link,
-  mkdir,
-  move,
-  normalizePath,
-  os,
-  prompt,
-  read,
-  recover,
-  remove,
-  rename,
-  root,
-  run,
-  sleep,
-  stat,
-  toArray,
-  toDate,
-  trimEnd,
-  watch,
-  wrapList,
-  write,
-  zip,
+  argv: argvTests,
+  at: atTests,
+  backup: backupTests,
+  clean: cleanTests,
+  copy: copyTests,
+  download: downloadTests,
+  echo: echoTests,
+  exec: execTests,
+  findIndex: findIndexTests,
+  flatten: flattenTests,
+  getBasename: getBasenameTests,
+  getDirname: getDirnameTests,
+  getExtname: getExtnameTests,
+  getFilename: getFilenameTests,
+  getName: getNameTests,
+  glob: globTests,
+  home: homeTests,
+  isExist: isExistTests,
+  isSame: isSameTests,
+  link: linkTests,
+  mkdir: mkdirTests,
+  move: moveTests,
+  normalizePath: normalizePathTests,
+  os: osTests,
+  prompt: promptTests,
+  read: readTests,
+  recover: recoverTests,
+  remove: removeTests,
+  rename: renameTests,
+  root: rootTests,
+  run: runTests,
+  runConcurrent: runConcurrentTests,
+  sleep: sleepTests,
+  stat: statTests,
+  toArray: toArrayTests,
+  toDate: toDateTests,
+  trimEnd: trimEndTests,
+  watch: watchTests,
+  wrapList: wrapListTests,
+  write: writeTests,
+  zip: zipTests,
 }
 
 // ---
 
-type FnAsync = (...args: unknown[]) => Promise<unknown>
+type Fn = () => Promise<void>
 
-// variable
+const TEMP = normalizePath('./temp')
 
-const temp = $.normalizePath('./temp')
-
-const clearup = () => $.echo.whisper($.remove(temp))
+const cleanup = () => echo.whisper(remove(TEMP))
 
 const main = async () => {
-  const target = ((await $.argv())._[1] || '') as
-    | keyof typeof mapModule
-    | undefined
+  const target = ((await argv())._[1] || '') as keyof typeof mapModule | ''
 
   const listModule = target
     ? [target]
@@ -109,19 +107,18 @@ const main = async () => {
     describe(name, () => {
       const listIt = Object.keys(mapModule[name])
       for (const key of listIt) {
-        const fn = mapModule[name][key] as FnAsync & { description?: string }
-        it(
-          fn.description ?? (listIt.length === 1 ? 'default' : key),
-          async () => {
-            await clearup()
-            await $.echo.freeze(fn)
-          },
-        )
+        const fn = mapModule[name][key] as Fn & {
+          description?: string
+        }
+
+        it(fn.description ?? key, async () => {
+          await cleanup()
+          await echo.freeze(fn)
+        })
       }
     })
 }
 
-// execute
 main()
 
-export { $, clearup, temp }
+export { cleanup, TEMP }

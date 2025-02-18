@@ -65,11 +65,14 @@ const replaceTest = async () => {
 
   const listTest = listModule.map(getBasename)
   const content = [
-    ...listTest.map(it => `import * as ${it} from './${it}'`),
     "import { describe, it } from 'mocha'",
-    "import * as $ from '../src/index'",
+    '',
+    "import { argv, echo, normalizePath, remove } from '../src'",
+    '',
+    ...listTest.map(it => `import * as ${it}Tests from './${it}'`),
+    '',
     'const mapModule = {',
-    `  ${listTest.join(', ')},`,
+    ...listTest.map(it => `  ${it}: ${it}Tests,`),
     '}',
     '',
     '// ---',

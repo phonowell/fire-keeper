@@ -7,51 +7,71 @@ import normalizePath from './normalizePath'
 import wrapList from './wrapList'
 import run from './run'
 import getName from './getName'
+import runConcurrent from './runConcurrent'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
 type Filename = string | ((filename: string) => string | Promise<string>)
 
 type Options = {
+  concurrency?: number
   filename?: Filename
-  isConcurrent?: boolean
 }
 
+const DEFAULT_CONCURRENCY = 5
+
 /**
- * Copy files or directories with advanced naming options.
- * @param source - Source file(s) or directory. Can be a single path or array of paths.
- * @param target - Optional target directory or function that returns target path.
- * @param options - Copy options or new filename
- * @param options.filename - New filename or function to generate filename
- * @param options.isConcurrent - Whether to copy files concurrently (default: true)
- * @throws {Error} When source file doesn't exist or copy operation fails
- * @returns Promise that resolves when copy is complete
+ * Copy files or directories with support for concurrent operations and flexible naming.
  *
- * @example Single file copy
+ * @param source - Source file(s) or directory path(s)
+ *                 Can be a single string path or array of paths
+ *                 Supports glob patterns
+ *
+ * @param target - (Optional) Target directory or path transformation function
+ *                 - If undefined: Copy to same directory with '.copy' suffix
+ *                 - If string: Copy to specified directory path
+ *                 - If function: Dynamic path generation based on source dirname
+ *
+ * @param options - (Optional) Copy configuration
+ *                 Can be either a string (new filename) or an options object
+ *                 - If string: Used as the new filename
+ *                 - If object: Supports following properties:
+ *                   - filename: New filename or function to generate filename
+ *                   - concurrency: Number of concurrent copy operations (default: 5)
+ *
+ * @throws {Error} When source file doesn't exist or copy operation fails
+ * @returns Promise<void> Resolves when all copy operations complete
+ *
+ * @example Copy single file (adds .copy suffix)
  * ```ts
  * await copy('source.txt');  // Creates source.copy.txt
  * ```
  *
- * @example Multiple files copy
+ * @example Copy multiple files to backup directory
  * ```ts
  * await copy(['file1.txt', 'file2.txt'], 'backup');
  * ```
  *
- * @example Copy with rename
+ * @example Copy with specific new filename
  * ```ts
  * await copy('file.txt', 'backup', 'newname.txt');
  * ```
  *
- * @example Dynamic target path
+ * @example Copy with dynamic target path generation
  * ```ts
- * await copy('file.txt', name => `backup/${name}`);
+ * await copy('file.txt', dirname => `backup/${dirname}`);
  * ```
  *
- * @example Custom options
+ * @example Copy with advanced options
  * ```ts
  * await copy('file.txt', 'backup', {
  *   filename: name => `${name}-${Date.now()}`,
- *   isConcurrent: false
+ *   concurrency: 3
  * });
+ * ```
+ *
+ * @example Copy with glob pattern
+ * ```ts
+ * await copy('src/*.js', 'dist');
  * ```
  */
 const copy = async (
@@ -66,17 +86,18 @@ const copy = async (
   }
 
   // 是否并发复制
-  // 默认为 true
-  const isConcurrent = run(() => {
-    if (!options) return true
-    if (typeof options !== 'object') return true
-    return options.isConcurrent ?? true
+  // 默认为 DEFAULT_CONCURRENCY
+  const c = run(() => {
+    if (!options) return DEFAULT_CONCURRENCY
+    if (typeof options !== 'object') return DEFAULT_CONCURRENCY
+    return options.concurrency ?? DEFAULT_CONCURRENCY
   })
 
   // 并发复制
-  if (isConcurrent)
-    await Promise.all(listSource.map(src => child(src, target, options)))
-  else for (const src of listSource) await child(src, target, options)
+  await runConcurrent(
+    c,
+    listSource.map(src => () => child(src, target, options)),
+  )
 
   // 输出信息
   echo(

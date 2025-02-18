@@ -1,64 +1,66 @@
-import { $, temp } from '.'
+import { isExist, remove, write, zip } from '../src'
+
+import { TEMP } from '.'
 
 const prepare = async () => {
   // Clean previous files
-  await $.remove(`${temp}/*.zip`)
-  await $.remove(`${temp}/*.txt`)
-  await $.remove(`${temp}/sub`)
+  await remove(`${TEMP}/*.zip`)
+  await remove(`${TEMP}/*.txt`)
+  await remove(`${TEMP}/sub`)
 
   // Create test files
-  await $.write(`${temp}/a.txt`, 'content a')
-  await $.write(`${temp}/b.txt`, 'content b')
-  await $.write(`${temp}/sub/c.txt`, 'content c')
+  await write(`${TEMP}/a.txt`, 'content a')
+  await write(`${TEMP}/b.txt`, 'content b')
+  await write(`${TEMP}/sub/c.txt`, 'content c')
 }
 
 export const a = async () => {
   await prepare()
 
   // Test single file zip
-  await $.zip(`${temp}/a.txt`, temp, 'single.zip')
-  if (!(await $.isExist(`${temp}/single.zip`)))
+  await zip(`${TEMP}/a.txt`, TEMP, 'single.zip')
+  if (!(await isExist(`${TEMP}/single.zip`)))
     throw new Error('single file zip failed')
 
   // Test multiple files zip
-  await $.zip([`${temp}/a.txt`, `${temp}/b.txt`], temp, 'multiple.zip')
-  if (!(await $.isExist(`${temp}/multiple.zip`)))
+  await zip([`${TEMP}/a.txt`, `${TEMP}/b.txt`], TEMP, 'multiple.zip')
+  if (!(await isExist(`${TEMP}/multiple.zip`)))
     throw new Error('multiple files zip failed')
 
   // Test wildcard pattern
-  await $.zip(`${temp}/*.txt`, temp, 'wild.zip')
-  if (!(await $.isExist(`${temp}/wild.zip`)))
+  await zip(`${TEMP}/*.txt`, TEMP, 'wild.zip')
+  if (!(await isExist(`${TEMP}/wild.zip`)))
     throw new Error('wildcard pattern zip failed')
 
   // Test custom base directory
-  await $.zip(`${temp}/sub/c.txt`, temp, {
-    base: `${temp}/sub`,
+  await zip(`${TEMP}/sub/c.txt`, TEMP, {
+    base: `${TEMP}/sub`,
     filename: 'base.zip',
   })
-  if (!(await $.isExist(`${temp}/base.zip`)))
+  if (!(await isExist(`${TEMP}/base.zip`)))
     throw new Error('custom base zip failed')
 
   // Test default target directory
-  await $.zip(`${temp}/a.txt`)
-  if (!(await $.isExist(`${temp}/temp.zip`)))
+  await zip(`${TEMP}/a.txt`)
+  if (!(await isExist(`${TEMP}/temp.zip`)))
     throw new Error('default target zip failed')
 
   // Test default filename
-  await $.remove(`${temp}/temp.zip`)
-  await $.zip(`${temp}/a.txt`, temp)
-  if (!(await $.isExist(`${temp}/temp.zip`)))
+  await remove(`${TEMP}/temp.zip`)
+  await zip(`${TEMP}/a.txt`, TEMP)
+  if (!(await isExist(`${TEMP}/temp.zip`)))
     throw new Error('default filename zip failed')
 
   // Test custom options
-  await $.zip(`${temp}/a.txt`, temp, { filename: 'custom.zip' })
-  if (!(await $.isExist(`${temp}/custom.zip`)))
+  await zip(`${TEMP}/a.txt`, TEMP, { filename: 'custom.zip' })
+  if (!(await isExist(`${TEMP}/custom.zip`)))
     throw new Error('custom options zip failed')
 
   // Test error handling
   // Test error handling for empty source list
   let errorThrown = false
   try {
-    await $.zip([], temp)
+    await zip([], TEMP)
   } catch {
     errorThrown = true
   }
@@ -66,7 +68,7 @@ export const a = async () => {
     throw new Error('error handling failed - expected error was not thrown')
 
   // Clean up
-  await $.remove(`${temp}/*.zip`)
-  await $.remove(`${temp}/*.txt`)
-  await $.remove(`${temp}/sub`)
+  await remove(`${TEMP}/*.zip`)
+  await remove(`${TEMP}/*.txt`)
+  await remove(`${TEMP}/sub`)
 }

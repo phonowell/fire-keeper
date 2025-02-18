@@ -1,7 +1,7 @@
-import { $ } from './index'
+import { getBasename } from '../src'
 
 const a = () => {
-  if (typeof $.getBasename !== 'function')
+  if (typeof getBasename !== 'function')
     throw new Error('getBasename function not found')
 }
 a.description = 'function exists'
@@ -17,7 +17,7 @@ const b = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(
         `basename extraction failed for ${input}, got ${result}, expected ${expected}`,
@@ -37,7 +37,7 @@ const c = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`multiple extension handling failed for ${input}`)
   }
@@ -55,7 +55,7 @@ const d = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`hidden file handling failed for ${input}`)
   }
@@ -73,7 +73,7 @@ const e = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`special character handling failed for ${input}`)
   }
@@ -83,7 +83,7 @@ e.description = 'handles special characters'
 const f = () => {
   // Test empty input
   try {
-    $.getBasename('')
+    getBasename('')
     throw new Error('empty input should throw')
   } catch (error) {
     if (!(error instanceof Error) || !error.message.includes('empty input'))
@@ -105,7 +105,7 @@ const g = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,
@@ -125,7 +125,7 @@ const h = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`Unicode handling failed for ${input}`)
   }
@@ -142,7 +142,7 @@ const i = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`Windows path handling failed for ${input}`)
   }
@@ -159,7 +159,7 @@ const j = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getBasename(input)
+    const result = getBasename(input)
     if (result !== expected)
       throw new Error(`URL-like path handling failed for ${input}`)
   }

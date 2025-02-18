@@ -1,8 +1,8 @@
-import { $ } from './index'
+import { getName } from '../src'
 
 const a = () => {
   const source = '~/Downloads/test.txt'
-  const { basename, dirname, extname, filename } = $.getName(source)
+  const { basename, dirname, extname, filename } = getName(source)
 
   if (basename !== 'test') throw new Error('basename mismatch')
   if (dirname !== '~/Downloads') throw new Error('dirname mismatch')

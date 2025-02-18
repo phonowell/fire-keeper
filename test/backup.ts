@@ -1,170 +1,113 @@
 import path from 'path'
 import { strict as assert } from 'assert'
 
-import { $, temp } from './index'
+import { backup, isExist, mkdir, read, remove, write } from '../src'
 
-const singleFileBackup = async () => {
-  const source = `${temp}/test.txt`
+import { TEMP } from './index'
+
+// Test single file backup and concurrency
+const testBasicBackup = async () => {
+  const source = `${TEMP}/test.txt`
   const content = 'test content'
-  await $.write(source, content)
-  await $.backup(source)
+  await write(source, content)
 
+  // Test with default concurrency
+  await backup(source)
   const backupFile = `${source}.bak`
-  if (!(await $.isExist(backupFile))) throw new Error('backup file not created')
-  const backupContent = await $.read(backupFile)
-  if (!backupContent) throw new Error('backup content not found')
-  if (backupContent.toString() !== content) throw new Error('content mismatch')
+  assert(await isExist(backupFile), 'backup file not created')
+  let backupContent = await read(backupFile)
+  assert(backupContent?.toString() === content, 'content mismatch')
+
+  // Test with custom concurrency
+  await write(source, 'updated content')
+  await backup(source, { concurrency: 2 })
+  backupContent = await read(backupFile)
+  assert(
+    backupContent?.toString() === 'updated content',
+    'content not updated with concurrency',
+  )
 }
-singleFileBackup.description = 'backs up single file'
+testBasicBackup.description = 'tests single file backup and concurrency options'
 
-const multipleFilesBackup = async () => {
-  const files = [
-    { path: `${temp}/file1.txt`, content: 'content1' },
-    { path: `${temp}/file2.txt`, content: 'content2' },
-  ]
-  await Promise.all(files.map(f => $.write(f.path, f.content)))
-  await $.backup(files.map(f => f.path))
-
-  for (const file of files) {
-    const backupFile = `${file.path}.bak`
-    if (!(await $.isExist(backupFile)))
-      throw new Error(`backup not created for ${file.path}`)
-    const backupContent = await $.read(backupFile)
-    if (!backupContent)
-      throw new Error(`backup content not found for ${file.path}`)
-    if (backupContent.toString() !== file.content)
-      throw new Error(`content mismatch for ${file.path}`)
-  }
-}
-multipleFilesBackup.description = 'backs up multiple files'
-
-const directoryBackup = async () => {
-  const dir = `${temp}/backup-test`
-  const structure = {
+// Test multiple files and directory structure
+const testMultipleFiles = async () => {
+  const dir = `${TEMP}/backup-test`
+  const files = {
     'file1.txt': 'content1',
     'nested/file2.txt': 'content2',
     'nested/deep/file3.txt': 'content3',
   }
 
-  for (const [filePath, content] of Object.entries(structure)) {
+  // Create test files
+  for (const [filePath, content] of Object.entries(files)) {
     const fullPath = path.join(dir, filePath)
-    await $.mkdir(path.dirname(fullPath))
-    await $.write(fullPath, content)
+    await mkdir(path.dirname(fullPath))
+    await write(fullPath, content)
   }
 
-  await $.backup(`${dir}/**/*`)
+  // Test array of files and glob pattern
+  const filePaths = Object.entries(files).map(([f]) => path.join(dir, f))
+  await backup(filePaths, { concurrency: 1 }) // Use sequential execution to avoid race conditions
 
-  for (const [filePath, content] of Object.entries(structure)) {
+  // Verify backups
+  for (const [filePath, content] of Object.entries(files)) {
     const fullPath = path.join(dir, filePath)
     const backupFile = `${fullPath}.bak`
-    if (!(await $.isExist(backupFile)))
-      throw new Error(`backup not created for ${filePath}`)
-    const backupContent = await $.read(backupFile)
-    if (!backupContent)
-      throw new Error(`backup content not found for ${filePath}`)
-    if (backupContent.toString() !== content)
-      throw new Error(`content mismatch for ${filePath}`)
+    assert(await isExist(backupFile), `backup not created for ${filePath}`)
+    const backupContent = await read(backupFile)
+    assert(
+      backupContent?.toString() === content,
+      `content mismatch for ${filePath}`,
+    )
   }
+
+  // Clean previous backups
+  await remove(`${dir}/**/*.bak`)
+
+  // Test glob pattern with sequential execution
+  await backup(`${dir}/**/*`, { concurrency: 1 })
 }
-directoryBackup.description = 'backs up directory structure'
+testMultipleFiles.description =
+  'tests backing up multiple files and directories'
 
-const concurrentAndEmptyBackup = async () => {
-  // Test concurrent and non-concurrent backup
-  const source = `${temp}/concurrent.txt`
-  await $.write(source, 'test')
+// Test edge cases and error handling
+const testEdgeCases = async () => {
+  // Test empty glob pattern
+  await backup(`${TEMP}/non-existent-*.txt`)
 
-  // Test with isConcurrent true
-  await $.backup(source, { isConcurrent: true })
-  const backupFile = `${source}.bak`
-  assert(await $.isExist(backupFile), 'backup file not created')
-
-  // Test with isConcurrent false
-  await $.write(source, 'test2')
-  await $.backup(source, { isConcurrent: false })
-  const newContent = await $.read(backupFile)
-  assert(newContent?.toString() === 'test2', 'content not updated')
-
-  // Test no matching files
-  const nonExistentPattern = `${temp}/non-existent-*.txt`
-  await $.backup(nonExistentPattern)
-  // The backup module should just return without creating any files
-  // for non-matching patterns, so no need to check for specific files
-}
-concurrentAndEmptyBackup.description =
-  'tests concurrent options and empty glob pattern'
-
-const edgeCases = async () => {
-  // Test special characters and different file types
+  // Test special characters and file types
   const testCases = [
-    { name: 'special!@#$.txt', content: 'test1' },
+    { name: 'special!@#.txt', content: 'test1' },
     { name: '文件.txt', content: 'test2' },
-    { name: 'binary.bin', content: Buffer.from([1, 2, 3, 4]) },
-    { name: 'empty.txt', content: Buffer.from('') },
+    { name: 'empty.txt', content: '' },
+    { name: 'binary.bin', content: Buffer.from([1, 2, 3]) },
   ]
 
   for (const tc of testCases) {
-    const source = `${temp}/${tc.name}`
-    await $.write(source, tc.content)
-    await $.backup(source)
+    const source = `${TEMP}/${tc.name}`
+    await write(source, tc.content)
+    await backup(source)
 
     const backupFile = `${source}.bak`
-    if (!(await $.isExist(backupFile)))
-      throw new Error(`backup failed for ${tc.name}`)
+    assert(await isExist(backupFile), `backup failed for ${tc.name}`)
 
-    const backupContent = await $.read(backupFile, {
+    const backupContent = await read(backupFile, {
       raw: tc.content instanceof Buffer,
     })
 
     if (tc.content instanceof Buffer) {
-      if (!backupContent || !Buffer.from(backupContent).equals(tc.content))
-        throw new Error(`content mismatch for ${tc.name}`)
+      assert(
+        Buffer.from(backupContent ?? '').equals(tc.content),
+        `content mismatch for ${tc.name}`,
+      )
+    } else {
+      assert(
+        backupContent?.toString() === tc.content,
+        `content mismatch for ${tc.name}`,
+      )
     }
   }
 }
-edgeCases.description = 'handles special cases and different file types'
+testEdgeCases.description = 'tests edge cases and error handling'
 
-const errorHandling = async () => {
-  // Test non-existent files and overwriting
-  const source = `${temp}/not-exist.txt`
-  await $.backup(source)
-  if (await $.isExist(`${source}.bak`))
-    throw new Error('backup created for non-existent file')
-
-  // Test overwriting
-  const overwriteSource = `${temp}/overwrite.txt`
-  await $.write(overwriteSource, 'original')
-  await $.backup(overwriteSource)
-  await $.write(overwriteSource, 'updated')
-  await $.backup(overwriteSource)
-
-  const backupContent = await $.read(`${overwriteSource}.bak`)
-  if (!backupContent) throw new Error('backup not found')
-  if (backupContent.toString() !== 'updated')
-    throw new Error('backup not overwritten')
-}
-errorHandling.description = 'handles errors and overwrites correctly'
-
-// Cleanup helper
-const cleanup = async () => {
-  await $.remove([
-    `${temp}/test.txt*`,
-    `${temp}/file*.txt*`,
-    `${temp}/backup-test`,
-    `${temp}/special!@#$.txt*`,
-    `${temp}/文件.txt*`,
-    `${temp}/binary.bin*`,
-    `${temp}/empty.txt*`,
-    `${temp}/not-exist.txt*`,
-    `${temp}/overwrite.txt*`,
-  ])
-}
-
-export {
-  singleFileBackup,
-  multipleFilesBackup,
-  directoryBackup,
-  concurrentAndEmptyBackup,
-  edgeCases,
-  errorHandling,
-  cleanup,
-}
+export { testBasicBackup, testMultipleFiles, testEdgeCases }

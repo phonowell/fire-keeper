@@ -1,7 +1,7 @@
-import { $ } from './index'
+import { getDirname } from '../src'
 
 const a = () => {
-  if (typeof $.getDirname !== 'function')
+  if (typeof getDirname !== 'function')
     throw new Error('getDirname function not found')
 }
 a.description = 'function exists'
@@ -17,7 +17,7 @@ const b = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(
         `dirname extraction failed for ${input}, got ${result}, expected ${expected}`,
@@ -36,7 +36,7 @@ const c = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(
         `Windows path handling failed for ${input}, got ${result}, expected ${expected}`,
@@ -55,7 +55,7 @@ const d = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(`special character handling failed for ${input}`)
   }
@@ -65,7 +65,7 @@ d.description = 'handles special characters'
 const e = () => {
   // Test empty and invalid inputs
   try {
-    $.getDirname('')
+    getDirname('')
     throw new Error('empty input should throw')
   } catch (error) {
     if (!(error instanceof Error) || !error.message.includes('empty input'))
@@ -73,7 +73,7 @@ const e = () => {
   }
 
   // Whitespace is a valid input that returns "."
-  const whitespaceResult = $.getDirname('   ')
+  const whitespaceResult = getDirname('   ')
   if (whitespaceResult !== '.')
     throw new Error(
       `whitespace input should return ".", got "${whitespaceResult}"`,
@@ -93,7 +93,7 @@ const f = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,
@@ -111,7 +111,7 @@ const g = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(`URL-like path handling failed for ${input}`)
   }
@@ -128,7 +128,7 @@ const h = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(`relative path handling failed for ${input}`)
   }
@@ -144,7 +144,7 @@ const i = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getDirname(input)
+    const result = getDirname(input)
     if (result !== expected)
       throw new Error(`multiple extension handling failed for ${input}`)
   }

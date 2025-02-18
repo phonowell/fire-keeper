@@ -1,7 +1,7 @@
-import { $ } from './index'
+import { getFilename } from '../src'
 
 const a = () => {
-  if (typeof $.getFilename !== 'function')
+  if (typeof getFilename !== 'function')
     throw new Error('getFilename function not found')
 }
 a.description = 'function exists'
@@ -17,7 +17,7 @@ const b = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`filename extraction failed for ${input}`)
   }
@@ -34,7 +34,7 @@ const c = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`separator handling failed for ${input}`)
   }
@@ -51,7 +51,7 @@ const d = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`extension-less handling failed for ${input}`)
   }
@@ -70,7 +70,7 @@ const e = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`special filename handling failed for ${input}`)
   }
@@ -80,7 +80,7 @@ e.description = 'handles special filenames'
 const f = () => {
   // Test empty input error handling
   try {
-    $.getFilename('')
+    getFilename('')
     throw new Error('empty input should throw error')
   } catch (err) {
     if (!(err instanceof Error) || !err.message.includes('empty input')) {
@@ -102,7 +102,7 @@ const g = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`directory/dot path handling failed for ${input}`)
   }
@@ -128,7 +128,7 @@ const h = () => {
   ]
 
   for (const [input, expected] of tests) {
-    const result = $.getFilename(input)
+    const result = getFilename(input)
     if (result !== expected)
       throw new Error(`complex filename handling failed for ${input}`)
   }
