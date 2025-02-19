@@ -1,4 +1,4 @@
-import { echo, glob, read } from 'fire-keeper'
+import { echo, glob, read } from '../src'
 
 const LIST_EXCLUDE_EXACT = [
   '@bilibili-firebird/activity-utils',
@@ -18,7 +18,7 @@ const LIST_EXCLUDE_EXACT = [
   '@types/node',
   'autoprefixer',
   'axios',
-  'classnames',
+  'clsx',
   'dayjs',
   'fire-compiler',
   'fire-keeper',
@@ -35,7 +35,6 @@ const LIST_EXCLUDE_EXACT = [
   'swr',
   'terser',
   'ts-node',
-  'tslib',
   'typescript',
   'vite',
 ]
@@ -51,13 +50,12 @@ const LIST_EXCLUDE_INCLUDE = [
 const fetchFileContents = () =>
   echo.whisper(async () => {
     const filePaths = await glob([
-      '!./node_modules/**',
-      './rollup.config.ts',
-      './src/**/*.js',
-      './src/**/*.jsx',
       './src/**/*.ts',
       './src/**/*.tsx',
+      './src/**/*.js',
+      './src/**/*.jsx',
       './task/**/*.ts',
+      '!./node_modules/**',
     ])
 
     const fileContents: string[] = []
@@ -103,8 +101,7 @@ const main = async () => {
   const unusedDependencies = dependencies.filter(
     dep =>
       !allFileContents.includes(` from '${dep}`) &&
-      !allFileContents.includes(` from "${dep}`) &&
-      !allFileContents.includes(`import('${dep}`),
+      !allFileContents.includes(` from "${dep}`),
   )
 
   if (!unusedDependencies.length) {
