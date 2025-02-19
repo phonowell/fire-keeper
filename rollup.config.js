@@ -2,10 +2,8 @@ import { readFileSync } from 'fs'
 
 import autoExternal from 'rollup-plugin-auto-external'
 import commonjs from '@rollup/plugin-commonjs'
-import del from 'rollup-plugin-delete'
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from 'rollup-plugin-ts'
-import { visualizer } from 'rollup-plugin-visualizer'
 
 const pkg = JSON.parse(readFileSync('./package.json'))
 
@@ -65,7 +63,6 @@ const config = [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      del({ targets: 'dist' }),
       autoExternal(),
       resolve({
         extensions: ['.ts', '.js'],
@@ -75,7 +72,6 @@ const config = [
         transpiler: 'typescript',
       }),
       commonjs(),
-      visualizer(),
     ],
   },
   {
