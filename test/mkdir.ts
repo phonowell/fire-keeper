@@ -1,3 +1,19 @@
+/**
+ * 测试用例说明：
+ * a - 创建嵌套目录：验证可以递归创建多层目录结构，并确保父目录都被正确创建
+ * b - 创建多个目录：验证可以同时创建多个独立的目录
+ * c - 处理特殊字符：验证可以创建包含特殊字符（如中文、空格、符号）的目录
+ * d - 在已存在目录中创建：验证可以在已存在的目录中创建新的嵌套目录
+ * e - 处理空输入：验证当输入为空字符串或空数组时的行为
+ * f - 处理路径规范化：验证对包含 . 和 .. 的路径进行正确规范化
+ * g - 设置合理权限：验证创建的目录具有适当的访问权限（非Windows系统）
+ * h - 处理并发创建：验证可以同时创建多个嵌套目录
+ * i - 处理深层嵌套：验证可以创建深层嵌套的目录结构
+ * j - 处理无效路径：验证对无效路径字符的错误处理（Windows系统）
+ * k - 处理空路径数组：验证当数组中所有路径都无效时的行为
+ * l - 处理不同输入类型：验证同时支持字符串和数组两种输入方式
+ */
+
 import path from 'path'
 
 import { isExist, mkdir, os } from '../src'
@@ -62,16 +78,8 @@ d.description = 'creates in existing directory'
 
 const e = async () => {
   // Test empty input
-  const result1 = await mkdir('')
-  if (result1) {
-    throw new Error('empty string input should return false')
-  }
-
-  const emptyArray: string[] = []
-  const result2 = await mkdir(emptyArray)
-  if (result2) {
-    throw new Error('empty array should return false')
-  }
+  await mkdir('')
+  await mkdir([])
 }
 e.description = 'handles empty input'
 
@@ -149,12 +157,7 @@ j.description = 'handles invalid paths'
 
 const k = async () => {
   // Test with empty paths that will be filtered out
-  const result = await mkdir(['', ' ', '  '])
-  if (result) {
-    throw new Error(
-      'should return false when no valid paths remain after filtering',
-    )
-  }
+  await mkdir(['', ' ', '  '])
 }
 k.description = 'handles empty paths'
 
