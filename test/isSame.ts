@@ -2,145 +2,113 @@ import { copy, isSame, write } from '../src'
 
 import { TEMP } from './index'
 
-const a = async () => {
-  const listSource = ['./readme.md', `${TEMP}/a.md`, `${TEMP}/b.md`]
-
-  await copy(listSource[0], TEMP, 'a.md')
-  await copy(listSource[0], TEMP, 'b.md')
-
-  const result = await isSame(listSource)
-  if (!result) throw new Error('array of equal files should return true')
-}
-a.description = 'array of same files'
-
-const b = async () => {
-  const listSource = ['./readme.md', `${TEMP}/a.md`, `${TEMP}/b.md`]
-
-  await copy(listSource[0], TEMP, 'a.md')
-  await copy(listSource[0], TEMP, 'b.md')
-
-  const result = await isSame(...listSource)
-  if (!result)
-    throw new Error('spread arguments of equal files should return true')
-}
-b.description = 'spread of same files'
-
-const c = async () => {
-  const nonExistent = [`${TEMP}/null.txt`, './non-existent.md']
-  const result = await isSame(nonExistent)
-  if (result) throw new Error('non-existent files should return false')
-}
-c.description = 'non-existent files'
-
-const d = async () => {
-  // Test single path input
-  const result = await isSame('./readme.md')
-  if (result) throw new Error('single file should return false')
-}
-d.description = 'single file input'
-
-const e = async () => {
-  // Test files with different sizes
-  const file1 = `${TEMP}/size1.txt`
-  const file2 = `${TEMP}/size2.txt`
-
-  await write(file1, 'short')
-  await write(file2, 'longer content')
-
-  const result = await isSame(file1, file2)
-  if (result) throw new Error('different size files should return false')
-}
-e.description = 'size mismatch'
-
-const f = async () => {
-  // Test files with same size but different content
-  const file1 = `${TEMP}/content1.txt`
-  const file2 = `${TEMP}/content2.txt`
-
-  await write(file1, 'text1')
-  await write(file2, 'text2')
-
-  const result = await isSame(file1, file2)
-  if (result)
-    throw new Error('same size but different content should return false')
-}
-f.description = 'content mismatch'
-
-const g = async () => {
-  // Test mixed array and string arguments
-  const file1 = `${TEMP}/mix1.txt`
-  const file2 = `${TEMP}/mix2.txt`
-  const file3 = `${TEMP}/mix3.txt`
-
+// Test successful cases
+const successCases = async () => {
   const content = 'same content'
+  const files = {
+    original: './readme.md',
+    copies: [`${TEMP}/a.md`, `${TEMP}/b.md`],
+    mixed: [`${TEMP}/mix1.txt`, `${TEMP}/mix2.txt`, `${TEMP}/mix3.txt`],
+    flat: [`${TEMP}/flat1.txt`, `${TEMP}/flat2.txt`, `${TEMP}/flat3.txt`],
+  }
+
+  // Setup test files
+  await copy(files.original, TEMP, 'a.md')
+  await copy(files.original, TEMP, 'b.md')
   await Promise.all([
-    write(file1, content),
-    write(file2, content),
-    write(file3, content),
+    ...files.mixed.map(f => write(f, content)),
+    ...files.flat.map(f => write(f, content)),
   ])
 
-  const result = await isSame([file1, file2], file3)
-  if (!result) throw new Error('mixed array and string args should work')
+  // Test cases
+  const tests = [
+    {
+      name: 'array of same files',
+      fn: () => isSame([files.original, ...files.copies]),
+      expected: true,
+    },
+    {
+      name: 'spread of same files',
+      fn: () => isSame(files.original, ...files.copies),
+      expected: true,
+    },
+    {
+      name: 'mixed array and string arguments',
+      fn: () => isSame([files.mixed[0], files.mixed[1]], files.mixed[2]),
+      expected: true,
+    },
+    {
+      name: 'array flattening',
+      fn: () => isSame([files.flat[0]], files.flat[1], [files.flat[2]]),
+      expected: true,
+    },
+  ]
+
+  for (const test of tests) {
+    const result = await test.fn()
+    if (result !== test.expected) {
+      throw new Error(`${test.name} failed: expected ${test.expected}`)
+    }
+  }
 }
-g.description = 'mixed arguments'
+successCases.description = 'successful comparison cases'
 
-const h = async () => {
-  // Test array flattening
-  const file1 = `${TEMP}/flat1.txt`
-  const file2 = `${TEMP}/flat2.txt`
-  const file3 = `${TEMP}/flat3.txt`
+// Test failure cases
+const failureCases = async () => {
+  const tests = [
+    {
+      name: 'non-existent files',
+      fn: () => isSame([`${TEMP}/null.txt`, './non-existent.md']),
+    },
+    {
+      name: 'single file input',
+      fn: () => isSame('./readme.md'),
+    },
+    {
+      name: 'size mismatch',
+      setup: async () => {
+        await write(`${TEMP}/size1.txt`, 'short')
+        await write(`${TEMP}/size2.txt`, 'longer content')
+      },
+      fn: () => isSame(`${TEMP}/size1.txt`, `${TEMP}/size2.txt`),
+    },
+    {
+      name: 'content mismatch',
+      setup: async () => {
+        await write(`${TEMP}/content1.txt`, 'text1')
+        await write(`${TEMP}/content2.txt`, 'text2')
+      },
+      fn: () => isSame(`${TEMP}/content1.txt`, `${TEMP}/content2.txt`),
+    },
+    {
+      name: 'empty array input',
+      fn: () => isSame([]),
+    },
+    {
+      name: 'falsy path in arguments',
+      fn: () => isSame('./readme.md', '', './license.md'),
+    },
+    {
+      name: 'one unreadable file',
+      setup: async () => {
+        await write(`${TEMP}/valid2.txt`, 'some content')
+      },
+      fn: () => isSame(`${TEMP}/unreadable1.txt`, `${TEMP}/valid2.txt`),
+    },
+    {
+      name: 'both files unreadable',
+      fn: () => isSame(`${TEMP}/unreadable1.txt`, `${TEMP}/unreadable2.txt`),
+    },
+  ]
 
-  const content = 'flat content'
-  await Promise.all([
-    write(file1, content),
-    write(file2, content),
-    write(file3, content),
-  ])
-
-  const result = await isSame([file1], file2, [file3])
-  if (!result) throw new Error('array arguments should be flattened')
+  for (const test of tests) {
+    await test.setup?.()
+    const result = await test.fn()
+    if (result) {
+      throw new Error(`${test.name} should return false`)
+    }
+  }
 }
-h.description = 'array flattening'
+failureCases.description = 'failure cases'
 
-const i = async () => {
-  // Test empty array input
-  const result = await isSame([])
-  if (result) throw new Error('empty array should return false')
-}
-i.description = 'empty array input'
-
-const j = async () => {
-  // Test when normalizePath returns falsy for some paths
-  const result = await isSame('./readme.md', '', './license.md')
-  if (result)
-    throw new Error('paths containing empty strings should return false')
-}
-j.description = 'falsy path in arguments'
-
-const k = async () => {
-  // Test when read() returns null for one file
-  // Here we compare an unreadable/non-existent file with a valid one
-  const file1 = `${TEMP}/unreadable1.txt`
-  const file2 = `${TEMP}/valid2.txt`
-
-  // Only create the second file
-  await write(file2, 'some content')
-
-  const result = await isSame(file1, file2)
-  if (result)
-    throw new Error('comparing with unreadable file should return false')
-}
-k.description = 'one unreadable file'
-
-const l = async () => {
-  // Test when read() returns null for both files
-  const file1 = `${TEMP}/unreadable1.txt`
-  const file2 = `${TEMP}/unreadable2.txt`
-
-  const result = await isSame(file1, file2)
-  if (result)
-    throw new Error('comparing two unreadable files should return false')
-}
-l.description = 'both files unreadable'
-
-export { a, b, c, d, e, f, g, h, i, j, k, l }
+export { successCases, failureCases }
