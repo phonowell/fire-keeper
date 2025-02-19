@@ -20,21 +20,37 @@ const isListedAsSource = (
   Array.isArray(input) && !!(input as ListSource).__IS_LISTED_AS_SOURCE__
 
 /**
- * List files or directories.
- * @param input - The input.
- * @param options - The options.
- * @returns The list source.
+ * List files or directories using glob patterns.
+ * @param {string | string[] | ListSource} input - Glob pattern(s) to match files or directories
+ * @param {Options} [options] - Additional options for glob matching
+ * @returns {Promise<ListSource>} A promise that resolves to an array of matched paths
  * @example
- * ```
- * const list = await glob('*.txt')
- * console.log(list)
+ * ```typescript
+ * // Basic usage with single pattern
+ * const list = await glob('*.txt');
+ * console.log(list);
  * //=> ['a.txt', 'b.txt']
+ *
+ * // Multiple patterns
+ * const files = await glob(['src/*.ts', '!src/*.test.ts']);
+ * //=> ['src/index.ts', 'src/utils/helper.ts']
+ *
+ * // With options
+ * const docs = await glob('docs/*', {
+ *   absolute: true,
+ *   dot: true
+ * });
+ * //=> ['/absolute/path/docs/readme.md']
+ *
+ * // Empty or invalid input
+ * const empty = await glob('');
+ * //=> []
  * ```
  */
 const main = async (
   input: string | string[] | ListSource,
   options?: Options,
-) => {
+): Promise<ListSource> => {
   if (isListedAsSource(input)) return input
 
   if (!input) return EMPTY_RESULT

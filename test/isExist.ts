@@ -122,6 +122,29 @@ const m = async () => {
 }
 m.description = 'handles empty input'
 
+const mm = async () => {
+  // Test null/undefined values in arrays
+  if (await isExist(['valid.txt', null as unknown as string, 'also-valid.txt']))
+    throw new Error('array with null should return false')
+  if (
+    await isExist([
+      'valid.txt',
+      undefined as unknown as string,
+      'also-valid.txt',
+    ])
+  )
+    throw new Error('array with undefined should return false')
+  if (await isExist([`${TEMP}/exists.txt`, '', `${TEMP}/also-exists.txt`]))
+    throw new Error('array with empty string should return false')
+
+  // Create test files to ensure the logic isn't just always returning false
+  await write(`${TEMP}/exists.txt`, 'content')
+  await write(`${TEMP}/also-exists.txt`, 'content')
+  if (!(await isExist([`${TEMP}/exists.txt`, `${TEMP}/also-exists.txt`])))
+    throw new Error('valid paths should return true')
+}
+mm.description = 'handles null/undefined values in arrays'
+
 const n = async () => {
   // Test symbolic links
   if (os() === 'windows') return // Skip on Windows
@@ -167,4 +190,4 @@ const p = async () => {
 }
 p.description = 'handles special characters'
 
-export { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p }
+export { a, b, c, d, e, f, g, h, i, j, k, l, m, mm, n, o, p }

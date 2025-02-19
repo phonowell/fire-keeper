@@ -6,7 +6,7 @@ import echo from './echo'
 import os from './os'
 import trimEnd from './trimEnd'
 
-type Option = {
+type Options = {
   silent?: boolean
 }
 
@@ -17,16 +17,33 @@ type Result = [number, string, string[]]
 const separator = os() === 'windows' ? ' && ' : '; '
 
 /**
- * Execute the command.
- * @param cmd The command.
- * @param option The option.
- * @returns The result.
+ * Execute a shell command either synchronously or asynchronously.
+ * @param cmd - The command to execute. Can be a single string command or an array of commands.
+ * @param options - Configuration options for command execution.
+ * @param {boolean} [option.silent=false] - If true, suppresses command output logging.
+ * @returns {Promise<[number, string, string[]]>} A promise that resolves to a tuple containing:
+ *   - [0]: Exit code (number)
+ *   - [1]: Last output message (string)
+ *   - [2]: Array of all output messages (string[])
  * @example
- * ```
- * const [code, last, all] = await exec('echo "Hello, world!"')
+ * ```typescript
+ * // Single command
+ * const [code, last, all] = await exec('echo "Hello, world!"');
+ *
+ * // Multiple commands
+ * const [code, last, all] = await exec([
+ *   'npm install',
+ *   'npm run build'
+ * ]);
+ *
+ * // Silent execution
+ * const [code, last, all] = await exec('git status', { silent: true });
  * ```
  */
-const exec = (cmd: string | string[], option: Option = {}) => {
+const exec = (
+  cmd: string | string[],
+  { silent = false }: Options = {},
+): Promise<Result> => {
   const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
 
   const [cmder, arg] =
@@ -34,7 +51,7 @@ const exec = (cmd: string | string[], option: Option = {}) => {
       ? ['cmd.exe', ['/s', '/c', stringCmd]]
       : ['/bin/sh', ['-c', stringCmd]]
 
-  if (!option.silent) echo('exec', stringCmd)
+  if (!silent) echo('exec', stringCmd)
 
   return new Promise<Result>(resolve => {
     const cacheAll: string[] = []
@@ -46,14 +63,14 @@ const exec = (cmd: string | string[], option: Option = {}) => {
       const message = parseMessage(data)
       cacheAll.push(message)
       cacheLast = message
-      if (!option.silent) info('error', message)
+      if (!silent) info('error', message)
     })
 
     process.stdout.on('data', (data: Uint8Array) => {
       const message = parseMessage(data)
       cacheAll.push(message)
       cacheLast = message
-      if (!option.silent) info('default', message)
+      if (!silent) info('default', message)
     })
 
     process.on('close', (code: number) => resolve([code, cacheLast, cacheAll]))

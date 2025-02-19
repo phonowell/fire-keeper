@@ -1,13 +1,26 @@
 import getName from './getName'
 
 /**
- * Get dirname from path
- * @param input string
- * @returns string
+ * Extracts the directory name from a file path.
+ * @param {string} input - The file path to process
+ * @returns {string} The directory name component of the path
  * @example
- * ```
- * const dirname = getDirname('./src/file.txt')
+ * ```typescript
+ * // Basic usage with relative path
+ * const dirname = getDirname('./src/file.txt');
  * //=> 'src'
+ *
+ * // With absolute path
+ * const root = getDirname('/usr/local/bin/app');
+ * //=> '/usr/local/bin'
+ *
+ * // With nested directories
+ * const nested = getDirname('project/src/components/Button.tsx');
+ * //=> 'project/src/components'
+ *
+ * // Current directory
+ * const current = getDirname('./config.json');
+ * //=> '.'
  * ```
  */
 const getDirname = (input: string) => getName(input).dirname

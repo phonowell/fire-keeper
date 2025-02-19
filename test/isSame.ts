@@ -109,4 +109,38 @@ const i = async () => {
 }
 i.description = 'empty array input'
 
-export { a, b, c, d, e, f, g, h, i }
+const j = async () => {
+  // Test when normalizePath returns falsy for some paths
+  const result = await isSame('./readme.md', '', './license.md')
+  if (result)
+    throw new Error('paths containing empty strings should return false')
+}
+j.description = 'falsy path in arguments'
+
+const k = async () => {
+  // Test when read() returns null for one file
+  // Here we compare an unreadable/non-existent file with a valid one
+  const file1 = `${TEMP}/unreadable1.txt`
+  const file2 = `${TEMP}/valid2.txt`
+
+  // Only create the second file
+  await write(file2, 'some content')
+
+  const result = await isSame(file1, file2)
+  if (result)
+    throw new Error('comparing with unreadable file should return false')
+}
+k.description = 'one unreadable file'
+
+const l = async () => {
+  // Test when read() returns null for both files
+  const file1 = `${TEMP}/unreadable1.txt`
+  const file2 = `${TEMP}/unreadable2.txt`
+
+  const result = await isSame(file1, file2)
+  if (result)
+    throw new Error('comparing two unreadable files should return false')
+}
+l.description = 'both files unreadable'
+
+export { a, b, c, d, e, f, g, h, i, j, k, l }
