@@ -71,5 +71,5 @@
   "sideEffects": false,
   "types": "./dist/index.d.ts",
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.218"
+  "version": "0.0.219"
 }
