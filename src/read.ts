@@ -40,13 +40,42 @@ const EXTNAMES = [
 ] as const
 
 /**
- * Read a file.
- * @param source The source file.
- * @param options The option.
- * @returns The promise.
+ * Read a file with automatic content parsing based on file extension.
+ * @param {S} source - The path to the file to read
+ * @param {Object} [options] - Reading options
+ * @param {boolean} [options.raw=false] - If true, returns raw buffer instead of parsed content
+ * @returns {Promise<Result<T, S, R> | undefined>} Promise that resolves to:
+ *   - Parsed JSON for .json files
+ *   - Parsed YAML for .yaml/.yml files
+ *   - String content for text-based files (.txt, .md, .ts, etc.)
+ *   - Raw buffer for other file types
+ *   - undefined if file doesn't exist
  * @example
- * ```
- * const content = await read('file.txt')
+ * ```typescript
+ * // Read text file
+ * const text = await read('readme.md');
+ * //=> string content
+ *
+ * // Read JSON file with type inference
+ * const config = await read('tsconfig.json');
+ * //=> parsed JSON object
+ *
+ * // Read YAML file
+ * const data = await read('config.yml');
+ * //=> parsed YAML object
+ *
+ * // Read binary file in raw mode
+ * const buffer = await read('image.png', { raw: true });
+ * //=> Buffer
+ *
+ * // Handle non-existent file
+ * const missing = await read('not-found.txt');
+ * //=> undefined
+ *
+ * // With type parameters
+ * interface Config { port: number }
+ * const config = await read<Config>('config.json');
+ * //=> { port: number }
  * ```
  */
 const read = async <
