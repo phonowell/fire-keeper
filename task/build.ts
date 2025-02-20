@@ -1,13 +1,16 @@
-import { getBasename, glob, read, remove, write } from '../src'
+import { exec, getBasename, glob, read, remove, write } from '../src'
 
 const main = async () => {
   await cleanup()
   await makeIndex()
   await replaceRollup()
   await replaceTest()
+  await generateDocs()
 }
 
 const cleanup = () => remove('./dist')
+
+const generateDocs = () => exec('pnpm doc')
 
 const makeIndex = async () => {
   const listModule = await makeListModule()

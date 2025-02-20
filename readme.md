@@ -14,3 +14,7 @@ pnpm i fire-keeper
 import { backup } from 'fire-keeper'
 await backup('./data.txt')
 ```
+
+## 文档
+
+- [TypeDoc](./docs/README.md)
