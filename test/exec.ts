@@ -1,24 +1,33 @@
+/*
+exec 模块测试用例说明：
+1. 执行基本命令（返回退出码和版本信息）
+2. 处理命令执行失败（非零退出码）
+3. 执行多条命令串联（验证顺序执行和输出）
+4. 捕获标准错误输出（包含错误关键字）
+5. 处理多行输出（验证输出顺序和内容）
+6. 处理不同平台换行符（统一格式）
+7. 验证命令分隔符正确性（平台特定分隔符）
+8. 静默模式测试（不输出日志）
+*/
+
 import { exec, os, at } from '../src'
 
 import { TEMP } from './index'
 
-const a = async () => {
-  // Test basic command execution
+const testBasicCommand = async () => {
   const [code, result] = await exec('node --version')
   if (code !== 0) throw new Error('command failed')
   if (!/v\d+\.\d+\.\d+/.test(result)) throw new Error('invalid version format')
 }
-a.description = 'executes basic command'
+testBasicCommand.description = 'executes basic command'
 
-const b = async () => {
-  // Test command failure
+const testCommandFailure = async () => {
   const [code] = await exec('non-existent-command')
   if (!code) throw new Error('should fail with non-zero code')
 }
-b.description = 'handles command failure'
+testCommandFailure.description = 'handles command failure'
 
-const c = async () => {
-  // Test array of commands
+const testCommandArray = async () => {
   const commands = [
     `mkdir -p ${TEMP}/exec`,
     `echo "test" > ${TEMP}/exec/test.txt`,
@@ -28,10 +37,9 @@ const c = async () => {
   if (code !== 0) throw new Error('commands failed')
   if (result !== 'test') throw new Error('command output incorrect')
 }
-c.description = 'executes command array'
+testCommandArray.description = 'executes command array'
 
-const e = async () => {
-  // Test stderr output
+const testStderrCapture = async () => {
   const command = os() === 'windows' ? 'dir /invalid-flag' : 'ls --invalid-flag'
 
   const [code, lastOutput, allOutputs] = await exec(command, { silent: true })
@@ -48,10 +56,9 @@ const e = async () => {
   if (lastOutput !== allOutputs[allOutputs.length - 1])
     throw new Error('last output tracking failed')
 }
-e.description = 'captures stderr'
+testStderrCapture.description = 'captures stderr'
 
-const f = async () => {
-  // Test multiple outputs
+const testMultipleOutputs = async () => {
   const commands = ['echo "line1"', 'echo "line2"', 'echo "line3"']
   const [code, lastOutput, allOutputs] = await exec(commands)
   if (code !== 0) throw new Error('commands failed')
@@ -62,10 +69,9 @@ const f = async () => {
   if (at(lastOutput.split('\n'), -1) !== 'line3')
     throw new Error('last output incorrect')
 }
-f.description = 'handles multiple outputs'
+testMultipleOutputs.description = 'handles multiple outputs'
 
-const g = async () => {
-  // Test line ending handling
+const testLineEndings = async () => {
   const command =
     os() === 'windows'
       ? 'echo "line1\r\nline2\r\n\r\nline3"'
@@ -79,10 +85,9 @@ const g = async () => {
   if (lines.join('') !== 'line1line2line3')
     throw new Error('content not preserved')
 }
-g.description = 'handles line endings'
+testLineEndings.description = 'handles line endings'
 
-const h = async () => {
-  // Test OS-specific separators
+const testCommandSeparators = async () => {
   const commands = ['echo "first"', 'echo "second"']
   const [code, lastOutput, allOutputs] = await exec(commands)
   if (code !== 0) throw new Error('commands failed')
@@ -91,18 +96,33 @@ const h = async () => {
   if (at(lastOutput.split('\n'), -1) !== 'second')
     throw new Error('last output incorrect')
 }
-h.description = 'uses OS-specific separators'
+testCommandSeparators.description = 'uses OS-specific separators'
 
-const i = async () => {
-  // Test command with environment
-  const commands =
-    os() === 'windows'
-      ? [`set "NODE_ENV=test" && node -e "console.log(process.env.NODE_ENV)"`]
-      : [`NODE_ENV=test node -e "console.log(process.env.NODE_ENV)"`]
-  const [code, result] = await exec(commands)
-  if (code !== 0) throw new Error('command with env failed')
-  if (!result.includes('test')) throw new Error('environment not passed')
+const testSilentMode = async () => {
+  const originalConsole = console.log
+  let loggedMessages = 0
+  console.log = () => loggedMessages++
+
+  try {
+    await exec('echo "silent test"', { silent: true })
+    if (loggedMessages > 0) throw new Error('Logs should be suppressed')
+
+    const [, result] = await exec('echo "non-silent test"')
+    if (loggedMessages === 0) throw new Error('Logs should be displayed')
+    if (!result.includes('non-silent')) throw new Error('Output mismatch')
+  } finally {
+    console.log = originalConsole
+  }
 }
-i.description = 'handles environment variables'
+testSilentMode.description = 'suppresses output in silent mode'
 
-export { a, b, c, e, f, g, h, i }
+export {
+  testBasicCommand,
+  testCommandFailure,
+  testCommandArray,
+  testStderrCapture,
+  testMultipleOutputs,
+  testLineEndings,
+  testCommandSeparators,
+  testSilentMode,
+}
