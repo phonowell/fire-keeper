@@ -1,3 +1,23 @@
+/*
+download 模块测试用例说明：
+1. 参数验证：
+  - 空URL检测
+  - 空目录检测
+2. 成功场景：
+  - 自动获取文件名下载
+  - 自定义文件名下载
+  - 自动创建目录
+  - 路径规范化处理
+3. 文件验证：
+  - 二进制文件下载
+  - 大文件下载验证
+4. 错误处理：
+  - 404响应处理
+  - 空响应体检测
+5. 特殊场景：
+  - Unicode文件名支持
+*/
+
 import { Buffer } from 'buffer'
 
 import { download, isExist, read, getFilename } from '../src'
@@ -5,7 +25,7 @@ import { download, isExist, read, getFilename } from '../src'
 import { TEMP } from './index'
 
 // Test parameter validation
-const validationTest = async (): Promise<void> => {
+const testParameterValidation = async (): Promise<void> => {
   // Test missing URL
   await download('', `${TEMP}/download-test`).catch((error: unknown) => {
     if (!(error instanceof Error) || !error.message.includes('empty input')) {
@@ -23,10 +43,35 @@ const validationTest = async (): Promise<void> => {
     }
   })
 }
-validationTest.description = 'validates required parameters'
+testParameterValidation.description = 'Parameter Validation'
 
-// Test success cases with auto and custom filenames
-const successTest = async (): Promise<void> => {
+// Test auto directory creation
+const testAutoCreateDir = async (): Promise<void> => {
+  const url = 'https://httpbin.org/bytes/100'
+  const dir = `${TEMP}/new-dir-${Date.now()}`
+  const filename = 'auto-create-dir.txt'
+
+  await download(url, dir, filename)
+  if (!(await isExist(`${dir}/${filename}`))) {
+    throw Error('Directory was not auto-created')
+  }
+}
+
+// Test path normalization
+const testPathNormalization = async (): Promise<void> => {
+  const url = 'https://httpbin.org/bytes/100'
+  const dir = `${TEMP}/.//path/norm/../test`
+  const filename = 'path-test.txt'
+
+  await download(url, dir, filename)
+  const normalizedPath = `${TEMP}/path/test/${filename}`
+  if (!(await isExist(normalizedPath))) {
+    throw Error('Path normalization failed')
+  }
+}
+
+// Test successful download scenarios
+const testSuccessfulDownload = async (): Promise<void> => {
   const url = 'https://httpbin.org/bytes/100'
   const dir = `${TEMP}/download-test`
 
@@ -43,10 +88,10 @@ const successTest = async (): Promise<void> => {
   if (!(await isExist(`${dir}/${customFilename}`)))
     throw Error('download with custom filename failed')
 }
-successTest.description = 'handles successful downloads'
+testSuccessfulDownload.description = 'Successful Download Scenarios'
 
-// Test binary content and large file handling
-const binaryAndSizeTest = async (): Promise<void> => {
+// Test file content validation
+const testFileContent = async (): Promise<void> => {
   const url = 'https://httpbin.org/bytes/102400'
   const dir = `${TEMP}/download-test`
   const filename = 'large.bin'
@@ -59,10 +104,10 @@ const binaryAndSizeTest = async (): Promise<void> => {
   if (!(content instanceof Buffer)) throw Error('content should be binary')
   if (content.length !== 102400) throw Error('file size mismatch')
 }
-binaryAndSizeTest.description = 'verifies binary content and file size'
+testFileContent.description = 'File Content Validation'
 
-// Test error cases
-const errorTest = async (): Promise<void> => {
+// Test error response handling
+const testErrorResponses = async (): Promise<void> => {
   // Test invalid URL response
   const badUrl = 'https://httpbin.org/status/404'
   try {
@@ -71,7 +116,7 @@ const errorTest = async (): Promise<void> => {
   } catch (error) {
     if (
       !(error instanceof Error) ||
-      !error.message.includes('unexpected response')
+      !error.message.toLowerCase().includes('not found')
     )
       throw Error('wrong error for bad response')
   }
@@ -84,7 +129,7 @@ const errorTest = async (): Promise<void> => {
   } catch (error) {
     if (
       !(error instanceof Error) ||
-      !error.message.includes('No response body')
+      !error.message.toLowerCase().includes('response has no body')
     )
       throw Error('wrong error for empty response')
   }
@@ -96,6 +141,13 @@ const errorTest = async (): Promise<void> => {
   if (!(await isExist(`${TEMP}/download-test/${filename}`)))
     throw Error('unicode filename test failed')
 }
-errorTest.description = 'handles error cases and special filenames'
+testErrorResponses.description = 'Error Response Handling'
 
-export { validationTest, successTest, binaryAndSizeTest, errorTest }
+export {
+  testParameterValidation,
+  testAutoCreateDir,
+  testPathNormalization,
+  testSuccessfulDownload,
+  testFileContent,
+  testErrorResponses,
+}
