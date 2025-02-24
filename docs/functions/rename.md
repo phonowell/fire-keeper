@@ -8,7 +8,7 @@
 
 > **rename**(`source`, `target`): `Promise`\<`void`\>
 
-Defined in: [rename.ts:17](https://github.com/phonowell/fire-keeper/blob/master/src/rename.ts#L17)
+Defined in: [rename.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/rename.ts#L17)
 
 Rename a file or directory.
 

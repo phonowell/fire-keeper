@@ -8,7 +8,7 @@
 
 > **prompt**\<`T`, `U`\>(`option`): `Promise`\<`T` & `Result`\<`U`, `T`\>\>
 
-Defined in: [prompt.ts:306](https://github.com/phonowell/fire-keeper/blob/master/src/prompt.ts#L306)
+Defined in: [prompt.ts:306](https://github.com/phonowell/fire-keeper/blob/main/src/prompt.ts#L306)
 
 Prompt the user.
 

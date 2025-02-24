@@ -8,7 +8,7 @@
 
 > **argv**(): `Promise`\<\{ `[x: string]`: `unknown`;  `_`: (`string` \| `number`)[]; `$0`: `string`; \}\>
 
-Defined in: [argv.ts:13](https://github.com/phonowell/fire-keeper/blob/master/src/argv.ts#L13)
+Defined in: [argv.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/argv.ts#L13)
 
 Get the arguments.
 

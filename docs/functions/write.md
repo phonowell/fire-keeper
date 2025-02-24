@@ -8,7 +8,7 @@
 
 > **write**(`source`, `content`, `options`?): `Promise`\<`void`\>
 
-Defined in: [write.ts:42](https://github.com/phonowell/fire-keeper/blob/master/src/write.ts#L42)
+Defined in: [write.ts:42](https://github.com/phonowell/fire-keeper/blob/main/src/write.ts#L42)
 
 Writes provided content to a specified file.
 

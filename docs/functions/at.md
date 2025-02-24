@@ -8,7 +8,7 @@
 
 > **at**\<`T`\>(`input`, `key`): `undefined` \| `T`
 
-Defined in: [at.ts:29](https://github.com/phonowell/fire-keeper/blob/master/src/at.ts#L29)
+Defined in: [at.ts:29](https://github.com/phonowell/fire-keeper/blob/main/src/at.ts#L29)
 
 Get the value at the specified index or key.
 

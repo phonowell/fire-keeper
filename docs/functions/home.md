@@ -8,7 +8,7 @@
 
 > **home**(): `string`
 
-Defined in: [home.ts:21](https://github.com/phonowell/fire-keeper/blob/master/src/home.ts#L21)
+Defined in: [home.ts:21](https://github.com/phonowell/fire-keeper/blob/main/src/home.ts#L21)
 
 Get the user's home directory with normalized forward slashes.
 

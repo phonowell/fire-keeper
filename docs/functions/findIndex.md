@@ -8,7 +8,7 @@
 
 > **findIndex**\<`T`\>(`list`, `fn`): `number`
 
-Defined in: [findIndex.ts:24](https://github.com/phonowell/fire-keeper/blob/master/src/findIndex.ts#L24)
+Defined in: [findIndex.ts:24](https://github.com/phonowell/fire-keeper/blob/main/src/findIndex.ts#L24)
 
 Returns the index of the first element in an array that satisfies the provided testing function.
 

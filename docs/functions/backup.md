@@ -8,7 +8,7 @@
 
 > **backup**(`source`, `options`): `Promise`\<`void`\>
 
-Defined in: [backup.ts:35](https://github.com/phonowell/fire-keeper/blob/master/src/backup.ts#L35)
+Defined in: [backup.ts:35](https://github.com/phonowell/fire-keeper/blob/main/src/backup.ts#L35)
 
 Backs up files by creating .bak copies.
 For each source file, creates a copy with '.bak' extension in the same directory.

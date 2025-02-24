@@ -8,7 +8,7 @@
 
 > **watch**(`listSource`, `callback`, `options`): `void`
 
-Defined in: [watch.ts:22](https://github.com/phonowell/fire-keeper/blob/master/src/watch.ts#L22)
+Defined in: [watch.ts:22](https://github.com/phonowell/fire-keeper/blob/main/src/watch.ts#L22)
 
 Watch the file or directory.
 

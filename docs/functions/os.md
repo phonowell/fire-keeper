@@ -8,7 +8,7 @@
 
 > **os**(): `"unknown"` \| `"macos"` \| `"windows"`
 
-Defined in: [os.ts:10](https://github.com/phonowell/fire-keeper/blob/master/src/os.ts#L10)
+Defined in: [os.ts:10](https://github.com/phonowell/fire-keeper/blob/main/src/os.ts#L10)
 
 Get the current operating system.
 

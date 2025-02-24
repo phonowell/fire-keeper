@@ -8,7 +8,7 @@
 
 > **normalizePath**(`input`): `string`
 
-Defined in: [normalizePath.ts:17](https://github.com/phonowell/fire-keeper/blob/master/src/normalizePath.ts#L17)
+Defined in: [normalizePath.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/normalizePath.ts#L17)
 
 Normalize path
 

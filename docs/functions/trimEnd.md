@@ -8,7 +8,7 @@
 
 > **trimEnd**(`source`, `chars`?): `string`
 
-Defined in: [trimEnd.ts:29](https://github.com/phonowell/fire-keeper/blob/master/src/trimEnd.ts#L29)
+Defined in: [trimEnd.ts:29](https://github.com/phonowell/fire-keeper/blob/main/src/trimEnd.ts#L29)
 
 Removes specified characters from the end of a string.
 

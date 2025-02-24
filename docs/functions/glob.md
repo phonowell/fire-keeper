@@ -8,7 +8,7 @@
 
 > **glob**(`input`, `options`?): `Promise`\<`ListSource`\>
 
-Defined in: [glob.ts:51](https://github.com/phonowell/fire-keeper/blob/master/src/glob.ts#L51)
+Defined in: [glob.ts:51](https://github.com/phonowell/fire-keeper/blob/main/src/glob.ts#L51)
 
 List files or directories using glob patterns.
 

@@ -8,7 +8,7 @@
 
 > **copy**(`source`, `target`?, `options`?): `Promise`\<`void`\>
 
-Defined in: [copy.ts:77](https://github.com/phonowell/fire-keeper/blob/master/src/copy.ts#L77)
+Defined in: [copy.ts:77](https://github.com/phonowell/fire-keeper/blob/main/src/copy.ts#L77)
 
 Copy files or directories with support for concurrent operations and flexible naming.
 

@@ -8,7 +8,7 @@
 
 > **getName**(`input`): `object`
 
-Defined in: [getName.ts:13](https://github.com/phonowell/fire-keeper/blob/master/src/getName.ts#L13)
+Defined in: [getName.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/getName.ts#L13)
 
 Get name from path
 

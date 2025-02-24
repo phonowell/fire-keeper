@@ -8,7 +8,7 @@
 
 > **toDate**(`input`): `Date`
 
-Defined in: [toDate.ts:12](https://github.com/phonowell/fire-keeper/blob/master/src/toDate.ts#L12)
+Defined in: [toDate.ts:12](https://github.com/phonowell/fire-keeper/blob/main/src/toDate.ts#L12)
 
 Convert input to Date object
 

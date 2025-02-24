@@ -8,7 +8,7 @@
 
 > **exec**(`cmd`, `options`): `Promise`\<`Result`\>
 
-Defined in: [exec.ts:43](https://github.com/phonowell/fire-keeper/blob/master/src/exec.ts#L43)
+Defined in: [exec.ts:43](https://github.com/phonowell/fire-keeper/blob/main/src/exec.ts#L43)
 
 Execute a shell command either synchronously or asynchronously.
 

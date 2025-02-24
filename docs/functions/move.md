@@ -8,7 +8,7 @@
 
 > **move**(`source`, `target`, `options`?): `Promise`\<`void`\>
 
-Defined in: [move.ts:42](https://github.com/phonowell/fire-keeper/blob/master/src/move.ts#L42)
+Defined in: [move.ts:42](https://github.com/phonowell/fire-keeper/blob/main/src/move.ts#L42)
 
 Move files or directories.
 

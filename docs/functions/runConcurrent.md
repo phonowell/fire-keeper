@@ -8,7 +8,7 @@
 
 > **runConcurrent**\<`T`\>(`concurrency`, `tasks`, `options`): `Promise`\<`T`[]\>
 
-Defined in: [runConcurrent.ts:9](https://github.com/phonowell/fire-keeper/blob/master/src/runConcurrent.ts#L9)
+Defined in: [runConcurrent.ts:9](https://github.com/phonowell/fire-keeper/blob/main/src/runConcurrent.ts#L9)
 
 Execute asynchronous tasks concurrently.
 

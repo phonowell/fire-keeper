@@ -8,7 +8,7 @@
 
 > **getDirname**(`input`): `string`
 
-Defined in: [getDirname.ts:26](https://github.com/phonowell/fire-keeper/blob/master/src/getDirname.ts#L26)
+Defined in: [getDirname.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/getDirname.ts#L26)
 
 Extracts the directory name from a file path.
 
