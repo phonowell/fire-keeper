@@ -51,7 +51,7 @@ const mkdir = async (
 
   await runConcurrent(
     concurrency,
-    patterns.map(pattern => () => fse.ensureDir(pattern)),
+    patterns.map((pattern) => () => fse.ensureDir(pattern)),
   )
 
   echo('mkdir', `created ${wrapList(source)}`)

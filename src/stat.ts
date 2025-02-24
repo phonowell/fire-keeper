@@ -32,7 +32,7 @@ const stat = async (source: string): Promise<fs.Stats | null> => {
     return null
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     fs.stat(listSource[0], (err, stat) => {
       if (err) throw err
       resolve(stat)

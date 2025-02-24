@@ -96,7 +96,7 @@ const copy = async (
   // 并发复制
   await runConcurrent(
     c,
-    listSource.map(src => () => child(src, target, options)),
+    listSource.map((src) => () => child(src, target, options)),
   )
 
   // 输出信息
@@ -107,7 +107,7 @@ const copy = async (
       !!target && typeof target === 'string' ? `to '${target}'` : '',
       !!options && typeof options === 'string' ? `as '${options}'` : '',
     ]
-      .filter(it => !!it)
+      .filter((it) => !!it)
       .join(' ')
       .trim(),
   )

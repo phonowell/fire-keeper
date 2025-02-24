@@ -52,7 +52,7 @@ const remove = async (
 
   await runConcurrent(
     concurrency,
-    listSource.map(src => () => fse.remove(src)),
+    listSource.map((src) => () => fse.remove(src)),
   )
 
   echo('remove', `removed ${wrapList(source)}`)

@@ -28,7 +28,7 @@ const execute = async (
 
   const listResource = await glob(listSource)
 
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     const output = fs.createWriteStream(`${target}/${filename}`)
     const archive = archiver('zip', {
       zlib: {
@@ -39,14 +39,14 @@ const execute = async (
 
     archive.on('end', () => resolve(true))
 
-    archive.on('entry', e => (message = renderPath(e.name)))
+    archive.on('entry', (e) => (message = renderPath(e.name)))
 
-    archive.on('error', e => {
+    archive.on('error', (e) => {
       console.log(kleur.red(e.message))
       throw e
     })
 
-    archive.on('progress', e => {
+    archive.on('progress', (e) => {
       if (!message) return
 
       const gray = kleur.gray(
@@ -58,7 +58,7 @@ const execute = async (
       message = ''
     })
 
-    archive.on('warning', e => {
+    archive.on('warning', (e) => {
       console.log(kleur.red(e.message))
       throw e
     })

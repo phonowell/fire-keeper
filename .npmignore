@@ -1,26 +1,19 @@
-# folder
-.history
-.idea
-.temp
-.vscode
-data/sync
-script
-secret
-source
-src
-storage
-task
-temp
-test
-# file
+# Directories
+.history/
+.idea/
+.temp/
+.vscode/
+src/
+test/
+temp/
+
+# Development files
 *.coffee
 *.map
-*.md
 *.ts
 .eslintrc.yaml
-.stylintrc
-coffeelint.json
 tsconfig.json
 tslint.json
-# inlcude
+
+# Allow TypeScript declarations
 !*.d.ts

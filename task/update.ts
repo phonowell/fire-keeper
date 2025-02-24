@@ -35,14 +35,14 @@ const updateDependencies = async () => {
     .map(([name]) => name)
 
   if (depsToUpdate.length) {
-    const list = depsToUpdate.map(name => `${name}@latest`).join(' ')
+    const list = depsToUpdate.map((name) => `${name}@latest`).join(' ')
     await exec(`pnpm install ${list}`)
   }
 
   echo(
     [
       'These dependencies have been locked:',
-      ...lockedDeps.map(it => `'${it.join('@')}'`),
+      ...lockedDeps.map((it) => `'${it.join('@')}'`),
     ].join('\n'),
   )
 }

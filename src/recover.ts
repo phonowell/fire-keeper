@@ -35,7 +35,7 @@ const recover = async (
   { concurrency = 5 }: Options = {},
 ): Promise<void> => {
   const listSource = await glob(
-    toArray(source).map(src => `${src}.bak`),
+    toArray(source).map((src) => `${src}.bak`),
     {
       onlyFiles: true,
     },
@@ -47,7 +47,7 @@ const recover = async (
 
   await runConcurrent(
     concurrency,
-    listSource.map(src => () => child(src)),
+    listSource.map((src) => () => child(src)),
   )
 
   echo('recover', `recovered ${wrapList(source)}`)

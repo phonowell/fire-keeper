@@ -19,19 +19,15 @@ const root = () => {
   const parts = path.split('/').filter(Boolean)
 
   // Validate path structure
-  if (parts.length < 1) {
-    throw new Error('Invalid path: path is empty')
-  }
+  if (parts.length < 1) throw new Error('Invalid path: path is empty')
 
   // Validate characters
-  if (parts.some(p => /[<>:"|?*]/.test(p))) {
+  if (parts.some((p) => /[<>:"|?*]/.test(p)))
     throw new Error('Invalid path: contains forbidden characters')
-  }
 
   // Check for illegal path patterns
-  if (parts.some(p => p === '.' || p === '..')) {
+  if (parts.some((p) => p === '.' || p === '..'))
     throw new Error('Invalid path: contains relative path components')
-  }
 
   return `/${parts.join('/')}`
 }

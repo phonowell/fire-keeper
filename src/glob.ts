@@ -1,4 +1,5 @@
-import glob, { Options } from 'fast-glob'
+import type { Options } from 'fast-glob'
+import glob from 'fast-glob'
 
 import normalizePath from './normalizePath'
 import toArray from './toArray'

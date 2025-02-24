@@ -53,7 +53,7 @@ const exec = (
 
   if (!silent) echo('exec', stringCmd)
 
-  return new Promise<Result>(resolve => {
+  return new Promise<Result>((resolve) => {
     const cacheAll: string[] = []
     let cacheLast = ''
 

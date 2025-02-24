@@ -326,7 +326,7 @@ const pickDefault = <T>(list: Choice<T>[], value: unknown = 0): number => {
     if (0 - value - 1 < 0) return 0
     return list.length + value
   }
-  return findIndex(list, it => value === it.value)
+  return findIndex(list, (it) => value === it.value)
 }
 
 const setCache = async <T>(option: Option<Type, T>, value: unknown) => {
@@ -341,7 +341,7 @@ const setCache = async <T>(option: Option<Type, T>, value: unknown) => {
 }
 
 const transChoice = <T>(list: List<T>): Choice<T>[] =>
-  list.map(it =>
+  list.map((it) =>
     isChoice<T>(it)
       ? it
       : {

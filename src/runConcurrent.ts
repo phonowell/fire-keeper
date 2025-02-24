@@ -50,9 +50,7 @@ const runConcurrent = async <T>(
         // 收集错误信息
         errors.push(error as Error)
         // 如果配置了遇错停止,则抛出错误中断执行
-        if (options.stopOnError) {
-          throw error
-        }
+        if (options.stopOnError) throw error
       }
 
       // 继续执行下一个任务
@@ -70,9 +68,8 @@ const runConcurrent = async <T>(
   )
 
   // 如果有错误发生且未配置遇错停止,则抛出聚合错误
-  if (errors.length > 0 && !options.stopOnError) {
+  if (errors.length > 0 && !options.stopOnError)
     throw new AggregateError(errors, 'Some tasks failed to execute')
-  }
 
   return results
 }

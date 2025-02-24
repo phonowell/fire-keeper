@@ -76,7 +76,7 @@ const freeze = async <T>(
 const makeTime = (): string => {
   const date = new Date()
   return [date.getHours(), date.getMinutes(), date.getSeconds()]
-    .map(it => it.toString().padStart(2, '0'))
+    .map((it) => it.toString().padStart(2, '0'))
     .join(':')
 }
 
@@ -102,7 +102,7 @@ const render = (type: string, message: string): string =>
 const renderContent = (input: string): string =>
   renderPath(input)
     // 'xxx'
-    .replace(/'.*?'/g, text => kleur.magenta(text.replace(/'/g, '') || "''"))
+    .replace(/'.*?'/g, (text) => kleur.magenta(text.replace(/'/g, '') || "''"))
 
 const renderPath = (input: string): string =>
   input.replace(regRoot, '.').replace(regHome, '~')

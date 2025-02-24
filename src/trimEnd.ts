@@ -28,9 +28,7 @@
  */
 const trimEnd = (source: string, chars?: string) => {
   // 如果没有提供 chars，移除所有空白字符
-  if (chars === undefined) {
-    return source.replace(/\s+$/, '')
-  }
+  if (chars === undefined) return source.replace(/\s+$/, '')
 
   // 特殊字符映射
   const specialChars: Record<string, string> = {
@@ -43,10 +41,9 @@ const trimEnd = (source: string, chars?: string) => {
 
   const _chars = chars
     .split('')
-    .map(char => {
-      if (char in specialChars) {
-        return specialChars[char]
-      }
+    .map((char) => {
+      if (char in specialChars) return specialChars[char]
+
       return char.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&')
     })
     .join('|')

@@ -10,7 +10,7 @@ import echo from './echo'
  * ```
  */
 const sleep = async (delay = 0) => {
-  await new Promise(resolve => setTimeout(resolve, delay))
+  await new Promise((resolve) => setTimeout(resolve, delay))
   if (delay) echo('sleep', `slept '${delay} ms'`)
 }
 

@@ -16,7 +16,7 @@ const makeIndex = async () => {
   const listModule = await makeListModule()
 
   const content = [
-    ...listModule.map(it => `import ${it} from './${it}'`),
+    ...listModule.map((it) => `import ${it} from './${it}'`),
     '',
     'export {',
     `  ${listModule.join(',\n  ')},`,
@@ -41,7 +41,7 @@ const replaceRollup = async () => {
   const content = cont.replace(
     /const input = {[\s\S]*?}/,
     `const input = {\n${listModule
-      .map(it => `  ${it}: 'src/${it}.ts',`)
+      .map((it) => `  ${it}: 'src/${it}.ts',`)
       .join('\n')}\n}`,
   )
   await write(source, content)
@@ -58,10 +58,10 @@ const replaceTest = async () => {
     '',
     "import { argv, echo, normalizePath, remove } from '../src'",
     '',
-    ...listTest.map(it => `import * as ${it}Tests from './${it}'`),
+    ...listTest.map((it) => `import * as ${it}Tests from './${it}'`),
     '',
     'const mapModule = {',
-    ...listTest.map(it => `  ${it}: ${it}Tests,`),
+    ...listTest.map((it) => `  ${it}: ${it}Tests,`),
     '}',
     '',
     '// ---',

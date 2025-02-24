@@ -54,13 +54,13 @@ const loadTasks = async (): Promise<string[]> => {
   const sources = await glob(['./task/**/*.js', './task/**/*.ts', '!*.d.ts'])
 
   return sources
-    .map(source =>
+    .map((source) =>
       [getBasename(source), getDirname(source).replace(`${root()}/task`, '')]
-        .map(it => trim(it, ' /'))
+        .map((it) => trim(it, ' /'))
         .filter(Boolean)
         .join('@'),
     )
-    .filter(source => !['index', 'alice'].includes(source))
+    .filter((source) => !['index', 'alice'].includes(source))
 }
 
 /**

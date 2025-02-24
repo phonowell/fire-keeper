@@ -17,7 +17,7 @@ import normalizePath from './normalizePath'
 const rename = async (source: string, target: string) => {
   const src = normalizePath(source)
   await new Promise((resolve, reject) =>
-    fs.rename(src, `${getDirname(src)}/${target}`, err => {
+    fs.rename(src, `${getDirname(src)}/${target}`, (err) => {
       if (err) reject(err)
       else resolve(undefined)
     }),

@@ -46,7 +46,7 @@ const backup = async (
 
   await copy(listSource, '', {
     concurrency,
-    filename: filename => `${filename}.bak`,
+    filename: (filename) => `${filename}.bak`,
   })
 
   echo('backup', `backed up ${wrapList(source)}`)
