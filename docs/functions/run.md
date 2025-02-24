@@ -8,7 +8,7 @@
 
 > **run**\<`T`\>(`fn`): `T`
 
-Defined in: [run.ts:6](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/run.ts#L6)
+Defined in: [run.ts:6](https://github.com/phonowell/fire-keeper/blob/master/src/run.ts#L6)
 
 Run a function
 

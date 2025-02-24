@@ -8,7 +8,7 @@
 
 > **isExist**(...`args`): `Promise`\<`boolean`\>
 
-Defined in: [isExist.ts:42](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/isExist.ts#L42)
+Defined in: [isExist.ts:42](https://github.com/phonowell/fire-keeper/blob/master/src/isExist.ts#L42)
 
 Check if one or more paths exist in the filesystem.
 

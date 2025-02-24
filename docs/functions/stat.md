@@ -8,7 +8,7 @@
 
 > **stat**(`source`): `Promise`\<`null` \| `Stats`\>
 
-Defined in: [stat.ts:26](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/stat.ts#L26)
+Defined in: [stat.ts:26](https://github.com/phonowell/fire-keeper/blob/master/src/stat.ts#L26)
 
 Get the file status of a file or directory.
 

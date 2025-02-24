@@ -8,7 +8,7 @@
 
 > **remove**(`source`, `options`): `Promise`\<`void`\>
 
-Defined in: [remove.ts:41](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/remove.ts#L41)
+Defined in: [remove.ts:41](https://github.com/phonowell/fire-keeper/blob/master/src/remove.ts#L41)
 
 Remove files or directories recursively.
 

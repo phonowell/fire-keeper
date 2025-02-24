@@ -8,7 +8,7 @@
 
 > **echo**\<`T`\>(...`args`): `T`
 
-Defined in: [echo.ts:33](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/echo.ts#L33)
+Defined in: [echo.ts:33](https://github.com/phonowell/fire-keeper/blob/master/src/echo.ts#L33)
 
 Print a message with optional type prefix and formatting
 

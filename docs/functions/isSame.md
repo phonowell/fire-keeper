@@ -8,7 +8,7 @@
 
 > **isSame**(...`args`): `Promise`\<`boolean`\>
 
-Defined in: [isSame.ts:46](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/isSame.ts#L46)
+Defined in: [isSame.ts:46](https://github.com/phonowell/fire-keeper/blob/master/src/isSame.ts#L46)
 
 Check if the content of multiple files or paths are identical.
 

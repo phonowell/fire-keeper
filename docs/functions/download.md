@@ -8,7 +8,7 @@
 
 > **download**(`url`, `dir`, `filename`?): `Promise`\<`void`\>
 
-Defined in: [download.ts:49](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/download.ts#L49)
+Defined in: [download.ts:49](https://github.com/phonowell/fire-keeper/blob/master/src/download.ts#L49)
 
 Downloads a file from a URL and saves it to the specified directory.
 

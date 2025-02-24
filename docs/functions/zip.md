@@ -8,7 +8,7 @@
 
 > **zip**(`source`, `target`, `option`): `Promise`\<`void`\>
 
-Defined in: [zip.ts:125](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/zip.ts#L125)
+Defined in: [zip.ts:125](https://github.com/phonowell/fire-keeper/blob/master/src/zip.ts#L125)
 
 Zip the source to the target.
 

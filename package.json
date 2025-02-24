@@ -65,7 +65,7 @@
   },
   "scripts": {
     "build": "pnpm task build && rollup -c rollup.config.js --bundleConfigAsCjs",
-    "doc": "typedoc --readme none --plugin typedoc-plugin-markdown ./src",
+    "doc": "typedoc ./src --gitRevision master --plugin typedoc-plugin-markdown --readme none",
     "lint": "eslint {src,task}/**/*.ts --fix",
     "task": "ts-node --swc task/index.ts",
     "test": "nyc mocha -r ts-node/register -t 10000 ./test/index.ts"

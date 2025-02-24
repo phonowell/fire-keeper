@@ -8,7 +8,7 @@
 
 > **root**(): `string`
 
-Defined in: [root.ts:12](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/root.ts#L12)
+Defined in: [root.ts:12](https://github.com/phonowell/fire-keeper/blob/master/src/root.ts#L12)
 
 Get the root path of the project
 

@@ -8,7 +8,7 @@
 
 > **flatten**\<`T`\>(`array`): `T`[]
 
-Defined in: [flatten.ts:20](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/flatten.ts#L20)
+Defined in: [flatten.ts:20](https://github.com/phonowell/fire-keeper/blob/master/src/flatten.ts#L20)
 
 Flattens a nested array structure into a single-level array.
 

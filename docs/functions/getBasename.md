@@ -8,7 +8,7 @@
 
 > **getBasename**(`input`): `string`
 
-Defined in: [getBasename.ts:26](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/getBasename.ts#L26)
+Defined in: [getBasename.ts:26](https://github.com/phonowell/fire-keeper/blob/master/src/getBasename.ts#L26)
 
 Extracts the basename (filename without extension) from a file path.
 

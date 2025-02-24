@@ -8,7 +8,7 @@
 
 > **getFilename**(`input`): `string`
 
-Defined in: [getFilename.ts:26](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/getFilename.ts#L26)
+Defined in: [getFilename.ts:26](https://github.com/phonowell/fire-keeper/blob/master/src/getFilename.ts#L26)
 
 Extracts the filename (with extension) from a file path.
 

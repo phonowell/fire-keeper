@@ -8,7 +8,7 @@
 
 > **link**(`source`, `target`): `Promise`\<`void`\>
 
-Defined in: [link.ts:39](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/link.ts#L39)
+Defined in: [link.ts:39](https://github.com/phonowell/fire-keeper/blob/master/src/link.ts#L39)
 
 Creates a symbolic link from source to target location.
 

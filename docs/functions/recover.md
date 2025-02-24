@@ -8,7 +8,7 @@
 
 > **recover**(`source`, `options`): `Promise`\<`void`\>
 
-Defined in: [recover.ts:33](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/recover.ts#L33)
+Defined in: [recover.ts:33](https://github.com/phonowell/fire-keeper/blob/master/src/recover.ts#L33)
 
 Recovers files from their backup versions (.bak files).
 

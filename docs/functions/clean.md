@@ -8,7 +8,7 @@
 
 > **clean**(`source`): `Promise`\<`void`\>
 
-Defined in: [clean.ts:37](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/clean.ts#L37)
+Defined in: [clean.ts:37](https://github.com/phonowell/fire-keeper/blob/master/src/clean.ts#L37)
 
 Clean (remove) files or directories and their empty parent directories.
 

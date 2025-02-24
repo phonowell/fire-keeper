@@ -8,7 +8,7 @@
 
 > **read**\<`T`, `S`, `R`\>(`source`, `options`?): `Promise`\<`undefined` \| `Result`\<`T`, `S`, `R`\>\>
 
-Defined in: [read.ts:81](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/read.ts#L81)
+Defined in: [read.ts:81](https://github.com/phonowell/fire-keeper/blob/master/src/read.ts#L81)
 
 Read a file with automatic content parsing based on file extension.
 

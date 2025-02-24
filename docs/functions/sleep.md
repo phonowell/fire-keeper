@@ -8,7 +8,7 @@
 
 > **sleep**(`delay`): `Promise`\<`void`\>
 
-Defined in: [sleep.ts:12](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/sleep.ts#L12)
+Defined in: [sleep.ts:12](https://github.com/phonowell/fire-keeper/blob/master/src/sleep.ts#L12)
 
 Sleep for a while.
 

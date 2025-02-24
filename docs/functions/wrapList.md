@@ -8,7 +8,7 @@
 
 > **wrapList**(`input`): `string`
 
-Defined in: [wrapList.ts:16](https://github.com/phonowell/fire-keeper/blob/862cc844119f7a539be35ffaeee5bfb3fdb4b3cd/src/wrapList.ts#L16)
+Defined in: [wrapList.ts:16](https://github.com/phonowell/fire-keeper/blob/master/src/wrapList.ts#L16)
 
 Wrap list.
 
