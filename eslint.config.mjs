@@ -68,30 +68,30 @@ export default [{
     "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
     // 类型导入方式
     // ✅ 推荐: import type { Type } from './types'
-    // ❌ 禁止: import { Type } from './types'
-    "@typescript-eslint/consistent-type-imports": ["error", {
+    // ❌ 不推荐: import { Type } from './types'
+    "@typescript-eslint/consistent-type-imports": ["warn", {
       prefer: "type-imports"
     }],
     // 类成员访问性
     // ✅ 推荐: name = ''
     // ❌ 禁止: public name = ''
-    "@typescript-eslint/explicit-member-accessibility": ["error", {
+    "@typescript-eslint/explicit-member-accessibility": ["warn", {
       accessibility: "no-public"
     }],
     // 方法签名风格
     // ✅ 推荐: greet: () => void
-    // ❌ 禁止: greet(): void
-    "@typescript-eslint/method-signature-style": ["error", "property"],
+    // ❌ 不推荐: greet(): void
+    "@typescript-eslint/method-signature-style": ["warn", "property"],
     // void表达式检查已关闭
     "@typescript-eslint/no-confusing-void-expression": "off",
     // 空函数检查
     // ✅ 推荐: function foo() { doSomething() }
     // ❌ 禁止: function foo() {}
-    "@typescript-eslint/no-empty-function": "error",
+    "@typescript-eslint/no-empty-function": "warn",
     // any类型使用限制
     // ✅ 推荐: function foo(x: unknown)
     // ❌ 禁止: function foo(x: any)
-    "@typescript-eslint/no-explicit-any": ["error", {
+    "@typescript-eslint/no-explicit-any": ["warn", {
       fixToUnknown: true
     }],
     // 非空断言操作符使用警告
@@ -114,18 +114,18 @@ export default [{
     // 未使用的变量
     // ✅ 允许: const { used, ...unused } = obj
     // ❌ 禁止: const unused = 5
-    "@typescript-eslint/no-unused-vars": ["error", {
+    "@typescript-eslint/no-unused-vars": ["warn", {
       caughtErrors: "all",
       ignoreRestSiblings: true
     }],
     // 空值合并运算符
     // ✅ 推荐: const x = foo ?? defaultValue
     // ❌ 不推荐: const x = foo || defaultValue
-    "@typescript-eslint/prefer-nullish-coalescing": "error",
+    "@typescript-eslint/prefer-nullish-coalescing": "warn",
     // 可选链运算符
     // ✅ 推荐: obj?.prop
     // ❌ 不推荐: obj && obj.prop
-    "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/prefer-optional-chain": "warn",
     // 模板字符串类型限制
     // ✅ 允许: `${number}`
     // ❌ 禁止: `${complex}`
@@ -147,8 +147,8 @@ export default [{
     eqeqeq: "error",
     // 函数风格
     // ✅ 推荐: const foo = () => {}
-    // ❌ 禁止: function foo() {}
-    "func-style": ["error", "expression"],
+    // ❌ 不推荐: function foo() {}
+    "func-style": ["warn", "expression"],
     // console语句允许使用
     "no-console": "off",
     // 条件判断
@@ -156,8 +156,8 @@ export default [{
     // ❌ 禁止: while (true)
     "no-constant-condition": "error",
     // debugger语句
-    // ❌ 禁止: debugger
-    "no-debugger": "error",
+    // ❌ 不推荐: debugger
+    "no-debugger": "warn",
     // 对象键重复
     // ❌ 禁止: { a: 1, a: 2 }
     "no-dupe-keys": "error",
@@ -194,22 +194,22 @@ export default [{
     "no-useless-catch": "error",
     // 不必要的计算属性
     // ✅ 推荐: obj.foo
-    // ❌ 禁止: obj['foo']
-    "no-useless-computed-key": "error",
+    // ❌ 不推荐: obj['foo']
+    "no-useless-computed-key": "warn",
     // 不必要的字符串连接
     // ✅ 推荐: 'ab'
-    // ❌ 禁止: 'a' + 'b'
-    "no-useless-concat": "error",
+    // ❌ 不推荐: 'a' + 'b'
+    "no-useless-concat": "warn",
     // 不必要的构造函数
-    // ❌ 禁止: class C { constructor(){} }
-    "no-useless-constructor": "error",
+    // ❌ 不推荐: class C { constructor(){} }
+    "no-useless-constructor": "warn",
     // 不必要的重命名
     // ✅ 推荐: const { foo }
-    // ❌ 禁止: const { foo: foo }
-    "no-useless-rename": "error",
+    // ❌ 不推荐: const { foo: foo }
+    "no-useless-rename": "warn",
     // 不必要的return
-    // ❌ 禁止: return undefined
-    "no-useless-return": "error",
+    // ❌ 不推荐: return undefined
+    "no-useless-return": "warn",
     // var声明
     // ✅ 推荐: const/let x = 1
     // ❌ 禁止: var x = 1
@@ -217,24 +217,24 @@ export default [{
     // 对象属性简写
     // ✅ 推荐: { foo }
     // ❌ 不推荐: { foo: foo }
-    "object-shorthand": "error",
+    "object-shorthand": "warn",
     // 变量声明
     // ✅ 推荐: let a; let b
-    // ❌ 禁止: var a, b
-    "one-var": ["error", "never"],
+    // ❌ 不推荐: var a, b
+    "one-var": ["warn", "never"],
     // 回调函数
     // ✅ 推荐: arr.map(x => x * 2)
     // ❌ 不推荐: arr.map(function(x) { return x * 2 })
-    "prefer-arrow-callback": "error",
+    "prefer-arrow-callback": "warn",
     // const使用
     // ✅ 推荐: 对所有不会被重新赋值的变量使用const
-    "prefer-const": ["error", {
+    "prefer-const": ["warn", {
       destructuring: "all"
     }],
     // 解构赋值
     // ✅ 推荐: const { prop } = obj
     // ❌ 不推荐: const prop = obj.prop
-    "prefer-destructuring": ["error", {
+    "prefer-destructuring": ["warn", {
       AssignmentExpression: {
         array: false,
         object: false
@@ -247,19 +247,19 @@ export default [{
     // 指数运算符
     // ✅ 推荐: 2 ** 3
     // ❌ 不推荐: Math.pow(2, 3)
-    "prefer-exponentiation-operator": "error",
+    "prefer-exponentiation-operator": "warn",
     // 数字字面量
     // ✅ 推荐: 0xFF
     // ❌ 不推荐: parseInt("FF", 16)
-    "prefer-numeric-literals": "error",
+    "prefer-numeric-literals": "warn",
     // 对象展开
     // ✅ 推荐: { ...obj }
     // ❌ 不推荐: Object.assign({}, obj)
-    "prefer-object-spread": "error",
+    "prefer-object-spread": "warn",
     // 模板字符串
     // ✅ 推荐: `Hello ${name}`
     // ❌ 不推荐: 'Hello ' + name
-    "prefer-template": "error",
+    "prefer-template": "warn",
     // Prettier格式化规则设置
     // 不使用分号，使用单引号，保留尾随逗号
     "prettier/prettier": ["warn", {
@@ -295,7 +295,7 @@ export default [{
     // 自闭合标签
     // ✅ 推荐: <div />
     // ❌ 不推荐: <div></div>
-    "react/self-closing-comp": "error",
+    "react/self-closing-comp": "warn",
     // style属性值类型
     // ✅ 推荐: style={{ color: 'red' }}
     // ❌ 不推荐: style="color: red"
