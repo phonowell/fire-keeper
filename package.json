@@ -19,7 +19,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
-    "@swc/core": "^1.11.1",
+    "@swc/core": "^1.11.4",
     "@types/archiver": "^6.0.3",
     "@types/download": "^8.0.5",
     "@types/fs-extra": "^11.0.4",
@@ -32,7 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
