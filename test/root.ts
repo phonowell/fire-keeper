@@ -65,9 +65,8 @@ const e = () => {
     if (
       !(error instanceof Error) ||
       error.message !== 'Invalid path: path is empty'
-    ) {
+    )
       throw error
-    }
   }
 
   // Test forbidden characters
@@ -79,9 +78,8 @@ const e = () => {
     if (
       !(error instanceof Error) ||
       error.message !== 'Invalid path: contains forbidden characters'
-    ) {
+    )
       throw error
-    }
   }
 
   // Test relative paths
@@ -93,9 +91,8 @@ const e = () => {
     if (
       !(error instanceof Error) ||
       error.message !== 'Invalid path: contains relative path components'
-    ) {
+    )
       throw error
-    }
   }
 
   process.cwd = originalProcess

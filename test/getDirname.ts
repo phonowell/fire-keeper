@@ -18,10 +18,11 @@ const b = () => {
 
   for (const [input, expected] of tests) {
     const result = getDirname(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `dirname extraction failed for ${input}, got ${result}, expected ${expected}`,
       )
+    }
   }
 }
 b.description = 'extracts basic dirnames'
@@ -37,10 +38,11 @@ const c = () => {
 
   for (const [input, expected] of tests) {
     const result = getDirname(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `Windows path handling failed for ${input}, got ${result}, expected ${expected}`,
       )
+    }
   }
 }
 c.description = 'handles Windows paths'
@@ -74,10 +76,11 @@ const e = () => {
 
   // Whitespace is a valid input that returns "."
   const whitespaceResult = getDirname('   ')
-  if (whitespaceResult !== '.')
+  if (whitespaceResult !== '.') {
     throw new Error(
       `whitespace input should return ".", got "${whitespaceResult}"`,
     )
+  }
 }
 e.description = 'handles invalid inputs'
 
@@ -94,10 +97,11 @@ const f = () => {
 
   for (const [input, expected] of tests) {
     const result = getDirname(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,
       )
+    }
   }
 }
 f.description = 'handles edge cases'

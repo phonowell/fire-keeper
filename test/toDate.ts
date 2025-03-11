@@ -41,9 +41,8 @@ const e = () => {
     toDate('invalid-date')
     throw new Error('should throw on invalid date string')
   } catch (error: unknown) {
-    if (!(error instanceof Error) || !error.message.includes('invalid input')) {
+    if (!(error instanceof Error) || !error.message.includes('invalid input'))
       throw new Error('wrong error for invalid date string')
-    }
   }
 }
 e.description = 'invalid date string'
@@ -54,9 +53,8 @@ const f = () => {
     toDate('1969-12-31')
     throw new Error('should throw on pre-epoch date')
   } catch (error: unknown) {
-    if (!(error instanceof Error) || !error.message.includes('invalid input')) {
+    if (!(error instanceof Error) || !error.message.includes('invalid input'))
       throw new Error('wrong error for pre-epoch date')
-    }
   }
 }
 f.description = 'pre-epoch date'
@@ -68,9 +66,8 @@ const g = () => {
     toDate({})
     throw new Error('should throw on invalid input type')
   } catch (error: unknown) {
-    if (!(error instanceof Error) || !error.message.includes('invalid input')) {
+    if (!(error instanceof Error) || !error.message.includes('invalid input'))
       throw new Error('wrong error for invalid input type')
-    }
   }
 }
 g.description = 'invalid input type'

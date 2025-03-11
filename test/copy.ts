@@ -83,7 +83,7 @@ const g = async () => {
   const source = `${TEMP}/g.txt`
   await write(source, 'content')
 
-  await copy(source, dirname => `${dirname}/func`)
+  await copy(source, (dirname) => `${dirname}/func`)
   if (!(await isExist(`${TEMP}/func/g.txt`))) throw new Error('0')
 }
 g.description = 'copy with function target'
@@ -93,7 +93,7 @@ const h = async () => {
   const source = `${TEMP}/h.txt`
   await write(source, 'content')
 
-  await copy(source, TEMP, async name => {
+  await copy(source, TEMP, async (name) => {
     await sleep(10) // small delay
     return `async-${name}`
   })
@@ -118,7 +118,7 @@ const j = async () => {
   await write(source, 'content')
 
   await copy(source, TEMP, {
-    filename: name => `func-${name}`,
+    filename: (name) => `func-${name}`,
     concurrency: 1,
   })
   if (!(await isExist(`${TEMP}/func-j.txt`))) throw new Error('0')
@@ -130,7 +130,7 @@ const k = async () => {
   const source = `${TEMP}/k.txt`
   await write(source, 'content')
 
-  await copy(source, async dirname => {
+  await copy(source, async (dirname) => {
     await sleep(10)
     return `${dirname}/async-target`
   })
@@ -155,7 +155,7 @@ l.description = 'default filename in different directory'
 const m = async () => {
   // Test concurrent copies with default concurrency (5)
   const sources = Array.from({ length: 10 }, (_, i) => `${TEMP}/file${i}.txt`)
-  await Promise.all(sources.map(s => write(s, 'content')))
+  await Promise.all(sources.map((s) => write(s, 'content')))
 
   // Test default concurrency (5)
   await copy(sources, `${TEMP}/concurrent`)

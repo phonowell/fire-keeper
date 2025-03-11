@@ -1,12 +1,12 @@
+import path from 'path'
 import { Readable } from 'stream'
 import { pipeline } from 'stream/promises'
-import path from 'path'
 
 import fse from 'fs-extra'
 
 import echo from './echo'
-import normalizePath from './normalizePath'
 import getFilename from './getFilename'
+import normalizePath from './normalizePath'
 
 /**
  * Downloads a file from a URL and saves it to the specified directory.

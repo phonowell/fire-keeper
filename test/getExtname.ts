@@ -18,10 +18,11 @@ const b = () => {
 
   for (const [input, expected] of tests) {
     const result = getExtname(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `extension extraction failed for ${input}, got ${result}, expected ${expected}`,
       )
+    }
   }
 }
 b.description = 'extracts basic extensions'
@@ -161,10 +162,11 @@ const j = () => {
 
   for (const [input, expected] of tests) {
     const result = getExtname(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,
       )
+    }
   }
 }
 j.description = 'handles edge cases'

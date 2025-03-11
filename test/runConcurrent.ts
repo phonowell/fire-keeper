@@ -6,17 +6,17 @@ const test = async () => {
   const results: number[] = []
   const tasks = [
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 30))
+      await new Promise((resolve) => setTimeout(resolve, 30))
       results.push(1)
       return 1
     },
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise((resolve) => setTimeout(resolve, 10))
       results.push(2)
       return 2
     },
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await new Promise((resolve) => setTimeout(resolve, 20))
       results.push(3)
       return 3
     },
@@ -51,7 +51,7 @@ const testStopOnError = async () => {
   const executed: number[] = []
   const tasks = [
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await new Promise((resolve) => setTimeout(resolve, 20))
       executed.push(1)
       return 1
     },
@@ -60,7 +60,7 @@ const testStopOnError = async () => {
       return Promise.reject(new Error('Stop here'))
     },
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise((resolve) => setTimeout(resolve, 10))
       executed.push(3)
       return 3
     },

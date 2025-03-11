@@ -132,8 +132,8 @@ const i = async () => {
     { path: `${TEMP}/concurrent3.txt`, content: 'content3' },
   ]
 
-  await Promise.all(sources.map(s => write(s.path, s.content)))
-  const results = await Promise.all(sources.map(s => read<string>(s.path)))
+  await Promise.all(sources.map((s) => write(s.path, s.content)))
+  const results = await Promise.all(sources.map((s) => read<string>(s.path)))
 
   for (let i = 0; i < sources.length; i++) {
     if (results[i] !== sources[i].content)
@@ -211,7 +211,7 @@ const cleanup = async () => {
       '.tsx',
       '.txt',
       '.xml',
-    ].map(ext => `${TEMP}/test${ext}`),
+    ].map((ext) => `${TEMP}/test${ext}`),
   ])
 }
 

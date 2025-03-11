@@ -18,10 +18,11 @@ const b = () => {
 
   for (const [input, expected] of tests) {
     const result = getBasename(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `basename extraction failed for ${input}, got ${result}, expected ${expected}`,
       )
+    }
   }
 }
 b.description = 'extracts basic basenames'
@@ -106,10 +107,11 @@ const g = () => {
 
   for (const [input, expected] of tests) {
     const result = getBasename(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `edge case handling failed for "${input}", got "${result}", expected "${expected}"`,
       )
+    }
   }
 }
 g.description = 'handles edge cases'

@@ -57,7 +57,7 @@ const c = async () => {
   const content = 'test content'
 
   // Create source files
-  await Promise.all(sources.map(src => write(src, content)))
+  await Promise.all(sources.map((src) => write(src, content)))
   await move(sources, target)
 
   // Verify all files moved

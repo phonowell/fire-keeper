@@ -1,8 +1,8 @@
-import type { Options } from 'fast-glob'
-
 import { glob, write } from '../src'
 
 import { TEMP } from './index'
+
+import type { Options } from 'fast-glob'
 
 type TestPattern = {
   pattern: string | string[]
@@ -37,7 +37,9 @@ const setupFiles = async () => {
     'dir2/deep/file.test.jsx',
   ]
 
-  await Promise.all(files.map(file => write(`${TEMP}/${file}`, 'test content')))
+  await Promise.all(
+    files.map((file) => write(`${TEMP}/${file}`, 'test content')),
+  )
 }
 
 const a = async () => {
@@ -53,7 +55,7 @@ const a = async () => {
 
   // ListSource 类型测试
   const listSource = [`${TEMP}/a.txt`, `${TEMP}/b.txt`]
-  await Promise.all(listSource.map(source => write(source, 'test content')))
+  await Promise.all(listSource.map((source) => write(source, 'test content')))
   const arrayResult = await glob(listSource)
   const secondPass = await glob(arrayResult)
   if (secondPass !== arrayResult) throw new Error('ListSource test failed')
@@ -120,12 +122,11 @@ const d = async () => {
 
   for (const { input, description } of cases) {
     const result = await glob(input)
-    if (result.length !== 0) {
+    if (result.length !== 0)
       throw new Error(`${description} should return empty array`)
-    }
-    if (!result.__IS_LISTED_AS_SOURCE__ as unknown) {
+
+    if (!result.__IS_LISTED_AS_SOURCE__ as unknown)
       throw new Error(`${description} should return ListSource type`)
-    }
   }
 }
 d.description = 'handles edge cases properly'

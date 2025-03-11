@@ -93,7 +93,7 @@ const j = (): void => {
   const result = flatten(question)
 
   // Check type preservation and structure
-  if (!result.every(x => typeof x === 'object' && 'id' in x && 'name' in x))
+  if (!result.every((x) => typeof x === 'object' && 'id' in x && 'name' in x))
     throw Error('type preservation failed')
 
   const answer: TestType[] = [

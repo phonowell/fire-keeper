@@ -1,8 +1,8 @@
 import fs from 'fs'
 
 import echo from './echo'
-import wrapList from './wrapList'
 import glob from './glob'
+import wrapList from './wrapList'
 
 /**
  * Get the file status of a file or directory.

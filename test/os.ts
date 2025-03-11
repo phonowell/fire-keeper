@@ -39,5 +39,5 @@ const tests = {
 }
 
 export const a = () => {
-  Object.values(tests).forEach(test => test())
+  Object.values(tests).forEach((test) => test())
 }

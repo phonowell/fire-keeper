@@ -2,8 +2,8 @@ import fse from 'fs-extra'
 
 import echo from './echo'
 import glob from './glob'
-import wrapList from './wrapList'
 import runConcurrent from './runConcurrent'
+import wrapList from './wrapList'
 
 type Options = {
   concurrency?: number

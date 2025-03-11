@@ -1,7 +1,7 @@
 import fse from 'fs-extra'
 
-import normalizePath from './normalizePath'
 import flatten from './flatten'
+import normalizePath from './normalizePath'
 
 /**
  * Check if one or more paths exist in the filesystem.

@@ -31,11 +31,11 @@ const b = async () => {
     { path: `${TEMP}/file2.txt`, content: 'content2' },
   ]
 
-  await Promise.all(files.map(f => write(f.path, f.content)))
-  await backup(files.map(f => f.path))
-  await remove(files.map(f => f.path))
+  await Promise.all(files.map((f) => write(f.path, f.content)))
+  await backup(files.map((f) => f.path))
+  await remove(files.map((f) => f.path))
 
-  await recover(files.map(f => f.path))
+  await recover(files.map((f) => f.path))
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
@@ -65,12 +65,12 @@ const d = async () => {
     content: `content${i}`,
   }))
 
-  await Promise.all(files.map(f => write(f.path, f.content)))
-  await backup(files.map(f => f.path))
-  await remove(files.map(f => f.path))
+  await Promise.all(files.map((f) => write(f.path, f.content)))
+  await backup(files.map((f) => f.path))
+  await remove(files.map((f) => f.path))
 
   await recover(
-    files.map(f => f.path),
+    files.map((f) => f.path),
     { concurrency: 2 },
   )
 

@@ -116,7 +116,7 @@ const i = async () => {
     { path: `${TEMP}/concurrent3.txt`, content: 'content3' },
   ]
 
-  await Promise.all(files.map(f => write(f.path, f.content)))
+  await Promise.all(files.map((f) => write(f.path, f.content)))
 
   // Verify all writes completed correctly
   for (const file of files) {

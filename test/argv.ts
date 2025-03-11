@@ -88,9 +88,9 @@ const i = async () => {
     !isEqual(args._, ['pos1', 'pos2']) ||
     args.flag1 !== true ||
     args.key !== 'value'
-  ) {
+  )
     throw new Error('mixed arguments parsing failed')
-  }
+
   restoreArgv()
 }
 i.description = 'handles mixed arguments'

@@ -35,8 +35,8 @@ const testSameFiles = async () => {
   await copy(files.original, TEMP, 'a.md')
   await copy(files.original, TEMP, 'b.md')
   await Promise.all([
-    ...files.mixed.map(f => write(f, content)),
-    ...files.flat.map(f => write(f, content)),
+    ...files.mixed.map((f) => write(f, content)),
+    ...files.flat.map((f) => write(f, content)),
   ])
 
   // Test cases
@@ -65,9 +65,8 @@ const testSameFiles = async () => {
 
   for (const test of tests) {
     const result = await test.fn()
-    if (result !== test.expected) {
+    if (result !== test.expected)
       throw new Error(`${test.name} failed: expected ${test.expected}`)
-    }
   }
 }
 testSameFiles.description = 'Successful file comparison scenarios'

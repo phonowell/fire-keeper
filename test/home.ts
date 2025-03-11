@@ -1,8 +1,8 @@
-import path from 'path'
 import nodeOs from 'os'
+import path from 'path'
 
-import osType from '../src/os'
 import { home } from '../src'
+import osType from '../src/os'
 
 const a = () => {
   // Test function existence and type
@@ -69,7 +69,7 @@ const g = () => {
   if (parts[0] !== '') throw new Error('path not starting from root')
 
   // No empty segments allowed (except first for root)
-  if (parts.slice(1).some(part => !part))
+  if (parts.slice(1).some((part) => !part))
     throw new Error('path contains empty segments')
 }
 g.description = 'has valid structure'

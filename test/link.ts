@@ -116,9 +116,7 @@ const f = async () => {
   const target = `${TEMP}/link.txt`
 
   // Create multiple source files
-  for (const file of sources) {
-    await write(`${TEMP}/${file}`, file)
-  }
+  for (const file of sources) await write(`${TEMP}/${file}`, file)
 
   // Link should use first match
   await link(`${TEMP}/test*.txt`, target)
@@ -128,7 +126,7 @@ const f = async () => {
   if (content !== 'test1.txt') throw new Error('incorrect source file linked')
 
   // Cleanup test files
-  await Promise.all(sources.map(file => remove(`${TEMP}/${file}`)))
+  await Promise.all(sources.map((file) => remove(`${TEMP}/${file}`)))
 }
 f.description = 'handles glob pattern with multiple matches'
 

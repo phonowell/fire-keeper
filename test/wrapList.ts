@@ -18,10 +18,11 @@ const b = () => {
 
   for (const [input, expected] of tests) {
     const result = wrapList(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `primitive ${typeof input} failed. Expected: ${expected}, Got: ${result}`,
       )
+    }
   }
 }
 b.description = 'wraps primitive values'
@@ -69,7 +70,7 @@ const e = () => {
   // Split and parse each object to verify
   const parts = result
     .split(', ')
-    .map(part => JSON.parse(part.slice(1, -1)) as TestObj)
+    .map((part) => JSON.parse(part.slice(1, -1)) as TestObj)
 
   if (parts.length !== 2) throw new Error('object array length wrong')
   if (parts[0].id !== 1 || parts[1].id !== 2)
@@ -90,10 +91,11 @@ const f = () => {
 
   for (const [input, expected] of tests) {
     const result = wrapList(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `falsy value ${String(input)} failed. Expected: ${expected}, Got: ${result}`,
       )
+    }
   }
 }
 f.description = 'handles falsy values'
@@ -103,7 +105,7 @@ const g = () => {
   const input = ["It's", 'a "quote"', '\\backslash\\']
   const result = wrapList(input)
   // Verify each part is properly wrapped and preserved
-  const parts = result.split(', ').map(part => part.slice(1, -1))
+  const parts = result.split(', ').map((part) => part.slice(1, -1))
 
   if (parts[0] !== "It's") throw new Error('single quote handling failed')
   if (parts[1] !== 'a "quote"') throw new Error('double quote handling failed')
@@ -124,7 +126,7 @@ const h = () => {
   const result = wrapList(input)
   const parts = result
     .split(', ')
-    .map(part => JSON.parse(part.slice(1, -1)) as NestedItem)
+    .map((part) => JSON.parse(part.slice(1, -1)) as NestedItem)
 
   const [arr, obj] = parts
   if (!Array.isArray(arr) || arr.join(',') !== '1,2')

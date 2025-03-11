@@ -83,9 +83,8 @@ const f = () => {
     getFilename('')
     throw new Error('empty input should throw error')
   } catch (err) {
-    if (!(err instanceof Error) || !err.message.includes('empty input')) {
+    if (!(err instanceof Error) || !err.message.includes('empty input'))
       throw new Error('unexpected error for empty input')
-    }
   }
 }
 f.description = 'handles empty input errors'

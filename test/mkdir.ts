@@ -107,9 +107,8 @@ const g = async () => {
 
   // Check that basic permissions exist (read/write/execute for owner)
   const ownerPermissions = stats.mode & 0o700 // owner bits
-  if (ownerPermissions < 0o700) {
+  if (ownerPermissions < 0o700)
     throw new Error('insufficient directory permissions')
-  }
 }
 g.description = 'sets reasonable permissions'
 
@@ -120,7 +119,7 @@ const h = async () => {
     path.join(base, `dir${i}`, 'nested', 'path'),
   )
 
-  await Promise.all(sources.map(source => mkdir(source)))
+  await Promise.all(sources.map((source) => mkdir(source)))
 
   for (const source of sources) {
     if (!(await isExist(source)))
@@ -170,12 +169,10 @@ const l = async () => {
   await mkdir(singlePath)
   await mkdir(arrayPath)
 
-  if (!(await isExist(singlePath))) {
+  if (!(await isExist(singlePath)))
     throw new Error('single string path not created')
-  }
-  if (!(await isExist(arrayPath[0]))) {
-    throw new Error('array path not created')
-  }
+
+  if (!(await isExist(arrayPath[0]))) throw new Error('array path not created')
 }
 l.description = 'handles both string and array inputs'
 

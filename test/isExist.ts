@@ -1,5 +1,5 @@
-import os from '../src/os'
 import { isExist, link, mkdir, remove, write } from '../src'
+import os from '../src/os'
 
 import { TEMP } from './index'
 
@@ -22,7 +22,7 @@ b.description = 'handles non-existent file'
 const c = async () => {
   const sources = [`${TEMP}/a.txt`, `${TEMP}/b.txt`, `${TEMP}/c.txt`]
   const content = 'aloha'
-  await Promise.all(sources.map(source => write(source, content)))
+  await Promise.all(sources.map((source) => write(source, content)))
 
   if (!(await isExist(sources)))
     throw new Error('multiple existing files not found')
@@ -32,7 +32,7 @@ c.description = 'checks multiple files'
 const d = async () => {
   const sources = [`${TEMP}/a.txt`, `${TEMP}/b.txt`, `${TEMP}/c.txt`]
   const content = 'aloha'
-  await Promise.all(sources.map(source => write(source, content)))
+  await Promise.all(sources.map((source) => write(source, content)))
   await remove(sources[0])
 
   if (await isExist(sources)) throw new Error('should fail if any file missing')
@@ -56,7 +56,7 @@ f.description = 'handles non-existent directory'
 
 const g = async () => {
   const sources = [`${TEMP}/dir1`, `${TEMP}/dir2`, `${TEMP}/dir3`]
-  await Promise.all(sources.map(source => mkdir(source)))
+  await Promise.all(sources.map((source) => mkdir(source)))
 
   if (!(await isExist(sources)))
     throw new Error('multiple existing directories not found')
@@ -65,7 +65,7 @@ g.description = 'checks multiple directories'
 
 const h = async () => {
   const sources = [`${TEMP}/dir1`, `${TEMP}/dir2`, `${TEMP}/dir3`]
-  await Promise.all(sources.map(source => mkdir(source)))
+  await Promise.all(sources.map((source) => mkdir(source)))
   await remove(sources[0])
 
   if (await isExist(sources))
@@ -181,7 +181,7 @@ const p = async () => {
     `${TEMP}/space file.txt`,
   ]
 
-  await Promise.all(paths.map(path => write(path, 'content')))
+  await Promise.all(paths.map((path) => write(path, 'content')))
 
   for (const path of paths) {
     if (!(await isExist(path)))

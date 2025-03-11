@@ -37,7 +37,7 @@ c.description = 'nested structure'
 const d = async () => {
   // Test array input
   const listSource = [`${TEMP}/d1.txt`, `${TEMP}/d2.txt`]
-  await Promise.all(listSource.map(f => write(f, 'text')))
+  await Promise.all(listSource.map((f) => write(f, 'text')))
   await clean(listSource)
 
   if (await isExist(listSource[0])) throw new Error('0')

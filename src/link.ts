@@ -1,8 +1,8 @@
 import fse from 'fs-extra'
 
 import echo from './echo'
-import normalizePath from './normalizePath'
 import glob from './glob'
+import normalizePath from './normalizePath'
 
 /**
  * Creates a symbolic link from source to target location.

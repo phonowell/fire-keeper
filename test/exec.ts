@@ -47,8 +47,8 @@ const testStderrCapture = async () => {
 
   // On Windows or Unix, error messages contain different text
   const errorTerms = ['invalid', 'Invalid', 'bad', 'Bad', 'error', 'Error']
-  const hasError = allOutputs.some(out =>
-    errorTerms.some(term => out.includes(term)),
+  const hasError = allOutputs.some((out) =>
+    errorTerms.some((term) => out.includes(term)),
   )
   if (!hasError) throw new Error('stderr not captured')
 

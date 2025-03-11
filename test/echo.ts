@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 
-import { renderPath } from '../src/echo'
 import { home, root, echo } from '../src'
+import { renderPath } from '../src/echo'
 
 const a = () => {
   // Test function existence
@@ -121,7 +121,7 @@ const f = async () => {
   echo('verylongtype', msg) // Type longer than 10 chars
 
   // Test time rendering and caching
-  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
   echo(msg) // First call caches time
   echo(msg) // Use cached time
   await wait(1100) // Wait more than 1 second
@@ -143,10 +143,11 @@ const g = () => {
 
   for (const [input, expected] of tests) {
     const result = renderPath(input)
-    if (result !== expected)
+    if (result !== expected) {
       throw new Error(
         `path rendering failed for ${input}, expected ${expected} but got ${result}`,
       )
+    }
   }
 }
 g.description = 'renders paths correctly'

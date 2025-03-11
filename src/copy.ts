@@ -2,12 +2,12 @@ import fse from 'fs-extra'
 
 import echo from './echo'
 import getDirname from './getDirname'
+import getName from './getName'
 import glob from './glob'
 import normalizePath from './normalizePath'
-import wrapList from './wrapList'
 import run from './run'
-import getName from './getName'
 import runConcurrent from './runConcurrent'
+import wrapList from './wrapList'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
 type Filename = string | ((filename: string) => string | Promise<string>)

@@ -103,7 +103,7 @@ const main = async () => {
     ? [target]
     : (Object.keys(mapModule) as (keyof typeof mapModule)[])
 
-  for (const name of listModule)
+  for (const name of listModule) {
     describe(name, () => {
       const listIt = Object.keys(mapModule[name])
       for (const key of listIt) {
@@ -117,6 +117,7 @@ const main = async () => {
         })
       }
     })
+  }
 }
 
 main()

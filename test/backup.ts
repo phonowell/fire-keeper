@@ -1,5 +1,5 @@
-import path from 'path'
 import { strict as assert } from 'assert'
+import path from 'path'
 
 import { backup, isExist, mkdir, read, remove, write } from '../src'
 
@@ -97,7 +97,7 @@ const testEdgeCases = async () => {
 
     if (tc.content instanceof Buffer) {
       assert(
-        Buffer.from(backupContent ?? '').equals(tc.content),
+        Buffer.isBuffer(backupContent) && backupContent.equals(tc.content),
         `content mismatch for ${tc.name}`,
       )
     } else {

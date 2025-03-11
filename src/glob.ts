@@ -1,9 +1,10 @@
-import type { Options } from 'fast-glob'
 import glob from 'fast-glob'
 
 import normalizePath from './normalizePath'
-import toArray from './toArray'
 import run from './run'
+import toArray from './toArray'
+
+import type { Options } from 'fast-glob'
 
 type ListSource = string[] & {
   __IS_LISTED_AS_SOURCE__: true

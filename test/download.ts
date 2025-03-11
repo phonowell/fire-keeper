@@ -28,19 +28,14 @@ import { TEMP } from './index'
 const testParameterValidation = async (): Promise<void> => {
   // Test missing URL
   await download('', `${TEMP}/download-test`).catch((error: unknown) => {
-    if (!(error instanceof Error) || !error.message.includes('empty input')) {
+    if (!(error instanceof Error) || !error.message.includes('empty input'))
       throw error
-    }
   })
 
   // Test missing directory
   await download('https://example.com/file', '').catch((error: unknown) => {
-    if (
-      !(error instanceof Error) ||
-      !error.message.includes('dir is required')
-    ) {
+    if (!(error instanceof Error) || !error.message.includes('dir is required'))
       throw error
-    }
   })
 }
 testParameterValidation.description = 'Parameter Validation'
@@ -52,9 +47,8 @@ const testAutoCreateDir = async (): Promise<void> => {
   const filename = 'auto-create-dir.txt'
 
   await download(url, dir, filename)
-  if (!(await isExist(`${dir}/${filename}`))) {
+  if (!(await isExist(`${dir}/${filename}`)))
     throw Error('Directory was not auto-created')
-  }
 }
 
 // Test path normalization
@@ -65,9 +59,7 @@ const testPathNormalization = async (): Promise<void> => {
 
   await download(url, dir, filename)
   const normalizedPath = `${TEMP}/path/test/${filename}`
-  if (!(await isExist(normalizedPath))) {
-    throw Error('Path normalization failed')
-  }
+  if (!(await isExist(normalizedPath))) throw Error('Path normalization failed')
 }
 
 // Test successful download scenarios

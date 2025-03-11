@@ -1,10 +1,11 @@
 import globals from "globals"
+import importPlugin from "eslint-plugin-import"
+import prettierPlugin from "eslint-plugin-prettier"
 import reactHooks from "eslint-plugin-react-hooks"
 import reactPlugin from "eslint-plugin-react"
 import reactRefresh from "eslint-plugin-react-refresh"
 import tsParser from "@typescript-eslint/parser"
 import tsPlugin from "@typescript-eslint/eslint-plugin"
-import prettierPlugin from "eslint-plugin-prettier"
 
 export default [{
   // 配置要忽略的文件和目录
@@ -43,6 +44,7 @@ export default [{
   // 启用的插件
   plugins: {
     "@typescript-eslint": tsPlugin,
+    "import": importPlugin,
     "prettier": prettierPlugin,
     "react": reactPlugin,
     "react-hooks": reactHooks,
@@ -149,6 +151,36 @@ export default [{
     // ✅ 推荐: const foo = () => {}
     // ❌ 不推荐: function foo() {}
     "func-style": ["warn", "expression"],
+    // 样式文件优先导入
+    // polyfills文件次优先导入
+    'import/order': ['warn', {
+      alphabetize: {
+        caseInsensitive: true,
+        order: 'asc',
+        orderImportKind: 'asc'
+      },
+      groups: [
+        'builtin', // node 内置模块
+        'external', // 外部模块
+        'internal', // 内部模块
+        'parent', // 父级目录引用
+        'sibling', // 同级目录引用
+        'index', // 当前目录引用
+        'object', // object imports
+        'type' // type imports
+      ],
+      'newlines-between': 'always',
+      pathGroups: [{
+        group: 'builtin',
+        pattern: '{.,@}/**/*.{css,scss,styl}',
+        position: 'before'
+      }, {
+        group: 'builtin',
+        pattern: '{.,@}/**/polyfills.{js,ts}',
+        position: 'before'
+      }],
+      warnOnUnassignedImports: true
+    }],
     // console语句允许使用
     "no-console": "off",
     // 条件判断
@@ -165,6 +197,13 @@ export default [{
     // ✅ 推荐: if (x) return 1; return 2
     // ❌ 禁止: if (x) return 1; else return 2
     "no-else-return": "error",
+    // 强制使用window前缀访问全局对象
+    // ✅ 推荐: window.addEventListener
+    // ❌ 禁止: addEventListener
+    "no-restricted-globals": ["error", {
+      message: "Use window.* instead of global scope access.",
+      name: "*"
+    }],
     // return await
     // ✅ 推荐: return promise
     // ❌ 禁止: return await promise

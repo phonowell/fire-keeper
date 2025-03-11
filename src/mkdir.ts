@@ -2,9 +2,9 @@ import fse from 'fs-extra'
 
 import echo from './echo'
 import normalizePath from './normalizePath'
+import runConcurrent from './runConcurrent'
 import toArray from './toArray'
 import wrapList from './wrapList'
-import runConcurrent from './runConcurrent'
 
 type Options = {
   concurrency?: number

@@ -18,9 +18,8 @@ const b = async () => {
   await write(sources[2], 'test content')
 
   await remove(sources, { concurrency: 3 })
-  for (const source of sources) {
+  for (const source of sources)
     if (await isExist(source)) throw new Error(`path ${source} not removed`)
-  }
 }
 b.description = 'removes multiple paths with custom concurrency'
 
@@ -30,15 +29,12 @@ const c = async () => {
     `${TEMP}/pattern/nested/file2.txt`,
   ]
 
-  for (const source of sources) {
-    await write(source, 'test content')
-  }
+  for (const source of sources) await write(source, 'test content')
 
   await remove(`${TEMP}/pattern/**/*.txt`)
 
-  for (const source of sources) {
+  for (const source of sources)
     if (await isExist(source)) throw new Error(`file ${source} not removed`)
-  }
 }
 c.description = 'removes files using glob pattern'
 
@@ -50,7 +46,7 @@ const d = async () => {
     `${deep}/subdirectory/file3.txt`,
   ]
 
-  await Promise.all(files.map(file => write(file, 'test')))
+  await Promise.all(files.map((file) => write(file, 'test')))
   await remove(deep)
 
   if (await isExist(deep))
@@ -74,9 +70,8 @@ const f = async () => {
     throw new Error('should throw error for invalid input')
   } catch (error) {
     // Any error is acceptable since validation could happen at different layers
-    if (!(error instanceof Error)) {
+    if (!(error instanceof Error))
       throw new Error('expected an Error for invalid input')
-    }
   }
 }
 f.description = 'throws error for invalid input'

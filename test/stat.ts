@@ -62,9 +62,8 @@ const e = async () => {
     await stat(null)
     throw new Error('should throw error when stat fails')
   } catch (err) {
-    if (!(err instanceof Error)) {
+    if (!(err instanceof Error))
       throw new Error('error should be instance of Error')
-    }
   }
 }
 e.description = 'throws error on fs.stat failure'

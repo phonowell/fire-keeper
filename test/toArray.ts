@@ -31,9 +31,8 @@ const c = () => {
   // 单独测试 Symbol
   const sym = Symbol('test')
   const symResult = toArray(sym)
-  if (symResult.length !== 1 || typeof symResult[0] !== 'symbol') {
+  if (symResult.length !== 1 || typeof symResult[0] !== 'symbol')
     throw new Error('primitive conversion failed for Symbol')
-  }
 
   // 测试其他基本类型
   for (const [input, expected] of tests) {

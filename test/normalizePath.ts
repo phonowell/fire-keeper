@@ -57,10 +57,8 @@ const invalidInputTests = () => {
   const invalidInputs = [undefined, null, {}, [], NaN, true, 123]
 
   for (const input of invalidInputs) {
-    if (normalizePath(input as unknown as string) !== '') {
-      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    if (normalizePath(input as unknown as string) !== '')
       throw new Error(`Invalid input not handled correctly: ${String(input)}`)
-    }
   }
 }
 invalidInputTests.description = 'handles invalid inputs correctly'

@@ -7,7 +7,7 @@ const a = (): void => {
   const answer = 2
   if (
     !isEqual(
-      findIndex(question, x => x === 3),
+      findIndex(question, (x) => x === 3),
       answer,
     )
   )
@@ -20,7 +20,7 @@ const b = (): void => {
   const answer = -1
   if (
     !isEqual(
-      findIndex(question, x => x === 6),
+      findIndex(question, (x) => x === 6),
       answer,
     )
   )
@@ -59,7 +59,7 @@ const e = (): void => {
   const answer = -1
   if (
     !isEqual(
-      findIndex(question, x => x === 1),
+      findIndex(question, (x) => x === 1),
       answer,
     )
   )
@@ -81,7 +81,7 @@ const f = (): void => {
   const answer = 1
   if (
     !isEqual(
-      findIndex(question, x => x.value === 'two'),
+      findIndex(question, (x) => x.value === 'two'),
       answer,
     )
   )
@@ -95,7 +95,7 @@ const g = (): void => {
   const answer = 3
   if (
     !isEqual(
-      findIndex(question, x => x > 3 && x % 2 === 0),
+      findIndex(question, (x) => x > 3 && x % 2 === 0),
       answer,
     )
   )
@@ -109,7 +109,7 @@ const h = (): void => {
   const answer = 2
   if (
     !isEqual(
-      findIndex(question, x => x === undefined),
+      findIndex(question, (x) => x === undefined),
       answer,
     )
   )
@@ -121,7 +121,7 @@ const i = (): void => {
   // Test with closure variable
   let count = 0
   const question = [1, 2, 3]
-  findIndex(question, x => {
+  findIndex(question, (x) => {
     count++
     return x === 2
   })
@@ -149,7 +149,7 @@ const k = (): void => {
   const size = 10000
   const question = Array.from({ length: size }, (_, i) => i)
   const start = Date.now()
-  const result = findIndex(question, x => x === size - 1)
+  const result = findIndex(question, (x) => x === size - 1)
   const duration = Date.now() - start
 
   if (result !== size - 1) throw Error('large array find failed')

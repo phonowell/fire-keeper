@@ -1,10 +1,10 @@
 import prompts from 'prompts'
 
+import at from './at'
 import echo from './echo'
+import findIndex from './findIndex'
 import read from './read'
 import write from './write'
-import at from './at'
-import findIndex from './findIndex'
 
 type Choice<T> = {
   title: string

@@ -43,9 +43,7 @@ const e = () => {
 e.description = 'preserves return type'
 
 const f = () => {
-  const regularFunction = () => {
-    return 'regular'
-  }
+  const regularFunction = () => 'regular'
   const result = run(regularFunction)
   if (result !== 'regular') throw new Error('regular function handling failed')
 }
