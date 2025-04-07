@@ -8,9 +8,11 @@
 
 > **write**(`source`, `content`, `options`?): `Promise`\<`void`\>
 
-Defined in: [write.ts:42](https://github.com/phonowell/fire-keeper/blob/main/src/write.ts#L42)
+Defined in: [write.ts:54](https://github.com/phonowell/fire-keeper/blob/main/src/write.ts#L54)
 
-Writes provided content to a specified file.
+Write content to a file with automatic content type handling and path creation.
+Supports writing strings, buffers, ArrayBuffers, TypedArrays, Blobs, and objects (auto-stringified).
+Creates intermediate directories if they don't exist.
 
 ## Parameters
 
@@ -18,52 +20,55 @@ Writes provided content to a specified file.
 
 `string`
 
-The target file where content will be written
+The path to write to. Will create directories if needed
 
 ### content
 
 `unknown`
 
-The content to be written to the file
+The content to write. Handled based on type:
+  - String/Buffer: Written directly
+  - ArrayBuffer/TypedArray: Converted to Uint8Array
+  - Blob: Converted to Uint8Array
+  - Object: JSON stringified
+  - Other: Converted to string
 
 ### options?
 
 `WriteFileOptions` = `{}`
 
-Optional file system write options
+fs.writeFile options
 
 ## Returns
 
 `Promise`\<`void`\>
 
-Promise that resolves when write is complete
-
 ## Example
 
 ```typescript
 // Write string content
-await write('example.txt', 'Hello World');
+await write('file.txt', 'Hello world')
 
-// Write Buffer content
-await write('binary.dat', Buffer.from([1, 2, 3]));
+// Write binary data
+await write('image.bin', Buffer.from([0xFF, 0x00, 0xFF]))
 
-// Write ArrayBuffer content
-const arr = new Uint8Array([65, 66, 67]);
-await write('array.bin', arr.buffer);
-
-// Write Blob content
-const blob = new Blob(['Hello'], { type: 'text/plain' });
-await write('blob.txt', blob);
-
-// Write JSON object (automatically stringified)
+// Write JSON (auto-stringified)
 await write('config.json', {
   port: 3000,
   host: 'localhost'
-});
+})
 
-// Write with options
-await write('example.txt', 'content', {
-  encoding: 'utf8',
-  mode: 0o644
-});
+// Write with specific encoding
+await write('utf16.txt', 'Content', {
+  encoding: 'utf16le'
+})
+
+// Write with permissions
+await write('script.sh', '#!/bin/sh\necho hello', {
+  mode: 0o755  // Executable
+})
+
+// Write binary with typed arrays
+const array = new Uint8Array([1, 2, 3])
+await write('data.bin', array)
 ```

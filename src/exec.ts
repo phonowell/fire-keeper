@@ -17,28 +17,39 @@ type Result = [number, string, string[]]
 const separator = os() === 'windows' ? ' && ' : '; '
 
 /**
- * Execute a shell command either synchronously or asynchronously.
- * @param cmd - The command to execute. Can be a single string command or an array of commands.
- * @param options - Configuration options for command execution.
- * @param {boolean} [option.silent=false] - If true, suppresses command output logging.
+ * Execute shell commands with output capture and error handling.
+ * Commands are executed sequentially when provided as an array.
+ *
+ * @param {string | string[]} cmd - A single command string or array of command strings to execute
+ * @param {Object} [options] - Configuration options
+ * @param {boolean} [options.silent=false] - If true, suppresses command output logging
+ *
  * @returns {Promise<[number, string, string[]]>} A promise that resolves to a tuple containing:
- *   - [0]: Exit code (number)
+ *   - [0]: Exit code (number) - 0 for success, non-zero for failure
  *   - [1]: Last output message (string)
  *   - [2]: Array of all output messages (string[])
- * @example
- * ```typescript
- * // Single command
- * const [code, last, all] = await exec('echo "Hello, world!"');
  *
- * // Multiple commands
- * const [code, last, all] = await exec([
- *   'npm install',
- *   'npm run build'
- * ]);
+ * @example
+ * // Single command execution
+ * const [code, last, all] = await exec('echo "Hello"')
+ * console.log('Exit code:', code)     // 0
+ * console.log('Last output:', last)   // "Hello"
+ *
+ * // Multiple commands in sequence
+ * const [code] = await exec([
+ *   'mkdir -p temp',
+ *   'echo "test" > temp/test.txt',
+ *   'cat temp/test.txt'
+ * ])
  *
  * // Silent execution
- * const [code, last, all] = await exec('git status', { silent: true });
- * ```
+ * await exec('npm install', { silent: true })
+ *
+ * // Error handling
+ * const [code] = await exec('invalid-command')
+ * if (code !== 0) {
+ *   console.error('Command failed')
+ * }
  */
 const exec = (
   cmd: string | string[],

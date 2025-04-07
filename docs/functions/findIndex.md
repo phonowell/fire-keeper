@@ -14,7 +14,9 @@ Returns the index of the first element in an array that satisfies the provided t
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 The type of elements in the array
 

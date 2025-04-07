@@ -10,32 +10,38 @@ type Options = {
 }
 
 /**
- * Remove files or directories recursively.
- * @param source A file/directory path or array of paths to remove.
- * @param options Configuration options for removal.
- * @param options.concurrency Maximum number of concurrent operations. Defaults to 5.
- * @returns Promise that resolves when all files are removed.
- * @throws {Error} If a file/directory cannot be accessed or removed.
- * @throws {TypeError} If source parameter is invalid.
+ * Remove files and directories with concurrent operation support.
+ * Uses glob patterns to match files and supports removing multiple files in parallel.
  *
- * @example Simple file removal
- * ```typescript
- * await remove('file.txt')
- * ```
+ * @param {string | string[]} source - Path(s) to remove. Can be:
+ *   - Single file/directory path
+ *   - Array of paths
+ *   - Glob pattern(s)
+ * @param {Object} [options] - Configuration options
+ * @param {number} [options.concurrency=5] - Maximum concurrent remove operations
+ * @returns {Promise<void>}
  *
- * @example Multiple files removal with options
+ * @example
  * ```typescript
- * await remove(['file1.txt', 'file2.txt'], { concurrency: 3 })
- * ```
+ * // Remove single file
+ * await remove('temp/file.txt')
  *
- * @example Directory removal
- * ```typescript
- * await remove('directory/to/remove')
- * ```
+ * // Remove multiple paths
+ * await remove([
+ *   'temp/cache',
+ *   'temp/logs'
+ * ])
  *
- * @example Using glob patterns
- * ```typescript
- * await remove('temp/*.log')
+ * // Remove using glob patterns
+ * await remove('temp/+(*.js|*.map)')
+ *
+ * // Remove with custom concurrency
+ * await remove(['large1.dat', 'large2.dat'], {
+ *   concurrency: 2
+ * })
+ *
+ * // Remove directory and its contents
+ * await remove('build')
  * ```
  */
 const remove = async (

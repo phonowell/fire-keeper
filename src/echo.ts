@@ -16,18 +16,48 @@ const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 const separator = `${kleur.gray('›')} `
 
 /**
- * Print a message with optional type prefix and formatting
- * @param args - Single message or [type, message] tuple
- * @returns The original message
+ * Enhanced console logging utility with formatting, message types, and flow control.
+ *
+ * @template T - The type of the message to log
+ * @param {[T] | [string, T]} args - Either:
+ *   - Single argument: The message to log (uses 'default' type)
+ *   - Two arguments: [type, message] where type affects formatting
+ * @returns {T} The message that was logged (for chaining)
+ *
+ * @property {boolean} isSilent - When true, suppresses all output
+ * @property {boolean} isFrozen - When true, output is temporarily disabled
+ * @property {function} pause - Temporarily disable output
+ * @property {function} resume - Re-enable output after pause
+ * @property {function} whisper - Log with minimal formatting
+ * @property {function} freeze - Temporarily disable output while executing an async operation
+ *
  * @example
  * ```typescript
- * // Simple message
- * echo('Hello, world!')
- * // => [12:34:56] › Hello, world!
+ * // Basic logging
+ * echo('Hello world')               // Basic gray text
+ * echo('info', 'Processing...')     // With type prefix
  *
- * // Typed message
- * echo('info', 'Operation completed')
- * // => [12:34:56] › info      Operation completed
+ * // Message types with different formatting
+ * echo('error', 'Failed to connect')  // Red error text
+ * echo('success', 'Completed')        // Green success text
+ *
+ * // Return value chaining
+ * const config = echo('config', { port: 3000 })  // Logs and returns config
+ *
+ * // Flow control
+ * echo.pause()
+ * echo('Silent operation')  // Nothing logged
+ * echo.resume()
+ *
+ * // Async operation with temporary silence
+ * await echo.freeze(async () => {
+ *   await heavyOperation()  // Output suppressed
+ * })
+ *
+ * // Minimal logging
+ * await echo.whisper(async () => {
+ *   // Minimal output formatting
+ * })
  * ```
  */
 const echo = <T>(...args: [T] | [string, T]): T => {

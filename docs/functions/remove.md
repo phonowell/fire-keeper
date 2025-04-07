@@ -6,54 +6,54 @@
 
 # Function: remove()
 
-> **remove**(`source`, `options`): `Promise`\<`void`\>
+> **remove**(`source`, `options`?): `Promise`\<`void`\>
 
-Defined in: [remove.ts:41](https://github.com/phonowell/fire-keeper/blob/main/src/remove.ts#L41)
+Defined in: [remove.ts:47](https://github.com/phonowell/fire-keeper/blob/main/src/remove.ts#L47)
 
-Remove files or directories recursively.
+Remove files and directories with concurrent operation support.
+Uses glob patterns to match files and supports removing multiple files in parallel.
 
 ## Parameters
 
 ### source
 
-A file/directory path or array of paths to remove.
+Path(s) to remove. Can be:
+  - Single file/directory path
+  - Array of paths
+  - Glob pattern(s)
 
 `string` | `string`[]
 
-### options
+### options?
 
 `Options` = `{}`
 
-Configuration options for removal.
+Configuration options
 
 ## Returns
 
 `Promise`\<`void`\>
 
-Promise that resolves when all files are removed.
-
-## Throws
-
-If a file/directory cannot be accessed or removed.
-
-## Throws
-
-If source parameter is invalid.
-
-## Examples
+## Example
 
 ```typescript
-await remove('file.txt')
-```
+// Remove single file
+await remove('temp/file.txt')
 
-```typescript
-await remove(['file1.txt', 'file2.txt'], { concurrency: 3 })
-```
+// Remove multiple paths
+await remove([
+  'temp/cache',
+  'temp/logs'
+])
 
-```typescript
-await remove('directory/to/remove')
-```
+// Remove using glob patterns
+await remove('temp/+(*.js|*.map)')
 
-```typescript
-await remove('temp/*.log')
+// Remove with custom concurrency
+await remove(['large1.dat', 'large2.dat'], {
+  concurrency: 2
+})
+
+// Remove directory and its contents
+await remove('build')
 ```

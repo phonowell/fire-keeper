@@ -143,4 +143,37 @@ const k = () => {
 }
 k.description = 'handles numeric object keys'
 
-export { a, b, c, d, e, f, g, h, i, j, k }
+const l = () => {
+  // Test deep property access with dot notation
+  const obj = { a: { b: { c: 1 } } }
+  
+  if (at(obj, 'a.b.c') !== 1)
+    throw new Error('deep property access with dot notation failed')
+  if (at(obj, 'a.b.d') !== undefined)
+    throw new Error('non-existent deep property should return undefined')
+}
+l.description = 'handles deep property access with dot notation'
+
+const m = () => {
+  // Test deep property access with multiple arguments
+  const obj = { a: { b: { c: 1 } } }
+  
+  if (at(obj, 'a', 'b', 'c') !== 1)
+    throw new Error('deep property access with multiple arguments failed')
+  if (at(obj, 'a', 'b', 'd') !== undefined)
+    throw new Error('non-existent deep property with multiple arguments should return undefined')
+}
+m.description = 'handles deep property access with multiple arguments'
+
+const n = () => {
+  // Test mixed property access styles
+  const obj = { a: { b: { c: { d: 1 } } } }
+  
+  if (at(obj, 'a.b', 'c.d') !== 1)
+    throw new Error('mixed property access styles failed')
+  if (at(obj, 'a', 'b.c.d') !== 1)
+    throw new Error('mixed property access styles alternative failed')
+}
+n.description = 'handles mixed property access styles'
+
+export { a, b, c, d, e, f, g, h, i, j, k, l, m, n }

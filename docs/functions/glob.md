@@ -8,15 +8,15 @@
 
 > **glob**(`input`, `options`?): `Promise`\<`ListSource`\>
 
-Defined in: [glob.ts:51](https://github.com/phonowell/fire-keeper/blob/main/src/glob.ts#L51)
+Defined in: [glob.ts:69](https://github.com/phonowell/fire-keeper/blob/main/src/glob.ts#L69)
 
-List files or directories using glob patterns.
+Find files and directories using glob patterns with enhanced options and type safety.
+Returns paths matching the specified patterns while respecting configuration options.
+The result is marked with a special flag to indicate it's a source list.
 
 ## Parameters
 
 ### input
-
-Glob pattern(s) to match files or directories
 
 `string` | `string`[] | `ListSource`
 
@@ -24,34 +24,41 @@ Glob pattern(s) to match files or directories
 
 `Options`
 
-Additional options for glob matching
+Configuration options
 
 ## Returns
 
 `Promise`\<`ListSource`\>
 
-A promise that resolves to an array of matched paths
+Array of matching paths
 
 ## Example
 
-```typescript
-// Basic usage with single pattern
-const list = await glob('*.txt');
-console.log(list);
-//=> ['a.txt', 'b.txt']
+```ts
+// Find all JavaScript files
+const jsFiles = await glob('src/*.js')
 
 // Multiple patterns
-const files = await glob(['src/*.ts', '!src/*.test.ts']);
-//=> ['src/index.ts', 'src/utils/helper.ts']
+const sources = await glob([
+  'src/*.ts',
+  'src/*.tsx',
+  '!src/*.test.*'  // Exclude test files
+])
 
-// With options
-const docs = await glob('docs/*', {
+// Find directories only
+const dirs = await glob('src/+([a-z])', {
+  onlyDirectories: true
+})
+
+// Shallow search with absolute paths
+const shallow = await glob('packages/+([a-z])', {
   absolute: true,
-  dot: true
-});
-//=> ['/absolute/path/docs/readme.md']
+  deep: 1
+})
 
-// Empty or invalid input
-const empty = await glob('');
-//=> []
+// Find all hidden files
+const dotFiles = await glob('.*', {
+  dot: true,
+  onlyFiles: true
+})
 ```

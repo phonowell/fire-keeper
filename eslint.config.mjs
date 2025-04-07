@@ -159,15 +159,14 @@ export default [{
         order: 'asc',
         orderImportKind: 'asc'
       },
-      groups: [
-        'builtin', // node 内置模块
-        'external', // 外部模块
-        'internal', // 内部模块
-        'parent', // 父级目录引用
-        'sibling', // 同级目录引用
-        'index', // 当前目录引用
-        'object', // object imports
-        'type' // type imports
+      groups: ['builtin', // node 内置模块
+      'external', // 外部模块
+      'internal', // 内部模块
+      'parent', // 父级目录引用
+      'sibling', // 同级目录引用
+      'index', // 当前目录引用
+      'object', // object imports
+      'type' // type imports
       ],
       'newlines-between': 'always',
       pathGroups: [{
@@ -197,13 +196,10 @@ export default [{
     // ✅ 推荐: if (x) return 1; return 2
     // ❌ 禁止: if (x) return 1; else return 2
     "no-else-return": "error",
-    // 强制使用window前缀访问全局对象
-    // ✅ 推荐: window.addEventListener
-    // ❌ 禁止: addEventListener
-    "no-restricted-globals": ["error", {
-      message: "Use window.* instead of global scope access.",
-      name: "*"
-    }],
+    // 使用window前缀访问全局对象
+    // ✅ 推荐: window.toString
+    // ❌ 不推荐: toString
+    "no-restricted-globals": ["warn", 'toString'],
     // return await
     // ✅ 推荐: return promise
     // ❌ 禁止: return await promise

@@ -14,7 +14,9 @@ Execute asynchronous tasks concurrently.
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 ## Parameters
 

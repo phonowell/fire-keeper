@@ -22,32 +22,49 @@ const isListedAsSource = (
   Array.isArray(input) && !!(input as ListSource).__IS_LISTED_AS_SOURCE__
 
 /**
- * List files or directories using glob patterns.
- * @param {string | string[] | ListSource} input - Glob pattern(s) to match files or directories
- * @param {Options} [options] - Additional options for glob matching
- * @returns {Promise<ListSource>} A promise that resolves to an array of matched paths
+ * Find files and directories using glob patterns with enhanced options and type safety.
+ * Returns paths matching the specified patterns while respecting configuration options.
+ * The result is marked with a special flag to indicate it's a source list.
+ *
+ * @param {string | string[]} source - Glob pattern(s) to match. Can be:
+ *   - Single pattern (e.g., 'src/*.js')
+ *   - Array of patterns
+ *   - File/directory path(s)
+ * @param {Object} [options] - Configuration options
+ * @param {boolean} [options.absolute=false] - Return absolute paths instead of relative
+ * @param {boolean} [options.dot=true] - Include dotfiles (files starting with .)
+ * @param {number} [options.deep=Infinity] - Maximum directory depth to traverse
+ * @param {boolean} [options.onlyFiles=true] - Only return files (no directories)
+ * @param {boolean} [options.onlyDirectories=false] - Only return directories (no files)
+ * @returns {Promise<string[] & { __IS_LISTED_AS_SOURCE__: true }>} Array of matching paths
+ *
  * @example
- * ```typescript
- * // Basic usage with single pattern
- * const list = await glob('*.txt');
- * console.log(list);
- * //=> ['a.txt', 'b.txt']
+ * // Find all JavaScript files
+ * const jsFiles = await glob('src/*.js')
  *
  * // Multiple patterns
- * const files = await glob(['src/*.ts', '!src/*.test.ts']);
- * //=> ['src/index.ts', 'src/utils/helper.ts']
+ * const sources = await glob([
+ *   'src/*.ts',
+ *   'src/*.tsx',
+ *   '!src/*.test.*'  // Exclude test files
+ * ])
  *
- * // With options
- * const docs = await glob('docs/*', {
+ * // Find directories only
+ * const dirs = await glob('src/+([a-z])', {
+ *   onlyDirectories: true
+ * })
+ *
+ * // Shallow search with absolute paths
+ * const shallow = await glob('packages/+([a-z])', {
  *   absolute: true,
- *   dot: true
- * });
- * //=> ['/absolute/path/docs/readme.md']
+ *   deep: 1
+ * })
  *
- * // Empty or invalid input
- * const empty = await glob('');
- * //=> []
- * ```
+ * // Find all hidden files
+ * const dotFiles = await glob('.*', {
+ *   dot: true,
+ *   onlyFiles: true
+ * })
  */
 const main = async (
   input: string | string[] | ListSource,

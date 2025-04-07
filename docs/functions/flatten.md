@@ -8,13 +8,16 @@
 
 > **flatten**\<`T`\>(`array`): `T`[]
 
-Defined in: [flatten.ts:20](https://github.com/phonowell/fire-keeper/blob/main/src/flatten.ts#L20)
+Defined in: [flatten.ts:32](https://github.com/phonowell/fire-keeper/blob/main/src/flatten.ts#L32)
 
 Flattens a nested array structure into a single-level array.
+Preserves the type and order of elements while removing nesting.
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 The type of elements in the array
 
@@ -24,25 +27,32 @@ The type of elements in the array
 
 (`T` \| `T`[])[]
 
-The array to flatten, which may contain nested arrays
-
 ## Returns
 
 `T`[]
 
-A new array with all sub-array elements concatenated recursively
+A new array with all nested elements at the top level
 
 ## Example
 
 ```typescript
-// Flatten numbers array
-const numbers = [1, [2, 3], [4, [5, 6]]];
-const flat = flatten(numbers); // [1, 2, 3, 4, 5, 6]
+// Basic flattening
+flatten([1, [2, 3], [4]])  // [1, 2, 3, 4]
 
-// Flatten string array
-const words = ['hello', ['world', ['typescript']]];
-const flat = flatten(words); // ['hello', 'world', 'typescript']
+// Empty arrays are removed
+flatten([1, [], [2], [], [3]])  // [1, 2, 3]
 
-// Empty array returns empty array
-const empty = flatten([]); // []
+// Works with any type
+flatten(['a', ['b', 'c']])  // ['a', 'b', 'c']
+
+// Complex types are preserved
+interface User { id: number }
+const users: (User | User[])[] = [
+  { id: 1 },
+  [{ id: 2 }, { id: 3 }]
+]
+flatten(users)  // [{ id: 1 }, { id: 2 }, { id: 3 }]
+
+// Handles deeply nested structures
+flatten([1, [2, [3, [4]]]])  // [1, 2, 3, 4]
 ```

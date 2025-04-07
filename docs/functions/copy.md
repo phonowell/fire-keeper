@@ -10,15 +10,18 @@
 
 Defined in: [copy.ts:77](https://github.com/phonowell/fire-keeper/blob/main/src/copy.ts#L77)
 
-Copy files or directories with support for concurrent operations and flexible naming.
+Copy files and directories with support for concurrent operations and flexible naming.
+Handles multiple files, glob patterns, and provides customization options for target paths and filenames.
+Includes smart path handling and performance optimizations for large-scale operations.
 
 ## Parameters
 
 ### source
 
-Source file(s) or directory path(s)
-                Can be a single string path or array of paths
-                Supports glob patterns
+Source file(s) or directory path(s). Can be:
+  - A single path
+  - An array of paths
+  - Glob pattern(s)
 
 `string` | `string`[]
 
@@ -26,19 +29,18 @@ Source file(s) or directory path(s)
 
 `Dirname`
 
-(Optional) Target directory or path transformation function
-                - If undefined: Copy to same directory with '.copy' suffix
-                - If string: Copy to specified directory path
-                - If function: Dynamic path generation based on source dirname
+Target directory or transform function:
+  - If undefined: Creates copy in same directory with '.copy' suffix
+  - If empty string (''):  Uses current directory
+  - If string: Copies to specified directory path (supports ~/ for home dir)
+  - If function: Dynamically generates target path (can be async)
 
 ### options?
 
-(Optional) Copy configuration
-                Can be either a string (new filename) or an options object
-                - If string: Used as the new filename
-                - If object: Supports following properties:
-                  - filename: New filename or function to generate filename
-                  - concurrency: Number of concurrent copy operations (default: 5)
+Configuration options:
+  - If string: Used as target filename
+  - If function: Generates target filename (can be async)
+  - If object: Advanced options object
 
 `Dirname` | `Options`
 
@@ -46,37 +48,40 @@ Source file(s) or directory path(s)
 
 `Promise`\<`void`\>
 
-Promise<void> Resolves when all copy operations complete
+Resolves when all copy operations are complete
 
-## Throws
-
-When source file doesn't exist or copy operation fails
-
-## Examples
+## Example
 
 ```ts
-await copy('source.txt');  // Creates source.copy.txt
-```
+// Basic copy with smart naming
+await copy('source.txt')                // creates source.copy.txt in same dir
+await copy('source.txt', 'target')      // creates target/source.txt
 
-```ts
-await copy(['file1.txt', 'file2.txt'], 'backup');
-```
+// Advanced path handling
+await copy('file.txt', '')              // copy to current directory
+await copy('file.txt', '~/backup')      // copy to home directory (macOS/Linux)
+await copy(['a.txt', 'b.txt'], 'dist')  // copy multiple files
 
-```ts
-await copy('file.txt', 'backup', 'newname.txt');
-```
+// Dynamic paths with async functions
+await copy('data.txt', async dirname => {
+  const timestamp = await getTimestamp()
+  return `backup/${timestamp}`
+})
 
-```ts
-await copy('file.txt', dirname => `backup/${dirname}`);
-```
+// Custom naming with type preservation
+await copy('src/*.ts', 'dist', {
+  filename: name => name.replace('.ts', '.js'),
+})
 
-```ts
-await copy('file.txt', 'backup', {
-  filename: name => `${name}-${Date.now()}`,
-  concurrency: 3
-});
-```
+// Large-scale operations with concurrency control
+await copy('assets/*.png', 'dist', {
+  concurrency: 3,  // limit concurrent operations
+})
 
-```ts
-await copy('src/*.js', 'dist');
+// Mixed patterns with glob
+await copy([
+  'src/*.js',
+  'src/*.ts',
+  '!src/*.test.ts',  // exclude test files
+], 'dist')
 ```
