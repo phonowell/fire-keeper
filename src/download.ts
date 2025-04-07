@@ -10,41 +10,50 @@ import normalizePath from './normalizePath'
 
 /**
  * Downloads a file from a URL and saves it to the specified directory.
+ * Handles binary files, large files, and Unicode filenames.
+ * Creates target directory if it doesn't exist and normalizes paths automatically.
+ *
  * @param {string} url - The URL of the file to download
- * @param {string} dir - The target directory where the file will be saved
+ * @param {string} dir - The target directory where the file will be saved (created if needed)
  * @param {string} [filename] - Optional custom filename. If not provided, extracts filename from URL
  * @returns {Promise<void>} Promise that resolves when download is complete
  * @throws {Error} If:
  *   - URL response is not ok (non-200 status)
- *   - Response has no body
+ *   - Response has no body (e.g., 204 status)
  *   - Network error occurs
  *   - File system operation fails
  *   - Stream pipeline fails
  * @throws {TypeError} If:
  *   - URL is invalid or empty
  *   - Directory path is invalid or empty
+ *
  * @example
- * ```typescript
  * // Basic download with auto-generated filename
- * await download('https://example.com/file.txt', 'downloads');
+ * await download('https://example.com/file.txt', 'downloads')
  *
- * // Download with custom filename
- * await download('https://api.example.com/data', 'data', 'report.json');
+ * // Download with custom filename, creates directory if needed
+ * await download('https://api.example.com/data', 'data/reports', 'report.json')
  *
- * // Download to nested directory (created automatically)
- * await download('https://cdn.example.com/image.png', 'assets/images');
+ * // Handles binary files and large downloads efficiently
+ * await download('https://example.com/large.zip', 'downloads/archives')
+ *
+ * // Supports Unicode filenames
+ * await download('https://example.com/data', 'downloads', '测试文件.txt')
+ *
+ * // Path normalization (both work the same)
+ * await download('https://example.com/file', './path/to/dir')
+ * await download('https://example.com/file', 'path/to/dir')
  *
  * // Error handling
  * try {
- *   await download('https://example.com/file.txt', 'downloads');
+ *   await download('https://example.com/file', 'downloads')
  * } catch (error) {
  *   if (error instanceof TypeError) {
- *     console.error('Invalid input:', error.message);
+ *     console.error('Invalid input:', error.message)
  *   } else {
- *     console.error('Download failed:', error.message);
+ *     console.error('Download failed:', error.message)
  *   }
  * }
- * ```
  */
 const download = async (
   url: string,

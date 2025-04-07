@@ -18,7 +18,7 @@ const separator = os() === 'windows' ? ' && ' : '; '
 
 /**
  * Execute shell commands with output capture and error handling.
- * Commands are executed sequentially when provided as an array.
+ * Supports cross-platform command execution with unified output formatting.
  *
  * @param {string | string[]} cmd - A single command string or array of command strings to execute
  * @param {Object} [options] - Configuration options
@@ -26,30 +26,33 @@ const separator = os() === 'windows' ? ' && ' : '; '
  *
  * @returns {Promise<[number, string, string[]]>} A promise that resolves to a tuple containing:
  *   - [0]: Exit code (number) - 0 for success, non-zero for failure
- *   - [1]: Last output message (string)
- *   - [2]: Array of all output messages (string[])
+ *   - [1]: Last output message (string) - Cleaned and normalized
+ *   - [2]: Array of all output messages (string[]) - Complete history
  *
  * @example
- * // Single command execution
- * const [code, last, all] = await exec('echo "Hello"')
- * console.log('Exit code:', code)     // 0
- * console.log('Last output:', last)   // "Hello"
+ * // Single command with error handling
+ * const [code, last, all] = await exec('npm test')
+ * if (code !== 0) {
+ *   console.error('Tests failed:', last)
+ * }
  *
- * // Multiple commands in sequence
- * const [code] = await exec([
- *   'mkdir -p temp',
- *   'echo "test" > temp/test.txt',
- *   'cat temp/test.txt'
- * ])
+ * // Multiple commands with platform-specific separators
+ * await exec([
+ *   'mkdir -p dist',
+ *   'tsc',
+ *   'node dist/index.js'
+ * ]) // Uses && on Windows, ; on Unix
  *
- * // Silent execution
+ * // Capture all output history
+ * const [code, last, all] = await exec('ls -R')
+ * console.log('Last file:', last)
+ * console.log('All files:', all.join('\n'))
+ *
+ * // Silent execution for background tasks
  * await exec('npm install', { silent: true })
  *
- * // Error handling
- * const [code] = await exec('invalid-command')
- * if (code !== 0) {
- *   console.error('Command failed')
- * }
+ * // Error output handling (shown in red)
+ * await exec('invalid-cmd') // Errors in red text
  */
 const exec = (
   cmd: string | string[],

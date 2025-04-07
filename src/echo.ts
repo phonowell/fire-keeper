@@ -16,7 +16,8 @@ const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 const separator = `${kleur.gray('›')} `
 
 /**
- * Enhanced console logging utility with formatting, message types, and flow control.
+ * Enhanced console logging utility with formatting, message types, and intelligent caching.
+ * Features smart path rendering, timestamp caching, and special content highlighting.
  *
  * @template T - The type of the message to log
  * @param {[T] | [string, T]} args - Either:
@@ -32,33 +33,36 @@ const separator = `${kleur.gray('›')} `
  * @property {function} freeze - Temporarily disable output while executing an async operation
  *
  * @example
- * ```typescript
- * // Basic logging
- * echo('Hello world')               // Basic gray text
- * echo('info', 'Processing...')     // With type prefix
+ * // Basic logging with auto-formatting
+ * echo('Hello world')               // Basic text with timestamp
+ * echo('info', 'Processing...')     // With cyan underlined type prefix
  *
- * // Message types with different formatting
- * echo('error', 'Failed to connect')  // Red error text
- * echo('success', 'Completed')        // Green success text
+ * // Smart path rendering
+ * echo('path', '/home/user/file')   // Shows as '~/file'
+ * echo('path', '/project/src')      // Shows as './src'
  *
- * // Return value chaining
- * const config = echo('config', { port: 3000 })  // Logs and returns config
+ * // Special content formatting
+ * echo("Found 'important' file")    // 'important' in magenta
+ * echo('info', "Processing 'data'") // Type prefix + magenta quotes
  *
- * // Flow control
+ * // Flow control with async operations
+ * await echo.freeze(async () => {
+ *   await heavyOperation()          // Output suppressed
+ * })
+ *
+ * // Temporary silence with automatic resume
+ * await echo.whisper(async () => {
+ *   echo('Silent operation')        // Nothing logged
+ * })
+ *
+ * // Manual flow control
  * echo.pause()
- * echo('Silent operation')  // Nothing logged
+ * echo('Hidden message')            // Nothing logged
  * echo.resume()
  *
- * // Async operation with temporary silence
- * await echo.freeze(async () => {
- *   await heavyOperation()  // Output suppressed
- * })
- *
- * // Minimal logging
- * await echo.whisper(async () => {
- *   // Minimal output formatting
- * })
- * ```
+ * // Object logging with type
+ * const config = {port: 3000}
+ * echo('config', config)            // Cyan 'config' prefix + formatted object
  */
 const echo = <T>(...args: [T] | [string, T]): T => {
   const [type, message] = args.length === 1 ? ['default', args[0]] : args
