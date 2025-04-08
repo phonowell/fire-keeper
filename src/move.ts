@@ -8,34 +8,65 @@ type Options = {
 }
 
 /**
- * Move files or directories.
- * @param {string | string[]} source - The source file/directory path or array of paths to move
- * @param {string | Function} target - The target directory or a function that returns the target path
+ * Move files or directories while preserving their structure.
+ * Uses copy-then-remove strategy for reliability.
+ *
+ * @param {string | string[]} source - Source path(s) to move
+ *   - Single file/directory path or array of paths
+ *   - Paths are normalized (e.g., './foo/../bar' → 'bar')
+ *   - Supports glob patterns for directory moves
+ *   - Non-existent sources are silently skipped
+ *
+ * @param {string | Function} target - Target directory or path generator
+ *   - String: Direct target directory path
+ *   - Function: (sourceName: string) => string | Promise<string>
+ *   - Paths are normalized automatically
+ *   - Directories are created as needed
+ *
  * @param {Object} [options] - Configuration options
- * @param {number} [options.concurrency=5] - Maximum number of concurrent operations
- * @returns {Promise<void>} Promise that resolves when all moves are complete
- * @throws {Error} If source doesn't exist or target is invalid
+ * @param {number} [options.concurrency=5] - Maximum concurrent operations
+ *
+ * @returns {Promise<void>} Resolves when all moves complete:
+ *   - Source files/directories are removed
+ *   - Target files/directories exist with identical content
+ *   - Directory structure is preserved
+ *
+ * @throws {Error} When:
+ *   - Target path generation fails
+ *   - Write permission denied
+ *   - Disk space insufficient
+ *
  * @example
  * ```typescript
- * // Move a single file
- * await move('file.txt', 'backup');
+ * // Basic file move
+ * await move('config.json', 'backup/')
  *
  * // Move multiple files
- * await move(['file1.txt', 'file2.txt'], 'backup');
+ * await move(['file1.txt', 'file2.txt'], 'archive/')
  *
- * // Using a function to generate target path
- * await move('file.txt', name => `backup/${name}`);
+ * // Move with glob pattern preserving structure
+ * await move('src/**\/*.ts', 'backup/src/')
  *
- * // With custom concurrency
- * await move(['file1.txt', 'file2.txt'], 'backup', {
- *   concurrency: 2
- * });
+ * // Dynamic target path with sync function
+ * await move('file.txt', name => `backup/${Date.now()}_${name}`)
+ *
+ * // Dynamic target path with async function
+ * await move('data.json', async name => {
+ *   await someAsyncOperation()
+ *   return `processed/${name}`
+ * })
+ *
+ * // Move to existing directory
+ * await move('newFile.txt', 'existing/dir/') // Won't affect other files
+ *
+ * // Control concurrency for many files
+ * await move(manyFiles, 'dest/', { concurrency: 3 })
  *
  * // Error handling
  * try {
- *   await move('nonexistent.txt', 'backup');
+ *   await move('huge.dat', '/limited-space/')
  * } catch (error) {
- *   console.error('Move failed:', error);
+ *   console.error('Move failed:', error)
  * }
  * ```
  */

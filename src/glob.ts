@@ -24,12 +24,12 @@ const isListedAsSource = (
 /**
  * Find files and directories using glob patterns with enhanced options and type safety.
  * Returns paths matching the specified patterns while respecting configuration options.
- * The result is marked with a special flag to indicate it's a source list.
+ * Includes smart caching through ListSource type marking and path normalization.
  *
- * @param {string | string[]} source - Glob pattern(s) to match. Can be:
- *   - Single pattern (e.g., 'src/*.js')
- *   - Array of patterns
- *   - File/directory path(s)
+ * @param {string | string[] | ListSource} source - Input to process:
+ *   - Glob pattern (e.g., 'src/*.js')
+ *   - Array of patterns with exclusions
+ *   - Previously returned ListSource (returned as-is)
  * @param {Object} [options] - Configuration options
  * @param {boolean} [options.absolute=false] - Return absolute paths instead of relative
  * @param {boolean} [options.dot=true] - Include dotfiles (files starting with .)
@@ -39,32 +39,30 @@ const isListedAsSource = (
  * @returns {Promise<string[] & { __IS_LISTED_AS_SOURCE__: true }>} Array of matching paths
  *
  * @example
- * // Find all JavaScript files
- * const jsFiles = await glob('src/*.js')
+ * // Basic file matching with exclusions
+ * const sources = await glob(['src/*.ts', '!src/*.test.ts'])
  *
- * // Multiple patterns
- * const sources = await glob([
- *   'src/*.ts',
- *   'src/*.tsx',
- *   '!src/*.test.*'  // Exclude test files
+ * // Directory matching with depth limit
+ * const dirs = await glob('packages/*', { onlyDirectories: true, deep: 1 })
+ *
+ * // Special characters and Unicode
+ * const specialFiles = await glob([
+ *   'src/特殊文件.txt',
+ *   'data/file!@#.txt',
+ *   'path with spaces/*.js'
  * ])
  *
- * // Find directories only
- * const dirs = await glob('src/+([a-z])', {
- *   onlyDirectories: true
- * })
+ * // Path normalization handled automatically
+ * const normalized = await glob('./dir1/../dir2/*.ts')
  *
- * // Shallow search with absolute paths
- * const shallow = await glob('packages/+([a-z])', {
- *   absolute: true,
- *   deep: 1
- * })
+ * // Smart caching with ListSource
+ * const files = await glob('src/*.ts')
+ * const sameFiles = await glob(files)  // Returns cached result
  *
- * // Find all hidden files
- * const dotFiles = await glob('.*', {
- *   dot: true,
- *   onlyFiles: true
- * })
+ * // Empty input cases all return empty ListSource
+ * const empty1 = await glob('')
+ * const empty2 = await glob([])
+ * const empty3 = await glob([''])
  */
 const main = async (
   input: string | string[] | ListSource,

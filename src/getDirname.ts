@@ -2,26 +2,36 @@ import getName from './getName'
 
 /**
  * Extracts the directory name from a file path.
+ * Normalizes paths across different formats and handles special cases.
+ *
  * @param {string} input - The file path to process
- * @returns {string} The directory name component of the path
+ * @returns {string} The directory name component of the path ('.' for current directory)
+ * @throws {Error} If input is empty
+ *
  * @example
- * ```typescript
- * // Basic usage with relative path
- * const dirname = getDirname('./src/file.txt');
- * //=> 'src'
+ * // Basic usage
+ * getDirname('path/to/file.txt')          // 'path/to'
+ * getDirname('./config.json')             // '.'
+ * getDirname('../config.json')            // '..'
  *
- * // With absolute path
- * const root = getDirname('/usr/local/bin/app');
- * //=> '/usr/local/bin'
+ * // Windows paths (automatically normalized)
+ * getDirname('C:\\path\\to\\file.txt')    // 'C:/path/to'
+ * getDirname('\\\\server\\share\\file')   // '//server/share'
  *
- * // With nested directories
- * const nested = getDirname('project/src/components/Button.tsx');
- * //=> 'project/src/components'
+ * // URL-like paths
+ * getDirname('http://site.com/file')      // 'http://site.com'
+ * getDirname('file:///root/file')         // 'file:///root'
  *
- * // Current directory
- * const current = getDirname('./config.json');
- * //=> '.'
- * ```
+ * // Special characters and Unicode
+ * getDirname('path/with spaces/file')     // 'path/with spaces'
+ * getDirname('文件夹/文件.txt')           // '文件夹'
+ * getDirname('path/with/🌟/file')         // 'path/with/🌟'
+ *
+ * // Edge cases
+ * getDirname('/')                         // '/'
+ * getDirname('.')                         // '.'
+ * getDirname('./')                        // '.'
+ * getDirname('   ')                       // '.'
  */
 const getDirname = (input: string) => getName(input).dirname
 

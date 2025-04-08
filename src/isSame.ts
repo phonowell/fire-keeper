@@ -6,41 +6,50 @@ import stat from './stat'
 
 /**
  * Check if the content of multiple files or paths are identical.
- * @param {...(string | string[])} args - The paths to compare. Can be single paths or arrays of paths
+ * All paths are automatically normalized before comparison.
+ * Uses efficient buffer comparison for binary-safe content matching.
+ *
+ * @param {...(string | string[])} args - The paths to compare. Can be single paths or arrays of paths.
+ *   - Accepts any combination of strings and arrays
+ *   - Arrays are automatically flattened
+ *   - Paths are normalized (e.g., './foo/../bar' → 'bar')
+ *   - At least 2 valid paths required
+ *
  * @returns {Promise<boolean>} A promise that resolves to:
- *   - `true` if all files have identical content and size
+ *   - `true` if all files have identical:
+ *     - File size
+ *     - Binary content (compared using Buffer)
  *   - `false` if:
- *     - Less than 2 paths provided
+ *     - Less than 2 valid paths provided
+ *     - Empty arrays or invalid paths included
  *     - Any path doesn't exist
  *     - Files have zero size
- *     - Files have different sizes
+ *     - Files have different sizes (checked before content)
  *     - Files have different content
+ *
  * @example
  * ```typescript
  * // Basic comparison
- * const same = await isSame('file1.txt', 'file2.txt');
- * //=> true if files have identical content
+ * await isSame('file1.txt', 'file2.txt')
+ * //=> true if files match
  *
- * // Multiple files with array
- * const allSame = await isSame(['config1.json', 'config2.json', 'config3.json']);
- * //=> true if all files are identical
- *
- * // Mixed parameter types
- * const mixed = await isSame('original.txt', ['copy1.txt', 'copy2.txt']);
+ * // Multiple comparison methods
+ * await isSame(['config1.json', 'config2.json'], 'config3.json')
+ * await isSame('master.txt', ['copy1.txt', 'copy2.txt'])
+ * await isSame(['v1.txt'], 'v2.txt', ['v3.txt', 'v4.txt'])
  * //=> true if all files match
  *
+ * // Path normalization
+ * await isSame('./path/file.txt', './path/./other/../file.txt')
+ * //=> true (paths normalize to same file)
+ *
  * // Failure cases
- * const single = await isSame('file.txt');
- * //=> false (needs at least 2 files)
- *
- * const nonExistent = await isSame('exists.txt', 'missing.txt');
- * //=> false (missing file)
- *
- * const diffSize = await isSame('small.txt', 'large.txt');
- * //=> false (different file sizes)
- *
- * const diffContent = await isSame('original.txt', 'modified.txt');
- * //=> false (different content)
+ * await isSame('file.txt')                   //=> false (single file)
+ * await isSame([])                           //=> false (empty input)
+ * await isSame('real.txt', 'missing.txt')    //=> false (missing file)
+ * await isSame('empty1.txt', 'empty2.txt')   //=> false (zero byte files)
+ * await isSame('small.txt', 'large.txt')     //=> false (size mismatch)
+ * await isSame('one.txt', '', 'two.txt')     //=> false (invalid path)
  * ```
  */
 const isSame = async (...args: (string | string[])[]): Promise<boolean> => {
