@@ -10,39 +10,23 @@ type Options = {
 }
 
 /**
- * Remove files and directories with concurrent operation support.
- * Uses glob patterns to match files and supports removing multiple files in parallel.
- *
- * @param {string | string[]} source - Path(s) to remove. Can be:
- *   - Single file/directory path
- *   - Array of paths
- *   - Glob pattern(s)
+ * Removes files and directories with pattern matching support
+ * @param {string | string[]} source - Path(s) to remove, can be files, directories, or glob patterns
  * @param {Object} [options] - Configuration options
  * @param {number} [options.concurrency=5] - Maximum concurrent remove operations
- * @returns {Promise<void>}
+ * @returns {Promise<void>} Resolves when all removals complete
  *
  * @example
- * ```typescript
- * // Remove single file
- * await remove('temp/file.txt')
+ * // Remove a single file
+ * remove('temp/file.txt')
  *
+ * @example
  * // Remove multiple paths
- * await remove([
- *   'temp/cache',
- *   'temp/logs'
- * ])
+ * remove(['logs/error.log', 'cache/temp'])
  *
- * // Remove using glob patterns
- * await remove('temp/+(*.js|*.map)')
- *
+ * @example
  * // Remove with custom concurrency
- * await remove(['large1.dat', 'large2.dat'], {
- *   concurrency: 2
- * })
- *
- * // Remove directory and its contents
- * await remove('build')
- * ```
+ * remove('build/', { concurrency: 3 })
  */
 const remove = async (
   source: string | string[],

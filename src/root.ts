@@ -1,13 +1,43 @@
 /**
- * Get the root path of the project
- * @returns - The root path of the project
- * @throws {Error} - If path is invalid or contains illegal characters
- * @throws {Error} - If current working directory doesn't exist
- * @example
- * ```
+ * Gets the normalized absolute path of the current working directory
+ * @returns {string} Normalized absolute path using forward slashes
+ *
+ * @example Current directory path
+ * ```ts
  * root()
- * //=> '/Users/johndoe/project'
+ * //=> '/Users/project/src'
  * ```
+ *
+ * @example Root directory handling
+ * ```ts
+ * // When cwd is root
+ * root()
+ * //=> '/'
+ * ```
+ *
+ * @example Unicode and spaces support
+ * ```ts
+ * // With special characters
+ * root()
+ * //=> '/Users/项目/测试 空格/src'
+ * ```
+ *
+ * Features:
+ * - Forward slash normalization
+ * - Unicode path support
+ * - Space handling
+ * - Root path detection
+ * - Path validation
+ *
+ * Validation:
+ * - No empty paths
+ * - No relative components (. or ..)
+ * - No illegal characters (<>:"|?*)
+ * - Must be absolute
+ *
+ * @throws {Error} 'Invalid path: path is empty' - If path resolves to empty
+ * @throws {Error} 'Invalid path: contains forbidden characters' - If path has illegal chars
+ * @throws {Error} 'Invalid path: contains relative path components' - If path has . or ..
  */
 const root = () => {
   const path = process.cwd().replace(/\\/g, '/')

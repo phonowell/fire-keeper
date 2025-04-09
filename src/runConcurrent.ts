@@ -1,10 +1,52 @@
 /**
- * Execute asynchronous tasks concurrently.
- * @param concurrency The maximum number of concurrent tasks.
- * @param tasks An array of asynchronous tasks to be executed.
- * @param options Configuration options.
- * @returns An array of task execution results.
- * @throws {AggregateError} When a task execution fails and stopOnError is not configured.
+ * Execute asynchronous tasks concurrently with controlled parallelism
+ * @template T - Type of value returned by tasks
+ * @param {number} concurrency - Maximum number of tasks to run in parallel
+ * @param {(() => Promise<T>)[]} tasks - Array of async task functions
+ * @param {Object} [options] - Configuration options
+ * @param {boolean} [options.stopOnError=false] - Stop all tasks on first error
+ * @returns {Promise<T[]>} Array of results in original task order
+ *
+ * @example Basic concurrent execution
+ * ```ts
+ * const tasks = [
+ *   () => downloadFile('file1.txt'),
+ *   () => downloadFile('file2.txt'),
+ *   () => downloadFile('file3.txt')
+ * ]
+ * const results = await runConcurrent(2, tasks)
+ * ```
+ *
+ * @example Error handling modes
+ * ```ts
+ * // Collect all errors (default)
+ * try {
+ *   await runConcurrent(2, tasks)
+ * } catch (err) {
+ *   if (err instanceof AggregateError) {
+ *     console.log(err.errors) // Array of all errors
+ *   }
+ * }
+ *
+ * // Stop on first error
+ * await runConcurrent(2, tasks, { stopOnError: true })
+ * ```
+ *
+ * Features:
+ * - Maintains result order regardless of execution order
+ * - Adaptive concurrency (min of concurrency limit and task count)
+ * - Two error handling modes (aggregate or stop-on-error)
+ * - Memory efficient task scheduling
+ * - Handles empty task arrays
+ *
+ * Error Handling:
+ * - Default: Collects all errors in AggregateError
+ * - stopOnError: Stops all tasks on first error
+ * - Empty task array: Returns empty array
+ * - Invalid tasks: Rejects immediately
+ *
+ * @throws {AggregateError} When tasks fail and stopOnError is false
+ * @throws {Error} When a task fails and stopOnError is true
  */
 const runConcurrent = async <T>(
   // 最大并发数

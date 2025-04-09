@@ -1,27 +1,52 @@
 /**
- * Executes a function and returns its result. Useful for immediately invoking functions
- * that return values or have side effects.
- *
+ * Executes a function immediately and returns its result with type preservation
  * @template T - The return type of the function
- * @param {(...args: unknown[]) => T} fn - The function to execute. Can be an arrow function,
- *                                        regular function, or any callable that returns type T
- * @returns {T} The value returned by the function
+ * @param {(...args: unknown[]) => T} fn - Function to execute
+ * @returns {T} The function's return value with preserved type
  *
- * @example
- * ```typescript
- * // Basic value return
- * const value = run(() => 42)  // returns 42
+ * @example Basic usage
+ * ```ts
+ * // Simple value
+ * const num = run(() => 42)
+ * //=> 42
  *
- * // Object return with type preservation
- * interface Config { port: number }
- * const config = run<Config>(() => ({ port: 3000 }))
- *
- * // Side effects
- * run(() => {
- *   console.log('Side effect')
- *   localStorage.clear()
- * })
+ * // Array with type inference
+ * const arr = run(() => [1, 2, 3])
+ * //=> [1, 2, 3]
  * ```
+ *
+ * @example Type safety
+ * ```ts
+ * interface User {
+ *   id: number
+ *   name: string
+ * }
+ *
+ * const user = run<User>(() => ({
+ *   id: 1,
+ *   name: 'Alice'
+ * }))
+ * //=> { id: 1, name: 'Alice' }
+ * ```
+ *
+ * @example Error handling
+ * ```ts
+ * // Errors propagate normally
+ * try {
+ *   run(() => {
+ *     throw new Error('Failed')
+ *   })
+ * } catch (err) {
+ *   console.error(err)
+ * }
+ * ```
+ *
+ * Features:
+ * - Type inference and preservation
+ * - Supports any callable function
+ * - Propagates errors naturally
+ * - No parameter passing
+ * - Synchronous execution
  */
 const run = <T>(fn: (...args: unknown[]) => T) => fn()
 

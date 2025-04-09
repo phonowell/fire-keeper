@@ -40,47 +40,76 @@ const EXTNAMES = [
 ] as const
 
 /**
- * Read file contents with automatic format detection and parsing based on file extension.
- * Handles text, JSON, YAML, and binary files with appropriate parsing.
- *
- * @template T - Expected type of the parsed content (for JSON/YAML files)
+ * Read file contents with smart format detection and comprehensive parsing capabilities
+ * @template T - Expected type of parsed content (for type-safe JSON/YAML parsing)
  * @template S - File path string literal type (for extension inference)
  * @template R - Whether to return raw buffer (true) or parsed content (false)
  *
- * @param {S} source - Path to the file to read
+ * @param {S} source - Path to file to read
  * @param {Object} [options] - Read options
  * @param {boolean} [options.raw=false] - Return raw buffer instead of parsed content
  *
- * @returns {Promise<Result<T, S, R> | undefined>} File contents or undefined if file doesn't exist:
- *   - Text files (.txt, .md, etc): String content
- *   - JSON files: Parsed object
- *   - YAML/YML files: Parsed object
- *   - With raw=true: Buffer
- *   - Non-existent file: undefined
+ * @returns {Promise<Result<T, S, R> | undefined>} File contents or undefined:
+ * - Text files (.txt, .md, etc): String with preserved line endings
+ * - JSON files (.json): Parsed object with type T
+ * - YAML files (.yml/.yaml): Parsed object with type T
+ * - Binary files (with raw=true): Buffer
+ * - Non-existent file: undefined
+ * - Empty file: "" (string) or empty Buffer (raw)
  *
- * @example
- * // Text file - returns string
- * const text = await read('readme.md')
- *
- * // JSON with type safety
+ * @example Type-safe JSON reading
+ * ```ts
  * interface Config {
  *   port: number
  *   host: string
  * }
  * const config = await read<Config>('config.json')
+ * //=> { port: 3000, host: 'localhost' }
+ * ```
  *
- * // YAML/YML files
+ * @example Complex YAML parsing
+ * ```ts
  * const data = await read('config.yml')
+ * //=> {
+ * //     server: { port: 8080 },
+ * //     features: ['auth', 'api']
+ * //   }
+ * ```
  *
- * // Binary files
+ * @example Binary file handling
+ * ```ts
  * const buffer = await read('image.png', { raw: true })
+ * //=> <Buffer ...>
+ * ```
  *
- * // Non-existent file
- * const missing = await read('not-found.txt')  // undefined
+ * @example Text file with line endings
+ * ```ts
+ * const text = await read('readme.md')
+ * //=> 'Line 1\nLine 2\r\nLine 3'
+ * ```
  *
- * // Empty file
- * const empty = await read('empty.txt')  // returns ""
- * const emptyRaw = await read('empty.txt', { raw: true })  // returns empty Buffer
+ * Features:
+ * - Full TypeScript type inference
+ * - Automatic format detection by extension
+ * - Preserves all line endings (CRLF/LF)
+ * - Supports concurrent file reads
+ * - Handles empty files gracefully
+ * - Built-in glob pattern support
+ * - JSON/YAML validation and parsing
+ *
+ * Supported text extensions:
+ * .coffee, .css, .html, .js, .md, .pug,
+ * .sh, .styl, .ts, .tsx, .txt, .xml
+ *
+ * Object formats:
+ * - .json (with type safety)
+ * - .yaml/.yml (with type safety)
+ *
+ * Error handling:
+ * - Missing file: Returns undefined
+ * - Invalid JSON/YAML: Throws parse error
+ * - IO errors: Throws system error
+ * - Empty file: Returns "" or empty Buffer
  */
 const read = async <
   T = undefined,
