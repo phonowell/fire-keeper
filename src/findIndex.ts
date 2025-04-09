@@ -1,45 +1,19 @@
 /**
- * Returns the index of the first element in an array that satisfies the provided testing function.
- * Safely handles array modifications, closure variables, and type predicates.
- * Optimized for large arrays with early termination.
- *
- * @template T - The type of elements in the array
- * @param {T[]} list - The array to search through
- * @param {function(T, number, T[]): boolean} fn - The testing function
- *   - param {T} value - The current element being processed in the array
- *   - param {number} index - The index of the current element being processed
- *   - param {T[]} array - The array findIndex was called upon
- * @returns {number} The index of the first element that passes the test; -1 if no element passes
+ * Find the first array element's index that matches a predicate
+ * @template T - Array element type
+ * @param {T[]} list - The array to search
+ * @param {function(T, number, T[]): boolean} fn - Test function
+ * @returns {number} First matching index or -1 if not found
  *
  * @example
- * // Basic usage with primitive types
- * const numbers = [1, 3, 4, 6, 7]
- * findIndex(numbers, x => x % 2 === 0) // returns 2
+ * // Basic search
+ * findIndex([1, 2, 3], x => x > 1) // returns 1
  *
- * // Complex conditions with early termination
- * findIndex(numbers, x => x > 3 && x % 2 === 0) // returns 3
+ * // With objects
+ * findIndex(users, u => u.id === 2)
  *
- * // Works with objects and type safety
- * type User = { id: number, name: string }
- * const users: User[] = [
- *   { id: 1, name: 'John' },
- *   { id: 2, name: 'Jane' }
- * ]
- * findIndex(users, user => user.id === 2) // returns 1
- *
- * // Safe with null/undefined values
- * const mixed = [0, null, undefined, 1]
- * findIndex(mixed, x => x === null) // returns 1
- *
- * // Type predicates for better type inference
- * findIndex(users, (user): user is User => user.id === 2)
- *
- * // Closures and side effects handled safely
- * let count = 0
- * findIndex(numbers, x => {
- *   count++ // Side effect in predicate is safe
- *   return x === 3
- * })
+ * // Type-safe predicate
+ * findIndex(items, (x): x is Item => x.type === 'test')
  */
 const findIndex = <T>(
   list: T[],

@@ -16,53 +16,16 @@ const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 const separator = `${kleur.gray('›')} `
 
 /**
- * Enhanced console logging utility with formatting, message types, and intelligent caching.
- * Features smart path rendering, timestamp caching, and special content highlighting.
- *
- * @template T - The type of the message to log
- * @param {[T] | [string, T]} args - Either:
- *   - Single argument: The message to log (uses 'default' type)
- *   - Two arguments: [type, message] where type affects formatting
- * @returns {T} The message that was logged (for chaining)
- *
- * @property {boolean} isSilent - When true, suppresses all output
- * @property {boolean} isFrozen - When true, output is temporarily disabled
- * @property {function} pause - Temporarily disable output
- * @property {function} resume - Re-enable output after pause
- * @property {function} whisper - Log with minimal formatting
- * @property {function} freeze - Temporarily disable output while executing an async operation
- *
- * @example
- * // Basic logging with auto-formatting
- * echo('Hello world')               // Basic text with timestamp
- * echo('info', 'Processing...')     // With cyan underlined type prefix
- *
- * // Smart path rendering
- * echo('path', '/home/user/file')   // Shows as '~/file'
- * echo('path', '/project/src')      // Shows as './src'
- *
- * // Special content formatting
- * echo("Found 'important' file")    // 'important' in magenta
- * echo('info', "Processing 'data'") // Type prefix + magenta quotes
- *
- * // Flow control with async operations
- * await echo.freeze(async () => {
- *   await heavyOperation()          // Output suppressed
- * })
- *
- * // Temporary silence with automatic resume
- * await echo.whisper(async () => {
- *   echo('Silent operation')        // Nothing logged
- * })
- *
- * // Manual flow control
- * echo.pause()
- * echo('Hidden message')            // Nothing logged
- * echo.resume()
- *
- * // Object logging with type
- * const config = {port: 3000}
- * echo('config', config)            // Cyan 'config' prefix + formatted object
+ * Enhanced console logging with smart formatting and caching.
+ * @template T Message type
+ * @param {[T] | [string, T]} args - Single arg: message (default type) or [type, message]
+ * @returns {T} The logged message
+ * @property {boolean} isSilent - Suppresses all output
+ * @property {boolean} isFrozen - Temporarily disables output
+ * @property {function} pause - Disable output
+ * @property {function} resume - Enable output
+ * @property {function} whisper - Log with minimal format
+ * @property {function} freeze - Silent async operation
  */
 const echo = <T>(...args: [T] | [string, T]): T => {
   const [type, message] = args.length === 1 ? ['default', args[0]] : args

@@ -1,44 +1,18 @@
 import path from 'path'
 
 /**
- * Extracts all path components from a file path string.
- * Normalizes path separators and handles cross-platform paths.
- *
- * @param {string} input - The file path to process
+ * Parse path into components with cross-platform support
+ * @param {string} input - File path
  * @returns {Object} Path components
- *   - basename: Name without extension (e.g., 'file')
- *   - dirname: Directory path (e.g., 'path/to')
- *   - extname: Extension with dot (e.g., '.txt')
- *   - filename: Full name with extension (e.g., 'file.txt')
- * @throws {Error} If input is empty
+ *   - basename: Name without extension ('file')
+ *   - dirname: Directory path ('path/to')
+ *   - extname: Extension with dot ('.txt')
+ *   - filename: Full name ('file.txt')
  *
  * @example
- * // Basic path decomposition
  * getName('path/to/file.txt')
- * // => {
- * //   basename: 'file',
- * //   dirname: 'path/to',
- * //   extname: '.txt',
- * //   filename: 'file.txt'
- * // }
- *
- * // Windows path (separators normalized)
- * getName('C:\\Users\\file.txt')
- * // => {
- * //   basename: 'file',
- * //   dirname: 'C:/Users',
- * //   extname: '.txt',
- * //   filename: 'file.txt'
- * // }
- *
- * // Complex path with dots
- * getName('src/test.spec.tsx')
- * // => {
- * //   basename: 'test.spec',
- * //   dirname: 'src',
- * //   extname: '.tsx',
- * //   filename: 'test.spec.tsx'
- * // }
+ * // => { basename: 'file', dirname: 'path/to',
+ * //      extname: '.txt', filename: 'file.txt' }
  */
 const getName = (input: string) => {
   if (!input) throw new Error(`getName/error: empty input`)

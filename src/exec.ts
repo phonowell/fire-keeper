@@ -17,42 +17,18 @@ type Result = [number, string, string[]]
 const separator = os() === 'windows' ? ' && ' : '; '
 
 /**
- * Execute shell commands with output capture and error handling.
- * Supports cross-platform command execution with unified output formatting.
- *
- * @param {string | string[]} cmd - A single command string or array of command strings to execute
+ * Cross-platform shell command execution with output capture
+ * @param {string | string[]} cmd - Single command or array of commands
  * @param {Object} [options] - Configuration options
- * @param {boolean} [options.silent=false] - If true, suppresses command output logging
- *
- * @returns {Promise<[number, string, string[]]>} A promise that resolves to a tuple containing:
- *   - [0]: Exit code (number) - 0 for success, non-zero for failure
- *   - [1]: Last output message (string) - Cleaned and normalized
- *   - [2]: Array of all output messages (string[]) - Complete history
+ * @param {boolean} [options.silent] - Suppress command output logging
+ * @returns {Promise<[number, string, string[]]>} [exitCode, lastOutput, allOutputs]
  *
  * @example
- * // Single command with error handling
- * const [code, last, all] = await exec('npm test')
- * if (code !== 0) {
- *   console.error('Tests failed:', last)
- * }
+ * // Multiple commands (uses && on Windows, ; on Unix)
+ * await exec(['mkdir dist', 'tsc', 'node dist/index.js'])
  *
- * // Multiple commands with platform-specific separators
- * await exec([
- *   'mkdir -p dist',
- *   'tsc',
- *   'node dist/index.js'
- * ]) // Uses && on Windows, ; on Unix
- *
- * // Capture all output history
- * const [code, last, all] = await exec('ls -R')
- * console.log('Last file:', last)
- * console.log('All files:', all.join('\n'))
- *
- * // Silent execution for background tasks
+ * // Silent background task
  * await exec('npm install', { silent: true })
- *
- * // Error output handling (shown in red)
- * await exec('invalid-cmd') // Errors in red text
  */
 const exec = (
   cmd: string | string[],
