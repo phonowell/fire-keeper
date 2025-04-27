@@ -1,8 +1,8 @@
-import { echo, wrapList } from 'fire-keeper'
-
+import echo from './echo'
 import getDirname from './getDirname'
 import glob from './glob'
 import remove from './remove'
+import wrapList from './wrapList'
 
 /**
  * Removes files and their empty parent directories
