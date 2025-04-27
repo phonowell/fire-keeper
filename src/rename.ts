@@ -11,33 +11,12 @@ import normalizePath from './normalizePath'
  * @returns {Promise<void>} Resolves when rename completes
  *
  * @example
- * // Simple file rename
+ * ```ts
  * rename('file.txt', 'backup.txt')
+ * rename('src/', 'backup-src') // Preserves directory contents
+ * ```
  *
- * @example
- * // Directory rename with contents
- * rename('src/', 'backup-src')
- *
- * @example
- * // Unicode filename support
- * rename('文件.txt', '改名.txt')
- *
- * @example
- * // Path normalization
- * rename('./temp/../config.json', 'config.backup.json')
- *
- * Features:
- * - Preserves directory contents
- * - Handles symlinks (Unix)
- * - Supports Unicode paths
- * - Normalizes paths
- * - Preserves permissions
- *
- * Throws:
- * - ENOENT: Source not found
- * - EEXIST: Target exists
- * - EPERM: Permission denied
- * - EXDEV: Cross-device link
+ * @throws {Error} ENOENT (not found), EEXIST (target exists), EPERM (permission denied)
  */
 const rename = async (source: string, target: string) => {
   const src = normalizePath(source)

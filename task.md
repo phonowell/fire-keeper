@@ -1,6 +1,6 @@
 我们一直在按字母顺序检查和改进放置在 `src` 下的源文件的 JSDoc 文档。
 
-目前进度：已完成处理所有 l 开头的文件（link.ts），准备开始处理 m 开头的文件。
+目前进度：已完成处理所有 t 开头的文件（toArray.ts, toDate.ts, trimEnd.ts）以及所有 w 开头的文件（watch.ts, wrapList.ts, write.ts）。
 
 工作特点：
 1. 严格遵循项目的代码风格指南：

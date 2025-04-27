@@ -8,16 +8,21 @@ type Options = {
 }
 
 /**
- * Watch the file or directory.
- * @param listSource The file or directory to watch.
- * @param callback The callback to execute.
- * @param options The options.
+ * Watch files or directories for changes and execute a callback when changes occur.
+ * @param listSource Single path or array of paths to watch
+ * @param callback Function called with the normalized path when changes are detected
+ * @param options Configuration options
+ * @param options.debounce Time in milliseconds to debounce callback (default: 1000)
  * @example
- * ```
+ * // Watch a single directory
  * watch('src', path => {
  *   console.log(path)
  * })
- * ```
+ *
+ * // Watch multiple paths with custom debounce
+ * watch(['src', 'config'], path => {
+ *   console.log(`Changed: ${path}`)
+ * }, { debounce: 500 })
  */
 const watch = (
   listSource: string | string[],

@@ -17,16 +17,10 @@ type Options = {
  * @returns {Promise<void>} Resolves when all removals complete
  *
  * @example
- * // Remove a single file
+ * ```ts
  * remove('temp/file.txt')
- *
- * @example
- * // Remove multiple paths
- * remove(['logs/error.log', 'cache/temp'])
- *
- * @example
- * // Remove with custom concurrency
- * remove('build/', { concurrency: 3 })
+ * remove(['logs/error.log', 'cache/'], { concurrency: 3 })
+ * ```
  */
 const remove = async (
   source: string | string[],

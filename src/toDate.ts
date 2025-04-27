@@ -1,12 +1,15 @@
 /**
- * Convert input to Date object
- * @param input Date | number | string
- * @returns Date
- * @throws Error
+ * Convert input to Date object. Handles various formats and validates results.
+ * @param input - Date object, timestamp (number), or date string
+ * @returns A valid Date object after 1970-01-01
+ * @throws Error when input is invalid or results in date before epoch
  * @example
  * ```
- * console.log(toDate(new Date(0)))
- * //=> 1970-01-01T00:00:00.000Z
+ * toDate(new Date())        // Current date
+ * toDate(1640995200000)     // 2022-01-01
+ * toDate('2021-01-01')      // Hyphenated format
+ * toDate('2021/01/01')      // Slash format
+ * toDate('2021-01-01T12:00:00Z') // ISO format
  * ```
  */
 const toDate = (input: Date | number | string) => {

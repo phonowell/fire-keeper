@@ -1,29 +1,15 @@
 /**
  * Removes specified characters from the end of a string.
- * @param {string} source - The string to trim
- * @param {string} [chars] - The characters to remove from the end. If omitted, removes whitespace
- * @returns {string} The trimmed string
+ * @param source - The string to trim
+ * @param chars - Characters to remove from the end (defaults to whitespace)
+ * @returns The trimmed string
  * @example
- * ```typescript
- * // Trim whitespace
- * trimEnd('  hello  ');
- * //=> '  hello'
- *
- * // Trim specific characters
- * trimEnd('hello...', '.');
- * //=> 'hello'
- *
- * // Trim multiple characters
- * trimEnd('hello123', '123');
- * //=> 'hello'
- *
- * // Trim special characters
- * trimEnd('hello\n\t', '\n\t');
- * //=> 'hello'
- *
- * // No trimming needed
- * trimEnd('hello');
- * //=> 'hello'
+ * ```
+ * trimEnd('  hello  ')      // '  hello'
+ * trimEnd('hello...', '.') // 'hello'
+ * trimEnd('hello123', '123') // 'hello'
+ * trimEnd('hello\n\t', '\n\t') // 'hello'
+ * trimEnd('hello世界', '世界') // 'hello'
  * ```
  */
 const trimEnd = (source: string, chars?: string) => {

@@ -12,55 +12,17 @@ type Options = {
 }
 
 /**
- * Recovers files from their backup versions (.bak files) with concurrent processing
- * @param source - File path(s) to recover (without .bak extension)
+ * Recovers files from their backup versions (.bak files)
+ * @param source - File path(s) to recover (without .bak extension), supports glob patterns
  * @param options - Recovery options
  * @param {number} [options.concurrency=5] - Maximum concurrent file operations
- *
  * @returns Promise<void> Resolves when all recoveries complete
  *
- * @example Single file recovery
+ * @example
  * ```ts
- * await recover('config.json')
- * //=> Recovers from config.json.bak
+ * await recover(['config.json', 'data.txt']) // Recovers from .bak files
+ * await recover('*.txt', { concurrency: 3 }) // Processes max 3 files at once
  * ```
- *
- * @example Multiple file recovery
- * ```ts
- * await recover([
- *   'config.json',
- *   'data.txt',
- *   'settings.yml'
- * ])
- * //=> Recovers all .bak files concurrently
- * ```
- *
- * @example Custom concurrency
- * ```ts
- * await recover('*.txt', {
- *   concurrency: 3
- * })
- * //=> Processes max 3 files at once
- * ```
- *
- * Features:
- * - Supports glob patterns
- * - Concurrent file processing
- * - Preserves file content
- * - Automatic cleanup of .bak files
- * - Progress reporting via echo
- *
- * Behavior:
- * - Missing backups: Skips silently
- * - Mixed sources: Recovers available backups
- * - Original exists: Gets overwritten
- * - After recovery: Removes .bak file
- *
- * Error handling:
- * - Non-existent backups: Reports via echo
- * - IO errors: Throws system errors
- * - Empty source list: Returns early
- * - Invalid paths: Reports via echo
  */
 const recover = async (
   source: string | string[],

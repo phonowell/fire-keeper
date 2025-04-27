@@ -252,85 +252,17 @@ const isChoice = <T>(input: unknown): input is Choice<T> =>
   typeof input === 'object'
 
 /**
- * Interactive command-line prompting utility with type-safe inputs and persistent caching
- * @template T - The value type returned by the prompt
- * @template U - The prompt type ('text'|'number'|'select'|'multi'|'confirm'|'toggle'|'auto')
+ * Interactive command-line prompting utility with type-safe inputs and caching
+ * @template T - Value type returned by the prompt
+ * @template U - Prompt type ('text'|'number'|'select'|'multi'|'confirm'|'toggle'|'auto')
+ * @param {Object} option - Prompt configuration including type, message, default values, and constraints
+ * @returns {Promise<T & Result<U, T>>} Type-safe result based on prompt type:
+ * text→string, number→number, select/auto→T, multi→T[], confirm/toggle→boolean
  *
- * @param {Object} option - Prompt configuration
- * @param {U} option.type - Prompt type
- * @param {string} [option.id] - Cache identifier (omit to disable caching)
- * @param {string} [option.message] - Display message
- * @param {T} [option.default] - Default value
- * @param {number} [option.min] - Minimum value for number type
- * @param {number} [option.max] - Maximum value for number type
- * @param {(T | Choice<T>)[]} [option.list] - Options for select/multi/auto types
- * @param {string} [option.on] - Toggle's enabled label
- * @param {string} [option.off] - Toggle's disabled label
- *
- * @returns {Promise<T & Result<U, T>>} Type-safe prompt result:
- * - text → string
- * - number → number (constrained by min/max)
- * - select/auto → T (single value from list)
- * - multi → T[] (multiple values from list)
- * - confirm/toggle → boolean
- *
- * @example Text input with caching
+ * @example
  * ```ts
- * const host = await prompt({
- *   type: 'text',
- *   id: 'server.host',
- *   message: 'Server hostname:',
- *   default: 'localhost'
- * })
+ * const env = await prompt({ type: 'select', message: 'Environment:', list: ['dev', 'prod'] })
  * ```
- *
- * @example Number with validation
- * ```ts
- * const port = await prompt({
- *   type: 'number',
- *   message: 'Port number:',
- *   min: 1024,
- *   max: 65535
- * })
- * ```
- *
- * @example Rich selection list
- * ```ts
- * const env = await prompt({
- *   type: 'select',
- *   message: 'Select environment:',
- *   list: [
- *     { title: '🔨 Development', value: 'dev', description: 'Local environment' },
- *     { title: '🚀 Production', value: 'prod', description: 'Live environment' },
- *     { title: '🧪 Testing', value: 'test', description: 'Test environment' }
- *   ]
- * })
- * ```
- *
- * @example Multi-select with Unicode
- * ```ts
- * const langs = await prompt({
- *   type: 'multi',
- *   message: 'Select languages:',
- *   list: ['TypeScript 📘', 'Python 🐍', 'Rust 🦀']
- * })
- * ```
- *
- * Features:
- * - Full TypeScript type safety and inference
- * - Persistent response caching (when id provided)
- * - Unicode/emoji support in all prompts
- * - Rich formatting for selection lists
- * - Automatic type conversion
- * - Graceful error handling
- * - Cross-platform support
- *
- * Cache behavior:
- * - Stored in ./temp/cache-prompt.json
- * - Cached by option.id if provided
- * - Multi-select values not cached
- * - Cache ignored if type changes
- * - Cache auto-migrates on version changes
  */
 const main = async <T, U extends Type = Type>(
   option: Option<U, T> & { list?: List<T>; type: U },
