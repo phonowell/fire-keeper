@@ -8,9 +8,9 @@
 
 > **getExtname**(`input`): `string`
 
-Defined in: [getExtname.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/getExtname.ts#L26)
+Defined in: [getExtname.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/getExtname.ts#L17)
 
-Extracts the file extension from a path string.
+Get file extension from a path
 
 ## Parameters
 
@@ -18,30 +18,22 @@ Extracts the file extension from a path string.
 
 `string`
 
-The file path to process
+File path
 
 ## Returns
 
 `string`
 
-The file extension including the leading dot, or empty string if no extension
+Extension with dot or empty string
 
 ## Example
 
-```typescript
+```ts
 // Basic usage
-const extname = getExtname('./src/file.txt');
-//=> '.txt'
+getExtname('file.txt') // '.txt'
+getExtname('no-extension') // ''
 
-// With multiple extensions
-const test = getExtname('script.test.ts');
-//=> '.ts'
-
-// No extension
-const none = getExtname('README');
-//=> ''
-
-// Hidden file
-const hidden = getExtname('.gitignore');
-//=> ''
+// Special cases
+getExtname('.gitignore') // ''
+getExtname('bundle.min.js') // '.js'
 ```

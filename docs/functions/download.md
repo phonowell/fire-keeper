@@ -6,11 +6,14 @@
 
 # Function: download()
 
-> **download**(`url`, `dir`, `filename`?): `Promise`\<`void`\>
+> **download**(`url`, `dir`, `filename?`): `Promise`\<`void`\>
 
-Defined in: [download.ts:49](https://github.com/phonowell/fire-keeper/blob/main/src/download.ts#L49)
+Defined in: [download.ts:22](https://github.com/phonowell/fire-keeper/blob/main/src/download.ts#L22)
 
-Downloads a file from a URL and saves it to the specified directory.
+Downloads file from URL using stream processing
+- Auto-creates target directory if missing
+- Supports binary files and Unicode filenames
+- Normalizes directory paths
 
 ## Parameters
 
@@ -18,61 +21,28 @@ Downloads a file from a URL and saves it to the specified directory.
 
 `string`
 
-The URL of the file to download
+URL to download from
 
 ### dir
 
 `string`
 
-The target directory where the file will be saved
+Target directory path
 
 ### filename?
 
 `string` = `...`
 
-Optional custom filename. If not provided, extracts filename from URL
+Optional custom filename, defaults to URL filename
 
 ## Returns
 
 `Promise`\<`void`\>
 
-Promise that resolves when download is complete
+## Throws
+
+Invalid URL or directory
 
 ## Throws
 
-If:
-  - URL response is not ok (non-200 status)
-  - Response has no body
-  - Network error occurs
-  - File system operation fails
-  - Stream pipeline fails
-
-## Throws
-
-If:
-  - URL is invalid or empty
-  - Directory path is invalid or empty
-
-## Example
-
-```typescript
-// Basic download with auto-generated filename
-await download('https://example.com/file.txt', 'downloads');
-
-// Download with custom filename
-await download('https://api.example.com/data', 'data', 'report.json');
-
-// Download to nested directory (created automatically)
-await download('https://cdn.example.com/image.png', 'assets/images');
-
-// Error handling
-try {
-  await download('https://example.com/file.txt', 'downloads');
-} catch (error) {
-  if (error instanceof TypeError) {
-    console.error('Invalid input:', error.message);
-  } else {
-    console.error('Download failed:', error.message);
-  }
-}
-```
+Network errors, non-200 responses, empty bodies, I/O failures

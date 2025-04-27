@@ -8,10 +8,9 @@
 
 > **run**\<`T`\>(`fn`): `T`
 
-Defined in: [run.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/run.ts#L26)
+Defined in: [run.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/run.ts#L13)
 
-Executes a function and returns its result. Useful for immediately invoking functions
-that return values or have side effects.
+Executes a function immediately and returns its result with type preservation
 
 ## Type Parameters
 
@@ -27,28 +26,17 @@ The return type of the function
 
 (...`args`) => `T`
 
-The function to execute. Can be an arrow function,
-                                       regular function, or any callable that returns type T
+Function to execute
 
 ## Returns
 
 `T`
 
-The value returned by the function
+The function's return value with preserved type
 
 ## Example
 
-```typescript
-// Basic value return
-const value = run(() => 42)  // returns 42
-
-// Object return with type preservation
-interface Config { port: number }
-const config = run<Config>(() => ({ port: 3000 }))
-
-// Side effects
-run(() => {
-  console.log('Side effect')
-  localStorage.clear()
-})
+```ts
+const num = run(() => 42) //=> 42
+const user = run<User>(() => ({ id: 1, name: 'Alice' }))
 ```

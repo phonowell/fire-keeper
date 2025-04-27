@@ -6,17 +6,17 @@
 
 # Function: move()
 
-> **move**(`source`, `target`, `options`?): `Promise`\<`void`\>
+> **move**(`source`, `target`, `options?`): `Promise`\<`void`\>
 
-Defined in: [move.ts:42](https://github.com/phonowell/fire-keeper/blob/main/src/move.ts#L42)
+Defined in: [move.ts:30](https://github.com/phonowell/fire-keeper/blob/main/src/move.ts#L30)
 
-Move files or directories.
+Move files or directories with copy-then-remove strategy.
 
 ## Parameters
 
 ### source
 
-The source file/directory path or array of paths to move
+Source path(s) to move
 
 `string` | `string`[]
 
@@ -24,7 +24,7 @@ The source file/directory path or array of paths to move
 
 `Dirname`
 
-The target directory or a function that returns the target path
+Target directory or path generator function
 
 ### options?
 
@@ -36,33 +36,17 @@ Configuration options
 
 `Promise`\<`void`\>
 
-Promise that resolves when all moves are complete
+Resolves when moves complete
 
 ## Throws
 
-If source doesn't exist or target is invalid
+When target generation fails or disk operations fail
 
 ## Example
 
 ```typescript
-// Move a single file
-await move('file.txt', 'backup');
-
-// Move multiple files
-await move(['file1.txt', 'file2.txt'], 'backup');
-
-// Using a function to generate target path
-await move('file.txt', name => `backup/${name}`);
-
-// With custom concurrency
-await move(['file1.txt', 'file2.txt'], 'backup', {
-  concurrency: 2
-});
-
-// Error handling
-try {
-  await move('nonexistent.txt', 'backup');
-} catch (error) {
-  console.error('Move failed:', error);
-}
+await move('config.json', 'backup/')
+await move(['file1.txt', 'file2.txt'], 'archive/')
+await move('src/**/*.ts', 'backup/src/')
+await move('file.txt', name => `backup/${Date.now()}_${name}`)
 ```

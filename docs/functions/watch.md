@@ -8,15 +8,15 @@
 
 > **watch**(`listSource`, `callback`, `options`): `void`
 
-Defined in: [watch.ts:22](https://github.com/phonowell/fire-keeper/blob/main/src/watch.ts#L22)
+Defined in: [watch.ts:27](https://github.com/phonowell/fire-keeper/blob/main/src/watch.ts#L27)
 
-Watch the file or directory.
+Watch files or directories for changes and execute a callback when changes occur.
 
 ## Parameters
 
 ### listSource
 
-The file or directory to watch.
+Single path or array of paths to watch
 
 `string` | `string`[]
 
@@ -24,13 +24,13 @@ The file or directory to watch.
 
 (`path`) => `void`
 
-The callback to execute.
+Function called with the normalized path when changes are detected
 
 ### options
 
 `Options` = `...`
 
-The options.
+Configuration options
 
 ## Returns
 
@@ -38,8 +38,14 @@ The options.
 
 ## Example
 
-```
+```ts
+// Watch a single directory
 watch('src', path => {
   console.log(path)
 })
+
+// Watch multiple paths with custom debounce
+watch(['src', 'config'], path => {
+  console.log(`Changed: ${path}`)
+}, { debounce: 500 })
 ```

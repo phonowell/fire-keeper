@@ -8,27 +8,23 @@
 
 > **root**(): `string`
 
-Defined in: [root.ts:12](https://github.com/phonowell/fire-keeper/blob/main/src/root.ts#L12)
+Defined in: [root.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/root.ts#L13)
 
-Get the root path of the project
+Gets the normalized absolute path of the current working directory
 
 ## Returns
 
 `string`
 
-- The root path of the project
-
-## Throws
-
-- If path is invalid or contains illegal characters
-
-## Throws
-
-- If current working directory doesn't exist
+Normalized absolute path using forward slashes
 
 ## Example
 
-```
+```ts
 root()
-//=> '/Users/johndoe/project'
+//=> '/Users/project/src'
 ```
+
+## Throws
+
+For invalid paths (empty, containing forbidden characters, or relative components)

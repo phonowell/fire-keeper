@@ -8,9 +8,9 @@
 
 > **stat**(`source`): `Promise`\<`null` \| `Stats`\>
 
-Defined in: [stat.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/stat.ts#L26)
+Defined in: [stat.ts:24](https://github.com/phonowell/fire-keeper/blob/main/src/stat.ts#L24)
 
-Get the file status of a file or directory.
+Get the file status of a file, directory, or glob pattern.
 
 ## Parameters
 
@@ -18,29 +18,27 @@ Get the file status of a file or directory.
 
 `string`
 
-A source file or directory path.
+A file path, directory path, or glob pattern.
 
 ## Returns
 
 `Promise`\<`null` \| `Stats`\>
 
 Promise that resolves with:
-         - fs.Stats object if the file exists
+         - fs.Stats object if the file exists (resolves symlinks)
          - null if the file is not found
 
 ## Throws
 
-If there's an error accessing the file
+If there's an error accessing the file (e.g., invalid input)
 
 ## Example
 
-```typescript
-try {
-  const stats = await stat('file.txt')
-  if (stats) {
-    console.log(`File size: ${stats.size}`)
-  }
-} catch (err) {
-  console.error('Error accessing file:', err)
-}
+```
+const stats = await stat('file.txt')
+if (stats?.isFile()) console.log(`Size: ${stats.size}`)
+
+// Also works with directories and glob patterns
+const dirStats = await stat('directory')
+const fileStats = await stat('src/*.ts')
 ```

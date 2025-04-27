@@ -8,9 +8,9 @@
 
 > **getFilename**(`input`): `string`
 
-Defined in: [getFilename.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/getFilename.ts#L26)
+Defined in: [getFilename.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/getFilename.ts#L17)
 
-Extracts the filename (with extension) from a file path.
+Get filename with extension from a path
 
 ## Parameters
 
@@ -18,30 +18,22 @@ Extracts the filename (with extension) from a file path.
 
 `string`
 
-The file path to process
+File path
 
 ## Returns
 
 `string`
 
-The filename including extension
+Full filename with extension
 
 ## Example
 
-```typescript
-// Basic usage
-const filename = getFilename('./src/file.txt');
-//=> 'file.txt'
+```ts
+// Basic paths
+getFilename('path/to/file.txt') // 'file.txt'
+getFilename('script.test.js') // 'script.test.js'
 
-// With multiple extensions
-const test = getFilename('path/to/script.test.ts');
-//=> 'script.test.ts'
-
-// Hidden file
-const hidden = getFilename('/path/.gitignore');
-//=> '.gitignore'
-
-// File without extension
-const noExt = getFilename('docs/README');
-//=> 'README'
+// Special paths
+getFilename('path/to/dir/') // 'dir'
+getFilename('.gitignore') // '.gitignore'
 ```

@@ -8,9 +8,9 @@
 
 > **wrapList**(`input`): `string`
 
-Defined in: [wrapList.ts:16](https://github.com/phonowell/fire-keeper/blob/main/src/wrapList.ts#L16)
+Defined in: [wrapList.ts:24](https://github.com/phonowell/fire-keeper/blob/main/src/wrapList.ts#L24)
 
-Wrap list.
+Converts input to a comma-separated string with each item wrapped in single quotes.
 
 ## Parameters
 
@@ -18,20 +18,30 @@ Wrap list.
 
 `unknown`
 
-The input.
+Any value (primitives, arrays, objects)
 
 ## Returns
 
 `string`
 
-The wrapped list.
+A string with items wrapped in quotes and joined with commas
 
 ## Example
 
-```
-wrapList([1, 2, 3])
-//=> '1, 2, 3'
+```ts
+// Arrays of primitives
+wrapList(['a', 'b', 'c'])
+//=> "'a', 'b', 'c'"
 
+// Single values are also processed
 wrapList(123)
-//=> '123'
+//=> "'123'"
+
+// Objects are JSON stringified
+wrapList({name: 'test'})
+//=> "'{"name":"test"}'"
+
+// Null and undefined become empty strings
+wrapList([null, undefined])
+//=> ", "
 ```

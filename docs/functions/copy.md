@@ -6,22 +6,17 @@
 
 # Function: copy()
 
-> **copy**(`source`, `target`?, `options`?): `Promise`\<`void`\>
+> **copy**(`source`, `target?`, `options?`): `Promise`\<`void`\>
 
-Defined in: [copy.ts:77](https://github.com/phonowell/fire-keeper/blob/main/src/copy.ts#L77)
+Defined in: [copy.ts:32](https://github.com/phonowell/fire-keeper/blob/main/src/copy.ts#L32)
 
-Copy files and directories with support for concurrent operations and flexible naming.
-Handles multiple files, glob patterns, and provides customization options for target paths and filenames.
-Includes smart path handling and performance optimizations for large-scale operations.
+Copy files with concurrent operations and flexible path handling
 
 ## Parameters
 
 ### source
 
-Source file(s) or directory path(s). Can be:
-  - A single path
-  - An array of paths
-  - Glob pattern(s)
+File path(s) or glob pattern(s)
 
 `string` | `string`[]
 
@@ -29,18 +24,11 @@ Source file(s) or directory path(s). Can be:
 
 `Dirname`
 
-Target directory or transform function:
-  - If undefined: Creates copy in same directory with '.copy' suffix
-  - If empty string (''):  Uses current directory
-  - If string: Copies to specified directory path (supports ~/ for home dir)
-  - If function: Dynamically generates target path (can be async)
+Target directory or path transform function. If empty uses current dir
 
 ### options?
 
-Configuration options:
-  - If string: Used as target filename
-  - If function: Generates target filename (can be async)
-  - If object: Advanced options object
+Target filename or options object with {concurrency?, filename?}
 
 `Dirname` | `Options`
 
@@ -48,40 +36,10 @@ Configuration options:
 
 `Promise`\<`void`\>
 
-Resolves when all copy operations are complete
-
 ## Example
 
 ```ts
-// Basic copy with smart naming
-await copy('source.txt')                // creates source.copy.txt in same dir
-await copy('source.txt', 'target')      // creates target/source.txt
-
-// Advanced path handling
-await copy('file.txt', '')              // copy to current directory
-await copy('file.txt', '~/backup')      // copy to home directory (macOS/Linux)
-await copy(['a.txt', 'b.txt'], 'dist')  // copy multiple files
-
-// Dynamic paths with async functions
-await copy('data.txt', async dirname => {
-  const timestamp = await getTimestamp()
-  return `backup/${timestamp}`
-})
-
-// Custom naming with type preservation
-await copy('src/*.ts', 'dist', {
-  filename: name => name.replace('.ts', '.js'),
-})
-
-// Large-scale operations with concurrency control
-await copy('assets/*.png', 'dist', {
-  concurrency: 3,  // limit concurrent operations
-})
-
-// Mixed patterns with glob
-await copy([
-  'src/*.js',
-  'src/*.ts',
-  '!src/*.test.ts',  // exclude test files
-], 'dist')
+copy('src.txt') // Creates src.copy.txt
+copy('src.txt', 'dist') // Creates dist/src.txt
+copy('*.ts', 'dist', { filename: f => f.replace('.ts','.js') })
 ```

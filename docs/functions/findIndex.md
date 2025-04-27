@@ -8,9 +8,9 @@
 
 > **findIndex**\<`T`\>(`list`, `fn`): `number`
 
-Defined in: [findIndex.ts:24](https://github.com/phonowell/fire-keeper/blob/main/src/findIndex.ts#L24)
+Defined in: [findIndex.ts:18](https://github.com/phonowell/fire-keeper/blob/main/src/findIndex.ts#L18)
 
-Returns the index of the first element in an array that satisfies the provided testing function.
+Find the first array element's index that matches a predicate
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Returns the index of the first element in an array that satisfies the provided t
 
 `T`
 
-The type of elements in the array
+Array element type
 
 ## Parameters
 
@@ -26,34 +26,29 @@ The type of elements in the array
 
 `T`[]
 
-The array to search through
+The array to search
 
 ### fn
 
 (`value`, `index`, `array`) => `boolean`
 
-The testing function
-  - param {T} value - The current element being processed in the array
-  - param {number} index - The index of the current element being processed
-  - param {T[]} array - The array findIndex was called upon
+Test function
 
 ## Returns
 
 `number`
 
-The index of the first element that passes the test; -1 if no element passes
+First matching index or -1 if not found
 
 ## Example
 
-```typescript
-// Find index of first even number
-const numbers = [1, 3, 4, 6, 7];
-const evenIndex = findIndex(numbers, x => x % 2 === 0); // returns 2
+```ts
+// Basic search
+findIndex([1, 2, 3], x => x > 1) // returns 1
 
-// Find index of specific object in array
-const users = [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }];
-const userIndex = findIndex(users, user => user.id === 2); // returns 1
+// With objects
+findIndex(users, u => u.id === 2)
 
-// When no element is found
-const notFound = findIndex([1, 3, 5], x => x > 10); // returns -1
+// Type-safe predicate
+findIndex(items, (x): x is Item => x.type === 'test')
 ```

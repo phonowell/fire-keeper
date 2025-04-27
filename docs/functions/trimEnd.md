@@ -6,9 +6,9 @@
 
 # Function: trimEnd()
 
-> **trimEnd**(`source`, `chars`?): `string`
+> **trimEnd**(`source`, `chars?`): `string`
 
-Defined in: [trimEnd.ts:29](https://github.com/phonowell/fire-keeper/blob/main/src/trimEnd.ts#L29)
+Defined in: [trimEnd.ts:15](https://github.com/phonowell/fire-keeper/blob/main/src/trimEnd.ts#L15)
 
 Removes specified characters from the end of a string.
 
@@ -24,7 +24,7 @@ The string to trim
 
 `string`
 
-The characters to remove from the end. If omitted, removes whitespace
+Characters to remove from the end (defaults to whitespace)
 
 ## Returns
 
@@ -34,24 +34,10 @@ The trimmed string
 
 ## Example
 
-```typescript
-// Trim whitespace
-trimEnd('  hello  ');
-//=> '  hello'
-
-// Trim specific characters
-trimEnd('hello...', '.');
-//=> 'hello'
-
-// Trim multiple characters
-trimEnd('hello123', '123');
-//=> 'hello'
-
-// Trim special characters
-trimEnd('hello\n\t', '\n\t');
-//=> 'hello'
-
-// No trimming needed
-trimEnd('hello');
-//=> 'hello'
+```
+trimEnd('  hello  ')      // '  hello'
+trimEnd('hello...', '.') // 'hello'
+trimEnd('hello123', '123') // 'hello'
+trimEnd('hello\n\t', '\n\t') // 'hello'
+trimEnd('hello世界', '世界') // 'hello'
 ```

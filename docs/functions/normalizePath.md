@@ -8,9 +8,9 @@
 
 > **normalizePath**(`input`): `string`
 
-Defined in: [normalizePath.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/normalizePath.ts#L17)
+Defined in: [normalizePath.ts:22](https://github.com/phonowell/fire-keeper/blob/main/src/normalizePath.ts#L22)
 
-Normalize path
+Normalizes file system paths with special case handling
 
 ## Parameters
 
@@ -18,17 +18,21 @@ Normalize path
 
 `string`
 
-string
+Path string to normalize
 
 ## Returns
 
 `string`
 
-string
+Normalized absolute path string, or empty string for invalid inputs
 
 ## Example
 
-```
-const np = normalizePath('./src/file.txt')
-//=> '/home/runner/work/project/project/src/file.txt'
+```ts
+normalizePath('./src/file.txt') //=> '/home/project/src/file.txt'
+normalizePath('~/documents') //=> '/home/user/documents'
+normalizePath('!./ignored') //=> '!/home/project/ignored'
+normalizePath('../config') //=> '/home/config'
+normalizePath('./测试/路径') //=> '/home/project/测试/路径'
+normalizePath('') //=> ''
 ```

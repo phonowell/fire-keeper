@@ -1,8 +1,3 @@
-/**
- * Core utilities for file operations, path manipulation, and process execution
- * @module fire-keeper
- */
-
 import argv from './argv'
 import at from './at'
 import backup from './backup'

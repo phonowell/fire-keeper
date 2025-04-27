@@ -8,28 +8,22 @@
 
 > **home**(): `string`
 
-Defined in: [home.ts:21](https://github.com/phonowell/fire-keeper/blob/main/src/home.ts#L21)
+Defined in: [home.ts:14](https://github.com/phonowell/fire-keeper/blob/main/src/home.ts#L14)
 
-Get the user's home directory with normalized forward slashes.
+Get normalized user home directory path
 
 ## Returns
 
 `string`
 
-The home directory path with forward slashes
+Absolute home path with forward slashes
 
 ## Example
 
-```typescript
-// On macOS/Linux
-home();
-//=> '/Users/username'
+```ts
+// Unix-like systems
+home() //=> '/Users/username'
 
-// On Windows (automatically converted to forward slashes)
-home();
-//=> 'C:/Users/username'
-
-// Usage example
-const configPath = `${home()}/.config/settings.json`;
-//=> '/Users/username/.config/settings.json'
+// Windows (normalized)
+home() //=> 'C:/Users/username'
 ```

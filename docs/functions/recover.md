@@ -8,15 +8,15 @@
 
 > **recover**(`source`, `options`): `Promise`\<`void`\>
 
-Defined in: [recover.ts:33](https://github.com/phonowell/fire-keeper/blob/main/src/recover.ts#L33)
+Defined in: [recover.ts:27](https://github.com/phonowell/fire-keeper/blob/main/src/recover.ts#L27)
 
-Recovers files from their backup versions (.bak files).
+Recovers files from their backup versions (.bak files)
 
 ## Parameters
 
 ### source
 
-A single file path or an array of paths to recover
+File path(s) to recover (without .bak extension), supports glob patterns
 
 `string` | `string`[]
 
@@ -30,21 +30,11 @@ Recovery options
 
 `Promise`\<`void`\>
 
-Promise<void>
-
-## Throws
-
-When file operations fail
+Promise<void> Resolves when all recoveries complete
 
 ## Example
 
-```typescript
-// Recover a single file
-await recover('file.txt')
-
-// Recover multiple files
-await recover(['file1.txt', 'file2.txt'])
-
-// Recover files with custom concurrency
-await recover('file.txt', { concurrency: 3 })
+```ts
+await recover(['config.json', 'data.txt']) // Recovers from .bak files
+await recover('*.txt', { concurrency: 3 }) // Processes max 3 files at once
 ```

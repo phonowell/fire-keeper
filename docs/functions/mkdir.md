@@ -6,17 +6,17 @@
 
 # Function: mkdir()
 
-> **mkdir**(`source`, `options`?): `Promise`\<`void`\>
+> **mkdir**(`source`, `options?`): `Promise`\<`void`\>
 
-Defined in: [mkdir.ts:45](https://github.com/phonowell/fire-keeper/blob/main/src/mkdir.ts#L45)
+Defined in: [mkdir.ts:30](https://github.com/phonowell/fire-keeper/blob/main/src/mkdir.ts#L30)
 
-Create one or more directories recursively.
+Create directories recursively with proper permissions.
 
 ## Parameters
 
 ### source
 
-A single directory path or array of directory paths to create
+Directory path(s) to create
 
 `string` | `string`[]
 
@@ -30,34 +30,15 @@ Configuration options
 
 `Promise`\<`void`\>
 
-Promise that resolves when all directories are created
+Resolves when all directories are created
 
 ## Throws
 
-If:
-  - The source is empty
-  - Directory creation fails
-  - Insufficient permissions
+When paths are invalid or permissions deny creation
 
 ## Example
 
 ```typescript
-// Create a single directory
-await mkdir('path/to/dir');
-
-// Create multiple directories
-await mkdir(['path/to/dir1', 'path/to/dir2']);
-
-// Handles nested paths
-await mkdir('path/to/nested/dir');
-
-// With custom concurrency
-await mkdir(['dir1', 'dir2', 'dir3'], { concurrency: 2 });
-
-// Error handling
-try {
-  await mkdir('/root/restricted-dir');
-} catch (error) {
-  console.error('Failed to create directory:', error);
-}
+await mkdir('path/to/deep/dir')
+await mkdir(['dir1', 'dir2', 'path/with/特殊字符'])
 ```

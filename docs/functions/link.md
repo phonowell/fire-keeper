@@ -8,9 +8,9 @@
 
 > **link**(`source`, `target`): `Promise`\<`void`\>
 
-Defined in: [link.ts:39](https://github.com/phonowell/fire-keeper/blob/main/src/link.ts#L39)
+Defined in: [link.ts:18](https://github.com/phonowell/fire-keeper/blob/main/src/link.ts#L18)
 
-Creates a symbolic link from source to target location.
+Creates a symbolic link from source to target
 
 ## Parameters
 
@@ -18,47 +18,28 @@ Creates a symbolic link from source to target location.
 
 `string`
 
-The source file or directory path to create a link from
+Source path (supports glob patterns)
 
 ### target
 
 `string`
 
-The target path where the symbolic link will be created
+Target path for the symlink
 
 ## Returns
 
 `Promise`\<`void`\>
 
-- Resolves when link is created successfully
+Resolves when link is created, or silently if no source matches
 
 ## Throws
 
-When:
-  - Source path does not exist
-  - Target path is invalid
-  - Filesystem operations fail
-  - Insufficient permissions
+If source exists but link creation fails (e.g., permissions)
 
 ## Example
 
-```typescript
-// Create a symlink for a file
-await link('source.txt', 'link.txt');
-
-// Create a symlink for a directory
-await link('source-dir', 'link-dir');
-
-// Create a symlink with absolute paths
-await link('/path/to/source', '/path/to/link');
-
-// Create a symlink with relative paths
-await link('./config/default.json', './config/current.json');
-
-// Error handling
-try {
-  await link('non-existent.txt', 'link.txt');
-} catch (error) {
-  console.error('Failed to create symlink:', error);
-}
+```ts
+await link('config.json', 'config.link.json')
+await link('configs/*.json', 'current.json') // uses first match
+await link('src/', 'link/') // directory (may need elevation on Windows)
 ```

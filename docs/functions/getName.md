@@ -8,9 +8,9 @@
 
 > **getName**(`input`): `object`
 
-Defined in: [getName.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/getName.ts#L13)
+Defined in: [getName.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/getName.ts#L17)
 
-Get name from path
+Parse path into components with cross-platform support
 
 ## Parameters
 
@@ -18,13 +18,17 @@ Get name from path
 
 `string`
 
-string
+File path
 
 ## Returns
 
 `object`
 
-object
+Path components
+  - basename: Name without extension ('file')
+  - dirname: Directory path ('path/to')
+  - extname: Extension with dot ('.txt')
+  - filename: Full name ('file.txt')
 
 ### basename
 
@@ -44,7 +48,8 @@ object
 
 ## Example
 
-```
-const name = getName('./src/file.txt')
-//=> { basename: 'file', dirname: 'src', extname: '.txt', filename: 'file.txt' }
+```ts
+getName('path/to/file.txt')
+// => { basename: 'file', dirname: 'path/to',
+//      extname: '.txt', filename: 'file.txt' }
 ```

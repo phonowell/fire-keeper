@@ -8,9 +8,9 @@
 
 > **getBasename**(`input`): `string`
 
-Defined in: [getBasename.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/getBasename.ts#L26)
+Defined in: [getBasename.ts:16](https://github.com/phonowell/fire-keeper/blob/main/src/getBasename.ts#L16)
 
-Extracts the basename (filename without extension) from a file path.
+Get filename without extension from a path
 
 ## Parameters
 
@@ -18,30 +18,21 @@ Extracts the basename (filename without extension) from a file path.
 
 `string`
 
-The file path to process
+File path
 
 ## Returns
 
 `string`
 
-The basename of the file without extension
+Basename without extension
 
 ## Example
 
-```typescript
-// Basic usage
-const basename = getBasename('./src/file.txt');
-//=> 'file'
+```ts
+// Regular paths
+getBasename('path/to/file.txt') // 'file'
+getBasename('script.test.ts') // 'script.test'
 
-// With multiple extensions
-const name = getBasename('path/to/script.test.ts');
-//=> 'script.test'
-
-// With no extension
-const simple = getBasename('documents/notes');
-//=> 'notes'
-
-// With absolute path
-const abs = getBasename('/usr/local/file.md');
-//=> 'file'
+// Special cases
+getBasename('.gitignore') // '.gitignore'
 ```

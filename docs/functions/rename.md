@@ -8,9 +8,9 @@
 
 > **rename**(`source`, `target`): `Promise`\<`void`\>
 
-Defined in: [rename.ts:17](https://github.com/phonowell/fire-keeper/blob/main/src/rename.ts#L17)
+Defined in: [rename.ts:21](https://github.com/phonowell/fire-keeper/blob/main/src/rename.ts#L21)
 
-Rename a file or directory.
+Rename a file or directory with path normalization
 
 ## Parameters
 
@@ -18,22 +18,27 @@ Rename a file or directory.
 
 `string`
 
-A source file or directory.
+Source path to rename (file, directory, or symlink)
 
 ### target
 
 `string`
 
-A target file or directory.
+New name (not full path) for the source
 
 ## Returns
 
 `Promise`\<`void`\>
 
-The promise.
+Resolves when rename completes
 
 ## Example
 
+```ts
+rename('file.txt', 'backup.txt')
+rename('src/', 'backup-src') // Preserves directory contents
 ```
-await rename('file.txt', 'file.bak')
-```
+
+## Throws
+
+ENOENT (not found), EEXIST (target exists), EPERM (permission denied)

@@ -8,9 +8,9 @@
 
 > **sleep**(`delay`): `Promise`\<`void`\>
 
-Defined in: [sleep.ts:12](https://github.com/phonowell/fire-keeper/blob/main/src/sleep.ts#L12)
+Defined in: [sleep.ts:15](https://github.com/phonowell/fire-keeper/blob/main/src/sleep.ts#L15)
 
-Sleep for a while.
+Sleep for a specified duration.
 
 ## Parameters
 
@@ -18,16 +18,19 @@ Sleep for a while.
 
 `number` = `0`
 
-The delay in milliseconds.
+The delay in milliseconds. Default is 0ms.
+Negative values are treated as 0. Float values are accepted.
+When delay > 0, logs a message with the sleep duration.
 
 ## Returns
 
 `Promise`\<`void`\>
 
-The promise.
+A promise that resolves after the delay.
 
 ## Example
 
 ```
-await sleep(1000)
+await sleep(1000) // sleeps for 1 second
+await sleep() // minimal delay
 ```

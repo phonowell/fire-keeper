@@ -8,9 +8,9 @@
 
 > **getDirname**(`input`): `string`
 
-Defined in: [getDirname.ts:26](https://github.com/phonowell/fire-keeper/blob/main/src/getDirname.ts#L26)
+Defined in: [getDirname.ts:16](https://github.com/phonowell/fire-keeper/blob/main/src/getDirname.ts#L16)
 
-Extracts the directory name from a file path.
+Get directory path from a file path
 
 ## Parameters
 
@@ -18,30 +18,21 @@ Extracts the directory name from a file path.
 
 `string`
 
-The file path to process
+File path
 
 ## Returns
 
 `string`
 
-The directory name component of the path
+Directory path ('.' for current directory)
 
 ## Example
 
-```typescript
-// Basic usage with relative path
-const dirname = getDirname('./src/file.txt');
-//=> 'src'
+```ts
+// Basic paths
+getDirname('path/to/file.txt') // 'path/to'
+getDirname('./config.json') // '.'
 
-// With absolute path
-const root = getDirname('/usr/local/bin/app');
-//=> '/usr/local/bin'
-
-// With nested directories
-const nested = getDirname('project/src/components/Button.tsx');
-//=> 'project/src/components'
-
-// Current directory
-const current = getDirname('./config.json');
-//=> '.'
+// Cross-platform support
+getDirname('C:\\path\\file.txt') // 'C:/path'
 ```

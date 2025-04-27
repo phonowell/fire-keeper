@@ -8,17 +8,15 @@
 
 > **backup**(`source`, `options`): `Promise`\<`void`\>
 
-Defined in: [backup.ts:42](https://github.com/phonowell/fire-keeper/blob/main/src/backup.ts#L42)
+Defined in: [backup.ts:20](https://github.com/phonowell/fire-keeper/blob/main/src/backup.ts#L20)
 
-Backs up files by creating .bak copies.
-For each source file, creates a copy with '.bak' extension in the same directory.
-Preserves directory structure, file content (including binary files), and supports special characters in filenames.
+Creates .bak copies of specified files in their original directories
 
 ## Parameters
 
 ### source
 
-A file path or glob pattern(s) to backup. Can be a single string or array of paths.
+File path(s) or glob pattern(s) to backup
 
 `string` | `string`[]
 
@@ -26,38 +24,19 @@ A file path or glob pattern(s) to backup. Can be a single string or array of pat
 
 `Options` = `{}`
 
-Backup configuration options
+Backup configuration
 
 ## Returns
 
 `Promise`\<`void`\>
 
-Promise that resolves when all backups are complete. If no files match the pattern, resolves without error.
-
 ## Throws
 
-If any backup operation fails or if source files cannot be accessed
+If backup operations fail
 
 ## Example
 
 ```ts
-// Backup a single file
-backup('file.txt')
-// Result: Creates file.txt.bak
-
-// Backup multiple files with pattern
-backup(['src/*.ts', 'src/utils/*.ts'])
-// Result: Creates .bak files preserving directory structure
-
-// Backup specific files
-backup(['file1.txt', 'data/file2.bin'])
-// Result: Creates file1.txt.bak and data/file2.bin.bak
-
-// Backup with custom concurrency
-backup('*.txt', { concurrency: 2 })
-// Result: Processes 2 files at a time
-
-// Supports special characters and non-ASCII filenames
-backup(['特殊文件.txt', 'file!@#.dat'])
-// Result: Creates 特殊文件.txt.bak and file!@#.dat.bak
+backup('file.txt') // Creates file.txt.bak
+backup(['src/*.ts'], { concurrency: 2 }) // Backs up 2 files at a time
 ```
