@@ -6,9 +6,9 @@
 
 # Function: watch()
 
-> **watch**(`listSource`, `callback`, `options`): `void`
+> **watch**(`listSource`, `callback`, `options`): () => `Promise`\<`void`\>
 
-Defined in: [watch.ts:27](https://github.com/phonowell/fire-keeper/blob/main/src/watch.ts#L27)
+Defined in: [watch.ts:23](https://github.com/phonowell/fire-keeper/blob/main/src/watch.ts#L23)
 
 Watch files or directories for changes and execute a callback when changes occur.
 
@@ -16,7 +16,8 @@ Watch files or directories for changes and execute a callback when changes occur
 
 ### listSource
 
-Single path or array of paths to watch
+Single path or array of paths to watch (uses chokidar's pattern matching,
+which may differ from other glob implementations in the project)
 
 `string` | `string`[]
 
@@ -34,18 +35,16 @@ Configuration options
 
 ## Returns
 
-`void`
+Function to close the watcher
+
+> (): `Promise`\<`void`\>
+
+### Returns
+
+`Promise`\<`void`\>
 
 ## Example
 
 ```ts
-// Watch a single directory
-watch('src', path => {
-  console.log(path)
-})
-
-// Watch multiple paths with custom debounce
-watch(['src', 'config'], path => {
-  console.log(`Changed: ${path}`)
-}, { debounce: 500 })
+watch(['src', 'config'], path => console.log(`Changed: ${path}`), { debounce: 500 })
 ```
