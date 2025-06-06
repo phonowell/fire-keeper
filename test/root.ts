@@ -70,7 +70,7 @@ const e = () => {
   }
 
   // Test forbidden characters
-  process.cwd = () => '/test/invalid:char'
+  process.cwd = () => '/test/invalid?char'
   try {
     root()
     throw new Error('should throw on forbidden characters')

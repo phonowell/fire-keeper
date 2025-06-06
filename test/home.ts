@@ -65,8 +65,15 @@ const g = () => {
   // Should have at least two parts (root and username)
   if (parts.length < 2) throw new Error('invalid path structure')
 
-  // First part should be empty (root)
-  if (parts[0] !== '') throw new Error('path not starting from root')
+  // Check first part based on OS
+  if (osType() === 'windows') {
+    // Windows: first part should be drive letter (e.g., "C:")
+    if (!/^[A-Za-z]:$/.test(parts[0]))
+      throw new Error('Windows path not starting with drive letter')
+  } else {
+    // Unix-like: first part should be empty (root)
+    if (parts[0] !== '') throw new Error('path not starting from root')
+  }
 
   // No empty segments allowed (except first for root)
   if (parts.slice(1).some((part) => !part))

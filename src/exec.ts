@@ -12,9 +12,7 @@ type Options = {
 
 type Result = [number, string, string[]]
 
-// variable
-
-const separator = os() === 'windows' ? ' && ' : '; '
+const SEPARATOR = os() === 'windows' ? ' && ' : '; '
 
 /**
  * Cross-platform shell command execution with output capture
@@ -34,7 +32,7 @@ const exec = (
   cmd: string | string[],
   { silent = false }: Options = {},
 ): Promise<Result> => {
-  const stringCmd = cmd instanceof Array ? cmd.join(separator) : cmd
+  const stringCmd = cmd instanceof Array ? cmd.join(SEPARATOR) : cmd
 
   const [cmder, arg] =
     os() === 'windows'

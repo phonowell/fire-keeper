@@ -8,7 +8,7 @@
 
 > **root**(): `string`
 
-Defined in: [root.ts:13](https://github.com/phonowell/fire-keeper/blob/main/src/root.ts#L13)
+Defined in: [root.ts:18](https://github.com/phonowell/fire-keeper/blob/main/src/root.ts#L18)
 
 Gets the normalized absolute path of the current working directory
 
@@ -22,7 +22,10 @@ Normalized absolute path using forward slashes
 
 ```ts
 root()
-//=> '/Users/project/src'
+//=> '/Users/project/src' (on Unix-like systems)
+
+root()
+//=> 'C:/Users/project/src' (on Windows)
 ```
 
 ## Throws

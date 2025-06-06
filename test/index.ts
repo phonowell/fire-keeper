@@ -93,6 +93,7 @@ const mapModule = {
 type Fn = () => Promise<void>
 
 const TEMP = normalizePath('./temp')
+console.log(`Using temporary directory: ${TEMP}`)
 
 const cleanup = () => echo.whisper(remove(TEMP))
 

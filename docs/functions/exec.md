@@ -8,7 +8,7 @@
 
 > **exec**(`cmd`, `options?`): `Promise`\<`Result`\>
 
-Defined in: [exec.ts:33](https://github.com/phonowell/fire-keeper/blob/main/src/exec.ts#L33)
+Defined in: [exec.ts:31](https://github.com/phonowell/fire-keeper/blob/main/src/exec.ts#L31)
 
 Cross-platform shell command execution with output capture
 

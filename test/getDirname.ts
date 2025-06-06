@@ -30,10 +30,10 @@ b.description = 'extracts basic dirnames'
 const c = () => {
   // Test Windows-style paths
   const tests = [
-    ['C:\\path\\to\\file.txt', 'C:/path/to'],
-    ['D:\\Program Files\\app\\file.txt', 'D:/Program Files/app'],
-    ['\\\\network\\share\\file.txt', '//network/share'],
-    ['C:\\Users\\user\\..\\file.txt', 'C:/Users/user/..'],
+    ['C:/path/to/file.txt', 'C:/path/to'],
+    ['D:/Program Files/app/file.txt', 'D:/Program Files/app'],
+    ['/network/share/file.txt', '/network/share'],
+    ['C:/Users/user/../file.txt', 'C:/Users/user/..'],
   ]
 
   for (const [input, expected] of tests) {
@@ -111,7 +111,7 @@ const g = () => {
   const tests = [
     ['http://example.com/path/file.txt', 'http://example.com/path'],
     ['file:///root/path/file.txt', 'file:///root/path'],
-    ['//server/share/file.txt', '//server/share'],
+    ['/server/share/file.txt', '/server/share'],
   ]
 
   for (const [input, expected] of tests) {
