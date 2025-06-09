@@ -54,31 +54,6 @@ const config = [
     output: {
       exports: 'named',
       dir: 'dist',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    external: [
-      /node_modules/,
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
-    ],
-    plugins: [
-      autoExternal(),
-      resolve({
-        extensions: ['.ts', '.js'],
-      }),
-      typescript({
-        tsconfig: './tsconfig.cjs.json',
-        transpiler: 'typescript',
-      }),
-      commonjs(),
-    ],
-  },
-  {
-    input,
-    output: {
-      exports: 'named',
-      dir: 'dist/esm',
       format: 'esm',
       preserveModules: true,
     },
@@ -94,6 +69,31 @@ const config = [
       }),
       typescript({
         tsconfig: './tsconfig.esm.json',
+        transpiler: 'typescript',
+      }),
+      commonjs(),
+    ],
+  },
+  {
+    input,
+    output: {
+      exports: 'named',
+      dir: 'dist/cjs',
+      format: 'cjs',
+      preserveModules: true,
+    },
+    external: [
+      /node_modules/,
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
+    plugins: [
+      autoExternal(),
+      resolve({
+        extensions: ['.ts', '.js'],
+      }),
+      typescript({
+        tsconfig: './tsconfig.cjs.json',
         transpiler: 'typescript',
       }),
       commonjs(),

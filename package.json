@@ -50,16 +50,18 @@
     "typedoc-plugin-markdown": "^4.6.4",
     "typescript": "5.4.5"
   },
-  "files": [
-    "dist/**"
-  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": ["dist/**"],
   "homepage": "https://github.com/phonowell/fire-keeper",
-  "keywords": [
-    "fire-keeper"
-  ],
+  "keywords": ["fire-keeper"],
   "license": "MIT",
   "main": "./dist/index.js",
-  "module": "./dist/esm/index.js",
+  "module": "./dist/cjs/index.js",
   "name": "fire-keeper",
   "repository": {
     "type": "git",
@@ -73,6 +75,7 @@
     "test": "nyc --require tsx/cjs mocha -t 10000 ./test/index.ts"
   },
   "sideEffects": false,
+  "type": "module",
   "types": "./dist/index.d.ts",
   "url": "https://github.com/phonowell/fire-keeper",
   "version": "0.0.224"
