@@ -1,4 +1,4 @@
-import { toDate } from '../src'
+import { toDate } from '../src/index.js'
 
 const a = () => {
   // Test string input with hyphens

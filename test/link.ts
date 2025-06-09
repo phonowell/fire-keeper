@@ -33,9 +33,9 @@
 
 import path from 'path'
 
-import { isExist, link, mkdir, read, remove, os, write } from '../src'
+import { isExist, link, mkdir, os, read, remove, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   // Test file symlink

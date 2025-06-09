@@ -1,4 +1,4 @@
-import { getBasename } from '../src'
+import { getBasename } from '../src/index.js'
 
 const a = () => {
   if (typeof getBasename !== 'function')

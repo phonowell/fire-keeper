@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 
-import { home, root, echo } from '../src'
-import { renderPath } from '../src/echo'
+import { renderPath } from '../src/echo.js'
+import { echo, home, root } from '../src/index.js'
 
 const a = () => {
   // Test function existence

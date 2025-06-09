@@ -1,4 +1,4 @@
-import { sleep } from '../src'
+import { sleep } from '../src/index.js'
 
 const a = async () => {
   const start = new Date().getTime()

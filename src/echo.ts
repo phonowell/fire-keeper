@@ -1,7 +1,7 @@
 import kleur from 'kleur'
 
-import home from './home'
-import root from './root'
+import home from './home.js'
+import root from './root.js'
 
 type CacheTime = [number, string]
 

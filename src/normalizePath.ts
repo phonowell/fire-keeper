@@ -1,23 +1,18 @@
 import path from 'path'
 
-import home from './home'
-import root from './root'
-import trimEnd from './trimEnd'
+import home from './home.js'
+import root from './root.js'
+import trimEnd from './trimEnd.js'
 
 /**
- * Normalizes file system paths with special case handling
- * @param input Path string to normalize
- * @returns Normalized absolute path string, or empty string for invalid inputs
+ * Normalizes file system paths to absolute paths with special handling
+ * @param input - Path string to normalize (supports ~, ./, ../, and ! prefix)
+ * @returns Normalized absolute path, empty string for invalid inputs
  *
  * @example
- * ```ts
- * normalizePath('./src/file.txt') //=> '/home/project/src/file.txt'
- * normalizePath('~/documents') //=> '/home/user/documents'
- * normalizePath('!./ignored') //=> '!/home/project/ignored'
- * normalizePath('../config') //=> '/home/config'
- * normalizePath('./测试/路径') //=> '/home/project/测试/路径'
- * normalizePath('') //=> ''
- * ```
+ * normalizePath('./src') // => '/project/src'
+ * normalizePath('~/docs') // => '/home/user/docs'
+ * normalizePath('!./ignore') // => '!/project/ignore'
  */
 const normalizePath = (input: string) => {
   if (typeof input !== 'string') return ''
@@ -25,27 +20,27 @@ const normalizePath = (input: string) => {
 
   // ignore?
   const isIgnored = input.startsWith('!')
-  let _source = isIgnored ? input.slice(1) : input
+  let result = isIgnored ? input.slice(1) : input
 
   // replace . & ~
-  _source = _source.replace(/\.{2}/g, '__parent_directory__')
-  if (_source.startsWith('.')) _source = _source.replace(/\./u, root())
-  else if (_source.startsWith('~')) _source = _source.replace(/~/u, home())
-  _source = _source.replace(/__parent_directory__/g, '..')
+  result = result.replace(/\.{2}/g, '__parent_directory__')
+  if (result.startsWith('.')) result = result.replace(/\./u, root())
+  else if (result.startsWith('~')) result = result.replace(/~/u, home())
+  result = result.replace(/__parent_directory__/g, '..')
 
   // replace ../ to ./../ at start
-  if (_source.startsWith('..')) _source = `${root()}/${_source}`
+  if (result.startsWith('..')) result = `${root()}/${result}`
 
-  // normalize
-  _source = path.normalize(_source).replace(/\\/g, '/')
+  // \\ -> /
+  result = path.normalize(result).replace(/\\/g, '/')
 
   // absolute
-  if (!path.isAbsolute(_source)) _source = `${root()}/${_source}`
+  if (!path.isAbsolute(result)) result = `${root()}/${result}`
 
   // ignore?
-  if (isIgnored) _source = `!${_source}`
+  if (isIgnored) result = `!${result}`
 
-  return trimEnd(_source, '/')
+  return trimEnd(result, '/')
 }
 
 export default normalizePath

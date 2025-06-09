@@ -1,8 +1,8 @@
-import echo from './echo'
-import flatten from './flatten'
-import normalizePath from './normalizePath'
-import read from './read'
-import stat from './stat'
+import echo from './echo.js'
+import flatten from './flatten.js'
+import normalizePath from './normalizePath.js'
+import read from './read.js'
+import stat from './stat.js'
 
 /**
  * Compares files for binary content equality

@@ -1,4 +1,4 @@
-import { getFilename } from '../src'
+import { getFilename } from '../src/index.js'
 
 const a = () => {
   if (typeof getFilename !== 'function')

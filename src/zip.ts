@@ -4,13 +4,13 @@ import archiver from 'archiver'
 import kleur from 'kleur'
 import { trim } from 'radash'
 
-import echo, { renderPath } from './echo'
-import getBasename from './getBasename'
-import getDirname from './getDirname'
-import glob from './glob'
-import normalizePath from './normalizePath'
-import convertToArray from './toArray'
-import wrapList from './wrapList'
+import echo, { renderPath } from './echo.js'
+import getBasename from './getBasename.js'
+import getDirname from './getDirname.js'
+import glob from './glob.js'
+import normalizePath from './normalizePath.js'
+import convertToArray from './toArray.js'
+import wrapList from './wrapList.js'
 
 type Options = {
   base?: string

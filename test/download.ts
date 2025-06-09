@@ -20,9 +20,9 @@ download 模块测试用例说明：
 
 import { Buffer } from 'buffer'
 
-import { download, isExist, read, getFilename } from '../src'
+import { download, getFilename, isExist, read } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 // Test parameter validation
 const testParameterValidation = async (): Promise<void> => {

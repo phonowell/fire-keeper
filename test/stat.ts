@@ -1,6 +1,6 @@
-import { copy, link, mkdir, os, remove, stat, write } from '../src'
+import { copy, link, mkdir, os, remove, stat, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   // Test basic file stats

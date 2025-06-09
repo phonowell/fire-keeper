@@ -1,7 +1,7 @@
 import fse from 'fs-extra'
 
-import flatten from './flatten'
-import normalizePath from './normalizePath'
+import flatten from './flatten.js'
+import normalizePath from './normalizePath.js'
 
 /**
  * Checks if all specified paths exist in filesystem

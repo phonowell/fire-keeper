@@ -1,4 +1,4 @@
-import { prompt } from '../src'
+import { prompt } from '../src/index.js'
 
 const a = () => {
   // Test prompt type exists and is a function

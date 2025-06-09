@@ -13,9 +13,17 @@
 
 import path from 'path'
 
-import { isExist, move, read, remove, write, mkdir, sleep } from '../src'
+import {
+  isExist,
+  mkdir,
+  move,
+  read,
+  remove,
+  sleep,
+  write,
+} from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   const source = `${TEMP}/source/test.txt`

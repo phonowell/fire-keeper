@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import { runConcurrent } from '../src'
+import { runConcurrent } from '../src/index.js'
 
 const test = async () => {
   const results: number[] = []

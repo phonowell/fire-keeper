@@ -1,7 +1,7 @@
-import copy from './copy'
-import echo from './echo'
-import glob from './glob'
-import wrapList from './wrapList'
+import copy from './copy.js'
+import echo from './echo.js'
+import glob from './glob.js'
+import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number

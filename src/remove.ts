@@ -1,9 +1,9 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import glob from './glob'
-import runConcurrent from './runConcurrent'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import glob from './glob.js'
+import runConcurrent from './runConcurrent.js'
+import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number

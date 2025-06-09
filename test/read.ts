@@ -1,6 +1,6 @@
-import { read, remove, write } from '../src'
+import { read, remove, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   const source = `${TEMP}/a.txt`

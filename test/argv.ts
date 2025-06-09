@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { argv } from '../src'
+import { argv } from '../src/index.js'
 
 // Store original argv
 const originalArgv = [...process.argv]

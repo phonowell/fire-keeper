@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { trimEnd } from '../src'
+import { trimEnd } from '../src/index.js'
 
 const a = (): void => {
   const question = '  hello  '

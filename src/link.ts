@@ -1,8 +1,8 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import glob from './glob'
-import normalizePath from './normalizePath'
+import echo from './echo.js'
+import glob from './glob.js'
+import normalizePath from './normalizePath.js'
 
 /**
  * Creates a symbolic link from source to target

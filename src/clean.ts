@@ -1,8 +1,8 @@
-import echo from './echo'
-import getDirname from './getDirname'
-import glob from './glob'
-import remove from './remove'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import getDirname from './getDirname.js'
+import glob from './glob.js'
+import remove from './remove.js'
+import wrapList from './wrapList.js'
 
 /**
  * Removes files and their empty parent directories

@@ -1,4 +1,4 @@
-import { getExtname } from '../src'
+import { getExtname } from '../src/index.js'
 
 const a = () => {
   if (typeof getExtname !== 'function')

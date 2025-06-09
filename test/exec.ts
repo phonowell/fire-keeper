@@ -10,9 +10,9 @@ exec 模块测试用例说明：
 8. 静默模式测试（不输出日志）
 */
 
-import { exec, os, at } from '../src'
+import { at, exec, os } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const testBasicCommand = async () => {
   const [code, result] = await exec('node --version')

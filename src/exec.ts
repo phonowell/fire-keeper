@@ -2,9 +2,9 @@ import child from 'child_process'
 
 import kleur from 'kleur'
 
-import echo from './echo'
-import os from './os'
-import trimEnd from './trimEnd'
+import echo from './echo.js'
+import os from './os.js'
+import trimEnd from './trimEnd.js'
 
 type Options = {
   silent?: boolean

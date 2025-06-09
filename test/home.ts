@@ -1,8 +1,7 @@
 import nodeOs from 'os'
 import path from 'path'
 
-import { home } from '../src'
-import osType from '../src/os'
+import { home, os as osType } from '../src/index.js'
 
 const a = () => {
   // Test function existence and type

@@ -1,4 +1,4 @@
-import { wrapList } from '../src'
+import { wrapList } from '../src/index.js'
 
 const a = () => {
   const question = ['a', 'b', 'c']

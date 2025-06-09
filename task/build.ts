@@ -1,8 +1,9 @@
-import { exec, getBasename, glob, read, remove, write } from '../src'
+import { exec, getBasename, glob, read, remove, write } from '../src/index.js'
 
 const main = async () => {
   await cleanup()
   await makeIndex()
+  await replacePackage()
   await replaceRollup()
   await replaceTest()
   await generateDocs()
@@ -16,7 +17,7 @@ const makeIndex = async () => {
   const listModule = await makeListModule()
 
   const content = [
-    ...listModule.map((it) => `import ${it} from './${it}'`),
+    ...listModule.map((it) => `import ${it} from './${it}.js'`),
     '',
     'export {',
     `  ${listModule.join(',\n  ')},`,
@@ -27,14 +28,51 @@ const makeIndex = async () => {
   await write('./src/index.ts', content)
 }
 
-const makeListModule = async () =>
-  (await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename)
+const listModuleCache: string[] = []
+const makeListModule = async () => {
+  if (!listModuleCache.length) {
+    listModuleCache.push(
+      ...(await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename),
+    )
+  }
+  return listModuleCache
+}
+
+const replacePackage = async () => {
+  const pkg = await read<{
+    exports?: Record<
+      string,
+      {
+        import: string
+        require: string
+      }
+    >
+  }>('./package.json')
+  if (!pkg) return
+
+  const exports: NonNullable<(typeof pkg)['exports']> = {
+    '.': {
+      import: './dist/index.js',
+      require: './dist/cjs/index.js',
+    },
+  }
+  const listModule = await makeListModule()
+  for (const it of listModule) {
+    exports[`./${it}`] = {
+      import: `./dist/${it}.js`,
+      require: `./dist/cjs/${it}.js`,
+    }
+  }
+  pkg.exports = exports
+
+  await write('./package.json', JSON.stringify(pkg, null, 2))
+}
 
 const replaceRollup = async () => {
   const listModule = await makeListModule()
   listModule.push('index')
 
-  const source = './rollup.config.ts'
+  const source = './rollup.config.js'
   const cont = await read(source)
   if (!cont) return
 
@@ -56,9 +94,9 @@ const replaceTest = async () => {
   const content = [
     "import { describe, it } from 'mocha'",
     '',
-    "import { argv, echo, normalizePath, remove } from '../src'",
+    "import { argv, echo, normalizePath, remove } from '../src/index.js'",
     '',
-    ...listTest.map((it) => `import * as ${it}Tests from './${it}'`),
+    ...listTest.map((it) => `import * as ${it}Tests from './${it}.js'`),
     '',
     'const mapModule = {',
     ...listTest.map((it) => `  ${it}: ${it}Tests,`),

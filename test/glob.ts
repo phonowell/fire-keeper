@@ -1,6 +1,6 @@
-import { glob, write } from '../src'
+import { glob, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 import type { Options } from 'fast-glob'
 

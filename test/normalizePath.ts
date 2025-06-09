@@ -1,6 +1,6 @@
 import path from 'path'
 
-import { home, normalizePath, root } from '../src'
+import { home, normalizePath, root } from '../src/index.js'
 
 const basicPathTests = () => {
   const tests = [

@@ -1,4 +1,4 @@
-import { glob, read, write } from '../src'
+import { glob, read, write } from '../src/index.js'
 
 const main = async () => {
   const listSource = await glob([

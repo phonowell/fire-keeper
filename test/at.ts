@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { at } from '../src'
+import { at } from '../src/index.js'
 
 const a = () => {
   const question = [1, 2, 3]
@@ -146,7 +146,7 @@ k.description = 'handles numeric object keys'
 const l = () => {
   // Test deep property access with dot notation
   const obj = { a: { b: { c: 1 } } }
-  
+
   if (at(obj, 'a.b.c') !== 1)
     throw new Error('deep property access with dot notation failed')
   if (at(obj, 'a.b.d') !== undefined)
@@ -157,18 +157,21 @@ l.description = 'handles deep property access with dot notation'
 const m = () => {
   // Test deep property access with multiple arguments
   const obj = { a: { b: { c: 1 } } }
-  
+
   if (at(obj, 'a', 'b', 'c') !== 1)
     throw new Error('deep property access with multiple arguments failed')
-  if (at(obj, 'a', 'b', 'd') !== undefined)
-    throw new Error('non-existent deep property with multiple arguments should return undefined')
+  if (at(obj, 'a', 'b', 'd') !== undefined) {
+    throw new Error(
+      'non-existent deep property with multiple arguments should return undefined',
+    )
+  }
 }
 m.description = 'handles deep property access with multiple arguments'
 
 const n = () => {
   // Test mixed property access styles
   const obj = { a: { b: { c: { d: 1 } } } }
-  
+
   if (at(obj, 'a.b', 'c.d') !== 1)
     throw new Error('mixed property access styles failed')
   if (at(obj, 'a', 'b.c.d') !== 1)

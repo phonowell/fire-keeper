@@ -1,6 +1,6 @@
-import { backup, isExist, read, recover, remove, write } from '../src'
+import { backup, isExist, read, recover, remove, write } from '../src/index.js'
 
-import { cleanup, TEMP } from './index'
+import { cleanup, TEMP } from './index.js'
 
 // Cleanup helper
 

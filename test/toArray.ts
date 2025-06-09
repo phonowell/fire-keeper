@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { toArray } from '../src'
+import { toArray } from '../src/index.js'
 
 const a = () => {
   const question = 'test/a'

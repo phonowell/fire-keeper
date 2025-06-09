@@ -1,4 +1,4 @@
-import { getName } from '../src'
+import { getName } from '../src/index.js'
 
 const a = () => {
   const source = '~/Downloads/test.txt'

@@ -1,4 +1,4 @@
-import { watch } from '../src'
+import { watch } from '../src/index.js'
 
 const a = () => {
   if (typeof watch !== 'function') throw new Error('watch function not found')

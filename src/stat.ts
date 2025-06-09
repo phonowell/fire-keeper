@@ -1,8 +1,8 @@
 import fs from 'fs'
 
-import echo from './echo'
-import glob from './glob'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import glob from './glob.js'
+import wrapList from './wrapList.js'
 
 /**
  * Get the file status of a file, directory, or glob pattern.

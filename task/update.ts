@@ -1,4 +1,4 @@
-import { echo, exec, read } from '../src'
+import { echo, exec, read } from '../src/index.js'
 
 type PackageJson = {
   dependencies?: Record<string, string>

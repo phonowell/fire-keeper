@@ -1,9 +1,9 @@
 import { strict as assert } from 'assert'
 import path from 'path'
 
-import { backup, isExist, mkdir, read, remove, write } from '../src'
+import { backup, isExist, mkdir, read, remove, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 // Test single file backup and concurrency
 const testBasicBackup = async () => {

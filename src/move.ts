@@ -1,5 +1,5 @@
-import copy from './copy'
-import remove from './remove'
+import copy from './copy.js'
+import remove from './remove.js'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
 

@@ -1,8 +1,8 @@
 import path from 'path'
 
-import { isExist, mkdir, remove, root } from '../src'
+import { isExist, mkdir, remove, root } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const originalCwd = process.cwd()
 

@@ -16,9 +16,9 @@
 
 import path from 'path'
 
-import { isExist, mkdir, os } from '../src'
+import { isExist, mkdir, os } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   const source = `${TEMP}/m/k/d/i/r`

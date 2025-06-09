@@ -1,8 +1,8 @@
 import fs from 'fs'
 
-import echo from './echo'
-import getDirname from './getDirname'
-import normalizePath from './normalizePath'
+import echo from './echo.js'
+import getDirname from './getDirname.js'
+import normalizePath from './normalizePath.js'
 
 /**
  * Rename a file or directory with path normalization

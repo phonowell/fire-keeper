@@ -1,6 +1,6 @@
-import { copy, isExist, isSame, write, os, sleep } from '../src'
+import { copy, isExist, isSame, os, sleep, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const noMatch = async () => {
   await copy('nonexistent-*.txt')

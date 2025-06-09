@@ -1,8 +1,8 @@
 import glob from 'fast-glob'
 
-import normalizePath from './normalizePath'
-import run from './run'
-import toArray from './toArray'
+import normalizePath from './normalizePath.js'
+import run from './run.js'
+import toArray from './toArray.js'
 
 import type { Options } from 'fast-glob'
 

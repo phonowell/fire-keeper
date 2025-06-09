@@ -1,8 +1,8 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import normalizePath from './normalizePath'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import normalizePath from './normalizePath.js'
+import wrapList from './wrapList.js'
 
 /**
  * Writes content to a file with path creation and automatic content type handling.

@@ -1,10 +1,10 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import normalizePath from './normalizePath'
-import runConcurrent from './runConcurrent'
-import toArray from './toArray'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import normalizePath from './normalizePath.js'
+import runConcurrent from './runConcurrent.js'
+import toArray from './toArray.js'
+import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number

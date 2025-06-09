@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer'
 
-import { read, write, isExist } from '../src'
+import { isExist, read, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   const source = `${TEMP}/wr/ite.txt`

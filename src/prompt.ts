@@ -1,10 +1,10 @@
 import prompts from 'prompts'
 
-import at from './at'
-import echo from './echo'
-import findIndex from './findIndex'
-import read from './read'
-import write from './write'
+import at from './at.js'
+import echo from './echo.js'
+import findIndex from './findIndex.js'
+import read from './read.js'
+import write from './write.js'
 
 type Choice<T> = {
   title: string

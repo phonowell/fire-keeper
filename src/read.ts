@@ -1,8 +1,8 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import getExtname from './getExtname'
-import glob from './glob'
+import echo from './echo.js'
+import getExtname from './getExtname.js'
+import glob from './glob.js'
 
 type ItemExtObject = '.json' | '.yaml' | '.yml'
 

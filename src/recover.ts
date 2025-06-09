@@ -1,11 +1,11 @@
-import echo from './echo'
-import glob from './glob'
-import read from './read'
-import remove from './remove'
-import runConcurrent from './runConcurrent'
-import toArray from './toArray'
-import wrapList from './wrapList'
-import write from './write'
+import echo from './echo.js'
+import glob from './glob.js'
+import read from './read.js'
+import remove from './remove.js'
+import runConcurrent from './runConcurrent.js'
+import toArray from './toArray.js'
+import wrapList from './wrapList.js'
+import write from './write.js'
 
 type Options = {
   concurrency?: number

@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { findIndex } from '../src'
+import { findIndex } from '../src/index.js'
 
 const a = (): void => {
   const question = [1, 2, 3, 4, 5]

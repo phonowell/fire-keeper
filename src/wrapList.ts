@@ -1,4 +1,4 @@
-import toArray from './toArray'
+import toArray from './toArray.js'
 
 /**
  * Converts input to a comma-separated string with each item wrapped in single quotes.

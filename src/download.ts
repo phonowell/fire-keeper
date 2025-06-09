@@ -4,9 +4,9 @@ import { pipeline } from 'stream/promises'
 
 import fse from 'fs-extra'
 
-import echo from './echo'
-import getFilename from './getFilename'
-import normalizePath from './normalizePath'
+import echo from './echo.js'
+import getFilename from './getFilename.js'
+import normalizePath from './normalizePath.js'
 
 /**
  * Downloads file from URL using stream processing

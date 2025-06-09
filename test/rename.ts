@@ -1,6 +1,6 @@
-import { isExist, link, mkdir, os, read, rename, write } from '../src'
+import { isExist, link, mkdir, os, read, rename, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const check = async (
   source: string,

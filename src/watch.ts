@@ -1,7 +1,7 @@
 import { watch as w } from 'chokidar'
 import { debounce } from 'radash'
 
-import normalizePath from './normalizePath'
+import normalizePath from './normalizePath.js'
 
 type Options = {
   debounce?: number

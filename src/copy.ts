@@ -1,13 +1,13 @@
 import fse from 'fs-extra'
 
-import echo from './echo'
-import getDirname from './getDirname'
-import getName from './getName'
-import glob from './glob'
-import normalizePath from './normalizePath'
-import run from './run'
-import runConcurrent from './runConcurrent'
-import wrapList from './wrapList'
+import echo from './echo.js'
+import getDirname from './getDirname.js'
+import getName from './getName.js'
+import glob from './glob.js'
+import normalizePath from './normalizePath.js'
+import run from './run.js'
+import runConcurrent from './runConcurrent.js'
+import wrapList from './wrapList.js'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
 type Filename = string | ((filename: string) => string | Promise<string>)

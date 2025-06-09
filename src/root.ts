@@ -1,4 +1,4 @@
-import os from './os'
+import os from './os.js'
 
 /**
  * Gets the normalized absolute path of the current working directory

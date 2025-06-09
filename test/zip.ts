@@ -1,6 +1,6 @@
-import { isExist, write, zip } from '../src'
+import { isExist, write, zip } from '../src/index.js'
 
-import { cleanup, TEMP } from '.'
+import { cleanup, TEMP } from './index.js'
 
 const setup = async () => {
   // Clean previous files

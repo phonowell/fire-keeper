@@ -17,9 +17,9 @@ isSame 模块测试用例说明：
   - 混合不同路径格式
 */
 
-import { copy, isSame, write } from '../src'
+import { copy, isSame, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 // Test successful cases
 const testSameFiles = async () => {

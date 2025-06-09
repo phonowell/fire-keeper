@@ -1,4 +1,4 @@
-import { os } from '../src'
+import { os } from '../src/index.js'
 
 const tests = {
   // Test function exists

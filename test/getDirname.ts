@@ -1,4 +1,4 @@
-import { getDirname } from '../src'
+import { getDirname } from '../src/index.js'
 
 const a = () => {
   if (typeof getDirname !== 'function')

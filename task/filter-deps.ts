@@ -1,4 +1,4 @@
-import { echo, glob, read } from '../src'
+import { echo, glob, read } from '../src/index.js'
 
 const LIST_EXCLUDE_EXACT = [
   '@bilibili-firebird/activity-utils',

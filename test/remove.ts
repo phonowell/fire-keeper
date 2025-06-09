@@ -1,6 +1,6 @@
-import { isExist, mkdir, remove, write } from '../src'
+import { isExist, mkdir, remove, write } from '../src/index.js'
 
-import { TEMP } from './index'
+import { TEMP } from './index.js'
 
 const a = async () => {
   const source = `${TEMP}/re/move.txt`

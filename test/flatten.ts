@@ -1,6 +1,6 @@
 import { isEqual } from 'radash'
 
-import { flatten } from '../src'
+import { flatten } from '../src/index.js'
 
 const a = (): void => {
   const question = [1, 2, 3]

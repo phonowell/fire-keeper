@@ -1,4 +1,4 @@
-import getName from './getName'
+import getName from './getName.js'
 
 /**
  * Get file extension from a path
