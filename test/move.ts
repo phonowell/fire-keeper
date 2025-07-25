@@ -1,16 +1,3 @@
-/**
- * 移动模块测试用例：
- *
- * a - 移动单个文件：验证基本的文件移动功能，确保源文件被成功移动到目标位置且内容保持一致
- * b - 处理不存在的源文件：验证当源文件不存在时的错误处理
- * c - 移动多个文件：验证同时移动多个文件的功能
- * d - 移动目录结构：验证在保持目录结构的情况下移动嵌套文件
- * e - 支持目标函数：验证使用函数动态生成目标路径的功能
- * f - 处理路径规范化：验证对包含 . 和 .. 的路径进行正确处理
- * g - 移动到已存在目录：验证移动文件到已包含其他文件的目录的功能
- * h - 支持异步目标函数：验证使用异步函数生成目标路径的功能
- */
-
 import path from 'path'
 
 import {
@@ -33,12 +20,10 @@ const a = async () => {
   await write(source, content)
   await move(source, target)
 
-  // Verify target exists and source is gone
   if (!(await isExist(`${target}/test.txt`)))
     throw new Error('target file missing')
   if (await isExist(source)) throw new Error('source file still exists')
 
-  // Verify content preserved
   const movedContent = await read<string>(`${target}/test.txt`)
   if (movedContent !== content) throw new Error('content mismatch')
 }
@@ -55,7 +40,6 @@ const b = async () => {
 b.description = 'handles non-existent source'
 
 const c = async () => {
-  // Test moving multiple files
   const sources = [
     `${TEMP}/source/test1.txt`,
     `${TEMP}/source/test2.txt`,
@@ -64,11 +48,9 @@ const c = async () => {
   const target = `${TEMP}/target`
   const content = 'test content'
 
-  // Create source files
   await Promise.all(sources.map((src) => write(src, content)))
   await move(sources, target)
 
-  // Verify all files moved
   for (const src of sources) {
     const fileName = path.basename(src)
     if (!(await isExist(`${target}/${fileName}`)))
@@ -80,29 +62,23 @@ const c = async () => {
 c.description = 'moves multiple files'
 
 const d = async () => {
-  // Test moving directory structure
   const sourceDir = `${TEMP}/source`
   const targetBase = `${TEMP}/target`
 
-  // Clean up first to ensure fresh state
   await remove([sourceDir, targetBase])
   await mkdir(targetBase)
 
-  // Create nested structure
   await mkdir(`${sourceDir}/nested/deep`)
   await write(`${sourceDir}/file1.txt`, 'test1')
   await write(`${sourceDir}/nested/file2.txt`, 'test2')
   await write(`${sourceDir}/nested/deep/file3.txt`, 'test3')
 
-  // Create same directory structure in target
   await mkdir(`${targetBase}/nested/deep`)
 
-  // Move files preserving structure
   await move(`${sourceDir}/*.txt`, targetBase)
   await move(`${sourceDir}/nested/*.txt`, `${targetBase}/nested`)
   await move(`${sourceDir}/nested/deep/*.txt`, `${targetBase}/nested/deep`)
 
-  // Define test files with their expected locations
   const files = [
     { src: `${sourceDir}/file1.txt`, target: `${targetBase}/file1.txt` },
     {
@@ -115,7 +91,6 @@ const d = async () => {
     },
   ]
 
-  // Verify all files moved correctly
   for (const file of files) {
     if (await isExist(file.src))
       throw new Error(`source file ${file.src} still exists`)
@@ -126,7 +101,6 @@ const d = async () => {
 d.description = 'moves directory structure'
 
 const e = async () => {
-  // Test using target function
   const source = `${TEMP}/source/test.txt`
   const content = 'function target test'
   await write(source, content)
@@ -143,7 +117,6 @@ const e = async () => {
 e.description = 'supports function target'
 
 const f = async () => {
-  // Test path normalization
   const source = `${TEMP}/./source/../source/test.txt`
   const target = `${TEMP}/./target/../target`
   const content = 'normalization test'
@@ -160,7 +133,6 @@ const f = async () => {
 f.description = 'handles path normalization'
 
 const g = async () => {
-  // Test moving to existing directory with content
   const source = `${TEMP}/source/move.txt`
   const target = `${TEMP}/target`
   const existingFile = `${target}/existing.txt`
@@ -169,7 +141,6 @@ const g = async () => {
   await write(existingFile, 'existing content')
   await move(source, target)
 
-  // Verify both files exist in target
   if (!(await isExist(`${target}/move.txt`)))
     throw new Error('moved file missing')
   if (!(await isExist(existingFile))) throw new Error('existing file missing')
@@ -178,13 +149,12 @@ const g = async () => {
 g.description = 'moves to existing directory'
 
 const h = async () => {
-  // Test async target function
   const source = `${TEMP}/source/test.txt`
   const content = 'async function test'
   await write(source, content)
 
   await move(source, async () => {
-    await sleep(100) // Simulate async operation
+    await sleep(100)
     return `${TEMP}/target`
   })
 
@@ -194,7 +164,6 @@ const h = async () => {
 }
 h.description = 'supports async target function'
 
-// Cleanup helper function
 const cleanup = async () => {
   await remove([`${TEMP}/source`, `${TEMP}/target`])
 }

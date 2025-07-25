@@ -239,7 +239,7 @@
   "scripts": {
     "build": "pnpm task build && rollup -c rollup.config.js --bundleConfigAsCjs",
     "doc": "typedoc ./src --gitRevision main --plugin typedoc-plugin-markdown --readme none",
-    "lint": "eslint {src,task}/**/*.ts --fix",
+    "lint": "eslint {src,task,test}/**/*.ts --fix",
     "task": "tsx task/index.ts",
     "test": "nyc --require tsx/cjs mocha -t 10000 ./test/index.ts"
   },

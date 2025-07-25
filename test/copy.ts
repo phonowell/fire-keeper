@@ -4,7 +4,6 @@ import { TEMP } from './index.js'
 
 const noMatch = async () => {
   await copy('nonexistent-*.txt')
-  // No error should be thrown for non-existent files
 }
 noMatch.description = 'no matching files'
 
@@ -51,7 +50,6 @@ const d = async () => {
 d.description = 'copy with empty target directory'
 
 const e = async () => {
-  // Test default copy name in same directory
   const source = `${TEMP}/original.txt`
   await write(source, 'content')
   await copy(source)
@@ -63,13 +61,12 @@ const e = async () => {
 e.description = 'default copy name in same directory'
 
 const f = async () => {
-  // Test array input and glob pattern
   await write(`${TEMP}/f1.txt`, 'content1')
   await write(`${TEMP}/f2.txt`, 'content2')
   await write(`${TEMP}/other.txt`, 'other')
 
   const targetDir = `${TEMP}/target`
-  // Test both array and glob functionality
+
   await copy([`${TEMP}/f*.txt`, `${TEMP}/other.txt`], targetDir)
 
   if (!(await isExist(`${targetDir}/f1.txt`))) throw new Error('0')
@@ -79,7 +76,6 @@ const f = async () => {
 f.description = 'copy array of files with glob pattern'
 
 const g = async () => {
-  // Test function target
   const source = `${TEMP}/g.txt`
   await write(source, 'content')
 
@@ -89,12 +85,11 @@ const g = async () => {
 g.description = 'copy with function target'
 
 const h = async () => {
-  // Test function name with async
   const source = `${TEMP}/h.txt`
   await write(source, 'content')
 
   await copy(source, TEMP, async (name) => {
-    await sleep(10) // small delay
+    await sleep(10)
     return `async-${name}`
   })
 
@@ -103,7 +98,6 @@ const h = async () => {
 h.description = 'copy with async function name'
 
 const i = async () => {
-  // Test options object - filename as string
   const source = `${TEMP}/i.txt`
   await write(source, 'content')
 
@@ -113,7 +107,6 @@ const i = async () => {
 i.description = 'copy with options.filename as string'
 
 const j = async () => {
-  // Test options object - filename as function
   const source = `${TEMP}/j.txt`
   await write(source, 'content')
 
@@ -126,7 +119,6 @@ const j = async () => {
 j.description = 'copy with options.filename as function and non-concurrent'
 
 const k = async () => {
-  // Test async function target
   const source = `${TEMP}/k.txt`
   await write(source, 'content')
 
@@ -139,28 +131,23 @@ const k = async () => {
 k.description = 'copy with async function target'
 
 const l = async () => {
-  // Test default filename behavior when copying to different directory
   const source = `${TEMP}/source.txt`
   await write(source, 'content')
 
   const targetDir = `${TEMP}/different`
   await copy(source, targetDir)
 
-  // Should not add .copy suffix when target directory is different
   if (!(await isExist(`${targetDir}/source.txt`))) throw new Error('0')
   if (await isExist(`${targetDir}/source.copy.txt`)) throw new Error('1')
 }
 l.description = 'default filename in different directory'
 
 const m = async () => {
-  // Test concurrent copies with default concurrency (5)
   const sources = Array.from({ length: 10 }, (_, i) => `${TEMP}/file${i}.txt`)
   await Promise.all(sources.map((s) => write(s, 'content')))
 
-  // Test default concurrency (5)
   await copy(sources, `${TEMP}/concurrent`)
 
-  // Only need to verify all files were copied successfully
   for (let i = 0; i < 10; i++) {
     if (!(await isExist(`${TEMP}/concurrent/file${i}.txt`)))
       throw new Error(`${i}`)

@@ -43,7 +43,6 @@ const e = () => {
 e.description = 'handles non-existent keys'
 
 const f = () => {
-  // Test with complex objects
   type TestObj = {
     id: number
     name: string
@@ -68,7 +67,6 @@ const f = () => {
 f.description = 'handles complex objects'
 
 const g = () => {
-  // Test empty containers
   const emptyArr: number[] = []
   const emptyObj: Record<string, number> = {}
 
@@ -80,7 +78,6 @@ const g = () => {
 g.description = 'handles empty containers'
 
 const h = () => {
-  // Test special values
   const arr = [null, undefined, NaN]
   const obj = { a: null, b: undefined, c: NaN }
 
@@ -95,7 +92,6 @@ const h = () => {
 h.description = 'handles special values'
 
 const i = () => {
-  // Test mixed type arrays
   const arr = [1, 'two', true, { four: 4 }]
   const obj = { a: 1, b: 'two', c: true, d: { four: 4 } }
 
@@ -112,7 +108,6 @@ const i = () => {
 i.description = 'preserves types'
 
 const j = () => {
-  // Test nested structures
   const arr = [
     [1, 2],
     [3, [4, 5]],
@@ -133,7 +128,6 @@ const j = () => {
 j.description = 'handles nested structures'
 
 const k = () => {
-  // Test array-like indices on objects
   const obj = { '0': 'zero', '1': 'one', '-1': 'negative' }
 
   if (at(obj, '0') !== 'zero') throw new Error('numeric key failed')
@@ -144,7 +138,6 @@ const k = () => {
 k.description = 'handles numeric object keys'
 
 const l = () => {
-  // Test deep property access with dot notation
   const obj = { a: { b: { c: 1 } } }
 
   if (at(obj, 'a.b.c') !== 1)
@@ -155,7 +148,6 @@ const l = () => {
 l.description = 'handles deep property access with dot notation'
 
 const m = () => {
-  // Test deep property access with multiple arguments
   const obj = { a: { b: { c: 1 } } }
 
   if (at(obj, 'a', 'b', 'c') !== 1)
@@ -169,7 +161,6 @@ const m = () => {
 m.description = 'handles deep property access with multiple arguments'
 
 const n = () => {
-  // Test mixed property access styles
   const obj = { a: { b: { c: { d: 1 } } } }
 
   if (at(obj, 'a.b', 'c.d') !== 1)

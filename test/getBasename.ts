@@ -7,7 +7,6 @@ const a = () => {
 a.description = 'function exists'
 
 const b = () => {
-  // Test basic basename extraction
   const tests = [
     ['file.txt', 'file'],
     ['path/to/document.pdf', 'document'],
@@ -28,7 +27,6 @@ const b = () => {
 b.description = 'extracts basic basenames'
 
 const c = () => {
-  // Test files with multiple extensions
   const tests = [
     ['archive.tar.gz', 'archive.tar'],
     ['script.test.js', 'script.test'],
@@ -46,7 +44,6 @@ const c = () => {
 c.description = 'handles multiple extensions'
 
 const d = () => {
-  // Test hidden files and special names
   const tests = [
     ['.gitignore', '.gitignore'],
     ['.env', '.env'],
@@ -64,7 +61,6 @@ const d = () => {
 d.description = 'handles hidden files'
 
 const e = () => {
-  // Test special characters
   const tests = [
     ['file with spaces.txt', 'file with spaces'],
     ['special!@#$chars.doc', 'special!@#$chars'],
@@ -82,7 +78,6 @@ const e = () => {
 e.description = 'handles special characters'
 
 const f = () => {
-  // Test empty input
   try {
     getBasename('')
     throw new Error('empty input should throw')
@@ -94,7 +89,6 @@ const f = () => {
 f.description = 'handles invalid inputs'
 
 const g = () => {
-  // Test edge cases (matches Node.js path.basename behavior)
   const tests = [
     ['.', '.'],
     ['..', '..'],
@@ -117,7 +111,6 @@ const g = () => {
 g.description = 'handles edge cases'
 
 const h = () => {
-  // Test Unicode characters
   const tests = [
     ['文件.txt', '文件'],
     ['path/to/ファイル.doc', 'ファイル'],
@@ -135,7 +128,6 @@ const h = () => {
 h.description = 'handles Unicode characters'
 
 const i = () => {
-  // Test Windows-style paths
   const tests = [
     ['C:\\path\\to\\file.txt', 'file'],
     ['D:\\Program Files\\app.exe', 'app'],
@@ -152,7 +144,6 @@ const i = () => {
 i.description = 'handles Windows paths'
 
 const j = () => {
-  // Test URL-like paths
   const tests = [
     ['http://example.com/file.txt', 'file'],
     ['https://site.com/path/doc.pdf', 'doc'],

@@ -1,22 +1,58 @@
-/*
-download 模块测试用例说明：
-1. 参数验证：
-  - 空URL检测
-  - 空目录检测
-2. 成功场景：
-  - 自动获取文件名下载
-  - 自定义文件名下载
-  - 自动创建目录
-  - 路径规范化处理
-3. 文件验证：
-  - 二进制文件下载
-  - 大文件下载验证
-4. 错误处理：
-  - 404响应处理
-  - 空响应体检测
-5. 特殊场景：
-  - Unicode文件名支持
-*/
+type MockFetchOptions = {
+  status?: number
+  statusText?: string
+  body?: string | Buffer | object | ArrayBuffer | unknown
+  arrayBuffer?: ArrayBuffer
+  throwError?: boolean | Error
+}
+
+type MockFetchResponse = {
+  status: number
+  statusText: string
+  body: string | Buffer | object | ArrayBuffer | unknown
+  arrayBuffer: () => Promise<ArrayBuffer>
+  text: () => Promise<string>
+  json: () => Promise<unknown>
+}
+
+export const mockFetch = (
+  options: MockFetchOptions = {},
+): Promise<MockFetchResponse> =>
+  new Promise<MockFetchResponse>((resolve, reject) => {
+    if (options.throwError) {
+      const err =
+        typeof options.throwError === 'object'
+          ? options.throwError
+          : new Error('Mock fetch error')
+      reject(err)
+      return
+    }
+    const status = options.status ?? 200
+    const statusText = options.statusText ?? 'OK'
+    const body: string | Buffer | object | ArrayBuffer | unknown =
+      options.body ?? ''
+    const arrBuf: ArrayBuffer =
+      options.arrayBuffer ??
+      (new TextEncoder().encode(String(body)).buffer as ArrayBuffer)
+
+    resolve({
+      status,
+      statusText,
+      body,
+      arrayBuffer: () => Promise.resolve(arrBuf),
+      text: () =>
+        Promise.resolve(typeof body === 'string' ? body : JSON.stringify(body)),
+      json: () => {
+        try {
+          return Promise.resolve(
+            typeof body === 'string' ? JSON.parse(body) : body,
+          )
+        } catch {
+          return Promise.resolve(body)
+        }
+      },
+    })
+  })
 
 import { Buffer } from 'buffer'
 
@@ -24,24 +60,67 @@ import { download, getFilename, isExist, read } from '../src/index.js'
 
 import { TEMP } from './index.js'
 
-// Test parameter validation
-const testParameterValidation = async (): Promise<void> => {
-  // Test missing URL
+const fetchWrapper = (input: RequestInfo | URL): Promise<Response> => {
+  const url: string =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.toString()
+        : (input as Request).url
+
+  let opts: MockFetchOptions = {}
+  if (url.includes('/status/404')) {
+    opts = {
+      status: 404,
+      statusText: 'Not Found',
+      body: '',
+      throwError: new Error('Not Found'),
+    }
+  } else if (url.includes('/status/204')) {
+    opts = {
+      status: 204,
+      statusText: 'No Content',
+      body: '',
+      throwError: new Error('Response has no body'),
+    }
+  } else if (url.includes('/bytes/102400'))
+    opts = { body: Buffer.alloc(102400) }
+  else if (url.includes('/bytes/100')) opts = { body: Buffer.alloc(100) }
+
+  return mockFetch(opts).then(
+    (mockRes: MockFetchResponse) => {
+      const responseInit: ResponseInit = {
+        status: mockRes.status,
+        statusText: mockRes.statusText,
+      }
+      let body: BodyInit
+      if (mockRes.body instanceof Buffer || mockRes.body instanceof ArrayBuffer)
+        body = mockRes.body
+      else if (typeof mockRes.body === 'string') body = mockRes.body
+      else body = JSON.stringify(mockRes.body)
+
+      return new Response(body, responseInit)
+    },
+    (err: unknown) => Promise.reject(err),
+  )
+}
+
+globalThis.fetch = fetchWrapper
+
+const testParameterValidation: () => Promise<void> = async () => {
   await download('', `${TEMP}/download-test`).catch((error: unknown) => {
     if (!(error instanceof Error) || !error.message.includes('empty input'))
       throw error
   })
 
-  // Test missing directory
   await download('https://example.com/file', '').catch((error: unknown) => {
     if (!(error instanceof Error) || !error.message.includes('dir is required'))
       throw error
   })
 }
-testParameterValidation.description = 'Parameter Validation'
+Object.assign(testParameterValidation, { description: 'Parameter Validation' })
 
-// Test auto directory creation
-const testAutoCreateDir = async (): Promise<void> => {
+const testAutoCreateDir: () => Promise<void> = async () => {
   const url = 'https://httpbin.org/bytes/100'
   const dir = `${TEMP}/new-dir-${Date.now()}`
   const filename = 'auto-create-dir.txt'
@@ -51,8 +130,7 @@ const testAutoCreateDir = async (): Promise<void> => {
     throw Error('Directory was not auto-created')
 }
 
-// Test path normalization
-const testPathNormalization = async (): Promise<void> => {
+const testPathNormalization: () => Promise<void> = async () => {
   const url = 'https://httpbin.org/bytes/100'
   const dir = `${TEMP}/.//path/norm/../test`
   const filename = 'path-test.txt'
@@ -62,28 +140,25 @@ const testPathNormalization = async (): Promise<void> => {
   if (!(await isExist(normalizedPath))) throw Error('Path normalization failed')
 }
 
-// Test successful download scenarios
-const testSuccessfulDownload = async (): Promise<void> => {
+const testSuccessfulDownload: () => Promise<void> = async () => {
   const url = 'https://httpbin.org/bytes/100'
   const dir = `${TEMP}/download-test`
 
-  // Test with auto filename from URL
   const expectedFilename = getFilename(url)
   await download(url, dir)
-  // Verify the exact file exists
   if (!(await isExist(`${dir}/${expectedFilename}`)))
     throw Error('download with auto filename failed')
 
-  // Test with custom filename
   const customFilename = 'custom.bin'
   await download(url, dir, customFilename)
   if (!(await isExist(`${dir}/${customFilename}`)))
     throw Error('download with custom filename failed')
 }
-testSuccessfulDownload.description = 'Successful Download Scenarios'
+Object.assign(testSuccessfulDownload, {
+  description: 'Successful Download Scenarios',
+})
 
-// Test file content validation
-const testFileContent = async (): Promise<void> => {
+const testFileContent: () => Promise<void> = async () => {
   const url = 'https://httpbin.org/bytes/102400'
   const dir = `${TEMP}/download-test`
   const filename = 'large.bin'
@@ -96,11 +171,9 @@ const testFileContent = async (): Promise<void> => {
   if (!(content instanceof Buffer)) throw Error('content should be binary')
   if (content.length !== 102400) throw Error('file size mismatch')
 }
-testFileContent.description = 'File Content Validation'
+Object.assign(testFileContent, { description: 'File Content Validation' })
 
-// Test error response handling
-const testErrorResponses = async (): Promise<void> => {
-  // Test invalid URL response
+const testErrorResponses: () => Promise<void> = async () => {
   const badUrl = 'https://httpbin.org/status/404'
   try {
     await download(badUrl, `${TEMP}/download-test`)
@@ -113,7 +186,6 @@ const testErrorResponses = async (): Promise<void> => {
       throw Error('wrong error for bad response')
   }
 
-  // Test empty response body
   const emptyUrl = 'https://httpbin.org/status/204'
   try {
     await download(emptyUrl, `${TEMP}/download-test`)
@@ -126,14 +198,30 @@ const testErrorResponses = async (): Promise<void> => {
       throw Error('wrong error for empty response')
   }
 
-  // Test Unicode filename
   const url = 'https://httpbin.org/bytes/100'
   const filename = '测试文件.bin'
   await download(url, `${TEMP}/download-test`, filename)
   if (!(await isExist(`${TEMP}/download-test/${filename}`)))
     throw Error('unicode filename test failed')
 }
-testErrorResponses.description = 'Error Response Handling'
+Object.assign(testErrorResponses, { description: 'Error Response Handling' })
+
+const testFetchThrows: () => Promise<void> = async () => {
+  const url = 'https://example.com/throw'
+  globalThis.fetch = () => mockFetch({ throwError: true }) as Promise<Response>
+  try {
+    await download(url, `${TEMP}/download-test`)
+    throw Error('should throw on fetch error')
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      !error.message.toLowerCase().includes('mock fetch error')
+    )
+      throw Error('wrong error for fetch throws')
+  }
+  globalThis.fetch = fetchWrapper
+}
+Object.assign(testFetchThrows, { description: 'Fetch Throws Exception' })
 
 export {
   testParameterValidation,
@@ -142,4 +230,5 @@ export {
   testSuccessfulDownload,
   testFileContent,
   testErrorResponses,
+  testFetchThrows,
 }

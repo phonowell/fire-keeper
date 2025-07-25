@@ -28,13 +28,11 @@ const c = () => {
     [BigInt(9007199254740991), [BigInt(9007199254740991)]],
   ]
 
-  // 单独测试 Symbol
   const sym = Symbol('test')
   const symResult = toArray(sym)
   if (symResult.length !== 1 || typeof symResult[0] !== 'symbol')
     throw new Error('primitive conversion failed for Symbol')
 
-  // 测试其他基本类型
   for (const [input, expected] of tests) {
     const result = toArray(input)
     if (!isEqual(result, expected))
@@ -44,7 +42,6 @@ const c = () => {
 c.description = 'handles primitive types'
 
 const d = () => {
-  // Test mixed type arrays
   const arr = [1, 'two', true, { four: 4 }]
   const result = toArray(arr)
   if (!isEqual(result, arr)) throw new Error('mixed type array handling failed')
@@ -52,7 +49,6 @@ const d = () => {
 d.description = 'handles mixed type arrays'
 
 const e = () => {
-  // Test object conversion
   const obj = { key: 'value' }
   const result = toArray(obj)
   if (!isEqual(result, [obj])) throw new Error('object conversion failed')
@@ -60,7 +56,6 @@ const e = () => {
 e.description = 'converts objects'
 
 const f = () => {
-  // Test type preservation with interface
   type TestType = {
     id: number
     name: string
@@ -75,7 +70,6 @@ const f = () => {
 f.description = 'preserves types'
 
 const g = () => {
-  // Test empty array
   const arr: never[] = []
   const result = toArray(arr)
   if (!isEqual(result, [])) throw new Error('empty array handling failed')
@@ -83,7 +77,6 @@ const g = () => {
 g.description = 'handles empty arrays'
 
 const h = () => {
-  // Test array-like objects
   const arrayLike = { 0: 'first', 1: 'second', length: 2 }
   const result = toArray(arrayLike)
   if (!isEqual(result, [arrayLike]))
@@ -92,7 +85,6 @@ const h = () => {
 h.description = 'handles array-like objects'
 
 const i = () => {
-  // Test nested structures
   const nested = [1, [2, 3], [4, [5, 6]]]
   const result = toArray(nested)
   if (!isEqual(result, nested)) throw new Error('nested array handling failed')
@@ -100,7 +92,6 @@ const i = () => {
 i.description = 'preserves nested structures'
 
 const j = () => {
-  // Test with complex objects
   class TestClass {
     value: string
     constructor(value: string) {
@@ -118,7 +109,6 @@ const j = () => {
 j.description = 'handles class instances'
 
 const k = () => {
-  // Test Set and Map conversion
   const set = new Set([1, 2, 3])
   const map = new Map([['key', 'value']])
 
@@ -131,13 +121,11 @@ const k = () => {
 k.description = 'handles built-in objects'
 
 const l = () => {
-  // Test array subclasses
   class CustomArray<T> extends Array<T> {}
   const customArr = new CustomArray<number>()
   customArr.push(1, 2, 3)
   const result = toArray(customArr)
 
-  // Should treat CustomArray as an array
   if (!isEqual(result, [1, 2, 3]))
     throw new Error('array subclass handling failed')
 }

@@ -2,15 +2,12 @@ import { isEqual } from 'radash'
 
 import { argv } from '../src/index.js'
 
-// Store original argv
 const originalArgv = [...process.argv]
 
-// Helper to set process.argv
 const setArgv = (args: string[]) => {
   process.argv = ['node', 'script.js', ...args]
 }
 
-// Helper to restore original argv
 const restoreArgv = () => {
   process.argv = originalArgv
 }

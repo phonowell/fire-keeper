@@ -1,27 +1,7 @@
-/*
-isSame 模块测试用例说明：
-1. 成功场景：
-  - 相同文件数组比较
-  - 扩展参数形式比较
-  - 混合数组和字符串参数
-  - 多维数组扁平化处理
-2. 失败场景：
-  - 文件不存在
-  - 单个文件输入
-  - 文件大小不同
-  - 文件内容不同
-  - 空数组输入
-  - 包含无效路径参数
-  - 路径规范化处理
-  - 零字节文件检测
-  - 混合不同路径格式
-*/
-
 import { copy, isSame, write } from '../src/index.js'
 
 import { TEMP } from './index.js'
 
-// Test successful cases
 const testSameFiles = async () => {
   const content = 'same content'
   const files = {
@@ -31,7 +11,6 @@ const testSameFiles = async () => {
     flat: [`${TEMP}/flat1.txt`, `${TEMP}/flat2.txt`, `${TEMP}/flat3.txt`],
   }
 
-  // Setup test files
   await copy(files.original, TEMP, 'a.md')
   await copy(files.original, TEMP, 'b.md')
   await Promise.all([
@@ -39,7 +18,6 @@ const testSameFiles = async () => {
     ...files.flat.map((f) => write(f, content)),
   ])
 
-  // Test cases
   const tests = [
     {
       name: 'array of same files',
@@ -71,19 +49,16 @@ const testSameFiles = async () => {
 }
 testSameFiles.description = 'Successful file comparison scenarios'
 
-// Test missing files scenario
 const testMissingFiles = async () => {
   const result = await isSame(`${TEMP}/null.txt`, './non-existent.md')
   if (result) throw new Error('Should detect non-existent files')
 }
 
-// Test single file input
 const testSingleFile = async () => {
   const result = await isSame('./readme.md')
   if (result) throw new Error('Single file should return false')
 }
 
-// Test different file sizes
 const testSizeMismatch = async () => {
   await write(`${TEMP}/size1.txt`, 'short')
   await write(`${TEMP}/size2.txt`, 'longer content')
@@ -91,7 +66,6 @@ const testSizeMismatch = async () => {
   if (result) throw new Error('Should detect different file sizes')
 }
 
-// Test content mismatch
 const testContentMismatch = async () => {
   await write(`${TEMP}/content1.txt`, 'text1')
   await write(`${TEMP}/content2.txt`, 'text2')
@@ -99,19 +73,16 @@ const testContentMismatch = async () => {
   if (result) throw new Error('Should detect content differences')
 }
 
-// Test empty array input
 const testEmptyArray = async () => {
   const result = await isSame([])
   if (result) throw new Error('Empty array should return false')
 }
 
-// Test invalid path parameters
 const testInvalidPaths = async () => {
   const result = await isSame('./readme.md', '', './license.md')
   if (result) throw new Error('Should detect invalid paths')
 }
 
-// Test zero byte files
 const testZeroByteFiles = async () => {
   await write(`${TEMP}/empty1.txt`, '')
   await write(`${TEMP}/empty2.txt`, '')
@@ -119,7 +90,6 @@ const testZeroByteFiles = async () => {
   if (result) throw new Error('Should reject zero byte files')
 }
 
-// Test path normalization
 const testPathNormalization = async () => {
   await write(`${TEMP}/path_norm1`, 'content')
   await write(`${TEMP}/path_norm2`, 'content')

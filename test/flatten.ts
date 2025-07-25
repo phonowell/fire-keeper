@@ -40,7 +40,6 @@ const e = (): void => {
 e.description = 'handles empty nested arrays'
 
 const f = (): void => {
-  // Test deep nesting
   type DeepArray = number | DeepArray[]
   const question: DeepArray[] = [1, [2, [3, [4, [5]]]]]
   const answer = [1, 2, 3, 4, 5]
@@ -49,7 +48,6 @@ const f = (): void => {
 f.description = 'flattens deeply nested arrays'
 
 const g = (): void => {
-  // Test mixed types
   type MixedType = string | number | boolean | { key: string }
   type NestedMixed = MixedType | NestedMixed[]
   const obj = { key: 'value' }
@@ -60,7 +58,6 @@ const g = (): void => {
 g.description = 'handles mixed content types'
 
 const h = (): void => {
-  // Test null/undefined values
   type NullableType = number | null | undefined
   type NestedNullable = NullableType | NestedNullable[]
   const question: NestedNullable[] = [1, [null], [undefined, [2]], 3]
@@ -71,7 +68,6 @@ const h = (): void => {
 h.description = 'handles null and undefined values'
 
 const i = (): void => {
-  // Test with dates
   type DateOrNum = Date | number
   type NestedDate = DateOrNum | NestedDate[]
   const date = new Date()
@@ -82,7 +78,6 @@ const i = (): void => {
 i.description = 'handles date objects'
 
 const j = (): void => {
-  // Test type preservation with interfaces
   type TestType = {
     id: number
     name: string
@@ -92,7 +87,6 @@ const j = (): void => {
   const question: NestedTest[] = [item, [{ id: 2, name: 'test2' }]]
   const result = flatten(question)
 
-  // Check type preservation and structure
   if (!result.every((x) => typeof x === 'object' && 'id' in x && 'name' in x))
     throw Error('type preservation failed')
 
@@ -105,14 +99,13 @@ const j = (): void => {
 j.description = 'preserves typescript types'
 
 const k = (): void => {
-  // Test with recursive type for large nested array
   type RecursiveNum = number | RecursiveNum[]
   const makeNestedArray = (depth: number): RecursiveNum[] => {
     if (depth === 0) return [depth]
     return [depth, makeNestedArray(depth - 1)]
   }
 
-  const question = makeNestedArray(5) // Reduced depth for practical testing
+  const question = makeNestedArray(5)
   const result = flatten(question)
   const expected = Array.from({ length: 6 }, (_, i) => 5 - i)
   if (!isEqual(result, expected)) throw Error('recursive array failed')

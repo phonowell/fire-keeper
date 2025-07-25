@@ -68,7 +68,6 @@ const e = (): void => {
 e.description = 'returns -1 for empty array'
 
 const f = (): void => {
-  // Test with object array
   type TestObject = {
     id: number
     value: string
@@ -90,7 +89,6 @@ const f = (): void => {
 f.description = 'finds in object array'
 
 const g = (): void => {
-  // Test with multiple conditions
   const question = [1, 2, 3, 4, 5]
   const answer = 3
   if (
@@ -104,7 +102,6 @@ const g = (): void => {
 g.description = 'handles multiple conditions'
 
 const h = (): void => {
-  // Test with null/undefined values
   const question = [0, null, undefined, 1, null]
   const answer = 2
   if (
@@ -118,7 +115,6 @@ const h = (): void => {
 h.description = 'handles null and undefined'
 
 const i = (): void => {
-  // Test with closure variable
   let count = 0
   const question = [1, 2, 3]
   findIndex(question, (x) => {
@@ -130,7 +126,6 @@ const i = (): void => {
 i.description = 'handles closure variables'
 
 const j = (): void => {
-  // Test type-safe interface
   type TypedItem = {
     readonly id: number
     readonly name: string
@@ -145,7 +140,6 @@ const j = (): void => {
 j.description = 'works with type predicates'
 
 const k = (): void => {
-  // Test performance with large array
   const size = 10000
   const question = Array.from({ length: size }, (_, i) => i)
   const start = Date.now()
@@ -158,12 +152,10 @@ const k = (): void => {
 k.description = 'handles large arrays efficiently'
 
 const l = (): void => {
-  // Test that findIndex maintains correct behavior even with array modifications
   const question = [1, 2, 3]
   const result = findIndex(question, (x, i, arr) => {
-    // Only modify after we've found our target
     if (x === 2) {
-      arr[i + 1] = 10 // This shouldn't affect the result
+      arr[i + 1] = 10
       return true
     }
     return false

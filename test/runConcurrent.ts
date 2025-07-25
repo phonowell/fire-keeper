@@ -23,9 +23,9 @@ const test = async () => {
   ]
 
   const output = await runConcurrent(2, tasks)
-  // Results array should show concurrent execution (not in order)
+
   assert.notDeepStrictEqual(results, [1, 2, 3])
-  // Output should be in original task order regardless of execution order
+
   assert.deepStrictEqual(output, [1, 2, 3])
 }
 
@@ -77,11 +77,9 @@ const testStopOnError = async () => {
 }
 
 const testEdgeCases = async () => {
-  // Test empty task array
   const emptyResults = await runConcurrent(2, [])
   assert.deepStrictEqual(emptyResults, [])
 
-  // Test concurrency higher than task count
   const tasks = [() => Promise.resolve(1), () => Promise.resolve(2)]
   const results = await runConcurrent(5, tasks)
   assert.deepStrictEqual(results, [1, 2])

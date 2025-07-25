@@ -91,7 +91,6 @@ const j = async () => {
 j.description = 'fails if any mixed path missing'
 
 const k = async () => {
-  // Test with wildcard paths
   const source = `${TEMP}/*.txt`
   try {
     await isExist(source)
@@ -104,7 +103,6 @@ const k = async () => {
 k.description = 'rejects wildcard paths'
 
 const l = async () => {
-  // Test path normalization
   const source = `${TEMP}/./normalize/../normalize/test.txt`
   const normalizedPath = `${TEMP}/normalize/test.txt`
   await write(normalizedPath, 'content')
@@ -114,7 +112,6 @@ const l = async () => {
 l.description = 'handles path normalization'
 
 const m = async () => {
-  // Test empty input
   if (await isExist()) throw new Error('empty input should return false')
   if (await isExist([])) throw new Error('empty array should return false')
   if (await isExist('')) throw new Error('empty string should return false')
@@ -122,7 +119,6 @@ const m = async () => {
 m.description = 'handles empty input'
 
 const mm = async () => {
-  // Test null/undefined values in arrays
   if (await isExist(['valid.txt', null as unknown as string, 'also-valid.txt']))
     throw new Error('array with null should return false')
   if (
@@ -136,7 +132,6 @@ const mm = async () => {
   if (await isExist([`${TEMP}/exists.txt`, '', `${TEMP}/also-exists.txt`]))
     throw new Error('array with empty string should return false')
 
-  // Create test files to ensure the logic isn't just always returning false
   await write(`${TEMP}/exists.txt`, 'content')
   await write(`${TEMP}/also-exists.txt`, 'content')
   if (!(await isExist([`${TEMP}/exists.txt`, `${TEMP}/also-exists.txt`])))
@@ -145,8 +140,7 @@ const mm = async () => {
 mm.description = 'handles null/undefined values in arrays'
 
 const n = async () => {
-  // Test symbolic links
-  if (os() === 'windows') return // Skip on Windows
+  if (os() === 'windows') return
 
   const target = `${TEMP}/link-target.txt`
   const linkString = `${TEMP}/test-link`
@@ -162,7 +156,6 @@ const n = async () => {
 n.description = 'handles symbolic links'
 
 const o = async () => {
-  // Test deeply nested paths
   const deep = `${TEMP}/a/b/c/d/e/f/g/h/i/j`
   await mkdir(deep)
   await write(`${deep}/test.txt`, 'content')
@@ -173,7 +166,6 @@ const o = async () => {
 o.description = 'handles deep paths'
 
 const p = async () => {
-  // Test special characters in paths
   const paths = [
     `${TEMP}/special!@#txt`,
     `${TEMP}/unicode文件.txt`,

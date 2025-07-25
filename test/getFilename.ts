@@ -7,7 +7,6 @@ const a = () => {
 a.description = 'function exists'
 
 const b = () => {
-  // Test basic filename extraction
   const tests = [
     ['file.txt', 'file.txt'],
     ['path/to/file.txt', 'file.txt'],
@@ -25,7 +24,6 @@ const b = () => {
 b.description = 'extracts basic filenames'
 
 const c = () => {
-  // Test different path separators
   const tests = [
     ['path\\to\\file.txt', 'file.txt'],
     ['path/to/file.txt', 'file.txt'],
@@ -42,7 +40,6 @@ const c = () => {
 c.description = 'handles path separators'
 
 const d = () => {
-  // Test files without extensions
   const tests = [
     ['file', 'file'],
     ['path/to/file', 'file'],
@@ -59,7 +56,6 @@ const d = () => {
 d.description = 'handles files without extensions'
 
 const e = () => {
-  // Test special filenames
   const tests = [
     ['file with spaces.txt', 'file with spaces.txt'],
     ['file.with.dots.txt', 'file.with.dots.txt'],
@@ -78,7 +74,6 @@ const e = () => {
 e.description = 'handles special filenames'
 
 const f = () => {
-  // Test empty input error handling
   try {
     getFilename('')
     throw new Error('empty input should throw error')
@@ -90,7 +85,6 @@ const f = () => {
 f.description = 'handles empty input errors'
 
 const g = () => {
-  // Test directory paths and dots
   const tests = [
     ['.', '.'],
     ['..', '..'],
@@ -109,7 +103,6 @@ const g = () => {
 g.description = 'handles directory paths and dots'
 
 const h = () => {
-  // Test complex extensions and filenames
   const tests = [
     ['file.tar.gz', 'file.tar.gz'],
     ['file.test.js.map', 'file.test.js.map'],

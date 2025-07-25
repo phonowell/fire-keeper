@@ -55,21 +55,17 @@ const d = async () => {
 d.description = 'removes deep directory structures'
 
 const e = async () => {
-  // Test non-matching glob pattern
   await remove(`${TEMP}/non-existing-pattern-*.txt`)
 
-  // Test empty array
   await remove([])
 }
 e.description = 'handles non-existent paths and patterns gracefully'
 
 const f = async () => {
   try {
-    // @ts-expect-error testing invalid input
     await remove(null)
     throw new Error('should throw error for invalid input')
   } catch (error) {
-    // Any error is acceptable since validation could happen at different layers
     if (!(error instanceof Error))
       throw new Error('expected an Error for invalid input')
   }

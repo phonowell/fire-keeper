@@ -7,7 +7,6 @@ const a = () => {
 a.description = 'function exists'
 
 const b = () => {
-  // Test basic path dirname extraction
   const tests = [
     ['file.txt', '.'],
     ['path/to/file.txt', 'path/to'],
@@ -28,7 +27,6 @@ const b = () => {
 b.description = 'extracts basic dirnames'
 
 const c = () => {
-  // Test Windows-style paths
   const tests = [
     ['C:/path/to/file.txt', 'C:/path/to'],
     ['D:/Program Files/app/file.txt', 'D:/Program Files/app'],
@@ -48,7 +46,6 @@ const c = () => {
 c.description = 'handles Windows paths'
 
 const d = () => {
-  // Test special characters and Unicode
   const tests = [
     ['path/with spaces/file.txt', 'path/with spaces'],
     ['special!@#$/chars/file.txt', 'special!@#$/chars'],
@@ -65,7 +62,6 @@ const d = () => {
 d.description = 'handles special characters'
 
 const e = () => {
-  // Test empty and invalid inputs
   try {
     getDirname('')
     throw new Error('empty input should throw')
@@ -74,7 +70,6 @@ const e = () => {
       throw new Error('wrong error for empty input')
   }
 
-  // Whitespace is a valid input that returns "."
   const whitespaceResult = getDirname('   ')
   if (whitespaceResult !== '.') {
     throw new Error(
@@ -85,7 +80,6 @@ const e = () => {
 e.description = 'handles invalid inputs'
 
 const f = () => {
-  // Test edge cases
   const tests = [
     ['.', '.'],
     ['..', '.'],
@@ -107,7 +101,6 @@ const f = () => {
 f.description = 'handles edge cases'
 
 const g = () => {
-  // Test URL-like paths
   const tests = [
     ['http://example.com/path/file.txt', 'http://example.com/path'],
     ['file:///root/path/file.txt', 'file:///root/path'],
@@ -123,7 +116,6 @@ const g = () => {
 g.description = 'handles URL-like paths'
 
 const h = () => {
-  // Test relative paths and parent directory references
   const tests = [
     ['./path/to/file.txt', './path/to'],
     ['../path/to/file.txt', '../path/to'],
@@ -140,7 +132,6 @@ const h = () => {
 h.description = 'handles relative paths'
 
 const i = () => {
-  // Test paths with multiple extensions
   const tests = [
     ['path/to/file.tar.gz', 'path/to'],
     ['path/to/file.min.js.map', 'path/to'],

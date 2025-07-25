@@ -55,7 +55,6 @@ const e = async () => {
 e.description = 'reads yaml file'
 
 const f = async () => {
-  // Test all supported file extensions
   const extensions = [
     '.coffee',
     '.css',
@@ -112,7 +111,6 @@ nested:
 g.description = 'reads complex yaml'
 
 const h = async () => {
-  // Test binary file
   const source = `${TEMP}/binary.bin`
   const content = Buffer.from([0x00, 0x01, 0x02, 0x03])
   await write(source, content)
@@ -125,7 +123,6 @@ const h = async () => {
 h.description = 'reads binary file'
 
 const i = async () => {
-  // Test concurrent reads
   const sources = [
     { path: `${TEMP}/concurrent1.txt`, content: 'content1' },
     { path: `${TEMP}/concurrent2.txt`, content: 'content2' },
@@ -143,7 +140,6 @@ const i = async () => {
 i.description = 'supports concurrent reads'
 
 const j = async () => {
-  // Test empty files
   const source = `${TEMP}/empty.txt`
   await write(source, '')
 
@@ -157,7 +153,6 @@ const j = async () => {
 j.description = 'handles empty files'
 
 const k = async () => {
-  // Test Windows-style line endings
   const source = `${TEMP}/windows.txt`
   const content = 'line1\r\nline2\r\nline3'
   await write(source, content)
@@ -171,19 +166,17 @@ const k = async () => {
 k.description = 'preserves line endings'
 
 const l = async () => {
-  // Test read timing after write
   const source = `${TEMP}/timing.txt`
   const content = 'timing test'
 
   await write(source, content)
-  // Immediately try to read
+
   const result = await read<string>(source)
 
   if (result !== content) throw new Error('read after write failed')
 }
 l.description = 'handles read timing'
 
-// Cleanup helper
 const cleanup = async () => {
   await remove([
     `${TEMP}/a.txt`,

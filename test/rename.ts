@@ -7,11 +7,10 @@ const check = async (
   target: string,
   content: string,
 ): Promise<boolean> => {
-  // Source should not exist after rename
   if (await isExist(source)) return false
-  // Target should exist after rename
+
   if (!(await isExist(target))) return false
-  // Content should match
+
   if (content !== (await read<string>(target))) return false
   return true
 }
@@ -30,7 +29,6 @@ const a = async () => {
 a.description = 'basic file rename'
 
 const b = async () => {
-  // Test directory rename
   const sourceDir = `${TEMP}/source-dir`
   const targetDir = `${TEMP}/target-dir`
   const file = `${sourceDir}/test.txt`
@@ -49,7 +47,6 @@ const b = async () => {
 b.description = 'directory rename'
 
 const c = async () => {
-  // Test rename with path that needs normalization
   const source = `${TEMP}/./normalize/../normalize/file.txt`
   const normalizedSource = `${TEMP}/normalize/file.txt`
   const target = `${TEMP}/normalize/renamed.txt`
@@ -65,7 +62,6 @@ const c = async () => {
 c.description = 'path normalization'
 
 const d = async () => {
-  // Test renaming non-existent source
   try {
     await rename(`${TEMP}/non-existent.txt`, 'target.txt')
     throw new Error('should throw on non-existent source')
@@ -77,7 +73,6 @@ const d = async () => {
 d.description = 'non-existent source'
 
 const e = async () => {
-  // Test special characters in filenames
   const source = `${TEMP}/special!@#$.txt`
   const target = `${TEMP}/renamed!@#$.txt`
   const content = 'special chars test'
@@ -91,7 +86,6 @@ const e = async () => {
 e.description = 'special characters'
 
 const f = async () => {
-  // Test Unicode filenames
   const source = `${TEMP}/文件.txt`
   const target = `${TEMP}/改名.txt`
   const content = 'unicode test'
@@ -105,7 +99,6 @@ const f = async () => {
 f.description = 'unicode filenames'
 
 const g = async () => {
-  // Test case sensitivity (platform dependent)
   const source = `${TEMP}/case.txt`
   const target = `${TEMP}/CASE.txt`
   const content = 'case test'
@@ -114,14 +107,13 @@ const g = async () => {
 
   try {
     await rename(source, 'CASE.txt')
-    // Should succeed on case-insensitive systems
+
     if (!(await isExist(target)))
       throw new Error('case-insensitive rename failed')
   } catch (err) {
-    // Ensure error is thrown only on case-sensitive systems
     if (!(err instanceof Error))
       throw new Error('wrong error type for case sensitivity')
-    // Source should still exist if rename failed
+
     if (!(await isExist(source)))
       throw new Error('source missing after failed case-sensitive rename')
   }
@@ -129,7 +121,6 @@ const g = async () => {
 g.description = 'case sensitivity'
 
 const h = async () => {
-  // Test cross-directory renaming
   const sourceDir = `${TEMP}/source`
   const targetDir = `${TEMP}/target`
   const content = 'cross directory test'
@@ -146,9 +137,8 @@ const h = async () => {
 h.description = 'cross-directory rename'
 
 const i = async () => {
-  if (os() === 'windows') return // Skip on Windows
+  if (os() === 'windows') return
 
-  // Test symlink renaming
   const target = `${TEMP}/link-target.txt`
   const source = `${TEMP}/link.txt`
   const renamed = `${TEMP}/renamed-link.txt`
@@ -166,7 +156,6 @@ const i = async () => {
 i.description = 'symlink rename'
 
 const j = async () => {
-  // Test deep directory structure
   const deep = `${TEMP}/deep/nested/path`
   const source = `${deep}/file.txt`
   const target = `${deep}/renamed.txt`

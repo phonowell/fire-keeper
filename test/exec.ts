@@ -1,15 +1,3 @@
-/*
-exec 模块测试用例说明：
-1. 执行基本命令（返回退出码和版本信息）
-2. 处理命令执行失败（非零退出码）
-3. 执行多条命令串联（验证顺序执行和输出）
-4. 捕获标准错误输出（包含错误关键字）
-5. 处理多行输出（验证输出顺序和内容）
-6. 处理不同平台换行符（统一格式）
-7. 验证命令分隔符正确性（平台特定分隔符）
-8. 静默模式测试（不输出日志）
-*/
-
 import { at, exec, os } from '../src/index.js'
 
 import { TEMP } from './index.js'
@@ -45,14 +33,12 @@ const testStderrCapture = async () => {
   const [code, lastOutput, allOutputs] = await exec(command, { silent: true })
   if (code === 0) throw new Error('should fail with invalid flag')
 
-  // On Windows or Unix, error messages contain different text
   const errorTerms = ['invalid', 'Invalid', 'bad', 'Bad', 'error', 'Error']
   const hasError = allOutputs.some((out) =>
     errorTerms.some((term) => out.includes(term)),
   )
   if (!hasError) throw new Error('stderr not captured')
 
-  // Verify lastOutput is actually the last output
   if (lastOutput !== allOutputs[allOutputs.length - 1])
     throw new Error('last output tracking failed')
 }

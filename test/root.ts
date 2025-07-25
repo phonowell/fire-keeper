@@ -13,17 +13,16 @@ a.description = 'root exists'
 
 const b = async () => {
   const rootString = root()
-  // Test basic path formatting
+
   if (rootString.includes('\\')) throw new Error('path contains backslashes')
   if (!path.isAbsolute(rootString)) throw new Error('path is not absolute')
-  // Test current path exists
+
   if (!(await isExist(rootString)))
     throw new Error('returned path does not exist')
 }
 b.description = 'returns valid absolute path that exists'
 
 const c = () => {
-  // Special case for root directory
   const originalProcess = process.cwd
   process.cwd = () => '/'
   try {
@@ -36,7 +35,6 @@ const c = () => {
 c.description = 'handles root path correctly'
 
 const d = async () => {
-  // Test with various valid path components
   const testDir = `${TEMP}/root-test 特殊目录/a/b/c`
   await mkdir(testDir)
 
@@ -53,10 +51,8 @@ const d = async () => {
 d.description = 'handles complex paths with spaces and unicode'
 
 const e = () => {
-  // Test error cases
   const originalProcess = process.cwd
 
-  // Test empty path
   process.cwd = () => ''
   try {
     root()
@@ -69,7 +65,6 @@ const e = () => {
       throw error
   }
 
-  // Test forbidden characters
   process.cwd = () => '/test/invalid?char'
   try {
     root()
@@ -82,7 +77,6 @@ const e = () => {
       throw error
   }
 
-  // Test relative paths
   process.cwd = () => '/test/../something'
   try {
     root()
@@ -99,7 +93,6 @@ const e = () => {
 }
 e.description = 'throws appropriate errors for invalid paths'
 
-// Cleanup function to ensure we're back in the original directory
 const cleanup = () => {
   process.chdir(originalCwd)
 }

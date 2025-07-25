@@ -4,7 +4,6 @@ import { renderPath } from '../src/echo.js'
 import { echo, home, root } from '../src/index.js'
 
 const a = () => {
-  // Test function existence
   let type = ''
 
   type = typeof renderPath
@@ -25,7 +24,6 @@ const a = () => {
 a.description = 'exposes required functions'
 
 const b = () => {
-  // Test basic echo functionality
   const msg = 'test message'
   assert.equal(echo(msg), msg, 'echo should return input message')
   assert.equal(
@@ -41,13 +39,11 @@ const b = () => {
     'should preserve whitespace in returned message',
   )
 
-  // Test message formatting
   const quotedMsg = "'quoted message'"
-  echo(quotedMsg) // Tests renderContent with quotes
+  echo(quotedMsg)
   const objMsg = { toString: () => 'test object' }
-  echo(objMsg) // Tests String() conversion
+  echo(objMsg)
 
-  // Test when silent
   echo.isSilent = true
   assert.equal(echo(msg), msg, 'should return message when silent')
   echo.isSilent = false
@@ -55,7 +51,6 @@ const b = () => {
 b.description = 'handles basic echo operations'
 
 const c = async () => {
-  // Test freeze functionality
   const testFn = () => Promise.resolve('test result')
   const result1 = await echo.freeze(testFn)
   assert.equal(result1, 'test result', 'freeze should return function result')
@@ -67,7 +62,6 @@ const c = async () => {
 c.description = 'handles freeze operations'
 
 const d = async () => {
-  // Test whisper functionality
   const testFn = () => Promise.resolve('whisper result')
   const result1 = await echo.whisper(testFn)
   assert.equal(
@@ -83,17 +77,14 @@ const d = async () => {
 d.description = 'handles whisper operations'
 
 const e = () => {
-  // Reset state first
   echo.isFrozen = false
   echo.isSilent = false
 
-  // Test normal pause/resume functionality
   echo.pause()
   assert.equal(echo.isSilent, true, 'pause should set isSilent to true')
   echo.resume()
   assert.equal(echo.isSilent, false, 'resume should set isSilent to false')
 
-  // Test when frozen
   echo.isFrozen = true
   echo.isSilent = false
 
@@ -102,30 +93,26 @@ const e = () => {
   echo.resume()
   assert.equal(echo.isSilent, false, 'resume should not affect when frozen')
 
-  // Reset state
   echo.isFrozen = false
   echo.isSilent = false
 }
 e.description = 'handles pause/resume operations'
 
 const f = async () => {
-  // Test type rendering and caching
   const msg = 'test'
-  echo('type1', msg) // First call caches type
-  echo('type1', msg) // Second call uses cache
-  echo('TYPE1', msg) // Case insensitive test
-  echo('default', msg) // Default type test
+  echo('type1', msg)
+  echo('type1', msg)
+  echo('TYPE1', msg)
+  echo('default', msg)
 
-  // Test type with varying lengths
-  echo('', msg) // Empty type
-  echo('verylongtype', msg) // Type longer than 10 chars
+  echo('', msg)
+  echo('verylongtype', msg)
 
-  // Test time rendering and caching
   const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-  echo(msg) // First call caches time
-  echo(msg) // Use cached time
-  await wait(1100) // Wait more than 1 second
-  echo(msg) // Should generate new time
+  echo(msg)
+  echo(msg)
+  await wait(1100)
+  echo(msg)
 }
 f.description = 'handles type rendering and caching'
 

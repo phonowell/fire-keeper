@@ -18,7 +18,6 @@ const formatPattern = (pattern: string | string[]): string =>
   Array.isArray(pattern) ? pattern.join(', ') : pattern
 
 const setupFiles = async () => {
-  // Create test directory structure
   const files = [
     'file1.txt',
     'file2.txt',
@@ -43,17 +42,14 @@ const setupFiles = async () => {
 }
 
 const a = async () => {
-  // 基础输入测试
   const singleFile = `${TEMP}/single.txt`
   await write(singleFile, 'single file content')
   const singleResult = await glob(singleFile)
   if (singleResult.length !== 1) throw new Error('single file test failed')
 
-  // 空输入测试
   const emptyResult = await glob('')
   if (emptyResult.length !== 0) throw new Error('empty input test failed')
 
-  // ListSource 类型测试
   const listSource = [`${TEMP}/a.txt`, `${TEMP}/b.txt`]
   await Promise.all(listSource.map((source) => write(source, 'test content')))
   const arrayResult = await glob(listSource)
@@ -65,7 +61,6 @@ a.description = 'handles basic inputs and empty cases'
 const b = async () => {
   await setupFiles()
 
-  // 组合全面的 glob 模式测试
   const tests: TestPattern[] = [
     { pattern: `${TEMP}/*.txt`, count: 6 },
     { pattern: `${TEMP}/*/*.txt`, count: 3 },
@@ -93,7 +88,6 @@ b.description =
 const c = async () => {
   await setupFiles()
 
-  // 选项组合测试
   const tests: OptionsTest[] = [
     { options: { onlyFiles: true, dot: false }, count: 14 },
     { options: { onlyDirectories: true, deep: 2 }, count: 4 },
@@ -113,7 +107,6 @@ const c = async () => {
 c.description = 'handles various options combinations'
 
 const d = async () => {
-  // 边界情况测试
   const cases = [
     { input: [], description: 'empty array' },
     { input: '', description: 'empty string' },

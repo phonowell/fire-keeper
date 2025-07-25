@@ -74,14 +74,12 @@ const i = (): void => {
 i.description = 'returns original string when no matching chars at end'
 
 const j = (): void => {
-  // Test empty string
   if (trimEnd('') !== '') throw Error('empty string failed')
   if (trimEnd('', '*') !== '') throw Error('empty string with pattern failed')
 }
 j.description = 'handles empty string'
 
 const k = (): void => {
-  // Test Unicode characters
   const question = 'hello世界世界'
   const answer = 'hello'
   if (!isEqual(trimEnd(question, '世界'), answer))
@@ -90,7 +88,6 @@ const k = (): void => {
 k.description = 'handles unicode characters'
 
 const l = (): void => {
-  // Test RegExp metacharacters
   const question = 'hello[]^$'
   const answer = 'hello'
   if (!isEqual(trimEnd(question, '[]^$'), answer))
@@ -99,7 +96,6 @@ const l = (): void => {
 l.description = 'handles regexp metacharacters'
 
 const m = (): void => {
-  // Test mixed whitespace and custom chars
   const question = 'hello  .**\t\n'
   const answer = 'hello'
   if (!isEqual(trimEnd(question, '.*\t\n '), answer))
@@ -108,7 +104,6 @@ const m = (): void => {
 m.description = 'handles mixed whitespace and custom chars'
 
 const n = (): void => {
-  // Test very long string
   const longString = 'a'.repeat(1000) + '*'.repeat(1000)
   const answer = 'a'.repeat(1000)
   if (!isEqual(trimEnd(longString, '*'), answer))
@@ -117,14 +112,12 @@ const n = (): void => {
 n.description = 'handles very long strings'
 
 const o = (): void => {
-  // Test multiple calls
   const result = trimEnd(trimEnd(trimEnd('hello...***\t\n', '\t\n'), '*'), '.')
   if (result !== 'hello') throw Error('multiple calls failed')
 }
 o.description = 'supports multiple calls'
 
 const p = (): void => {
-  // Test consecutive different special chars
   const question = 'hello\n\t\r\f\v'
   const answer = 'hello'
   if (!isEqual(trimEnd(question, '\n\t\r\f\v'), answer))
@@ -133,7 +126,6 @@ const p = (): void => {
 p.description = 'handles consecutive special chars'
 
 const q = (): void => {
-  // Test with all special chars
   const specialChars = Object.entries({
     '\n': '\\n',
     '\r': '\\r',

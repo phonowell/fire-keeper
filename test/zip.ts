@@ -3,10 +3,8 @@ import { isExist, write, zip } from '../src/index.js'
 import { cleanup, TEMP } from './index.js'
 
 const setup = async () => {
-  // Clean previous files
   await cleanup()
 
-  // Create test files
   await write(`${TEMP}/a.txt`, 'content a')
   await write(`${TEMP}/b.txt`, 'content b')
   await write(`${TEMP}/sub/c.txt`, 'content c')

@@ -26,7 +26,6 @@ const b = async () => {
 b.description = 'writes object content'
 
 const c = async () => {
-  // Test Buffer input
   const source = `${TEMP}/buffer.txt`
   const content = Buffer.from('buffer content')
   await write(source, content)
@@ -37,7 +36,6 @@ const c = async () => {
 c.description = 'writes buffer content'
 
 const d = async () => {
-  // Test ArrayBuffer/TypedArray
   const source = `${TEMP}/typed-array.txt`
   const encoder = new TextEncoder()
   const content = encoder.encode('typed array content')
@@ -50,7 +48,6 @@ const d = async () => {
 d.description = 'writes typed array'
 
 const e = async () => {
-  // Test Blob
   const source = `${TEMP}/blob.txt`
   const content = 'blob content'
   const blob = new Blob([content], { type: 'text/plain' })
@@ -62,7 +59,6 @@ const e = async () => {
 e.description = 'writes blob content'
 
 const f = async () => {
-  // Test primitive types
   const source = `${TEMP}/primitive.txt`
   const testCases = [
     [42, '42'],
@@ -82,7 +78,6 @@ const f = async () => {
 f.description = 'writes primitive types'
 
 const g = async () => {
-  // Test path normalization
   const source = `${TEMP}/./normalize/../normalize/test.txt`
   const normalizedPath = `${TEMP}/normalize/test.txt`
   const content = 'normalized path test'
@@ -98,9 +93,8 @@ const g = async () => {
 g.description = 'handles path normalization'
 
 const h = async () => {
-  // Test large file
   const source = `${TEMP}/large.txt`
-  const content = 'x'.repeat(1024 * 1024) // 1MB
+  const content = 'x'.repeat(1024 * 1024)
   await write(source, content)
 
   const result = await read<string>(source)
@@ -109,7 +103,6 @@ const h = async () => {
 h.description = 'handles large files'
 
 const i = async () => {
-  // Test concurrent writes
   const files = [
     { path: `${TEMP}/concurrent1.txt`, content: 'content1' },
     { path: `${TEMP}/concurrent2.txt`, content: 'content2' },
@@ -118,7 +111,6 @@ const i = async () => {
 
   await Promise.all(files.map((f) => write(f.path, f.content)))
 
-  // Verify all writes completed correctly
   for (const file of files) {
     const result = await read<string>(file.path)
     if (result !== file.content)
@@ -128,7 +120,6 @@ const i = async () => {
 i.description = 'supports concurrent writes'
 
 const j = async () => {
-  // Test special character encoding
   const source = `${TEMP}/special.txt`
   const content = '特殊文字🌟\n\t\r\u0000'
   await write(source, content)
@@ -139,7 +130,6 @@ const j = async () => {
 j.description = 'handles special characters'
 
 const k = async () => {
-  // Test write after write
   const source = `${TEMP}/overwrite.txt`
   await write(source, 'initial content')
   await write(source, 'updated content')
@@ -150,7 +140,6 @@ const k = async () => {
 k.description = 'handles overwrites'
 
 const l = async () => {
-  // Test binary data
   const source = `${TEMP}/binary.dat`
   const content = Buffer.from([0x00, 0xff, 0x80, 0x7f])
   await write(source, content)
@@ -163,7 +152,6 @@ const l = async () => {
 l.description = 'writes binary data'
 
 const m = async () => {
-  // Test empty content
   const source = `${TEMP}/empty.txt`
   await write(source, '')
 

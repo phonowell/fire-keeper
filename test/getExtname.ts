@@ -7,7 +7,6 @@ const a = () => {
 a.description = 'function exists'
 
 const b = () => {
-  // Test basic extension extraction
   const tests = [
     ['file.txt', '.txt'],
     ['document.pdf', '.pdf'],
@@ -28,7 +27,6 @@ const b = () => {
 b.description = 'extracts basic extensions'
 
 const c = () => {
-  // Test files with no extension
   const tests = [
     ['README', ''],
     ['makefile', ''],
@@ -46,7 +44,6 @@ const c = () => {
 c.description = 'handles no extensions'
 
 const d = () => {
-  // Test multiple extensions
   const tests = [
     ['archive.tar.gz', '.gz'],
     ['script.test.js', '.js'],
@@ -64,7 +61,6 @@ const d = () => {
 d.description = 'handles multiple extensions'
 
 const e = () => {
-  // Test hidden files and special cases
   const tests = [
     ['.gitignore', ''],
     ['.env', ''],
@@ -82,7 +78,6 @@ const e = () => {
 e.description = 'handles hidden files'
 
 const f = () => {
-  // Test empty and invalid inputs
   try {
     getExtname('')
     throw new Error('empty input should throw')
@@ -91,14 +86,12 @@ const f = () => {
       throw new Error('wrong error for empty input')
   }
 
-  // Whitespace is treated as a valid path by path.extname
   const result = getExtname('   ')
   if (result !== '') throw new Error('whitespace should return empty extension')
 }
 f.description = 'handles invalid inputs'
 
 const g = () => {
-  // Test case sensitivity
   const tests = [
     ['file.TXT', '.TXT'],
     ['script.JS', '.JS'],
@@ -116,7 +109,6 @@ const g = () => {
 g.description = 'preserves case sensitivity'
 
 const h = () => {
-  // Test special extensions and formats
   const tests = [
     ['file.d.ts', '.ts'],
     ['file.test.d.ts', '.ts'],
@@ -134,7 +126,6 @@ const h = () => {
 h.description = 'handles special formats'
 
 const i = () => {
-  // Test paths with dots
   const tests = [
     ['path.to.file.txt', '.txt'],
     ['.file.with.dots.md', '.md'],
@@ -151,13 +142,12 @@ const i = () => {
 i.description = 'handles paths with dots'
 
 const j = () => {
-  // Test edge cases
   const tests = [
     ['.', ''],
     ['..', ''],
     ['file.', '.'],
     ['.file.', '.'],
-    ['...', '.'], // Node's path.extname considers last dot as extension
+    ['...', '.'],
   ]
 
   for (const [input, expected] of tests) {

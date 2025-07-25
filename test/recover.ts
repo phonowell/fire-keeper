@@ -2,8 +2,6 @@ import { backup, isExist, read, recover, remove, write } from '../src/index.js'
 
 import { cleanup, TEMP } from './index.js'
 
-// Cleanup helper
-
 const a = async () => {
   await cleanup()
   const source = `${TEMP}/test.txt`

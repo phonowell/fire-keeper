@@ -35,7 +35,6 @@ const c = async () => {
 c.description = 'nested structure'
 
 const d = async () => {
-  // Test array input
   const listSource = [`${TEMP}/d1.txt`, `${TEMP}/d2.txt`]
   await Promise.all(listSource.map((f) => write(f, 'text')))
   await clean(listSource)
@@ -47,7 +46,6 @@ const d = async () => {
 d.description = 'array input'
 
 const e = async () => {
-  // Test empty directory cleanup
   const dir = `${TEMP}/empty`
   const file = `${dir}/e.txt`
   await mkdir(dir)
@@ -60,7 +58,6 @@ const e = async () => {
 e.description = 'empty directory cleanup'
 
 const f = async () => {
-  // Test non-existent file
   const nonExistent = `${TEMP}/non-existent.txt`
   await clean(nonExistent)
 

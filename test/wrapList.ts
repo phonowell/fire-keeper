@@ -8,12 +8,11 @@ const a = () => {
 a.description = 'wraps string array'
 
 const b = () => {
-  // Test single primitive values
   const tests = [
     ['hello', "'hello'"],
     [123, "'123'"],
     [true, "'true'"],
-    [false, "'false'"], // wrap in array to avoid falsy check
+    [false, "'false'"],
   ] as const
 
   for (const [input, expected] of tests) {
@@ -28,7 +27,6 @@ const b = () => {
 b.description = 'wraps primitive values'
 
 const c = () => {
-  // Test arrays of mixed primitives
   const input = ['hello', 42, true, false]
   const expected = "'hello', '42', 'true', 'false'"
   if (wrapList(input) !== expected) throw new Error('mixed primitives failed')
@@ -36,19 +34,17 @@ const c = () => {
 c.description = 'wraps mixed primitives'
 
 const d = () => {
-  // Test objects
   type TestObj = {
     name: string
     value: number
   }
   const input = { name: 'test', value: 42 }
-  // Let wrapList handle the JSON stringification
+
   const result = wrapList(input)
-  // Verify it's a string wrapped in quotes containing JSON
+
   if (!result.startsWith("'") || !result.endsWith("'"))
     throw new Error('object quote wrapping failed')
 
-  // Parse the inner JSON to verify structure
   const inner = JSON.parse(result.slice(1, -1)) as TestObj
   if (inner.name !== 'test' || inner.value !== 42)
     throw new Error('object structure failed')
@@ -56,7 +52,6 @@ const d = () => {
 d.description = 'wraps objects'
 
 const e = () => {
-  // Test array of objects
   type TestObj = {
     id: number
     name: string
@@ -67,7 +62,6 @@ const e = () => {
   ]
   const result = wrapList(input)
 
-  // Split and parse each object to verify
   const parts = result
     .split(', ')
     .map((part) => JSON.parse(part.slice(1, -1)) as TestObj)
@@ -79,7 +73,6 @@ const e = () => {
 e.description = 'wraps array of objects'
 
 const f = () => {
-  // Test falsy values
   type FalsyTest = [null | undefined | string | boolean | unknown[], string]
   const tests: FalsyTest[] = [
     [null, ''],
@@ -101,10 +94,9 @@ const f = () => {
 f.description = 'handles falsy values'
 
 const g = () => {
-  // Test special characters
   const input = ["It's", 'a "quote"', '\\backslash\\']
   const result = wrapList(input)
-  // Verify each part is properly wrapped and preserved
+
   const parts = result.split(', ').map((part) => part.slice(1, -1))
 
   if (parts[0] !== "It's") throw new Error('single quote handling failed')
@@ -114,7 +106,6 @@ const g = () => {
 g.description = 'handles special characters'
 
 const h = () => {
-  // Test nested structures
   type NestedObj = {
     nested: {
       deep: boolean
@@ -137,7 +128,6 @@ const h = () => {
 h.description = 'handles nested structures'
 
 const i = () => {
-  // Test unicode characters
   const input = ['你好', '世界', '🌍']
   const expected = "'你好', '世界', '🌍'"
   if (wrapList(input) !== expected) throw new Error('unicode characters failed')
@@ -145,7 +135,6 @@ const i = () => {
 i.description = 'handles unicode characters'
 
 const j = () => {
-  // Test very long array
   const input = Array.from({ length: 1000 }, (_, i) => i)
   const result = wrapList(input)
   if (!result.startsWith("'0'") || !result.endsWith("'999'"))
@@ -157,7 +146,6 @@ const j = () => {
 j.description = 'handles long arrays'
 
 const k = () => {
-  // Test complex mixed types
   type ComplexTypes = (
     | number
     | string
@@ -182,7 +170,6 @@ const k = () => {
   const result = wrapList(input)
   const parts = result.split(', ').filter(Boolean)
 
-  // Verify each type is handled
   if (!parts[0].includes('42')) throw new Error('number conversion failed')
   if (!parts[1].includes('string')) throw new Error('string conversion failed')
   if (!parts[2].includes('test')) throw new Error('object conversion failed')
