@@ -5,7 +5,6 @@ const main = async () => {
   await makeIndex()
   await replacePackage()
   await replaceRollup()
-  await replaceTest()
   await generateDocs()
 }
 
@@ -83,32 +82,6 @@ const replaceRollup = async () => {
       .join('\n')}\n}`,
   )
   await write(source, content)
-}
-
-const replaceTest = async () => {
-  const listModule = (await glob(['./test/*.ts', '!**/index.ts'])).map(
-    getBasename,
-  )
-
-  const listTest = listModule.map(getBasename)
-  const content = [
-    "import { describe, it } from 'mocha'",
-    '',
-    "import { argv, echo, normalizePath, remove } from '../src/index.js'",
-    '',
-    ...listTest.map((it) => `import * as ${it}Tests from './${it}.js'`),
-    '',
-    'const mapModule = {',
-    ...listTest.map((it) => `  ${it}: ${it}Tests,`),
-    '}',
-    '',
-    '// ---',
-  ]
-
-  const contIndex = await read('./test/index.ts')
-  if (!contIndex) return
-  const contIndex2 = contIndex.replace(/[\s\S]*\/\/\s---/u, content.join('\n'))
-  await write('./test/index.ts', contIndex2)
 }
 
 export default main

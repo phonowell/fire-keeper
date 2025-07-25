@@ -1,5 +1,12 @@
 import path from 'path'
 
+export type GetNameResult = {
+  basename: string
+  dirname: string
+  extname: string
+  filename: string
+}
+
 /**
  * Parse path into components with cross-platform support
  * @param {string} input - File path
@@ -14,7 +21,8 @@ import path from 'path'
  * // => { basename: 'file', dirname: 'path/to',
  * //      extname: '.txt', filename: 'file.txt' }
  */
-const getName = (input: string) => {
+
+const getName = (input: string): GetNameResult => {
   if (!input) throw new Error(`getName/error: empty input`)
 
   const ipt = input.replace(/\\/g, '/')

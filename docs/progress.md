@@ -1,0 +1,45 @@
+# 测试用例优化进度追踪
+
+## 待处理文件列表
+
+- [x] argv.ts
+- [x] at.ts
+- [x] backup.ts
+- [x] clean.ts
+- [x] copy.ts
+- [x] download.ts
+- [x] echo.ts
+- [x] exec.ts
+- [x] findIndex.ts
+- [x] flatten.ts
+- [x] getBasename.ts
+- [x] getDirname.ts
+- [x] getExtname.ts
+- [x] getFilename.ts
+- [x] getName.ts
+- [x] glob.ts
+- [x] home.ts
+- [x] isExist.ts
+- [x] isSame.ts
+- [x] link.ts
+- [x] mkdir.ts
+- [x] move.ts
+- [x] normalizePath.ts
+- [x] os.ts
+- [x] prompt.ts
+- [x] read.ts
+- [x] recover.ts
+- [ ] remove.ts
+- [ ] rename.ts
+- [ ] root.ts
+- [ ] run.ts
+- [ ] runConcurrent.ts
+- [ ] sleep.ts
+- [ ] stat.ts
+- [ ] toArray.ts
+- [ ] toDate.ts
+- [ ] trimEnd.ts
+- [ ] watch.ts
+- [ ] wrapList.ts
+- [ ] write.ts
+- [ ] zip.ts
