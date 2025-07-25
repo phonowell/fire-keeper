@@ -12,9 +12,11 @@ import echo from './echo.js'
  * await sleep() // minimal delay
  * ```
  */
-const sleep = async (delay = 0) => {
-  await new Promise((resolve) => setTimeout(resolve, delay))
-  if (delay) echo('sleep', `slept '${delay} ms'`)
+const sleep = async (delay: number = 0): Promise<void> => {
+  // 类型安全处理，负数视为0，非数值或NaN视为0
+  const ms = typeof delay === 'number' && !isNaN(delay) ? Math.max(0, delay) : 0
+  await new Promise<void>((resolve) => setTimeout(resolve, ms))
+  if (ms > 0) echo('sleep', `slept '${ms} ms'`)
 }
 
 export default sleep

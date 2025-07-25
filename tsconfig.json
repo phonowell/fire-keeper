@@ -30,6 +30,7 @@
   "include": [
     ".eslintrc.js",
     "rollup.config.js",
+    "vitest.config.ts",
     "src/**/*",
     "task/**/*",
     "test/**/*"

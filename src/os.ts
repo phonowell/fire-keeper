@@ -10,10 +10,12 @@
  * //=> 'unknown' // On other systems like Linux
  * ```
  */
-const os = () => {
+const os = (): 'macos' | 'windows' | 'unknown' => {
   const { platform } = process
-  if (platform.includes('darwin')) return 'macos'
-  if (platform.includes('win')) return 'windows'
+  if (typeof platform !== 'string') return 'unknown'
+  const p = platform.toLowerCase()
+  if (p.includes('darwin')) return 'macos'
+  if (p.includes('win')) return 'windows'
   return 'unknown'
 }
 

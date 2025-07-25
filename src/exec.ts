@@ -10,7 +10,7 @@ type Options = {
   silent?: boolean
 }
 
-type Result = [number, string, string[]]
+export type Result = [number, string, string[]]
 
 const SEPARATOR = os() === 'windows' ? ' && ' : '; '
 
