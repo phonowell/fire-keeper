@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import rename from '../src/rename.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'rename')
 const tempFile = (name: string) => path.join(tempDir, name)
 
 describe('rename - 真实文件系统测试', () => {

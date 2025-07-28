@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import download from '../src/download.js'
 
-const TEMP_DIR = 'temp/download-test'
+const TEMP_DIR = './temp/download'
 
 describe('download', () => {
   beforeEach(async () => {

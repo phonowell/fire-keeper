@@ -5,7 +5,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import backup from '../src/backup.js'
 
-const tempDir = 'temp'
+const tempDir = 'temp/backup'
 
 const cleanTemp = () => {
   if (existsSync(tempDir)) rmSync(tempDir, { recursive: true, force: true })

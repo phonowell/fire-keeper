@@ -1,11 +1,6 @@
-import fs from 'fs'
-import path from 'path'
-
 import { describe, expect, it } from 'vitest'
 
 import exec from '../src/exec.js'
-
-const TEMP_DIR = 'temp'
 
 describe('exec', () => {
   it('应正常执行单条命令并返回结果', async () => {
@@ -73,19 +68,10 @@ describe('exec', () => {
     expect(result[2].length).toBeGreaterThanOrEqual(1)
   })
 
-  it('应能创建并删除临时文件', async () => {
-    if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true })
-
-    const filePath = path.join(TEMP_DIR, 'exec_temp.txt')
-    const writeCmd = `echo temp > "${filePath}"`
-    await exec(writeCmd)
-    expect(fs.existsSync(filePath)).toBeTruthy()
-    fs.unlinkSync(filePath)
-    // 彻底清理临时目录
-    if (fs.existsSync(TEMP_DIR))
-      fs.rmSync(TEMP_DIR, { recursive: true, force: true })
-
-    expect(fs.existsSync(filePath)).toBeFalsy()
-    expect(fs.existsSync(TEMP_DIR)).toBeFalsy()
+  it('应处理文件相关命令', async () => {
+    // 使用现有文件进行测试，不创建临时文件
+    const result = await exec('ls package.json')
+    expect(result[0]).toBe(0)
+    expect(result[1]).toContain('package.json')
   })
 })

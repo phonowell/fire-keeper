@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import read from '../src/read.js'
 
 describe('read', () => {
-  const tempDir = path.join(process.cwd(), 'temp')
+  const tempDir = path.join(process.cwd(), 'temp', 'read')
   const txtFile = path.join(tempDir, 'test.txt')
   const jsonFile = path.join(tempDir, 'test.json')
   const yamlFile = path.join(tempDir, 'test.yaml')

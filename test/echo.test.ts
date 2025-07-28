@@ -1,6 +1,3 @@
-import fs from 'fs'
-import path from 'path'
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import echo, { renderPath } from '../src/echo.js'
@@ -72,20 +69,11 @@ describe('echo', () => {
     expect(logSpy).toHaveBeenCalled()
   })
 
-  it('renderPath 路径转换与清理', () => {
-    const tempDir = path.join(process.cwd(), 'temp')
-    if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true })
-    const tempFile = path.join(tempDir, 'echo_test.txt')
-    fs.writeFileSync(tempFile, 'test')
-    expect(renderPath(tempFile)).toMatch(/temp[\\/]/)
-    fs.unlinkSync(tempFile)
-    // 清理空目录
-    try {
-      fs.rmdirSync(tempDir)
-    } catch {}
+  it('renderPath 路径转换', () => {
     expect(renderPath('/')).toBe('/')
     expect(renderPath('')).toBe('')
     expect(renderPath('/not/home/or/root')).toBe('/not/home/or/root')
+    expect(renderPath('./package.json')).toMatch(/package\.json/)
   })
 
   it('default类型与边界', () => {

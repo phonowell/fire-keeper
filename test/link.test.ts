@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import link from '../src/link.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'link')
 
 const tempFile = (name: string) => path.join(tempDir, name)
 
@@ -34,6 +34,10 @@ describe('link', () => {
       tempFile('src-dir'),
       tempFile('dest-dir-link'),
     ])
+    // 彻底清理 link 目录本身
+    try {
+      await fse.remove(tempDir)
+    } catch {}
   })
 
   it('应能创建文件符号链接', async () => {

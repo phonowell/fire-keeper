@@ -1,20 +1,8 @@
-import * as fs from 'fs'
-import * as path from 'path'
-
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import at from '../src/at.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
-
 describe('at', () => {
-  beforeEach(() => {
-    if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir)
-  })
-  afterEach(() => {
-    fs.rmSync(tempDir, { recursive: true, force: true })
-  })
-
   it('数组索引与极端边界', () => {
     const arr = [10, 20, 30]
     expect(at(arr, 0)).toBe(10)
@@ -90,12 +78,9 @@ describe('at', () => {
     expect(at(objWithDot, 'a.b')).toBe(42)
   })
 
-  it('临时文件对象访问与清理', () => {
-    const filePath = path.join(tempDir, 'test.json')
-    fs.writeFileSync(filePath, JSON.stringify({ a: { b: 123 } }))
-    const fileObj = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
-    expect(at(fileObj, 'a.b')).toBe(123)
-    fs.unlinkSync(filePath)
-    expect(fs.existsSync(filePath)).toBe(false)
+  it('内存对象访问', () => {
+    const testObj = { a: { b: 123 } }
+    expect(at(testObj, 'a.b')).toBe(123)
+    expect(at(testObj, 'a')).toEqual({ b: 123 })
   })
 })

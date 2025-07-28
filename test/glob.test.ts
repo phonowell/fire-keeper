@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import glob from '../src/glob.js'
 
-const tempDir = './temp/glob-test'
+const tempDir = './temp/glob'
 
 const setupTemp = async () => {
   await fs.mkdir(`${tempDir}/subdir`, { recursive: true })

@@ -1,7 +1,4 @@
-import fs from 'fs'
-import path from 'path'
-
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import flatten from '../src/flatten.js'
 
@@ -65,31 +62,10 @@ describe('flatten', () => {
     // 类型推断辅助，实际断言已覆盖，无需额外 typeCheck 变量
   })
 
-  describe('临时文件路径数组展开', () => {
-    const tempDir = path.join(process.cwd(), 'temp')
-    const files = [
-      path.join(tempDir, 'a.txt'),
-      [path.join(tempDir, 'b.txt'), [path.join(tempDir, 'c.txt')]],
-    ]
-    beforeEach(() => {
-      if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir)
-      fs.writeFileSync(path.join(tempDir, 'a.txt'), 'A')
-      fs.writeFileSync(path.join(tempDir, 'b.txt'), 'B')
-      fs.writeFileSync(path.join(tempDir, 'c.txt'), 'C')
-    })
-    afterEach(() => {
-      fs.rmSync(tempDir, { recursive: true, force: true })
-    })
-    it('应正确展开文件路径数组并验证文件存在', () => {
-      const flat = flatten(files)
-      expect(flat).toEqual([
-        path.join(tempDir, 'a.txt'),
-        path.join(tempDir, 'b.txt'),
-        path.join(tempDir, 'c.txt'),
-      ])
-      flat.forEach((f) => {
-        if (typeof f === 'string') expect(fs.existsSync(f)).toBe(true)
-      })
-    })
+  it('路径字符串数组展开', () => {
+    const files = ['./package.json', ['./README.md', ['./tsconfig.json']]]
+    const flat = flatten(files)
+    expect(flat).toEqual(['./package.json', './README.md', './tsconfig.json'])
+    expect(flat).toHaveLength(3)
   })
 })
