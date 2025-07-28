@@ -6,30 +6,40 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import flatten from '../src/flatten.js'
 
 describe('flatten', () => {
-  it('应正确展开一层嵌套数组', () => {
+  it('基础展开与递归', () => {
     expect(flatten([1, [2, 3], 4])).toEqual([1, 2, 3, 4])
-  })
-
-  it('应递归展开多层嵌套数组', () => {
     expect(flatten([1, [2, [3, [4]]], 5])).toEqual([1, 2, 3, 4, 5])
-  })
-
-  it('应处理空数组', () => {
-    expect(flatten([])).toEqual([])
-  })
-
-  it('应处理已扁平化数组', () => {
+    expect(flatten([[[[[[1]]]]]])).toEqual([1])
     expect(flatten([1, 2, 3])).toEqual([1, 2, 3])
+    expect(flatten([])).toEqual([])
+    expect(flatten([[], [[]], []])).toEqual([])
+    expect(flatten([[1], [2], [3]])).toEqual([1, 2, 3])
   })
 
-  it('应处理包含对象的嵌套数组', () => {
+  it('支持对象、函数、Symbol、特殊对象', () => {
     const a = { id: 1 }
     const b = { id: 2 }
     const c = { id: 3 }
+    const s = Symbol('deep')
+    const fn = () => 42
+    const date = new Date()
+    const reg = /\d+/
     expect(flatten([a, [b], [c]])).toEqual([a, b, c])
+    expect(flatten([[[a]], [[b]]])).toEqual([a, b])
+    expect(flatten([[[s]]])).toEqual([s])
+    expect(flatten([[s], [Symbol('mix')]])).toHaveLength(2)
+    expect(flatten([[[fn]]])).toEqual([fn])
+    // Date/RegExp混合类型需显式声明类型
+    const arr: (Date | RegExp | (Date | RegExp)[])[] = [date, [reg]]
+    expect(flatten(arr)).toEqual([date, reg])
+    const deepArr: (Date | RegExp | (Date | RegExp)[])[] = [
+      [new Date()],
+      [/\w+/],
+    ]
+    expect(flatten(deepArr)).toHaveLength(2)
   })
 
-  it('应处理混合类型（number/string/boolean/null/undefined）', () => {
+  it('支持混合类型与null/undefined', () => {
     const arr: (
       | number
       | string
@@ -39,54 +49,20 @@ describe('flatten', () => {
       | (number | string | boolean | null | undefined)[]
     )[] = [1, ['a', true], null, undefined]
     expect(flatten(arr)).toEqual([1, 'a', true, null, undefined])
-  })
 
-  it('应处理嵌套空数组', () => {
-    expect(flatten([[], [[]], []])).toEqual([])
-  })
-
-  it('应处理仅包含 undefined/null 的数组', () => {
-    const arr: (undefined | null | (undefined | null)[])[] = [
+    const arr2: (undefined | null | (undefined | null)[])[] = [
       undefined,
       [null],
       [undefined],
     ]
-    expect(flatten(arr)).toEqual([undefined, null, undefined])
+    expect(flatten(arr2)).toEqual([undefined, null, undefined])
   })
 
-  it('应处理深层嵌套对象', () => {
-    const a = { id: 1 }
-    const b = { id: 2 }
-    expect(flatten([[[a]], [[b]]])).toEqual([a, b])
-  })
-
-  it('应处理深层嵌套 Symbol', () => {
-    const s = Symbol('deep')
-    expect(flatten([[[s]]])).toEqual([s])
-    const s2 = Symbol('mix')
-    expect(flatten([[s], [s2]])).toEqual([s, s2])
-  })
-
-  it('应处理深层嵌套函数', () => {
-    const fn = () => 42
-    expect(flatten([[[fn]]])).toEqual([fn])
-  })
-
-  it('应处理只含数组元素', () => {
-    expect(flatten([[1], [2], [3]])).toEqual([1, 2, 3])
-  })
-
-  it('应处理深度嵌套', () => {
-    expect(flatten([[[[[[1]]]]]])).toEqual([1])
-  })
-
-  it('应支持泛型类型推断', () => {
+  it('泛型类型推断', () => {
     const arr: Array<number | number[]> = [1, [2, 3], 4]
     const result = flatten(arr)
     expect(result).toEqual([1, 2, 3, 4])
-    type Test = typeof result extends number[] ? true : false
-    const typeCheck: Test = true
-    expect(typeCheck).toBe(true)
+    // 类型推断辅助，实际断言已覆盖，无需额外 typeCheck 变量
   })
 
   describe('临时文件路径数组展开', () => {
@@ -104,7 +80,7 @@ describe('flatten', () => {
     afterEach(() => {
       fs.rmSync(tempDir, { recursive: true, force: true })
     })
-    it('应正确展开文件路径数组', () => {
+    it('应正确展开文件路径数组并验证文件存在', () => {
       const flat = flatten(files)
       expect(flat).toEqual([
         path.join(tempDir, 'a.txt'),
@@ -115,25 +91,5 @@ describe('flatten', () => {
         if (typeof f === 'string') expect(fs.existsSync(f)).toBe(true)
       })
     })
-  })
-
-  it('应处理特殊对象（Date、RegExp）', () => {
-    const arr: (Date | RegExp | (Date | RegExp)[])[] = [new Date(), [/\d+/]]
-    const result = flatten(arr)
-    expect(result.length).toBe(2)
-    expect(result[0] instanceof Date || result[0] instanceof RegExp).toBe(true)
-    expect(result[1] instanceof Date || result[1] instanceof RegExp).toBe(true)
-    const deepArr: (Date | RegExp | (Date | RegExp)[])[] = [
-      [new Date()],
-      [/\w+/],
-    ]
-    const deepResult = flatten(deepArr)
-    expect(deepResult.length).toBe(2)
-    expect(
-      deepResult[0] instanceof Date || deepResult[0] instanceof RegExp,
-    ).toBe(true)
-    expect(
-      deepResult[1] instanceof Date || deepResult[1] instanceof RegExp,
-    ).toBe(true)
   })
 })

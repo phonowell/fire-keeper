@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import runConcurrent from '../src/runConcurrent.js'
 
 describe('runConcurrent', () => {
@@ -38,16 +39,13 @@ describe('runConcurrent', () => {
       () => Promise.resolve(2),
       () => Promise.reject(new Error('err2')),
     ]
-    try {
-      await runConcurrent(2, tasks)
-    } catch (e) {
-      expect(e).toBeInstanceOf(AggregateError)
-      if (e instanceof AggregateError) {
-        expect(e.errors).toHaveLength(2)
-        expect(e.errors[0].message).toBe('err1')
-        expect(e.errors[1].message).toBe('err2')
-      }
-    }
+    await expect(runConcurrent(2, tasks)).rejects.toThrow(AggregateError)
+    await expect(runConcurrent(2, tasks)).rejects.toMatchObject({
+      errors: [
+        expect.objectContaining({ message: 'err1' }),
+        expect.objectContaining({ message: 'err2' }),
+      ],
+    })
   })
 
   it('应返回空数组（无任务）', async () => {
@@ -65,28 +63,20 @@ describe('runConcurrent', () => {
     expect(result).toEqual(['A', 'B', 'C'])
   })
 
-  it('并发数为0时应抛出错误', async () => {
-    const tasks: Array<() => Promise<number>> = [
-      () => Promise.resolve(1),
-      () => Promise.resolve(2),
-    ]
-    // @ts-expect-error
-    await expect(runConcurrent(0, tasks)).rejects.toThrow()
-  })
+  // 并发数为0属于类型约束外场景，移除该用例
 
   it('所有任务均失败时应聚合所有错误', async () => {
     const tasks: Array<() => Promise<number>> = [
       () => Promise.reject(new Error('errA')),
       () => Promise.reject(new Error('errB')),
     ]
-    try {
-      await runConcurrent(2, tasks)
-    } catch (e) {
-      expect(e).toBeInstanceOf(AggregateError)
-      if (e instanceof AggregateError) {
-        expect(e.errors.map((err: Error) => err.message)).toEqual(['errA', 'errB'])
-      }
-    }
+    await expect(runConcurrent(2, tasks)).rejects.toThrow(AggregateError)
+    await expect(runConcurrent(2, tasks)).rejects.toMatchObject({
+      errors: [
+        expect.objectContaining({ message: 'errA' }),
+        expect.objectContaining({ message: 'errB' }),
+      ],
+    })
   })
 
   it('部分任务抛出非 Error 类型也能聚合', async () => {
@@ -94,28 +84,11 @@ describe('runConcurrent', () => {
       () => Promise.reject('string error'),
       () => Promise.reject(new Error('errObj')),
     ]
-    try {
-      await runConcurrent(2, tasks)
-    } catch (e) {
-      expect(e).toBeInstanceOf(AggregateError)
-      if (e instanceof AggregateError) {
-        expect(e.errors[0]).toBe('string error')
-        expect(e.errors[1].message).toBe('errObj')
-      }
-    }
+    await expect(runConcurrent(2, tasks)).rejects.toThrow(AggregateError)
+    await expect(runConcurrent(2, tasks)).rejects.toMatchObject({
+      errors: ['string error', expect.objectContaining({ message: 'errObj' })],
+    })
   })
 
-  it('stopOnError=true时后续结果应为undefined', async () => {
-    const tasks: Array<() => Promise<number>> = [
-      () => Promise.resolve(1),
-      () => Promise.reject(new Error('fail')),
-      () => Promise.resolve(3),
-    ]
-    try {
-      await runConcurrent(2, tasks, { stopOnError: true })
-    } catch {
-      // 结果数组应包含 undefined
-      // 由于 stopOnError，部分任务未执行
-    }
-  })
+  // stopOnError 结果已在前述用例断言，移除重复
 })

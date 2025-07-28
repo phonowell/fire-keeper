@@ -1,114 +1,92 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { promises as fs } from 'fs'
+import path from 'path'
 
-import echo from '../src/echo.js'
-import glob from '../src/glob.js'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
 import read from '../src/read.js'
 import recover from '../src/recover.js'
-import remove from '../src/remove.js'
 import write from '../src/write.js'
 
-// Mock dependencies
-vi.mock('../src/echo.js')
-vi.mock('../src/glob.js')
-vi.mock('../src/read.js')
-vi.mock('../src/write.js')
-vi.mock('../src/remove.js')
+const tempDir = path.join(process.cwd(), 'temp')
 
-// Helper function to create ListSource type
-const createListSource = (paths: string[]) => {
-  const result = paths as string[] & { __IS_LISTED_AS_SOURCE__: true }
-  result.__IS_LISTED_AS_SOURCE__ = true
-  return result
+const cleanupTemp = async () => {
+  try {
+    const files = await fs.readdir(tempDir)
+    await Promise.all(
+      files.map((file) => fs.rm(path.join(tempDir, file), { force: true })),
+    )
+  } catch {}
 }
 
+beforeEach(async () => {
+  await fs.mkdir(tempDir, { recursive: true })
+  await cleanupTemp()
+})
+
+afterEach(async () => {
+  await cleanupTemp()
+})
+
 describe('recover', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('应正常恢复单个文件', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['test.txt.bak']))
-    vi.mocked(read).mockResolvedValue('backup content')
-    vi.mocked(write).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await recover('test.txt')
-
-    expect(glob).toHaveBeenCalledWith(['test.txt.bak'], { onlyFiles: true })
-    expect(read).toHaveBeenCalledWith('test.txt.bak')
-    expect(write).toHaveBeenCalledWith('test.txt', 'backup content')
-    expect(remove).toHaveBeenCalledWith('test.txt.bak')
-    expect(echo).toHaveBeenCalledWith('recover', expect.stringContaining('recovered'))
+    const file = path.join(tempDir, 'a.txt')
+    const bak = `${file}.bak`
+    await write(bak, 'backup')
+    await recover(file)
+    const content = await read(file)
+    expect(content).toBe('backup')
+    const bakExist = await fs
+      .access(bak)
+      .then(() => true)
+      .catch(() => false)
+    expect(bakExist).toBe(false)
   })
 
   it('应正常恢复多个文件', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['file1.txt.bak', 'file2.txt.bak']))
-    vi.mocked(read).mockResolvedValue('content')
-    vi.mocked(write).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await recover(['file1.txt', 'file2.txt'])
-
-    expect(glob).toHaveBeenCalledWith(['file1.txt.bak', 'file2.txt.bak'], { onlyFiles: true })
-    expect(read).toHaveBeenCalledTimes(2)
-    expect(write).toHaveBeenCalledTimes(2)
-    expect(remove).toHaveBeenCalledTimes(2)
+    const file1 = path.join(tempDir, 'b1.txt')
+    const file2 = path.join(tempDir, 'b2.txt')
+    const bak1 = `${file1}.bak`
+    const bak2 = `${file2}.bak`
+    await write(bak1, 'b1')
+    await write(bak2, 'b2')
+    await recover([file1, file2])
+    expect(await read(file1)).toBe('b1')
+    expect(await read(file2)).toBe('b2')
+    const bak1Exist = await fs
+      .access(bak1)
+      .then(() => true)
+      .catch(() => false)
+    const bak2Exist = await fs
+      .access(bak2)
+      .then(() => true)
+      .catch(() => false)
+    expect(bak1Exist).toBe(false)
+    expect(bak2Exist).toBe(false)
   })
 
   it('应支持自定义并发数', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['test.txt.bak']))
-    vi.mocked(read).mockResolvedValue('content')
-    vi.mocked(write).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await recover('test.txt', { concurrency: 3 })
-
-    expect(read).toHaveBeenCalledWith('test.txt.bak')
-    expect(write).toHaveBeenCalledWith('test.txt', 'content')
-    expect(remove).toHaveBeenCalledWith('test.txt.bak')
+    const file = path.join(tempDir, 'c.txt')
+    const bak = `${file}.bak`
+    await write(bak, 'concurrent')
+    await recover(file, { concurrency: 2 })
+    expect(await read(file)).toBe('concurrent')
   })
 
-  it('无备份文件时应输出提示信息', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource([]))
-
-    await recover('nonexistent.txt')
-
-    expect(echo).toHaveBeenCalledWith('recover', expect.stringContaining('no files found'))
-  })
-
-  it('读取失败时应抛出错误', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['test.txt.bak']))
-    vi.mocked(read).mockRejectedValue(new Error('read error'))
-
-    await expect(recover('test.txt')).rejects.toThrow()
-  })
-
-  it('写入失败时应抛出错误', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['test.txt.bak']))
-    vi.mocked(read).mockResolvedValue('content')
-    vi.mocked(write).mockRejectedValue(new Error('write error'))
-
-    await expect(recover('test.txt')).rejects.toThrow()
-  })
-
-  it('删除备份文件失败时应抛出错误', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['test.txt.bak']))
-    vi.mocked(read).mockResolvedValue('content')
-    vi.mocked(write).mockResolvedValue(undefined)
-    vi.mocked(remove).mockRejectedValue(new Error('remove error'))
-
-    await expect(recover('test.txt')).rejects.toThrow()
+  it('无备份文件时应无操作', async () => {
+    const file = path.join(tempDir, 'd.txt')
+    await expect(recover(file)).resolves.toBeUndefined()
+    const exist = await fs
+      .access(file)
+      .then(() => true)
+      .catch(() => false)
+    expect(exist).toBe(false)
   })
 
   it('应正确处理空内容的备份文件', async () => {
-    vi.mocked(glob).mockResolvedValue(createListSource(['empty.txt.bak']))
-    vi.mocked(read).mockResolvedValue('')
-    vi.mocked(write).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await recover('empty.txt')
-
-    expect(write).toHaveBeenCalledWith('empty.txt', '')
-    expect(echo).toHaveBeenCalledWith('recover', expect.stringContaining('recovered'))
+    const file = path.join(tempDir, 'e.txt')
+    const bak = `${file}.bak`
+    await write(bak, '')
+    await recover(file)
+    expect(await read(file)).toBe('')
   })
 })

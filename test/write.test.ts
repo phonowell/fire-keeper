@@ -1,116 +1,15 @@
 import path from 'path'
 
 import fse from 'fs-extra'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import echo from '../src/echo.js'
 import write from '../src/write.js'
 
 const tempDir = path.join(process.cwd(), 'temp')
 const tempFile = (name: string) => path.join(tempDir, name)
 
-const mockedEcho = vi.mocked(echo)
-
-describe('write - Mock 测试', () => {
-  vi.mock('../src/echo.js')
-
-  let fseMock: any
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-    fseMock = vi.spyOn(fse, 'outputFile').mockResolvedValue(undefined)
-  })
-
-  it('应写入字符串内容', async () => {
-    await write('a.txt', 'hello')
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), 'hello', {})
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'write',
-      expect.stringContaining('wrote'),
-    )
-  })
-
-  it('应写入 Buffer 内容', async () => {
-    const buf = Buffer.from([1, 2, 3])
-    await write('b.bin', buf)
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), buf, {})
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入 ArrayBuffer 内容', async () => {
-    const arr = new Uint8Array([4, 5, 6]).buffer
-    await write('c.bin', arr)
-    expect(fseMock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.any(Uint8Array),
-      {},
-    )
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入 TypedArray 内容', async () => {
-    const typed = new Int32Array([7, 8, 9])
-    await write('d.bin', typed)
-    expect(fseMock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.any(Uint8Array),
-      {},
-    )
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入对象内容为 JSON 字符串', async () => {
-    await write('f.json', { a: 1 })
-    expect(fseMock).toHaveBeenCalledWith(
-      expect.any(String),
-      JSON.stringify({ a: 1 }),
-      {},
-    )
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入数字内容为字符串', async () => {
-    await write('g.txt', 123)
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), '123', {})
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入布尔值内容为字符串', async () => {
-    await write('h.txt', false)
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), 'false', {})
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入 null 内容为字符串', async () => {
-    await write('i.txt', null)
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), 'null', {})
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应写入 undefined 内容为字符串', async () => {
-    await write('j.txt', undefined)
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), 'undefined', {})
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('应支持写入时传递 options', async () => {
-    await write('n.txt', 'opt', { mode: 0o644 })
-    expect(fseMock).toHaveBeenCalledWith(expect.any(String), 'opt', {
-      mode: 0o644,
-    })
-    expect(mockedEcho).toHaveBeenCalled()
-  })
-
-  it('异常路径应抛出错误', async () => {
-    fseMock.mockRejectedValueOnce(new Error('路径错误'))
-    await expect(write('/invalid/path.txt', 'err')).rejects.toThrow('路径错误')
-  })
-})
-
 describe('write - 真实文件系统测试', () => {
   beforeEach(async () => {
-    vi.clearAllMocks()
-    vi.restoreAllMocks()
     await fse.ensureDir(tempDir)
   })
 
@@ -190,7 +89,7 @@ describe('write - 真实文件系统测试', () => {
 
     expect(await fse.pathExists(filePath)).toBe(true)
     const stats = await fse.stat(filePath)
-    expect(stats.mode & parseInt('777', 8)).toBe(mode)
+    expect(stats.mode & 0o777).toBe(mode)
   })
 
   it('应能写入大文件内容', async () => {
@@ -211,9 +110,7 @@ describe('write - 真实文件系统测试', () => {
       content: `content ${i}`,
     }))
 
-    await Promise.all(
-      files.map(({ path, content }) => write(path, content))
-    )
+    await Promise.all(files.map(({ path, content }) => write(path, content)))
 
     for (const { path, content } of files) {
       expect(await fse.pathExists(path)).toBe(true)
@@ -224,7 +121,7 @@ describe('write - 真实文件系统测试', () => {
   it('应能处理并发写入同一文件', async () => {
     const filePath = tempFile('concurrent_same.txt')
     const promises = Array.from({ length: 3 }, (_, i) =>
-      write(filePath, `content ${i}`)
+      write(filePath, `content ${i}`),
     )
 
     await Promise.all(promises)
@@ -256,23 +153,17 @@ describe('write - 真实文件系统测试', () => {
   it('写入到只读目录应抛出错误', async () => {
     const readOnlyDir = tempFile('readonly')
     await fse.ensureDir(readOnlyDir)
-
-    // 在某些系统上可能无法设置只读权限，因此这个测试可能跳过
     try {
       await fse.chmod(readOnlyDir, 0o444)
       const filePath = path.join(readOnlyDir, 'test.txt')
-
       await expect(write(filePath, 'test')).rejects.toThrow()
-    } catch (error) {
-      // 如果无法设置权限，跳过这个测试
-      console.warn('无法测试只读目录权限限制')
+    } catch {
+      // 跳过：无法设置权限则不测
+      return
     } finally {
-      // 恢复权限以便清理
       try {
         await fse.chmod(readOnlyDir, 0o755)
-      } catch {
-        // 忽略恢复权限失败
-      }
+      } catch {}
     }
   })
 

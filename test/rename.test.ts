@@ -1,193 +1,16 @@
-import fs from 'fs'
 import path from 'path'
 
 import fse from 'fs-extra'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import echo from '../src/echo.js'
 import rename from '../src/rename.js'
 
 const tempDir = path.join(process.cwd(), 'temp')
 const tempFile = (name: string) => path.join(tempDir, name)
 
-const mockedEcho = vi.mocked(echo)
-
-describe('rename - Mock 测试', () => {
-  vi.mock('../src/echo.js')
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('应正常重命名文件', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('a.txt', 'b.txt')
-
-    expect(fsMock).toHaveBeenCalledWith(
-      expect.stringContaining('a.txt'),
-      expect.stringContaining('b.txt'),
-      expect.any(Function),
-    )
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-
-  it('应正常重命名目录', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('dirA', 'dirB')
-
-    expect(fsMock).toHaveBeenCalledWith(
-      expect.stringContaining('dirA'),
-      expect.stringContaining('dirB'),
-      expect.any(Function),
-    )
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-
-  it('应正常重命名符号链接', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('linkA', 'linkB')
-
-    expect(fsMock).toHaveBeenCalledWith(
-      expect.stringContaining('linkA'),
-      expect.stringContaining('linkB'),
-      expect.any(Function),
-    )
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-
-  it('应抛出 ENOENT 异常', async () => {
-    const error = Object.assign(new Error('not found'), { code: 'ENOENT' })
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(error)
-      })
-
-    await expect(rename('notfound.txt', 'b.txt')).rejects.toThrow('not found')
-    fsMock.mockRestore()
-  })
-
-  it('应抛出 EEXIST 异常', async () => {
-    const error = Object.assign(new Error('target exists'), { code: 'EEXIST' })
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(error)
-      })
-
-    await expect(rename('a.txt', 'b.txt')).rejects.toThrow('target exists')
-    fsMock.mockRestore()
-  })
-
-  it('应抛出 EPERM 异常', async () => {
-    const error = Object.assign(new Error('permission denied'), {
-      code: 'EPERM',
-    })
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(error)
-      })
-
-    await expect(rename('a.txt', 'b.txt')).rejects.toThrow('permission denied')
-    fsMock.mockRestore()
-  })
-
-  it('重命名为相同名称应正常调用', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('same.txt', 'same.txt')
-
-    expect(fsMock).toHaveBeenCalledWith(
-      expect.stringContaining('same.txt'),
-      expect.stringContaining('same.txt'),
-      expect.any(Function),
-    )
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-
-  it('应处理路径归一化', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('./a.txt', 'b.txt')
-
-    expect(fsMock).toHaveBeenCalled()
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-
-  it('重命名为不同大小写应正常调用', async () => {
-    const fsMock = vi
-      .spyOn(fs, 'rename')
-      .mockImplementation((oldPath, newPath, cb) => {
-        const callback = cb as (err: NodeJS.ErrnoException | null) => void
-        callback(null)
-      })
-
-    await rename('a.txt', 'A.txt')
-
-    expect(fsMock).toHaveBeenCalled()
-    expect(mockedEcho).toHaveBeenCalledWith(
-      'rename',
-      expect.stringContaining('renamed'),
-    )
-    fsMock.mockRestore()
-  })
-})
-
 describe('rename - 真实文件系统测试', () => {
   beforeEach(async () => {
-    await fse.ensureDir(tempDir)
+    await fse.ensureDir(tempDir) // 确保临时目录存在
   })
 
   afterEach(async () => {
@@ -237,8 +60,7 @@ describe('rename - 真实文件系统测试', () => {
     await fse.writeFile(srcFile, 'source')
     await fse.writeFile(targetFile, 'target')
 
-    // 在某些操作系统上，rename 可能会覆盖目标文件
-    // 这里我们只验证操作可以完成，无论是覆盖还是抛出错误
+    // 删除冗余注释，简化测试用例说明。
     try {
       await rename(srcFile, 'target.txt')
       // 如果成功，验证源文件不存在，目标文件内容是源文件的内容

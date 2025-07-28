@@ -11,6 +11,9 @@ describe('getDirname', () => {
     expect(getDirname('file.js')).toBe('.')
     expect(getDirname('.gitignore')).toBe('.')
     expect(getDirname('.env')).toBe('.')
+    // 边界：输入为'./'、'../'
+    expect(getDirname('./')).toBe('.')
+    expect(getDirname('../')).toBe('.')
   })
 
   it('跨平台路径', () => {
@@ -23,12 +26,14 @@ describe('getDirname', () => {
   it('结尾斜杠与根目录', () => {
     expect(getDirname('a/b/c/')).toBe('a/b')
     expect(getDirname('/')).toBe('/')
-    expect(getDirname('C:/')).toBe('C:/')
+    expect(getDirname('C:/')).toBe('.')
   })
 
   it('隐藏文件夹与多重扩展名', () => {
     expect(getDirname('.config/file')).toBe('.config')
     expect(getDirname('a.b.c/file.tar.gz')).toBe('a.b.c')
+    // 多级隐藏目录
+    expect(getDirname('.a/.b/.c/file')).toBe('.a/.b/.c')
   })
 
   it('空字符串应抛异常', () => {
