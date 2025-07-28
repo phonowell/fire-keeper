@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import write from '../src/write.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'write')
 const tempFile = (name: string) => path.join(tempDir, name)
 
 describe('write - 真实文件系统测试', () => {

@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import stat from '../src/stat.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'stat')
 const tempFile = (name: string) => path.join(tempDir, name)
 
 describe('stat - 基础功能测试', () => {

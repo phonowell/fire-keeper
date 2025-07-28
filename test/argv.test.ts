@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs'
-
 import { afterEach, describe, expect, it } from 'vitest'
 
 import argv from '../src/argv.js'
@@ -18,17 +16,11 @@ type ArgvResult = {
   $0: string
 }
 
-const TEMP_DIR = './temp'
-const TEMP_FILE = `${TEMP_DIR}/test-argv.txt`
-
 describe('argv', () => {
   const OLD_ARGV = process.argv
 
-  afterEach(async () => {
+  afterEach(() => {
     process.argv = OLD_ARGV
-    try {
-      await fs.rm(TEMP_DIR, { recursive: true, force: true })
-    } catch {}
   })
 
   it('解析命名参数', async () => {
@@ -98,12 +90,11 @@ describe('argv', () => {
     expect(args.$0).toBe('script.js')
   })
 
-  it('参数为临时文件路径', async () => {
-    await fs.mkdir(TEMP_DIR, { recursive: true })
-    await fs.writeFile(TEMP_FILE, 'test')
-    process.argv = ['node', 'script.js', `--file=${TEMP_FILE}`]
+  it('参数为文件路径', async () => {
+    const testFilePath = './package.json'
+    process.argv = ['node', 'script.js', `--file=${testFilePath}`]
     const args = (await argv()) as ArgvResult
-    expect(args.file).toBe(TEMP_FILE)
+    expect(args.file).toBe(testFilePath)
   })
 
   it('参数名包含短横线', async () => {

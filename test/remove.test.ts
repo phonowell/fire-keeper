@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import remove from '../src/remove.js'
 
-const tempDir = path.join(process.cwd(), 'temp/remove-test')
+const tempDir = path.join(process.cwd(), 'temp/remove')
 
 const tempFile = (name: string) => path.join(tempDir, name)
 

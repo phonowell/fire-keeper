@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import clean from '../src/clean.js'
 
-const tempDir = join(process.cwd(), 'temp')
+const tempDir = join(process.cwd(), 'temp', 'clean')
 
 const safeRm = (path: string) => {
   try {

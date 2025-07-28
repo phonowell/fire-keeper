@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import copy from '../src/copy.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'copy')
 const tempFile = (name: string) => path.join(tempDir, name)
 
 describe('copy', () => {

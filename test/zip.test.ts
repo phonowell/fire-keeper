@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import zip from '../src/zip.js'
 
-const tempDir = path.join(process.cwd(), 'temp')
+const tempDir = path.join(process.cwd(), 'temp', 'zip')
 const tempFile = (name: string) => path.join(tempDir, name)
 const tempSrcDir = tempFile('srcdir')
 const tempSrcFile = tempFile('file.txt')
@@ -51,7 +51,7 @@ describe('zip - 真实文件系统测试', () => {
 
   it('应自动推断文件名和 base', async () => {
     await zip(tempSrcFile, tempDir)
-    const zipPath = tempFile('temp.zip')
+    const zipPath = tempFile('zip.zip')
     expect(await fse.pathExists(zipPath)).toBe(true)
   })
 })

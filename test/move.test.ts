@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import move from '../src/move.js'
 
-const tempDir = path.join(process.cwd(), 'temp/move-test')
+const tempDir = path.join(process.cwd(), 'temp/move')
 const fileA = path.join(tempDir, 'a.txt')
 const fileB = path.join(tempDir, 'b.txt')
 const dirTarget = path.join(tempDir, 'target')

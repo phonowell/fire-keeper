@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import watch from '../src/watch.js'
 
-const tempDir = path.resolve(__dirname, '../temp')
+const tempDir = path.join(__dirname, '../temp', 'watch')
 const tempFile = path.join(tempDir, 'watch-test.txt')
 const tempFile2 = path.join(tempDir, 'watch-test2.txt')
 
@@ -13,10 +13,8 @@ const ensureTempDir = function () {
   if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true })
 }
 const cleanTempFiles = function () {
-  if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile)
-  if (fs.existsSync(tempFile2)) fs.unlinkSync(tempFile2)
-  if (fs.existsSync(tempDir) && fs.readdirSync(tempDir).length === 0)
-    fs.rmdirSync(tempDir)
+  if (fs.existsSync(tempDir))
+    fs.rmSync(tempDir, { recursive: true, force: true })
 }
 
 describe('watch', () => {
