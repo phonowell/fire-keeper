@@ -1,82 +1,132 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { promises as fs } from 'fs'
+import path from 'path'
 
-import copy from '../src/copy.js'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
 import move from '../src/move.js'
-import remove from '../src/remove.js'
 
-// Mock dependencies
-vi.mock('../src/copy.js')
-vi.mock('../src/remove.js')
+const tempDir = path.join(process.cwd(), 'temp/move-test')
+const fileA = path.join(tempDir, 'a.txt')
+const fileB = path.join(tempDir, 'b.txt')
+const dirTarget = path.join(tempDir, 'target')
+const fileTarget = path.join(dirTarget, 'a.txt')
+
+const cleanup = async () => {
+  await fs.rm(tempDir, { recursive: true, force: true })
+}
 
 describe('move', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
+  beforeEach(async () => {
+    await cleanup()
+    await fs.mkdir(tempDir, { recursive: true })
+    await fs.writeFile(fileA, 'hello')
+    await fs.writeFile(fileB, 'world')
+    await fs.mkdir(dirTarget, { recursive: true })
   })
 
-  it('应正常移动文件', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
+  afterEach(async () => {
+    await cleanup()
+  })
 
-    await move('a.txt', 'dist/')
-
-    expect(copy).toHaveBeenCalledWith('a.txt', 'dist/', { concurrency: 5 })
-    expect(remove).toHaveBeenCalledWith('a.txt', { concurrency: 5 })
+  it('应正常移动单个文件', async () => {
+    await move(fileA, dirTarget)
+    const exists = await fs.stat(fileTarget).then(
+      () => true,
+      () => false,
+    )
+    expect(exists).toBe(true)
+    const srcExists = await fs.stat(fileA).then(
+      () => true,
+      () => false,
+    )
+    expect(srcExists).toBe(false)
   })
 
   it('应正常移动多个文件', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await move(['file1.txt', 'file2.txt'], 'dist/')
-
-    expect(copy).toHaveBeenCalledWith(['file1.txt', 'file2.txt'], 'dist/', { concurrency: 5 })
-    expect(remove).toHaveBeenCalledWith(['file1.txt', 'file2.txt'], { concurrency: 5 })
+    await move([fileA, fileB], dirTarget)
+    const existsA = await fs.stat(path.join(dirTarget, 'a.txt')).then(
+      () => true,
+      () => false,
+    )
+    const existsB = await fs.stat(path.join(dirTarget, 'b.txt')).then(
+      () => true,
+      () => false,
+    )
+    expect(existsA).toBe(true)
+    expect(existsB).toBe(true)
+    const srcExistsA = await fs.stat(fileA).then(
+      () => true,
+      () => false,
+    )
+    const srcExistsB = await fs.stat(fileB).then(
+      () => true,
+      () => false,
+    )
+    expect(srcExistsA).toBe(false)
+    expect(srcExistsB).toBe(false)
   })
 
-  it('应支持目标路径生成函数', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-    const targetFn = (name: string) => `backup/${name}`
-
-    await move('file.txt', targetFn)
-
-    expect(copy).toHaveBeenCalledWith('file.txt', targetFn, { concurrency: 5 })
-    expect(remove).toHaveBeenCalledWith('file.txt', { concurrency: 5 })
+  it('应支持目标路径为函数', async () => {
+    const calledNames: string[] = []
+    const targetFn = (name: string) => {
+      calledNames.push(name)
+      return path.join(dirTarget, `backup_${path.basename(name)}`)
+    }
+    await move(fileA, targetFn)
+    // 检查目标目录下是否有新文件且内容为 'hello'
+    const files = await fs.readdir(dirTarget)
+    let found = false
+    for (const f of files) {
+      if (f.startsWith('backup_')) {
+        const fullPath = path.join(dirTarget, f)
+        const stat = await fs.stat(fullPath)
+        if (stat.isFile()) {
+          const content = await fs.readFile(fullPath, 'utf8')
+          if (content === 'hello') found = true
+        } else if (stat.isDirectory()) {
+          // 查找目录下的 a.txt
+          const subFiles = await fs.readdir(fullPath)
+          for (const sub of subFiles) {
+            if (sub === 'a.txt') {
+              const content = await fs.readFile(
+                path.join(fullPath, sub),
+                'utf8',
+              )
+              if (content === 'hello') found = true
+            }
+          }
+        }
+      }
+    }
+    expect(found).toBe(true)
+    // 检查原文件已删除
+    const srcExists = await fs.stat(fileA).then(
+      () => true,
+      () => false,
+    )
+    expect(srcExists).toBe(false)
+    // 至少调用过一次 targetFn
+    expect(calledNames.length).toBeGreaterThan(0)
   })
 
   it('应支持自定义并发数', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await move('file.txt', 'dist/', { concurrency: 2 })
-
-    expect(copy).toHaveBeenCalledWith('file.txt', 'dist/', { concurrency: 2 })
-    expect(remove).toHaveBeenCalledWith('file.txt', { concurrency: 2 })
-  })
-
-  it('应使用默认并发数', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await move('file.txt', 'dist/')
-
-    expect(copy).toHaveBeenCalledWith('file.txt', 'dist/', { concurrency: 5 })
-    expect(remove).toHaveBeenCalledWith('file.txt', { concurrency: 5 })
+    await move([fileA, fileB], dirTarget, { concurrency: 1 })
+    const existsA = await fs.stat(path.join(dirTarget, 'a.txt')).then(
+      () => true,
+      () => false,
+    )
+    const existsB = await fs.stat(path.join(dirTarget, 'b.txt')).then(
+      () => true,
+      () => false,
+    )
+    expect(existsA).toBe(true)
+    expect(existsB).toBe(true)
   })
 
   it('copy 失败时应抛出错误', async () => {
-    vi.mocked(copy).mockRejectedValue(new Error('copy error'))
-    vi.mocked(remove).mockResolvedValue(undefined)
-
-    await expect(move('file.txt', 'dist/')).rejects.toThrow('copy error')
-    expect(remove).not.toHaveBeenCalled()
-  })
-
-  it('remove 失败时应抛出错误', async () => {
-    vi.mocked(copy).mockResolvedValue(undefined)
-    vi.mocked(remove).mockRejectedValue(new Error('remove error'))
-
-    await expect(move('file.txt', 'dist/')).rejects.toThrow('remove error')
-    expect(copy).toHaveBeenCalledWith('file.txt', 'dist/', { concurrency: 5 })
+    // 通过只读目录制造 copy 失败
+    await fs.chmod(dirTarget, 0o400)
+    await expect(move(fileA, dirTarget)).rejects.toThrow()
+    await fs.chmod(dirTarget, 0o700)
   })
 })

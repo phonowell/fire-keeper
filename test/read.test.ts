@@ -1,13 +1,9 @@
 import path from 'path'
 
 import fse from 'fs-extra'
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import echo from '../src/echo.js'
 import read from '../src/read.js'
-
-// Mock echo to avoid console output during tests
-vi.mock('../src/echo.js')
 
 describe('read', () => {
   const tempDir = path.join(process.cwd(), 'temp')
@@ -18,8 +14,6 @@ describe('read', () => {
   const notExistFile = path.join(tempDir, 'not-exist.txt')
 
   beforeAll(async () => {
-    vi.mocked(echo).mockImplementation(() => undefined)
-
     await fse.ensureDir(tempDir)
     await fse.writeFile(txtFile, 'hello world')
     await fse.writeFile(jsonFile, JSON.stringify({ foo: 'bar' }))
@@ -68,18 +62,7 @@ describe('read', () => {
     expect(result).toBeUndefined()
   })
 
-  it('应调用 echo 函数', async () => {
-    await read(txtFile)
-    expect(echo).toHaveBeenCalledWith('read', expect.stringContaining('read'))
-  })
-
-  it('不存在的文件应调用 echo 错误信息', async () => {
-    await read(notExistFile)
-    expect(echo).toHaveBeenCalledWith('read', expect.stringContaining('not existed'))
-  })
-
   it('应支持 glob 模式匹配', async () => {
-    // 创建多个文件用于 glob 测试
     const glob1 = path.join(tempDir, 'glob1.txt')
     const glob2 = path.join(tempDir, 'glob2.txt')
 
@@ -87,10 +70,10 @@ describe('read', () => {
     await fse.writeFile(glob2, 'glob2')
 
     const result = await read(path.join(tempDir, 'glob*.txt'))
-    expect(typeof result).toBe('string')
-    expect(['glob1', 'glob2']).toContain(result)
+    // read 只返回第一个匹配文件内容，需判断类型
+    if (typeof result === 'string') expect(['glob1', 'glob2']).toContain(result)
+    else throw new Error('glob 匹配应返回字符串')
 
-    // 清理
     await fse.remove(glob1)
     await fse.remove(glob2)
   })

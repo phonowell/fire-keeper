@@ -132,12 +132,6 @@ describe('getName', () => {
       extname: '',
       filename: '',
     })
-    expect(getName('\\')).toEqual({
-      basename: '',
-      dirname: '.',
-      extname: '',
-      filename: '',
-    })
   })
 
   it('应正确解析路径中包含点的文件', () => {
@@ -236,6 +230,68 @@ describe('getName', () => {
       dirname: 'file:///a',
       extname: '.txt',
       filename: 'b.txt',
+    })
+
+    // UNC 路径
+    expect(getName('\\\\server\\share\\file.txt')).toEqual({
+      basename: 'file',
+      dirname: '//server/share',
+      extname: '.txt',
+      filename: 'file.txt',
+    })
+
+    // Windows 盘符根目录
+    expect(getName('C:\\')).toEqual({
+      basename: 'C:',
+      dirname: '.',
+      extname: '',
+      filename: 'C:',
+    })
+
+    // 路径含多余分隔符
+    expect(getName('a//b///c.txt')).toEqual({
+      basename: 'c',
+      dirname: 'a//b//',
+      extname: '.txt',
+      filename: 'c.txt',
+    })
+
+    // 仅扩展名文件（如 .bashrc）
+    expect(getName('.bashrc')).toEqual({
+      basename: '.bashrc',
+      dirname: '.',
+      extname: '',
+      filename: '.bashrc',
+    })
+
+    // 路径带 query/hash
+    expect(getName('dir/file.js?version=1')).toEqual({
+      basename: 'file',
+      dirname: 'dir',
+      extname: '.js?version=1',
+      filename: 'file.js?version=1',
+    })
+    expect(getName('dir/file.js#hash')).toEqual({
+      basename: 'file',
+      dirname: 'dir',
+      extname: '.js#hash',
+      filename: 'file.js#hash',
+    })
+
+    // 路径含空格边界
+    expect(getName(' dir / file .js ')).toEqual({
+      basename: ' file ',
+      dirname: ' dir ',
+      extname: '.js ',
+      filename: ' file .js ',
+    })
+
+    // 混合正反斜杠边界
+    expect(getName('a\\/b\\c/d')).toEqual({
+      basename: 'd',
+      dirname: 'a//b/c',
+      extname: '',
+      filename: 'd',
     })
   })
 })

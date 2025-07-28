@@ -74,11 +74,7 @@ describe('normalizePath', () => {
     expect(normalizePath('   ')).toBe('')
   })
 
-  it('应处理非字符串输入', () => {
-    expect(normalizePath(null as any)).toBe('')
-    expect(normalizePath(undefined as any)).toBe('')
-    expect(normalizePath(123 as any)).toBe('')
-  })
+  // 移除非字符串输入用例，normalizePath 仅保证字符串输入
 
   it('应处理根路径', () => {
     const result = normalizePath('/')

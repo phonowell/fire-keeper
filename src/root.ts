@@ -16,7 +16,9 @@ import os from './os.js'
  * @throws {Error} For invalid paths (empty, containing forbidden characters, or relative components)
  */
 const root = () => {
-  const path = process.cwd().replace(/\\/g, '/')
+  const cwd = process.cwd()
+  if (!cwd) throw new Error('Invalid path: path is empty')
+  const path = cwd.replace(/\\/g, '/')
 
   // Special case for root path
   if (path === '/') return path
@@ -35,8 +37,14 @@ const root = () => {
   if (parts.some((p) => p === '.' || p === '..'))
     throw new Error('Invalid path: contains relative path components')
 
-  if (os() === 'windows') return parts.join('/')
-  return `/${parts.join('/')}`
+  if (os() === 'windows') {
+    if (parts.length === 1 && parts[0].endsWith(':')) return `${parts[0]}/` // Handle Windows root path like "C:/"
+
+    return parts.length === 1
+      ? `${parts[0]}/`
+      : `${parts[0]}:/${parts.slice(1).join('/')}` // Handle root and normal paths
+  }
+  return `/${parts.join('/')}` // Handle Unix paths
 }
 
 export default root

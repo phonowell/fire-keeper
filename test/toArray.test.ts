@@ -55,13 +55,13 @@ describe('toArray', () => {
   })
 
   it('类型推断应正确', () => {
-    const numArr = toArray(1)
-    type NumArrType = typeof numArr
+    const _numArr = toArray(1)
+    type NumArrType = typeof _numArr
     const assertNumArr: NumArrType = [1]
     expect(assertNumArr).toEqual([1])
 
-    const strArr = toArray(['a', 'b'])
-    type StrArrType = typeof strArr
+    const _strArr = toArray(['a', 'b'])
+    type StrArrType = typeof _strArr
     const assertStrArr: StrArrType = ['a', 'b']
     expect(assertStrArr).toEqual(['a', 'b'])
   })

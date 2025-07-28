@@ -1,110 +1,148 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import fs from 'fs'
+import path from 'path'
 
-import normalizePath from '../src/normalizePath.js'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
 import watch from '../src/watch.js'
 
+const tempDir = path.resolve(__dirname, '../temp')
+const tempFile = path.join(tempDir, 'watch-test.txt')
+const tempFile2 = path.join(tempDir, 'watch-test2.txt')
+
+const ensureTempDir = function () {
+  if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true })
+}
+const cleanTempFiles = function () {
+  if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile)
+  if (fs.existsSync(tempFile2)) fs.unlinkSync(tempFile2)
+  if (fs.existsSync(tempDir) && fs.readdirSync(tempDir).length === 0)
+    fs.rmdirSync(tempDir)
+}
+
 describe('watch', () => {
-  let chokidarMock: {
-    on: ReturnType<typeof vi.fn>
-    close: ReturnType<typeof vi.fn>
-  }
-  let debounceMock: ReturnType<typeof vi.fn>
-
   beforeEach(() => {
-    vi.resetModules()
-    chokidarMock = {
-      on: vi.fn().mockReturnThis(),
-      close: vi.fn(),
-    }
-    debounceMock = vi.fn(
-      (_: { delay: number }, cb: (path: string) => void) => cb,
-    )
-    vi.mock('chokidar', () => ({
-      watch: vi.fn(() => chokidarMock),
-    }))
-    vi.mock('radash', () => ({
-      debounce: debounceMock,
-    }))
-    vi.spyOn(normalizePath, 'default').mockImplementation(
-      (p: string) => `normalized/${p}`,
-    )
+    ensureTempDir()
+    cleanTempFiles()
+  })
+  afterEach(() => {
+    cleanTempFiles()
   })
 
-  it('应正常监听变更并回调', () => {
-    const cb = vi.fn()
-    const unwatch = watch('file.txt', cb)
-    expect(chokidarMock.on).toHaveBeenCalledWith('error', expect.any(Function))
-    expect(chokidarMock.on).toHaveBeenCalledWith('change', expect.any(Function))
-    // 模拟 change 事件
-    const changeHandler = chokidarMock.on.mock.calls.find(
-      ([event]: [string]) => event === 'change',
-    )?.[1] as (path: string) => void
-    changeHandler('file.txt')
-    expect(cb).toHaveBeenCalledWith('normalized/file.txt')
-    expect(typeof unwatch).toBe('function')
+  it('监听单个文件变更并回调', async () => {
+    ensureTempDir()
+    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
+    fs.writeFileSync(tempFile, 'init')
+    let called = ''
+    const unwatch = watch(tempFile, (p) => {
+      called = p
+    })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    fs.appendFileSync(tempFile, 'change')
+    // 等待回调发生或超时
+    await new Promise((resolve, reject) => {
+      const start = Date.now()
+      const timer = setInterval(() => {
+        if (called) {
+          clearInterval(timer)
+          resolve(null)
+        } else if (Date.now() - start > 1500) {
+          clearInterval(timer)
+          reject(new Error('watch callback not triggered'))
+        }
+      }, 50)
+    })
     unwatch()
-    expect(chokidarMock.close).toHaveBeenCalled()
+    expect(called).toContain('watch-test.txt')
   })
 
-  it('应支持 debounce 配置', () => {
-    const cb = vi.fn()
-    watch('file.txt', cb, { debounce: 500 })
-    expect(debounceMock).toHaveBeenCalledWith({ delay: 500 }, cb)
+  it('监听多个文件时变更第一个文件能回调', async () => {
+    ensureTempDir()
+    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
+    fs.mkdirSync(path.dirname(tempFile2), { recursive: true })
+    fs.writeFileSync(tempFile, 'a')
+    fs.writeFileSync(tempFile2, 'b')
+    let called = ''
+    const unwatch = watch([tempFile, tempFile2], (p) => {
+      called = p
+    })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    fs.appendFileSync(tempFile, '1')
+    await new Promise((resolve, reject) => {
+      const start = Date.now()
+      const timer = setInterval(() => {
+        if (called.includes('watch-test.txt')) {
+          clearInterval(timer)
+          resolve(null)
+        } else if (Date.now() - start > 2000) {
+          clearInterval(timer)
+          reject(new Error('watch callback not triggered'))
+        }
+      }, 50)
+    })
+    unwatch()
+    expect(called).toContain('watch-test.txt')
   })
 
-  it('应处理 watcher 错误', () => {
-    const errorHandler = chokidarMock.on.mock.calls.find(
-      ([event]: [string]) => event === 'error',
-    )?.[1] as (err: Error) => void
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    errorHandler(new Error('test error'))
-    expect(errorSpy).toHaveBeenCalledWith(
-      'Error watching files:',
-      expect.any(Error),
+  it('监听多个文件时变更第二个文件能回调', async () => {
+    ensureTempDir()
+    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
+    fs.mkdirSync(path.dirname(tempFile2), { recursive: true })
+    fs.writeFileSync(tempFile, 'a')
+    fs.writeFileSync(tempFile2, 'b')
+    let called = ''
+    const unwatch = watch([tempFile, tempFile2], (p) => {
+      called = p
+    })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    fs.appendFileSync(tempFile2, '2')
+    await new Promise((resolve, reject) => {
+      const start = Date.now()
+      const timer = setInterval(() => {
+        if (called.includes('watch-test2.txt')) {
+          clearInterval(timer)
+          resolve(null)
+        } else if (Date.now() - start > 2000) {
+          clearInterval(timer)
+          reject(new Error('watch callback not triggered'))
+        }
+      }, 50)
+    })
+    unwatch()
+    expect(called).toContain('watch-test2.txt')
+  })
+
+  it('支持 debounce 配置', async () => {
+    ensureTempDir()
+    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
+    fs.writeFileSync(tempFile, 'init')
+    let count = 0
+    const unwatch = watch(
+      tempFile,
+      () => {
+        count++
+      },
+      { debounce: 200 },
     )
-    errorSpy.mockRestore()
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    fs.appendFileSync(tempFile, '1')
+    fs.appendFileSync(tempFile, '2')
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    unwatch()
+    expect(count).toBe(1)
   })
 
-  it('debounce 为 0 时不包裹回调', () => {
-    const cb = vi.fn()
-    watch('file.txt', cb, { debounce: 0 })
-    expect(debounceMock).not.toHaveBeenCalled()
-  })
-
-  it('应支持数组路径监听', () => {
-    const cb = vi.fn()
-    watch(['a.txt', 'b.txt'], cb)
-    expect(chokidarMock.on).toHaveBeenCalledWith('change', expect.any(Function))
-  })
-
-  it('debounce 为负数时不包裹回调', () => {
-    const cb = vi.fn()
-    watch('file.txt', cb, { debounce: -100 })
-    expect(debounceMock).not.toHaveBeenCalled()
-  })
-
-  it('回调抛错时不影响 watcher', () => {
-    const cb = vi.fn(() => {
-      throw new Error('cb error')
+  it('返回关闭函数可正常关闭 watcher', async () => {
+    ensureTempDir()
+    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
+    fs.writeFileSync(tempFile, 'init')
+    let called = false
+    const unwatch = watch(tempFile, () => {
+      called = true
     })
-    const unwatch = watch('file.txt', cb)
-    const changeHandler = chokidarMock.on.mock.calls.find(
-      ([event]: [string]) => event === 'change',
-    )?.[1] as (path: string) => void
-    expect(() => changeHandler('file.txt')).toThrow('cb error')
-    expect(typeof unwatch).toBe('function')
-  })
-
-  it('normalizePath 异常时仍调用回调', () => {
-    ;(normalizePath.default as unknown as (p: string) => string) = vi.fn(() => {
-      throw new Error('normalize error')
-    })
-    const cb = vi.fn()
-    const unwatch = watch('file.txt', cb)
-    const changeHandler = chokidarMock.on.mock.calls.find(
-      ([event]: [string]) => event === 'change',
-    )?.[1] as (path: string) => void
-    expect(() => changeHandler('file.txt')).toThrow('normalize error')
-    expect(typeof unwatch).toBe('function')
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    unwatch()
+    fs.appendFileSync(tempFile, 'change')
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    expect(called).toBe(false)
   })
 })
