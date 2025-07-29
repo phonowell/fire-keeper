@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import link from '../src/link.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
 import write from '../src/write.js'
 
 const TEMP_DIR = './temp/link'
@@ -13,12 +13,12 @@ const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
 describe('link', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('应能创建文件符号链接', async () => {

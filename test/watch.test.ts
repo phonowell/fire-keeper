@@ -2,8 +2,8 @@ import fs from 'fs'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import mkdir from '../src/mkdir.js'
+import remove from '../src/remove.js'
 import watch from '../src/watch.js'
 
 const TEMP_DIR = './temp/watch'
@@ -12,11 +12,11 @@ const tempFile2 = `${TEMP_DIR}/watch-test2.txt`
 
 describe('watch', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('监听单个文件变更并回调', async () => {

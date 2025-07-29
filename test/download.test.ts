@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import clean from '../src/clean.js'
 import download from '../src/download.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
 
 const TEMP_DIR = './temp/download'
 
@@ -26,12 +26,12 @@ const toArr = (buf: unknown): number[] => {
 
 describe('download', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('正常下载文件', async () => {

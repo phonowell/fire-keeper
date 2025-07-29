@@ -4,42 +4,42 @@
 
 - [ ] argv.ts
 - [ ] at.ts
-- [ ] backup.ts
-- [ ] clean.ts
-- [ ] copy.ts
-- [ ] download.ts
-- [ ] echo.ts
-- [ ] exec.ts
-- [ ] findIndex.ts
-- [ ] flatten.ts
-- [ ] getBasename.ts
-- [ ] getDirname.ts
-- [ ] getExtname.ts
-- [ ] getFilename.ts
-- [ ] getName.ts
-- [ ] glob.ts
-- [ ] home.ts
-- [ ] isExist.ts
-- [ ] isSame.ts
-- [ ] link.ts
-- [ ] mkdir.ts
-- [ ] move.ts
-- [ ] normalizePath.ts
-- [ ] os.ts
-- [ ] prompt.ts
-- [ ] read.ts
-- [ ] recover.ts
-- [ ] remove.ts
-- [ ] rename.ts
-- [ ] root.ts
-- [ ] run.ts
-- [ ] runConcurrent.ts
-- [ ] sleep.ts
-- [ ] stat.ts
-- [ ] toArray.ts
-- [ ] toDate.ts
-- [ ] trimEnd.ts
-- [ ] watch.ts
-- [ ] wrapList.ts
-- [ ] write.ts
-- [ ] zip.ts
+- [x] backup.ts
+- [x] clean.ts
+- [x] copy.ts
+- [x] download.ts
+- [x] echo.ts
+- [x] exec.ts
+- [x] findIndex.ts
+- [x] flatten.ts
+- [x] getBasename.ts
+- [x] getDirname.ts
+- [x] getExtname.ts
+- [x] getFilename.ts
+- [x] getName.ts
+- [x] glob.ts
+- [x] home.ts
+- [x] isExist.ts
+- [x] isSame.ts
+- [x] link.ts
+- [x] mkdir.ts
+- [x] move.ts
+- [x] normalizePath.ts
+- [x] os.ts
+- [x] prompt.ts
+- [x] read.ts
+- [x] recover.ts
+- [x] remove.ts
+- [x] rename.ts
+- [x] root.ts
+- [x] run.ts
+- [x] runConcurrent.ts
+- [x] sleep.ts
+- [x] stat.ts
+- [x] toArray.ts
+- [x] toDate.ts
+- [x] trimEnd.ts
+- [x] watch.ts
+- [x] wrapList.ts
+- [x] write.ts
+- [x] zip.ts

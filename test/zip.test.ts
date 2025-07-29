@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
+import remove from '../src/remove.js'
 import stat from '../src/stat.js'
 import write from '../src/write.js'
 import zip from '../src/zip.js'
@@ -14,7 +14,7 @@ const tempSrcFile = tempFile('file.txt')
 
 describe('zip - 真实文件系统测试', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
     await write(tempSrcFile, 'hello zip')
     await mkdir(tempSrcDir)
@@ -23,7 +23,7 @@ describe('zip - 真实文件系统测试', () => {
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('应能压缩单个文件', async () => {

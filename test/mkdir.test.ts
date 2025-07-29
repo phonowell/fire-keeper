@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 
-import clean from 'src/clean.js'
 import isExist from 'src/isExist.js'
+import remove from 'src/remove.js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import echo from '../src/echo.js'
@@ -22,14 +22,14 @@ const tempDirs = [
 
 describe('mkdir 单元测试', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
     vi.clearAllMocks()
     vi.mocked(echo).mockImplementation(() => undefined)
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     vi.restoreAllMocks()
   })
 

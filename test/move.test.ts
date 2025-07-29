@@ -2,11 +2,11 @@ import { promises as fs } from 'fs'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
 import move from '../src/move.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
 import write from '../src/write.js'
 
 const TEMP_DIR = './temp/move'
@@ -16,7 +16,7 @@ const dirTarget = `${TEMP_DIR}/target`
 const fileTarget = `${dirTarget}/a.txt`
 
 const cleanup = async () => {
-  await clean(TEMP_DIR)
+  await remove(TEMP_DIR)
 }
 
 describe('move', () => {

@@ -1,21 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
 import recover from '../src/recover.js'
+import remove from '../src/remove.js'
 import write from '../src/write.js'
 
 const TEMP_DIR = './temp'
 
 beforeEach(async () => {
   await mkdir(TEMP_DIR)
-  await clean(TEMP_DIR)
+  await remove(TEMP_DIR)
 })
 
 afterEach(async () => {
-  await clean(TEMP_DIR)
+  await remove(TEMP_DIR)
 })
 
 describe('recover', () => {

@@ -1,22 +1,22 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import backup from '../src/backup.js'
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
 import write from '../src/write.js'
 
 const TEMP_DIR = './temp/backup'
 
 describe('backup', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
 
   afterAll(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('创建单个文件的备份', async () => {
