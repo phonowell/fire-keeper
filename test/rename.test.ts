@@ -1,20 +1,23 @@
-import path from 'path'
-
-import fse from 'fs-extra'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import clean from '../src/clean.js'
+import isExist from '../src/isExist.js'
+import mkdir from '../src/mkdir.js'
+import read from '../src/read.js'
 import rename from '../src/rename.js'
+import write from '../src/write.js'
 
-const tempDir = path.join(process.cwd(), 'temp', 'rename')
-const tempFile = (name: string) => path.join(tempDir, name)
+const TEMP_DIR = './temp/rename'
+const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
 describe('rename - 真实文件系统测试', () => {
   beforeEach(async () => {
-    await fse.ensureDir(tempDir) // 确保临时目录存在
+    await clean(TEMP_DIR)
+    await mkdir(TEMP_DIR)
   })
 
   afterEach(async () => {
-    await fse.remove(tempDir)
+    await clean(TEMP_DIR)
   })
 
   it('应能重命名真实文件', async () => {
@@ -22,29 +25,27 @@ describe('rename - 真实文件系统测试', () => {
     const targetName = 'renamed.txt'
     const targetFile = tempFile(targetName)
 
-    await fse.writeFile(srcFile, 'hello')
+    await write(srcFile, 'hello')
     await rename(srcFile, targetName)
 
-    expect(await fse.pathExists(targetFile)).toBe(true)
-    expect(await fse.pathExists(srcFile)).toBe(false)
-    expect(await fse.readFile(targetFile, 'utf8')).toBe('hello')
+    expect(await isExist(targetFile)).toBe(true)
+    expect(await isExist(srcFile)).toBe(false)
+    expect(await read(targetFile)).toBe('hello')
   })
 
   it('应能重命名真实目录', async () => {
     const srcDir = tempFile('testdir')
     const targetName = 'renameddir'
     const targetDir = tempFile(targetName)
-    const testFile = path.join(srcDir, 'file.txt')
+    const testFile = `${srcDir}/file.txt`
 
-    await fse.ensureDir(srcDir)
-    await fse.writeFile(testFile, 'content')
+    await mkdir(srcDir)
+    await write(testFile, 'content')
     await rename(srcDir, targetName)
 
-    expect(await fse.pathExists(targetDir)).toBe(true)
-    expect(await fse.pathExists(srcDir)).toBe(false)
-    expect(await fse.readFile(path.join(targetDir, 'file.txt'), 'utf8')).toBe(
-      'content',
-    )
+    expect(await isExist(targetDir)).toBe(true)
+    expect(await isExist(srcDir)).toBe(false)
+    expect(await read(`${targetDir}/file.txt`)).toBe('content')
   })
 
   it('重命名不存在的文件应抛出错误', async () => {
@@ -57,15 +58,15 @@ describe('rename - 真实文件系统测试', () => {
     const srcFile = tempFile('source.txt')
     const targetFile = tempFile('target.txt')
 
-    await fse.writeFile(srcFile, 'source')
-    await fse.writeFile(targetFile, 'target')
+    await write(srcFile, 'source')
+    await write(targetFile, 'target')
 
     // 删除冗余注释，简化测试用例说明。
     try {
       await rename(srcFile, 'target.txt')
       // 如果成功，验证源文件不存在，目标文件内容是源文件的内容
-      expect(await fse.pathExists(srcFile)).toBe(false)
-      expect(await fse.readFile(targetFile, 'utf8')).toBe('source')
+      expect(await isExist(srcFile)).toBe(false)
+      expect(await read(targetFile)).toBe('source')
     } catch (error) {
       // 如果抛出错误也是可接受的行为
       expect(error).toBeDefined()
@@ -77,26 +78,27 @@ describe('rename - 真实文件系统测试', () => {
     const targetName = '重命名文件.txt'
     const targetFile = tempFile(targetName)
 
-    await fse.writeFile(srcFile, 'unicode content')
+    await write(srcFile, 'unicode content')
     await rename(srcFile, targetName)
 
-    expect(await fse.pathExists(targetFile)).toBe(true)
-    expect(await fse.pathExists(srcFile)).toBe(false)
-    expect(await fse.readFile(targetFile, 'utf8')).toBe('unicode content')
+    expect(await isExist(targetFile)).toBe(true)
+    expect(await isExist(srcFile)).toBe(false)
+    expect(await read(targetFile)).toBe('unicode content')
   })
 
   it('重命名时保持在同一目录', async () => {
     const subDir = tempFile('subdir')
-    const srcFile = path.join(subDir, 'original.txt')
+    const srcFile = `${subDir}/original.txt`
     const targetName = 'renamed.txt'
-    const targetFile = path.join(subDir, targetName)
+    const targetFile = `${subDir}/${targetName}`
 
-    await fse.ensureDir(subDir)
-    await fse.writeFile(srcFile, 'test')
+    await mkdir(subDir)
+    await write(srcFile, 'test')
     await rename(srcFile, targetName)
 
-    expect(await fse.pathExists(targetFile)).toBe(true)
-    expect(await fse.pathExists(srcFile)).toBe(false)
-    expect(path.dirname(targetFile)).toBe(subDir)
+    expect(await isExist(targetFile)).toBe(true)
+    expect(await isExist(srcFile)).toBe(false)
+    // 验证文件仍在同一目录下
+    expect(targetFile.startsWith(subDir)).toBe(true)
   })
 })

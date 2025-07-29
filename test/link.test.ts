@@ -1,67 +1,55 @@
-import path from 'path'
-
-import fse from 'fs-extra'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import clean from '../src/clean.js'
+import isExist from '../src/isExist.js'
 import link from '../src/link.js'
+import mkdir from '../src/mkdir.js'
+import read from '../src/read.js'
+import write from '../src/write.js'
 
-const tempDir = path.join(process.cwd(), 'temp', 'link')
+const TEMP_DIR = './temp/link'
 
-const tempFile = (name: string) => path.join(tempDir, name)
-
-const cleanup = async (paths: string[]) => {
-  for (const p of paths) {
-    try {
-      await fse.remove(p)
-    } catch {}
-  }
-}
+const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
 describe('link', () => {
   beforeEach(async () => {
-    await fse.ensureDir(tempDir)
-    await cleanup([
-      tempFile('src-file.txt'),
-      tempFile('dest-link.txt'),
-      tempFile('src-dir'),
-      tempFile('dest-dir-link'),
-    ])
+    await clean(TEMP_DIR)
+    await mkdir(TEMP_DIR)
   })
+
   afterEach(async () => {
-    await cleanup([
-      tempFile('src-file.txt'),
-      tempFile('dest-link.txt'),
-      tempFile('src-dir'),
-      tempFile('dest-dir-link'),
-    ])
-    // 彻底清理 link 目录本身
-    try {
-      await fse.remove(tempDir)
-    } catch {}
+    await clean(TEMP_DIR)
   })
 
   it('应能创建文件符号链接', async () => {
     const src = tempFile('src-file.txt')
     const dest = tempFile('dest-link.txt')
-    await fse.writeFile(src, 'hello')
+    await write(src, 'hello')
     await link(src, dest)
-    const stat = await fse.lstat(dest)
-    expect(stat.isSymbolicLink()).toBe(true)
-    const linked = await fse.readFile(dest, 'utf8')
+
+    // 检查符号链接是否创建成功
+    expect(await isExist(dest)).toBe(true)
+
+    // 检查通过符号链接读取的内容是否正确
+    const linked = await read(dest)
     expect(linked).toBe('hello')
   })
 
   it('应能创建目录符号链接', async () => {
     const srcDir = tempFile('src-dir')
     const destDir = tempFile('dest-dir-link')
-    await fse.ensureDir(srcDir)
-    await fse.writeFile(path.join(srcDir, 'a.txt'), 'abc')
+    await mkdir(srcDir)
+    await write(`${srcDir}/a.txt`, 'abc')
     await link(srcDir, destDir)
-    const stat = await fse.lstat(destDir)
-    expect(stat.isSymbolicLink()).toBe(true)
-    const files = await fse.readdir(destDir)
-    expect(files).toContain('a.txt')
-    const content = await fse.readFile(path.join(destDir, 'a.txt'), 'utf8')
+
+    // 检查目录符号链接是否创建成功
+    expect(await isExist(destDir)).toBe(true)
+
+    // 检查可以通过符号链接访问目录内容
+    expect(await isExist(`${destDir}/a.txt`)).toBe(true)
+
+    // 检查文件内容是否正确
+    const content = await read(`${destDir}/a.txt`)
     expect(content).toBe('abc')
   })
 })

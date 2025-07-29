@@ -1,29 +1,30 @@
-import path from 'path'
-
-import fse from 'fs-extra'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
+import clean from '../src/clean.js'
+import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
+import write from '../src/write.js'
 
 describe('read', () => {
-  const tempDir = path.join(process.cwd(), 'temp', 'read')
-  const txtFile = path.join(tempDir, 'test.txt')
-  const jsonFile = path.join(tempDir, 'test.json')
-  const yamlFile = path.join(tempDir, 'test.yaml')
-  const binFile = path.join(tempDir, 'test.bin')
-  const notExistFile = path.join(tempDir, 'not-exist.txt')
+  const TEMP_DIR = './temp/read'
+  const txtFile = `${TEMP_DIR}/test.txt`
+  const jsonFile = `${TEMP_DIR}/test.json`
+  const yamlFile = `${TEMP_DIR}/test.yaml`
+  const binFile = `${TEMP_DIR}/test.bin`
+  const notExistFile = `${TEMP_DIR}/not-exist.txt`
 
   beforeAll(async () => {
-    await fse.ensureDir(tempDir)
-    await fse.writeFile(txtFile, 'hello world')
-    await fse.writeFile(jsonFile, JSON.stringify({ foo: 'bar' }))
-    await fse.writeFile(yamlFile, 'foo: bar')
-    await fse.writeFile(binFile, Buffer.from([1, 2, 3, 4]))
+    await mkdir(TEMP_DIR)
+    await write(txtFile, 'hello world')
+    await write(jsonFile, JSON.stringify({ foo: 'bar' }))
+    await write(yamlFile, 'foo: bar')
+    await write(binFile, Buffer.from([1, 2, 3, 4]))
   })
 
   afterAll(async () => {
     try {
-      await fse.remove(tempDir)
+      await clean(TEMP_DIR)
     } catch {}
   })
 
@@ -63,18 +64,18 @@ describe('read', () => {
   })
 
   it('应支持 glob 模式匹配', async () => {
-    const glob1 = path.join(tempDir, 'glob1.txt')
-    const glob2 = path.join(tempDir, 'glob2.txt')
+    const glob1 = `${TEMP_DIR}/glob1.txt`
+    const glob2 = `${TEMP_DIR}/glob2.txt`
 
-    await fse.writeFile(glob1, 'glob1')
-    await fse.writeFile(glob2, 'glob2')
+    await write(glob1, 'glob1')
+    await write(glob2, 'glob2')
 
-    const result = await read(path.join(tempDir, 'glob*.txt'))
+    const result = await read(`${TEMP_DIR}/glob*.txt`)
     // read 只返回第一个匹配文件内容，需判断类型
     if (typeof result === 'string') expect(['glob1', 'glob2']).toContain(result)
     else throw new Error('glob 匹配应返回字符串')
 
-    await fse.remove(glob1)
-    await fse.remove(glob2)
+    await remove(glob1)
+    await remove(glob2)
   })
 })

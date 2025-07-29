@@ -1,26 +1,24 @@
-import fs from 'fs/promises'
-import path from 'path'
-
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import glob from '../src/glob.js'
+import mkdir from '../src/mkdir.js'
+import remove from '../src/remove.js'
+import write from '../src/write.js'
 
-const tempDir = './temp/glob'
+const TEMP_DIR = './temp/glob'
 
 const setupTemp = async () => {
-  await fs.mkdir(`${tempDir}/subdir`, { recursive: true })
-  await fs.mkdir(`${tempDir}/subdir2`, { recursive: true })
-  await Promise.all([
-    fs.writeFile(`${tempDir}/.dotfile`, 'dot'),
-    fs.writeFile(`${tempDir}/normal.txt`, 'txt'),
-    fs.writeFile(`${tempDir}/subdir/file1.ts`, 'ts'),
-    fs.writeFile(`${tempDir}/subdir/.hidden`, 'hidden'),
-    fs.writeFile(`${tempDir}/subdir2/file2.ts`, 'ts2'),
-    fs.writeFile(`${tempDir}/subdir2/file3.js`, 'js3'),
-  ])
+  await mkdir(`${TEMP_DIR}/subdir`)
+  await mkdir(`${TEMP_DIR}/subdir2`)
+  await write(`${TEMP_DIR}/.dotfile`, 'dot')
+  await write(`${TEMP_DIR}/normal.txt`, 'txt')
+  await write(`${TEMP_DIR}/subdir/file1.ts`, 'ts')
+  await write(`${TEMP_DIR}/subdir/.hidden`, 'hidden')
+  await write(`${TEMP_DIR}/subdir2/file2.ts`, 'ts2')
+  await write(`${TEMP_DIR}/subdir2/file3.js`, 'js3')
 }
 const cleanupTemp = async () => {
-  await fs.rm(tempDir, { recursive: true, force: true })
+  await remove(TEMP_DIR)
 }
 
 describe('glob', () => {
@@ -40,22 +38,22 @@ describe('glob', () => {
 
   it('返回绝对路径', async () => {
     const result = await glob('src/*.ts', { absolute: true })
-    expect(result.every((p) => path.isAbsolute(p))).toBe(true)
+    expect(result.every((p) => p.startsWith('/'))).toBe(true)
   })
 
   it('包含点文件', async () => {
-    const result = await glob(`${tempDir}/.*`, { dot: true })
+    const result = await glob(`${TEMP_DIR}/.*`, { dot: true })
     expect(result.some((p) => p.endsWith('.dotfile'))).toBe(true)
   })
 
   it('只匹配文件', async () => {
-    const result = await glob(`${tempDir}/subdir/*.ts`, { onlyFiles: true })
+    const result = await glob(`${TEMP_DIR}/subdir/*.ts`, { onlyFiles: true })
     expect(result.length).toBe(1)
     expect(result[0].endsWith('file1.ts')).toBe(true)
   })
 
   it('只匹配目录', async () => {
-    const result = await glob(`${tempDir}/*`, { onlyDirectories: true })
+    const result = await glob(`${TEMP_DIR}/*`, { onlyDirectories: true })
     expect(result.some((p) => p.endsWith('subdir'))).toBe(true)
     expect(result.some((p) => p.endsWith('subdir2'))).toBe(true)
   })
@@ -66,13 +64,13 @@ describe('glob', () => {
   })
 
   it('无匹配结果返回空数组', async () => {
-    const result = await glob(`${tempDir}/not-exist.*`)
+    const result = await glob(`${TEMP_DIR}/not-exist.*`)
     expect(Array.isArray(result)).toBe(true)
     expect(result.length).toBe(0)
   })
 
   it('深度限制', async () => {
-    const result = await glob(`${tempDir}/**/*.ts`, { deep: 1 })
+    const result = await glob(`${TEMP_DIR}/**/*.ts`, { deep: 1 })
     expect(
       result.every((p) => p.endsWith('file1.ts') || p.endsWith('file2.ts')),
     ).toBe(true)
@@ -81,14 +79,14 @@ describe('glob', () => {
   it('边界情况', async () => {
     expect((await glob([''])).length).toBe(0)
     expect((await glob('not_exist_dir/*')).length).toBe(0)
-    const result = await glob(`${tempDir}/subdir/*[a-z]*.ts`)
+    const result = await glob(`${TEMP_DIR}/subdir/*[a-z]*.ts`)
     expect(result.length).toBe(1)
     expect(result[0].endsWith('file1.ts')).toBe(true)
   })
 
   it('options 组合', async () => {
     const result = await glob(
-      [`${tempDir}/subdir/*.ts`, `!${tempDir}/subdir/*.js`],
+      [`${TEMP_DIR}/subdir/*.ts`, `!${TEMP_DIR}/subdir/*.js`],
       {
         absolute: true,
         dot: true,
@@ -96,7 +94,7 @@ describe('glob', () => {
         deep: 1,
       },
     )
-    expect(result.every((p) => path.isAbsolute(p))).toBe(true)
+    expect(result.every((p) => p.startsWith('/'))).toBe(true)
     expect(result.every((p) => p.endsWith('.ts'))).toBe(true)
   })
 })

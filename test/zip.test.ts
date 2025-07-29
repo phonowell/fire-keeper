@@ -1,57 +1,60 @@
-import path from 'path'
-
-import fse from 'fs-extra'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import clean from '../src/clean.js'
+import isExist from '../src/isExist.js'
+import mkdir from '../src/mkdir.js'
+import stat from '../src/stat.js'
+import write from '../src/write.js'
 import zip from '../src/zip.js'
 
-const tempDir = path.join(process.cwd(), 'temp', 'zip')
-const tempFile = (name: string) => path.join(tempDir, name)
+const TEMP_DIR = './temp/zip'
+const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 const tempSrcDir = tempFile('srcdir')
 const tempSrcFile = tempFile('file.txt')
 
 describe('zip - 真实文件系统测试', () => {
   beforeEach(async () => {
-    await fse.ensureDir(tempDir)
-    await fse.writeFile(tempSrcFile, 'hello zip')
-    await fse.ensureDir(tempSrcDir)
-    await fse.writeFile(path.join(tempSrcDir, 'a.txt'), 'A')
-    await fse.writeFile(path.join(tempSrcDir, 'b.txt'), 'B')
+    await clean(TEMP_DIR)
+    await mkdir(TEMP_DIR)
+    await write(tempSrcFile, 'hello zip')
+    await mkdir(tempSrcDir)
+    await write(`${tempSrcDir}/a.txt`, 'A')
+    await write(`${tempSrcDir}/b.txt`, 'B')
   })
 
   afterEach(async () => {
-    await fse.remove(tempDir)
+    await clean(TEMP_DIR)
   })
 
   it('应能压缩单个文件', async () => {
-    await zip(tempSrcFile, tempDir, 'single.zip')
+    await zip(tempSrcFile, TEMP_DIR, 'single.zip')
     const zipPath = tempFile('single.zip')
-    expect(await fse.pathExists(zipPath)).toBe(true)
+    expect(await isExist(zipPath)).toBe(true)
     // 检查文件大小大于0
-    const stat = await fse.stat(zipPath)
-    expect(stat.size).toBeGreaterThan(0)
+    const info = await stat(zipPath)
+    expect(info?.size).toBeGreaterThan(0)
   })
 
   it('应能压缩目录', async () => {
-    await zip(tempSrcDir, tempDir, 'dir.zip')
+    await zip(tempSrcDir, TEMP_DIR, 'dir.zip')
     const zipPath = tempFile('dir.zip')
-    expect(await fse.pathExists(zipPath)).toBe(true)
-    const stat = await fse.stat(zipPath)
-    expect(stat.size).toBeGreaterThan(0)
+    expect(await isExist(zipPath)).toBe(true)
+    const info = await stat(zipPath)
+    expect(info?.size).toBeGreaterThan(0)
   })
 
   it('应能压缩多个文件', async () => {
-    const files = [tempSrcFile, path.join(tempSrcDir, 'a.txt')]
-    await zip(files, tempDir, 'multi.zip')
+    const files = [tempSrcFile, `${tempSrcDir}/a.txt`]
+    await zip(files, TEMP_DIR, 'multi.zip')
     const zipPath = tempFile('multi.zip')
-    expect(await fse.pathExists(zipPath)).toBe(true)
-    const stat = await fse.stat(zipPath)
-    expect(stat.size).toBeGreaterThan(0)
+    expect(await isExist(zipPath)).toBe(true)
+    const info = await stat(zipPath)
+    expect(info?.size).toBeGreaterThan(0)
   })
 
   it('应自动推断文件名和 base', async () => {
-    await zip(tempSrcFile, tempDir)
+    await zip(tempSrcFile, TEMP_DIR)
     const zipPath = tempFile('zip.zip')
-    expect(await fse.pathExists(zipPath)).toBe(true)
+    expect(await isExist(zipPath)).toBe(true)
   })
 })
