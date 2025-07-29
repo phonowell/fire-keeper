@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
 import remove from '../src/remove.js'
@@ -24,7 +23,7 @@ describe('read', () => {
 
   afterAll(async () => {
     try {
-      await clean(TEMP_DIR)
+      await remove(TEMP_DIR)
     } catch {}
   })
 

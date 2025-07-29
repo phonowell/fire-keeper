@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
 import remove from '../src/remove.js'
@@ -12,11 +11,11 @@ const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
 describe('remove', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('应删除单个文件', async () => {

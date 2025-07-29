@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import isExist from '../src/isExist.js'
 import mkdir from '../src/mkdir.js'
 import read from '../src/read.js'
+import remove from '../src/remove.js'
 import rename from '../src/rename.js'
 import write from '../src/write.js'
 
@@ -12,12 +12,12 @@ const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
 describe('rename - 真实文件系统测试', () => {
   beforeEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
     await mkdir(TEMP_DIR)
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('应能重命名真实文件', async () => {

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import clean from '../src/clean.js'
 import link from '../src/link.js'
 import mkdir from '../src/mkdir.js'
 import remove from '../src/remove.js'
@@ -16,7 +15,7 @@ describe('stat - 基础功能测试', () => {
   })
 
   afterEach(async () => {
-    await clean(TEMP_DIR)
+    await remove(TEMP_DIR)
   })
 
   it('应能检测真实文件是否存在', async () => {

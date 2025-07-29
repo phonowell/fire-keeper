@@ -1,16 +1,19 @@
 import { exec, getBasename, glob, read, remove, write } from '../src/index.js'
 
 const main = async () => {
+  if (!(await runTasks())) {
+    console.error('Tests failed, aborting build.')
+    return
+  }
+
   await cleanup()
   await makeIndex()
   await replacePackage()
   await replaceRollup()
-  await generateDocs()
+  await exec('rollup -c rollup.config.js --bundleConfigAsCjs')
 }
 
 const cleanup = () => remove('./dist')
-
-const generateDocs = () => exec('pnpm doc')
 
 const makeIndex = async () => {
   const listModule = await makeListModule()
@@ -82,6 +85,11 @@ const replaceRollup = async () => {
       .join('\n')}\n}`,
   )
   await write(source, content)
+}
+
+const runTasks = async () => {
+  const [code] = await exec('pnpm test')
+  return code === 0
 }
 
 export default main
