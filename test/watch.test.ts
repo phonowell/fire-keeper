@@ -1,34 +1,25 @@
 import fs from 'fs'
-import path from 'path'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import clean from '../src/clean.js'
+import mkdir from '../src/mkdir.js'
 import watch from '../src/watch.js'
 
-const tempDir = path.join(__dirname, '../temp', 'watch')
-const tempFile = path.join(tempDir, 'watch-test.txt')
-const tempFile2 = path.join(tempDir, 'watch-test2.txt')
-
-const ensureTempDir = function () {
-  if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true })
-}
-const cleanTempFiles = function () {
-  if (fs.existsSync(tempDir))
-    fs.rmSync(tempDir, { recursive: true, force: true })
-}
+const TEMP_DIR = './temp/watch'
+const tempFile = `${TEMP_DIR}/watch-test.txt`
+const tempFile2 = `${TEMP_DIR}/watch-test2.txt`
 
 describe('watch', () => {
-  beforeEach(() => {
-    ensureTempDir()
-    cleanTempFiles()
+  beforeEach(async () => {
+    await clean(TEMP_DIR)
+    await mkdir(TEMP_DIR)
   })
-  afterEach(() => {
-    cleanTempFiles()
+  afterEach(async () => {
+    await clean(TEMP_DIR)
   })
 
   it('监听单个文件变更并回调', async () => {
-    ensureTempDir()
-    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
     fs.writeFileSync(tempFile, 'init')
     let called = ''
     const unwatch = watch(tempFile, (p) => {
@@ -54,9 +45,6 @@ describe('watch', () => {
   })
 
   it('监听多个文件时变更第一个文件能回调', async () => {
-    ensureTempDir()
-    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
-    fs.mkdirSync(path.dirname(tempFile2), { recursive: true })
     fs.writeFileSync(tempFile, 'a')
     fs.writeFileSync(tempFile2, 'b')
     let called = ''
@@ -82,9 +70,6 @@ describe('watch', () => {
   })
 
   it('监听多个文件时变更第二个文件能回调', async () => {
-    ensureTempDir()
-    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
-    fs.mkdirSync(path.dirname(tempFile2), { recursive: true })
     fs.writeFileSync(tempFile, 'a')
     fs.writeFileSync(tempFile2, 'b')
     let called = ''
@@ -110,8 +95,6 @@ describe('watch', () => {
   })
 
   it('支持 debounce 配置', async () => {
-    ensureTempDir()
-    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
     fs.writeFileSync(tempFile, 'init')
     let count = 0
     const unwatch = watch(
@@ -130,8 +113,6 @@ describe('watch', () => {
   })
 
   it('返回关闭函数可正常关闭 watcher', async () => {
-    ensureTempDir()
-    fs.mkdirSync(path.dirname(tempFile), { recursive: true })
     fs.writeFileSync(tempFile, 'init')
     let called = false
     const unwatch = watch(tempFile, () => {

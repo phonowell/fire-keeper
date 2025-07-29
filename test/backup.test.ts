@@ -1,104 +1,100 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
-import { join } from 'path'
-
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
 import backup from '../src/backup.js'
+import clean from '../src/clean.js'
+import isExist from '../src/isExist.js'
+import mkdir from '../src/mkdir.js'
+import read from '../src/read.js'
+import write from '../src/write.js'
 
-const tempDir = 'temp/backup'
-
-const cleanTemp = () => {
-  if (existsSync(tempDir)) rmSync(tempDir, { recursive: true, force: true })
-}
+const TEMP_DIR = './temp/backup'
 
 describe('backup', () => {
-  beforeEach(() => {
-    cleanTemp()
-    mkdirSync(tempDir, { recursive: true })
+  beforeEach(async () => {
+    await clean(TEMP_DIR)
+    await mkdir(TEMP_DIR)
   })
 
-  afterAll(() => {
-    cleanTemp()
+  afterAll(async () => {
+    await clean(TEMP_DIR)
   })
 
   it('创建单个文件的备份', async () => {
-    const testFile = join(tempDir, 'test.txt')
+    const testFile = `${TEMP_DIR}/test.txt`
     const backupFile = `${testFile}.bak`
-    writeFileSync(testFile, 'test content')
+    await write(testFile, 'test content')
     await backup(testFile)
-    expect(existsSync(backupFile)).toBe(true)
+    expect(await isExist(backupFile)).toBe(true)
   })
 
   it('支持自定义并发参数', async () => {
-    const testFile = join(tempDir, 'concurrent.txt')
+    const testFile = `${TEMP_DIR}/concurrent.txt`
     const backupFile = `${testFile}.bak`
-    writeFileSync(testFile, 'concurrent test')
+    await write(testFile, 'concurrent test')
     await backup(testFile, { concurrency: 2 })
-    expect(existsSync(backupFile)).toBe(true)
+    expect(await isExist(backupFile)).toBe(true)
   })
 
   it('支持 glob 模式匹配', async () => {
-    const file1 = join(tempDir, 'test1.txt')
-    const file2 = join(tempDir, 'test2.txt')
-    const file3 = join(tempDir, 'other.md')
-    writeFileSync(file1, 'content1')
-    writeFileSync(file2, 'content2')
-    writeFileSync(file3, 'markdown content')
-    await backup(join(tempDir, '*.txt'))
-    expect(existsSync(`${file1}.bak`)).toBe(true)
-    expect(existsSync(`${file2}.bak`)).toBe(true)
-    expect(existsSync(`${file3}.bak`)).toBe(false)
+    const file1 = `${TEMP_DIR}/test1.txt`
+    const file2 = `${TEMP_DIR}/test2.txt`
+    const file3 = `${TEMP_DIR}/other.md`
+    await write(file1, 'content1')
+    await write(file2, 'content2')
+    await write(file3, 'markdown content')
+    await backup(`${TEMP_DIR}/*.txt`)
+    expect(await isExist(`${file1}.bak`)).toBe(true)
+    expect(await isExist(`${file2}.bak`)).toBe(true)
+    expect(await isExist(`${file3}.bak`)).toBe(false)
   })
 
   it('支持数组输入', async () => {
-    const file1 = join(tempDir, 'array1.txt')
-    const file2 = join(tempDir, 'array2.txt')
-    writeFileSync(file1, 'content1')
-    writeFileSync(file2, 'content2')
+    const file1 = `${TEMP_DIR}/array1.txt`
+    const file2 = `${TEMP_DIR}/array2.txt`
+    await write(file1, 'content1')
+    await write(file2, 'content2')
     await backup([file1, file2])
-    expect(existsSync(`${file1}.bak`)).toBe(true)
-    expect(existsSync(`${file2}.bak`)).toBe(true)
+    expect(await isExist(`${file1}.bak`)).toBe(true)
+    expect(await isExist(`${file2}.bak`)).toBe(true)
   })
 
   it('处理不存在的文件', async () => {
-    const nonexistentFile = join(tempDir, 'nonexistent.txt')
+    const nonexistentFile = `${TEMP_DIR}/nonexistent.txt`
     await expect(backup(nonexistentFile)).resolves.toBeUndefined()
-    expect(existsSync(`${nonexistentFile}.bak`)).toBe(false)
+    expect(await isExist(`${nonexistentFile}.bak`)).toBe(false)
   })
 
   it('备份文件内容正确', async () => {
-    const testFile = join(tempDir, 'content-test.txt')
+    const testFile = `${TEMP_DIR}/content-test.txt`
     const backupFile = `${testFile}.bak`
     const content = 'This is test content\nWith multiple lines\n中文内容'
-    writeFileSync(testFile, content)
+    await write(testFile, content)
     await backup(testFile)
-    expect(existsSync(backupFile)).toBe(true)
-    const originalContent = readFileSync(testFile, 'utf8')
-    const backupContent = readFileSync(backupFile, 'utf8')
+    expect(await isExist(backupFile)).toBe(true)
+    const originalContent = ((await read(testFile)) ?? '').toString()
+    const backupContent = ((await read(backupFile)) ?? '').toString()
     expect(backupContent).toBe(originalContent)
   })
 
   it('处理子目录中的文件', async () => {
-    const subDir = join(tempDir, 'subdir')
-    mkdirSync(subDir, { recursive: true })
-    const testFile = join(subDir, 'nested.txt')
+    const subDir = `${TEMP_DIR}/subdir`
+    await mkdir(subDir)
+    const testFile = `${subDir}/nested.txt`
     const backupFile = `${testFile}.bak`
-    writeFileSync(testFile, 'nested content')
+    await write(testFile, 'nested content')
     await backup(testFile)
-    expect(existsSync(backupFile)).toBe(true)
+    expect(await isExist(backupFile)).toBe(true)
   })
 
   it('处理大量文件', async () => {
     const fileCount = 10
     const files: string[] = []
     for (let i = 0; i < fileCount; i++) {
-      const file = join(tempDir, `bulk-test-${i}.txt`)
-      writeFileSync(file, `content ${i}`)
+      const file = `${TEMP_DIR}/bulk-test-${i}.txt`
+      await write(file, `content ${i}`)
       files.push(file)
     }
     await backup(files, { concurrency: 3 })
-    files.forEach((file) => {
-      expect(existsSync(`${file}.bak`)).toBe(true)
-    })
+    for (const file of files) expect(await isExist(`${file}.bak`)).toBe(true)
   })
 })

@@ -1,34 +1,34 @@
-import path from 'path'
-
-import fse from 'fs-extra'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import isSame from '../src/isSame.js'
+import mkdir from '../src/mkdir.js'
+import remove from '../src/remove.js'
+import write from '../src/write.js'
 
 describe('isSame', () => {
-  const tmpDir = path.join(__dirname, 'temp', 'isSame')
-  const fileA = path.join(tmpDir, 'a.txt')
-  const fileB = path.join(tmpDir, 'b.txt')
-  const fileC = path.join(tmpDir, 'c.txt')
-  const fileEmpty = path.join(tmpDir, 'empty.txt')
-  const fileNotExist = path.join(tmpDir, 'notExist.txt')
-  const fileBin1 = path.join(tmpDir, 'bin1.bin')
-  const fileBin2 = path.join(tmpDir, 'bin2.bin')
-  const fileSpecial = path.join(tmpDir, '特殊字符.txt')
+  const tmpDir = './temp/isSame'
+  const fileA = `${tmpDir}/a.txt`
+  const fileB = `${tmpDir}/b.txt`
+  const fileC = `${tmpDir}/c.txt`
+  const fileEmpty = `${tmpDir}/empty.txt`
+  const fileNotExist = `${tmpDir}/notExist.txt`
+  const fileBin1 = `${tmpDir}/bin1.bin`
+  const fileBin2 = `${tmpDir}/bin2.bin`
+  const fileSpecial = `${tmpDir}/特殊字符.txt`
 
   beforeAll(async () => {
-    await fse.ensureDir(tmpDir)
-    await fse.writeFile(fileA, 'hello world')
-    await fse.writeFile(fileB, 'hello world')
-    await fse.writeFile(fileC, 'different content')
-    await fse.writeFile(fileEmpty, '')
-    await fse.writeFile(fileBin1, Buffer.from([1, 2, 3, 4, 5]))
-    await fse.writeFile(fileBin2, Buffer.from([1, 2, 3, 4, 5]))
-    await fse.writeFile(fileSpecial, 'hello world')
+    await mkdir(tmpDir)
+    await write(fileA, 'hello world')
+    await write(fileB, 'hello world')
+    await write(fileC, 'different content')
+    await write(fileEmpty, '')
+    await write(fileBin1, Buffer.from([1, 2, 3, 4, 5]))
+    await write(fileBin2, Buffer.from([1, 2, 3, 4, 5]))
+    await write(fileSpecial, 'hello world')
   })
 
   afterAll(async () => {
-    await fse.remove(tmpDir)
+    await remove(tmpDir)
   })
 
   it('文本内容一致返回 true，内容不同返回 false', async () => {
@@ -60,9 +60,8 @@ describe('isSame', () => {
   })
 
   it('路径归一化和特殊字符文件名', async () => {
-    const relA = path.relative(process.cwd(), fileA)
-    const relB = path.relative(process.cwd(), fileB)
-    expect(await isSame(relA, relB)).toBe(true)
+    // 相对路径测试
+    expect(await isSame(fileA, fileB)).toBe(true)
     expect(await isSame(fileA, fileSpecial)).toBe(true)
   })
 })
