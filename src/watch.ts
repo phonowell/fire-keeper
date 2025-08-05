@@ -11,14 +11,21 @@ const EVENTS = ['change'] as const
 
 /**
  * Watch files or directories for changes and execute a callback when changes occur.
- * @param listSource Single path or array of paths to watch (uses chokidar's pattern matching,
- * which may differ from other glob implementations in the project)
+ * @param listSource Single path or array of paths to watch. Note: glob patterns are NOT supported
+ * in chokidar v4+. Use specific file paths or directory paths only.
  * @param callback Function called with the normalized path when changes are detected
  * @param options Configuration options
  * @param options.debounce Time in milliseconds to debounce callback (default: 1000)
  * @returns Function to close the watcher
  * @example
+ * // Watch specific directories (recommended)
  * watch(['src', 'config'], path => console.log(`Changed: ${path}`), { debounce: 500 })
+ *
+ * // Watch a single directory
+ * watch('src', path => console.log(`Changed: ${path}`))
+ *
+ * // Watch specific files
+ * watch(['file1.js', 'file2.js'], path => console.log(`Changed: ${path}`))
  */
 const watch = (
   listSource: string | string[],
