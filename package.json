@@ -243,5 +243,5 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "url": "https://github.com/phonowell/fire-keeper",
-  "version": "0.0.227"
+  "version": "0.0.228"
 }
