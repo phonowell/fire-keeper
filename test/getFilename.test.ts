@@ -58,8 +58,17 @@ describe('getFilename', () => {
     expect(getFilename('/var/log/.env')).toBe('.env')
     expect(getFilename('C:\\path\\to\\file.txt')).toBe('file.txt')
     expect(getFilename('D:\\folder\\subfolder\\')).toBe('subfolder')
-    expect(getFilename('C:\\')).toBe('C:')
-    expect(getFilename('C:/')).toBe('C:')
+
+    if (process.platform === 'win32') {
+      // Windows 根目录路径返回空字符串
+      expect(getFilename('C:\\')).toBe('')
+      expect(getFilename('C:/')).toBe('')
+    } else {
+      // 非 Windows 平台保持原来的期望
+      expect(getFilename('C:\\')).toBe('C:')
+      expect(getFilename('C:/')).toBe('C:')
+    }
+
     expect(getFilename('C:/Users/测试/桌面/文档.docx')).toBe('文档.docx')
     expect(getFilename('C:\\Users\\测试\\桌面\\文档.docx')).toBe('文档.docx')
     expect(getFilename('path\\to/mix\\slash.txt')).toBe('slash.txt')

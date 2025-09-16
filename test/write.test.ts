@@ -92,7 +92,15 @@ describe('write - 基础功能测试', () => {
 
     expect(await isExist(filePath)).toBe(true)
     const stats = await stat(filePath)
-    expect(stats?.mode && stats.mode & 0o777).toBe(mode)
+
+    // Windows 和 Unix 系统的文件权限处理不同，只验证文件已创建
+    if (process.platform === 'win32') {
+      // Windows 上只验证文件存在且可读
+      expect(stats?.mode).toBeDefined()
+    } else {
+      // Unix 系统上验证具体权限
+      expect(stats?.mode && stats.mode & 0o777).toBe(mode)
+    }
   })
 
   it('应能写入大文件内容', async () => {

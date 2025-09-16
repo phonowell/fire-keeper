@@ -1,5 +1,3 @@
-import os from './os.js'
-
 /**
  * Gets the normalized absolute path of the current working directory
  * @returns {string} Normalized absolute path using forward slashes
@@ -37,14 +35,21 @@ const root = () => {
   if (parts.some((p) => p === '.' || p === '..'))
     throw new Error('Invalid path: contains relative path components')
 
-  if (os() === 'windows') {
+  // Determine if this is a Windows drive path or Unix path
+  const isWindowsDrivePath = parts.length > 0 && parts[0].match(/^[A-Za-z]:$/)
+  const isAbsolute = cwd.startsWith('/')
+
+  if (isWindowsDrivePath) {
+    // Windows path handling
     if (parts.length === 1 && parts[0].endsWith(':')) return `${parts[0]}/` // Handle Windows root path like "C:/"
 
     return parts.length === 1
       ? `${parts[0]}/`
-      : `${parts[0]}:/${parts.slice(1).join('/')}` // Handle root and normal paths
+      : `${parts[0]}/${parts.slice(1).join('/')}` // Handle Windows paths
   }
-  return `/${parts.join('/')}` // Handle Unix paths
+
+  // Unix path handling - preserve leading slash if original path was absolute
+  return isAbsolute ? `/${parts.join('/')}` : parts.join('/')
 }
 
 export default root

@@ -20,13 +20,21 @@ describe('getDirname', () => {
     expect(getDirname('C:\\path\\file.txt')).toBe('C:/path')
     expect(getDirname('D:\\a\\b\\c.txt')).toBe('D:/a/b')
     expect(getDirname('C:/root/file.txt')).toBe('C:/root')
-    expect(getDirname('C:/file.txt')).toBe('C:')
+
+    if (process.platform === 'win32') {
+      // Windows 驱动器根目录
+      expect(getDirname('C:/file.txt')).toBe('C:/')
+    } else expect(getDirname('C:/file.txt')).toBe('C:')
   })
 
   it('结尾斜杠与根目录', () => {
     expect(getDirname('a/b/c/')).toBe('a/b')
     expect(getDirname('/')).toBe('/')
-    expect(getDirname('C:/')).toBe('.')
+
+    if (process.platform === 'win32') {
+      // Windows 驱动器根目录
+      expect(getDirname('C:/')).toBe('C:/')
+    } else expect(getDirname('C:/')).toBe('.')
   })
 
   it('隐藏文件夹与多重扩展名', () => {

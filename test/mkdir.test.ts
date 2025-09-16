@@ -1,5 +1,3 @@
-import fs from 'fs/promises'
-
 import isExist from 'src/isExist.js'
 import remove from 'src/remove.js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -72,18 +70,17 @@ describe('mkdir 单元测试', () => {
   })
 
   it('创建失败时应抛出错误', async () => {
-    // 创建只读目录模拟失败
-    const readonlyDir = `${TEMP_DIR}/readonly`
-    await mkdir(readonlyDir)
-    fs.chmod(readonlyDir, 0o444)
-    const invalid = `${readonlyDir}/sub`
+    // 使用无效的路径来模拟失败（在 Windows 上使用非法字符）
+    const invalidPath =
+      process.platform === 'win32'
+        ? `${TEMP_DIR}/invalid<>:"|?*path` // Windows 非法字符
+        : `${TEMP_DIR}/\0invalidpath` // Unix 非法字符
+
     let error: unknown = null
     try {
-      await mkdir(invalid)
+      await mkdir(invalidPath)
     } catch (e) {
       error = e
-    } finally {
-      fs.chmod(readonlyDir, 0o755)
     }
     expect(error).toBeTruthy()
   })

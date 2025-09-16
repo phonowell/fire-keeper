@@ -12,7 +12,7 @@ type Options = {
 
 export type Result = [number, string, string[]]
 
-const SEPARATOR = os() === 'windows' ? ' && ' : '; '
+const SEPARATOR = os() === 'windows' ? '; ' : '; '
 
 /**
  * Cross-platform shell command execution with output capture
@@ -36,7 +36,14 @@ const exec = (
 
   const [cmder, arg] =
     os() === 'windows'
-      ? ['cmd.exe', ['/s', '/c', stringCmd]]
+      ? [
+          'powershell.exe',
+          [
+            '-NoProfile',
+            '-Command',
+            `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${stringCmd}`,
+          ],
+        ]
       : ['/bin/sh', ['-c', stringCmd]]
 
   if (!silent) echo('exec', stringCmd)
@@ -45,7 +52,9 @@ const exec = (
     const cacheAll: string[] = []
     let cacheLast = ''
 
-    const process = child.spawn(cmder, arg, {})
+    const spawnOptions = os() === 'windows' ? { shell: false } : {}
+
+    const process = child.spawn(cmder, arg, spawnOptions)
 
     process.stderr.on('data', (data: Uint8Array) => {
       const message = parseMessage(data)

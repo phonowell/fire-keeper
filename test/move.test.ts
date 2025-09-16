@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs'
-
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import isExist from '../src/isExist.js'
@@ -73,9 +71,12 @@ describe('move', () => {
   })
 
   it('copy 失败时应抛出错误', async () => {
-    // 通过只读目录制造 copy 失败
-    await fs.chmod(dirTarget, 0o400)
-    await expect(move(fileA, dirTarget)).rejects.toThrow()
-    await fs.chmod(dirTarget, 0o700)
+    // 使用无效的目标路径来模拟 copy 失败
+    const invalidTarget =
+      process.platform === 'win32'
+        ? `${TEMP_DIR}/invalid<>:"|?*path` // Windows 非法字符
+        : `${TEMP_DIR}/\0invalidpath` // Unix 非法字符
+
+    await expect(move(fileA, invalidTarget)).rejects.toThrow()
   })
 })

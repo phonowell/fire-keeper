@@ -23,12 +23,17 @@ describe('isExist', () => {
     await write(fileA, 'hello')
     await write(fileB, 'world')
     await mkdir(dirA)
-    await link(fileA, symlinkA)
-    await link(`${tmpDir}/notExist.txt`, symlinkBroken)
+
+    // 在 Windows 下跳过符号链接创建（需要管理员权限）
+    if (process.platform !== 'win32') {
+      await link(fileA, symlinkA)
+      await link(`${tmpDir}/notExist.txt`, symlinkBroken)
+      await link(fileA, onlySymlink)
+      await link(cycleSymlink, cycleSymlink)
+    }
+
     await write(specialFile, 'special')
     await mkdir(onlyDir)
-    await link(fileA, onlySymlink)
-    await link(cycleSymlink, cycleSymlink)
   })
 
   afterAll(async () => {
@@ -36,15 +41,26 @@ describe('isExist', () => {
   })
 
   it('所有存在类型：文件、目录、软链', async () => {
-    expect(await isExist(fileA, fileB, dirA, symlinkA)).toBe(true)
-    expect(await isExist(onlyDir)).toBe(true)
-    expect(await isExist(onlySymlink)).toBe(true)
+    if (process.platform === 'win32') {
+      // Windows 下跳过符号链接测试
+      expect(await isExist(fileA, fileB, dirA)).toBe(true)
+      expect(await isExist(onlyDir)).toBe(true)
+    } else {
+      expect(await isExist(fileA, fileB, dirA, symlinkA)).toBe(true)
+      expect(await isExist(onlyDir)).toBe(true)
+      expect(await isExist(onlySymlink)).toBe(true)
+    }
   })
 
   it('部分路径不存在', async () => {
     expect(await isExist(fileA, `${tmpDir}/notExist.txt`)).toBe(false)
     expect(await isExist([fileA, 'notExist.txt'])).toBe(false)
-    expect(await isExist(symlinkBroken)).toBe(false)
+
+    if (process.platform !== 'win32') {
+      // 只在非 Windows 平台测试损坏的符号链接
+      expect(await isExist(symlinkBroken)).toBe(false)
+    }
+
     expect(await isExist(['', fileA])).toBe(false)
     expect(await isExist('')).toBe(false)
     expect(await isExist()).toBe(false)
@@ -67,7 +83,12 @@ describe('isExist', () => {
 
   it('特殊路径场景', async () => {
     expect(await isExist(specialFile)).toBe(true)
-    expect(await isExist(cycleSymlink)).toBe(false)
+
+    if (process.platform !== 'win32') {
+      // 只在非 Windows 平台测试循环符号链接
+      expect(await isExist(cycleSymlink)).toBe(false)
+    }
+
     // 绝对路径测试
     expect(await isExist(fileA)).toBe(true)
     // 相对路径测试

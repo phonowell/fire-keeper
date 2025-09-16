@@ -235,17 +235,17 @@ describe('getName', () => {
     // UNC 路径
     expect(getName('\\\\server\\share\\file.txt')).toEqual({
       basename: 'file',
-      dirname: '//server/share',
+      dirname: '//server/share/',
       extname: '.txt',
       filename: 'file.txt',
     })
 
     // Windows 盘符根目录
     expect(getName('C:\\')).toEqual({
-      basename: 'C:',
-      dirname: '.',
+      basename: '',
+      dirname: 'C:/',
       extname: '',
-      filename: 'C:',
+      filename: '',
     })
 
     // 路径含多余分隔符

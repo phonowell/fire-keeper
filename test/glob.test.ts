@@ -1,3 +1,5 @@
+import path from 'path'
+
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import glob from '../src/glob.js'
@@ -38,7 +40,7 @@ describe('glob', () => {
 
   it('返回绝对路径', async () => {
     const result = await glob('src/*.ts', { absolute: true })
-    expect(result.every((p) => p.startsWith('/'))).toBe(true)
+    expect(result.every((p) => path.isAbsolute(p))).toBe(true)
   })
 
   it('包含点文件', async () => {
@@ -94,7 +96,7 @@ describe('glob', () => {
         deep: 1,
       },
     )
-    expect(result.every((p) => p.startsWith('/'))).toBe(true)
+    expect(result.every((p) => path.isAbsolute(p))).toBe(true)
     expect(result.every((p) => p.endsWith('.ts'))).toBe(true)
   })
 })

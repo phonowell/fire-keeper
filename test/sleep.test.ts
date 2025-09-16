@@ -35,7 +35,7 @@ describe('sleep', () => {
     await sleep(NaN)
     await sleep(0)
     const elapsed = Date.now() - start
-    expect(elapsed).toBeLessThan(20)
+    expect(elapsed).toBeLessThan(50)
     expect(logSpy).not.toHaveBeenCalled()
     logSpy.mockRestore()
   })

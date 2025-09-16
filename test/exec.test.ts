@@ -70,8 +70,14 @@ describe('exec', () => {
 
   it('应处理文件相关命令', async () => {
     // 使用现有文件进行测试，不创建临时文件
-    const result = await exec('ls package.json')
+    const command =
+      process.platform === 'win32'
+        ? 'Get-ChildItem package.json'
+        : 'ls package.json'
+    const result = await exec(command)
     expect(result[0]).toBe(0)
-    expect(result[1]).toContain('package.json')
+    // Windows PowerShell 输出在不同的数组索引，检查整个输出数组
+    const allOutput = result[2].join(' ')
+    expect(allOutput).toContain('package.json')
   })
 })

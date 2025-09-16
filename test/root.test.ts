@@ -18,13 +18,13 @@ describe('root', () => {
     spyCwd = vi.spyOn(process, 'cwd').mockReturnValue('/Users/test/project/')
     expect(root()).toBe('/Users/test/project')
     spyCwd.mockReturnValue('C:/Users\\test/project')
-    expect(root()).toBe('/C:/Users/test/project')
+    expect(root()).toBe('C:/Users/test/project')
     spyCwd.mockReturnValue('C:\\project')
-    expect(root()).toBe('/C:/project')
+    expect(root()).toBe('C:/project')
     spyCwd.mockReturnValue('/Users/test/project')
     expect(root()).toBe('/Users/test/project')
     spyCwd.mockReturnValue('C:\\Users\\test\\project')
-    expect(root()).toBe('/C:/Users/test/project')
+    expect(root()).toBe('C:/Users/test/project')
   })
 
   it('路径为 undefined/null/空字符串应抛出异常', () => {
