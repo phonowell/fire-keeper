@@ -65,8 +65,8 @@ const read = async <
     echo('read', `'${source}' not existed`)
     return undefined
   }
-  src = listSource[0] as S
 
+  src = listSource[0] as S
   const content = await fse.readFile(src)
   echo('read', `read '${source}'`)
 
@@ -76,7 +76,9 @@ const read = async <
 
   if (EXTNAMES.includes(extname as ItemExtString))
     return String(content) as Result<T, S, R>
+
   if (extname === '.json') return JSON.parse(String(content)) as Result<T, S, R>
+
   if (['.yaml', '.yml'].includes(extname)) {
     const jsYaml = (await import('js-yaml')).default
     return jsYaml.load(content.toString()) as Result<T, S, R>

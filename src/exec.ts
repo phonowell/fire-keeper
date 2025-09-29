@@ -4,7 +4,6 @@ import kleur from 'kleur'
 
 import echo from './echo.js'
 import os from './os.js'
-import trimEnd from './trimEnd.js'
 
 type Options = {
   silent?: boolean
@@ -80,8 +79,10 @@ const info = (type: string, message: string) => {
 }
 
 const parseMessage = (buffer: Uint8Array) =>
-  trimEnd(buffer.toString().trim(), '\n')
+  buffer
+    .toString()
+    .trim()
     .replace(/\r/g, '\n')
-    .replace(/\n{2,}/g, '')
+    .replace(/\n{2,}/g, '\n')
 
 export default exec

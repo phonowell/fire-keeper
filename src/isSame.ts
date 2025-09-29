@@ -5,17 +5,17 @@ import read from './read.js'
 import stat from './stat.js'
 
 /**
- * Compares files for binary content equality
- * @param {...(string | string[])} args - Paths to compare (min 2 paths required)
- * @returns {Promise<boolean>} True if all files exist and have identical content
+ * Compare multiple files for binary content equality
+ * @param args - File paths to compare (minimum 2 required)
+ * @returns Promise resolving to true if all files have identical content
  * @example
- * await isSame('file1.txt', 'file2.txt')
- * await isSame(['v1.txt', 'v2.txt'], 'v3.txt')
- * await isSame('./path/file.txt', './other/../file.txt') // normalizes paths
+ * await isSame('file1.txt', 'file2.txt')     // Compare two files
+ * await isSame(['v1.txt', 'v2.txt'], 'v3.txt')  // Compare arrays with single
  */
 const isSame = async (...args: (string | string[])[]): Promise<boolean> => {
   const originalGroup = flatten(args)
   const group = originalGroup.map(normalizePath).filter(Boolean)
+
   if (group.length < 2) return false
   if (group.length !== originalGroup.length) return false
 
@@ -37,13 +37,9 @@ const isSame = async (...args: (string | string[])[]): Promise<boolean> => {
   }
 
   // 检查文件内容
-  let cacheCont: Buffer | undefined = undefined
+  let cacheCont: Buffer | undefined
   for (const source of group) {
-    const cont = await echo.freeze(
-      read(source, {
-        raw: true,
-      }),
-    )
+    const cont = await echo.freeze(read(source, { raw: true }))
     if (!cont) return false // 如果文件内容为空，则直接返回 false
 
     if (!cacheCont) {

@@ -1,17 +1,12 @@
 import getName from './getName.js'
 
 /**
- * Get directory path from a file path
- * @param {string} input - File path
- * @returns {string} Directory path ('.' for current directory)
- *
+ * Extract directory path from file path
+ * @param input - File path string
+ * @returns Directory path ('.' for current dir)
  * @example
- * // Basic paths
  * getDirname('path/to/file.txt') // 'path/to'
- * getDirname('./config.json') // '.'
- *
- * // Cross-platform support
- * getDirname('C:\\path\\file.txt') // 'C:/path'
+ * getDirname('./config.json')   // '.'
  */
 const getDirname = (input: string) => getName(input).dirname
 

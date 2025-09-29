@@ -17,7 +17,6 @@ import glob from './glob.js'
 import home from './home.js'
 import isExist from './isExist.js'
 import isSame from './isSame.js'
-import link from './link.js'
 import mkdir from './mkdir.js'
 import move from './move.js'
 import normalizePath from './normalizePath.js'
@@ -60,7 +59,6 @@ export {
   home,
   isExist,
   isSame,
-  link,
   mkdir,
   move,
   normalizePath,

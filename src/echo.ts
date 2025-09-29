@@ -16,16 +16,13 @@ const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
 const separator = `${kleur.gray('›')} `
 
 /**
- * Enhanced console logging with smart formatting and caching.
- * @template T Message type
- * @param {[T] | [string, T]} args - Single arg: message (default type) or [type, message]
- * @returns {T} The logged message
- * @property {boolean} isSilent - Suppresses all output
- * @property {boolean} isFrozen - Temporarily disables output
- * @property {function} pause - Disable output
- * @property {function} resume - Enable output
- * @property {function} whisper - Log with minimal format
- * @property {function} freeze - Silent async operation
+ * Enhanced console logging with type-based formatting
+ * @template T - Message type
+ * @param args - Single message or [type, message] tuple
+ * @returns The original message value
+ * @example
+ * echo('info', 'Starting process...')
+ * echo('Hello world') // Uses default type
  */
 const echo = <T>(...args: [T] | [string, T]): T => {
   const [type, message] = args.length === 1 ? ['default', args[0]] : args
@@ -114,16 +111,13 @@ const renderTime = (): string => {
   return result
 }
 
-const renderType = (type: string): string | undefined => {
+const renderType = (type: string): string => {
   const key = type.trim().toLowerCase()
   if (key === 'default') return ''
-  if (cacheType.has(key)) return cacheType.get(key)
+  if (cacheType.has(key)) return cacheType.get(key) as string
 
-  const content = [
-    kleur.cyan().underline(key),
-    ' '.repeat(Math.max(10 - key.length, 0)),
-  ].join('')
-
+  const content =
+    kleur.cyan().underline(key) + ' '.repeat(Math.max(10 - key.length, 0))
   cacheType.set(key, content)
   return content
 }

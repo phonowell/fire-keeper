@@ -162,6 +162,30 @@ const DEFAULT_MESSAGE_MAP = {
 
 const CACHE_PATH = './temp/cache-prompt.json'
 
+/**
+ * Interactive command-line prompting with type-safe inputs
+ * @template T - Value type returned by the prompt
+ * @template U - Prompt type constraint
+ * @param option - Prompt configuration (type, message, defaults, etc.)
+ * @returns Promise resolving to typed user input
+ * @example
+ * const name = await prompt({ type: 'text', message: 'Your name:' })
+ * const env = await prompt({ type: 'select', list: ['dev', 'prod'] })
+ */
+const main = async <T, U extends Type = Type>(
+  option: Option<U, T> & { list?: List<T>; type: U },
+): Promise<T & Result<U, T>> => {
+  echo.pause()
+
+  const opt: prompts.PromptObject = await formatOption<U, T>(option)
+  const result = (await prompts(opt))[opt.name as string] as T & Result<U, T>
+  await setCache(option, result)
+
+  echo.resume()
+
+  return result
+}
+
 const formatOption = async <T extends Type, U>(
   option: Option<T, U>,
 ): Promise<OP<T, U>> => {
@@ -235,6 +259,7 @@ const getCache = async <T, U>(
   option: Option<Type, U>,
 ): Promise<T | undefined> => {
   const { id, type } = option
+
   if (!id) return undefined
   if (type === 'multi') return undefined
 
@@ -242,79 +267,44 @@ const getCache = async <T, U>(
   if (!cache) return undefined
 
   const data = at(cache, id)
-  if (!data) return undefined
+  if (!data || type !== data.type) return undefined
 
-  if (type !== data.type) return undefined
   return data.value as T
-}
-
-const isChoice = <T>(input: unknown): input is Choice<T> =>
-  typeof input === 'object'
-
-/**
- * Interactive command-line prompting utility with type-safe inputs and caching
- * @template T - Value type returned by the prompt
- * @template U - Prompt type ('text'|'number'|'select'|'multi'|'confirm'|'toggle'|'auto')
- * @param {Object} option - Prompt configuration including type, message, default values, and constraints
- * @returns {Promise<T & Result<U, T>>} Type-safe result based on prompt type:
- * text→string, number→number, select/auto→T, multi→T[], confirm/toggle→boolean
- *
- * @example
- * ```ts
- * const env = await prompt({ type: 'select', message: 'Environment:', list: ['dev', 'prod'] })
- * ```
- */
-const main = async <T, U extends Type = Type>(
-  option: Option<U, T> & { list?: List<T>; type: U },
-): Promise<T & Result<U, T>> => {
-  echo.pause()
-
-  const opt: prompts.PromptObject = await formatOption<U, T>(option)
-  const result = (await prompts(opt))[opt.name as string] as T & Result<U, T>
-  await setCache(option, result)
-
-  echo.resume()
-
-  return result
 }
 
 const pickDefault = <T>(list: Choice<T>[], value: unknown = 0): number => {
   if (typeof value === 'number') {
-    if (value >= 0) {
-      if (value > list.length - 1) return list.length - 1
-      return value
-    }
-    if (0 - value - 1 < 0) return 0
-    return list.length + value
+    if (value >= 0) return value > list.length - 1 ? list.length - 1 : value
+
+    return Math.max(0, list.length + value)
   }
-  return findIndex(list, (it) => value === it.value)
+
+  return Math.max(
+    0,
+    findIndex(list, (it) => value === it.value),
+  )
 }
 
 const setCache = async <T>(option: Option<Type, T>, value: unknown) => {
   const { id, type } = option
-  if (!id) return
-  if (type === 'multi') return
+
+  if (!id || type === 'multi') return
 
   const cache = (await read<File>(CACHE_PATH)) ?? {}
   cache[id] = { type, value }
-
   await write(CACHE_PATH, cache)
 }
-
-const transChoice = <T>(list: List<T>): Choice<T>[] =>
-  list.map((it) =>
-    isChoice<T>(it)
-      ? it
-      : {
-          title: String(it),
-          value: it,
-        },
-  )
 
 const transType = (type: 'auto' | 'multi' | 'select') => {
   if (type === 'auto') return 'autocomplete'
   if (type === 'multi') return 'multiselect'
   return 'select'
 }
+
+const transChoice = <T>(list: List<T>): Choice<T>[] =>
+  list.map((it) => (isChoice<T>(it) ? it : { title: String(it), value: it }))
+
+const isChoice = <T>(input: unknown): input is Choice<T> =>
+  typeof input === 'object' && input !== null
 
 export default main

@@ -1,14 +1,10 @@
 /**
- * Executes a function immediately and returns its result with type preservation
- * @template T - The return type of the function
- * @param {(...args: unknown[]) => T} fn - Function to execute
- * @returns {T} The function's return value with preserved type
- *
+ * Execute a function immediately and return its result
+ * @template T - Return type of the function
+ * @param fn - Function to execute immediately
+ * @returns The function's return value
  * @example
- * ```ts
- * const num = run(() => 42) //=> 42
- * const user = run<User>(() => ({ id: 1, name: 'Alice' }))
- * ```
+ * const config = run(() => ({ debug: true, port: 3000 }))
  */
 const run = <T>(fn: (...args: unknown[]) => T) => fn()
 

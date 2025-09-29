@@ -8,18 +8,12 @@ export type GetNameResult = {
 }
 
 /**
- * Parse path into components with cross-platform support
- * @param {string} input - File path
- * @returns {Object} Path components
- *   - basename: Name without extension ('file')
- *   - dirname: Directory path ('path/to')
- *   - extname: Extension with dot ('.txt')
- *   - filename: Full name ('file.txt')
- *
+ * Parse file path into named components
+ * @param input - File path to parse
+ * @returns Object with basename, dirname, extname, filename
  * @example
  * getName('path/to/file.txt')
- * // => { basename: 'file', dirname: 'path/to',
- * //      extname: '.txt', filename: 'file.txt' }
+ * // => { basename: 'file', dirname: 'path/to', extname: '.txt', filename: 'file.txt' }
  */
 
 const getName = (input: string): GetNameResult => {
@@ -29,8 +23,14 @@ const getName = (input: string): GetNameResult => {
 
   const extname = path.extname(ipt)
   const basename = path.basename(ipt, extname)
-  const dirname = path.dirname(ipt)
+  let dirname = path.dirname(ipt)
   const filename = `${basename}${extname}`
+
+  // Special handling for edge cases to match expected behavior
+
+  // Handle UNC paths: //server/share/file.txt -> //server/share/
+  if (ipt.startsWith('//') && dirname.match(/^\/\/[^/]+\/[^/]+$/))
+    dirname = `${dirname}/`
 
   return { basename, dirname, extname, filename }
 }

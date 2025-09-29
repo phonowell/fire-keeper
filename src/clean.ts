@@ -5,17 +5,15 @@ import remove from './remove.js'
 import wrapList from './wrapList.js'
 
 /**
- * Removes files and their empty parent directories
- * @param source - File path(s) or glob pattern(s) to clean
- * @returns Promise resolving when cleaning is complete
+ * Remove files and their empty parent directories
+ * @param source - File paths or glob patterns to clean
  * @example
- * clean('temp/logs/debug.log') // Removes file and empty parents
- * clean(['build/temp/*.txt']) // Removes matching files
+ * clean('temp/debug.log') // Removes file and empty parent dirs
+ * clean(['build/*.tmp'])  // Clean all temp files
  */
 const clean = async (source: string | string[]): Promise<void> => {
-  const listSource = await glob(source, {
-    onlyFiles: false,
-  })
+  const listSource = await glob(source, { onlyFiles: false })
+
   if (!listSource.length) {
     echo('clean', `no files found matching ${wrapList(source)}`)
     return
@@ -24,14 +22,9 @@ const clean = async (source: string | string[]): Promise<void> => {
   await remove(source)
 
   const dirname = getDirname(listSource[0])
-  if (
-    (
-      await glob(`${dirname}/**/*`, {
-        onlyFiles: true,
-      })
-    ).length
-  )
-    return
+  const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
+
+  if (remainingFiles.length > 0) return
 
   await remove(dirname)
 }

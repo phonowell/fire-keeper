@@ -5,19 +5,13 @@ import normalizePath from './normalizePath.js'
 import wrapList from './wrapList.js'
 
 /**
- * Writes content to a file with path creation and automatic content type handling.
- * @param source File path to write to (directories created if needed)
- * @param content Content to write - handles strings, Buffer, typed arrays, Blob, and objects
- * @param options File writing options (encoding, mode, flag)
+ * Write content to file with automatic type handling and path creation
+ * @param source - File path (directories created if needed)
+ * @param content - Content (string, Buffer, Blob, objects auto-stringified)
+ * @param options - File writing options (encoding, mode, flag)
  * @example
- * // Write string content
  * await write('file.txt', 'Hello world')
- *
- * // Write JSON (auto-stringified)
- * await write('config.json', { port: 3000 })
- *
- * // Write binary data with permissions
- * await write('data.bin', new Uint8Array([1, 2, 3]), { mode: 0o644 })
+ * await write('config.json', { port: 3000 })  // Auto-stringified
  */
 const write = async (
   source: string,
@@ -47,6 +41,7 @@ const write = async (
     typeof content === 'object' && content !== null
       ? JSON.stringify(content)
       : String(content)
+
   await writeContent(source, str, options)
 }
 

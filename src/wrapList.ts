@@ -1,31 +1,18 @@
 import toArray from './toArray.js'
 
 /**
- * Converts input to a comma-separated string with each item wrapped in single quotes.
- * @param input Any value (primitives, arrays, objects)
- * @returns A string with items wrapped in quotes and joined with commas
+ * Convert values to comma-separated quoted string
+ * @param input - Any value (primitives, arrays, objects)
+ * @returns String with items wrapped in quotes and joined with commas
  * @example
- * // Arrays of primitives
- * wrapList(['a', 'b', 'c'])
- * //=> "'a', 'b', 'c'"
- *
- * // Single values are also processed
- * wrapList(123)
- * //=> "'123'"
- *
- * // Objects are JSON stringified
- * wrapList({name: 'test'})
- * //=> "'{"name":"test"}'"
- *
- * // Null and undefined become empty strings
- * wrapList([null, undefined])
- * //=> ", "
+ * wrapList(['a', 'b'])     // "'a', 'b'"
+ * wrapList(123)            // "'123'"
+ * wrapList({key: 'val'})   // "'{"key":"val"}'"
  */
 const wrapList = (input: unknown) =>
   toArray(input)
     .map((it): string => {
-      if (it === null) return ''
-      if (it === undefined) return ''
+      if (it === null || it === undefined) return ''
 
       if (
         typeof it === 'string' ||

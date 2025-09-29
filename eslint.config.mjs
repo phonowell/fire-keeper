@@ -1,9 +1,6 @@
 import globals from "globals"
 import importPlugin from "eslint-plugin-import"
 import prettierPlugin from "eslint-plugin-prettier"
-import reactHooks from "eslint-plugin-react-hooks"
-import reactPlugin from "eslint-plugin-react"
-import reactRefresh from "eslint-plugin-react-refresh"
 import tsParser from "@typescript-eslint/parser"
 import tsPlugin from "@typescript-eslint/eslint-plugin"
 import unusedImports from "eslint-plugin-unused-imports"
@@ -47,9 +44,6 @@ export default [{
     "@typescript-eslint": tsPlugin,
     "import": importPlugin,
     "prettier": prettierPlugin,
-    "react": reactPlugin,
-    "react-hooks": reactHooks,
-    "react-refresh": reactRefresh,
     "unused-imports": unusedImports
   },
   rules: {
@@ -393,55 +387,9 @@ export default [{
       trailingComma: "all"
     }],
 
-    // React Hooks 依赖项检查
-    // ✅ 允许: 完整列出依赖项
-    // ❌ 禁止: 遗漏依赖项
-    "react-hooks/exhaustive-deps": "error",
-
-    // React Refresh 组件导出规则
-    // ✅ 推荐: 导出常量组件
-    'react-refresh/only-export-components': ['warn', {
-      allowConstantExport: true
-    }],
-
-    // PropTypes 外部类型使用限制
-    // ✅ 推荐: 在 propTypes 中使用外部类型
-    'react/forbid-foreign-prop-types': ['warn', {
-      allowInPropTypes: true
-    }],
-
-    // JSX 组件命名规范
-    // ✅ 允许: MyComponent, ALL_CAPS
-    // ❌ 禁止: myComponent
-    'react/jsx-pascal-case': ['error', {
-      allowAllCaps: true,
-      ignore: []
-    }],
-
-    // React 导入检查已关闭
-    'react/jsx-uses-react': 'off',
-
-    // PropTypes 检查已关闭
-    'react/prop-types': 'off',
-
-    // JSX 的 React 作用域检查已关闭
-    'react/react-in-jsx-scope': 'off',
-
-    // 自闭合标签
-    // ✅ 推荐: <div />
-    // ❌ 不推荐: <div></div>
-    "react/self-closing-comp": "warn",
-
     // async 函数
     // ✅ 允许: async function foo() { await something() }
     // ❌ 禁止: async function foo() { return 42 }
     "require-await": "error"
-  },
-  // React设置
-  settings: {
-    react: {
-      // 自动检测React版本
-      version: "detect"
-    }
   }
 }]

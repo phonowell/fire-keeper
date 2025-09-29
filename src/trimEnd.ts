@@ -1,22 +1,16 @@
 /**
- * Removes specified characters from the end of a string.
- * @param source - The string to trim
- * @param chars - Characters to remove from the end (defaults to whitespace)
- * @returns The trimmed string
+ * Remove specified characters from the end of a string
+ * @param source - String to trim
+ * @param chars - Characters to remove (defaults to whitespace)
+ * @returns Trimmed string
  * @example
- * ```
- * trimEnd('  hello  ')      // '  hello'
- * trimEnd('hello...', '.') // 'hello'
- * trimEnd('hello123', '123') // 'hello'
- * trimEnd('hello\n\t', '\n\t') // 'hello'
- * trimEnd('hello世界', '世界') // 'hello'
- * ```
+ * trimEnd('  hello  ')        // '  hello'
+ * trimEnd('hello...', '.')    // 'hello'
  */
 const trimEnd = (source: string, chars?: string) => {
-  // 如果没有提供 chars，移除所有空白字符
   if (chars === undefined) return source.replace(/\s+$/, '')
 
-  // 特殊字符映射
+  // 特殊字符映射，保持原始行为
   const specialChars: Record<string, string> = {
     '\n': '\\n',
     '\r': '\\r',
@@ -29,7 +23,6 @@ const trimEnd = (source: string, chars?: string) => {
     .split('')
     .map((char) => {
       if (char in specialChars) return specialChars[char]
-
       return char.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&')
     })
     .join('|')

@@ -21,7 +21,6 @@
 - [x] home.ts
 - [x] isExist.ts
 - [x] isSame.ts
-- [x] link.ts
 - [x] mkdir.ts
 - [x] move.ts
 - [x] normalizePath.ts

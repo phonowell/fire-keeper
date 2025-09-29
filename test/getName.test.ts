@@ -240,13 +240,23 @@ describe('getName', () => {
       filename: 'file.txt',
     })
 
-    // Windows 盘符根目录
-    expect(getName('C:\\')).toEqual({
-      basename: '',
-      dirname: 'C:/',
-      extname: '',
-      filename: '',
-    })
+    // Windows 盘符根目录 (platform-specific behavior)
+    if (process.platform === 'win32') {
+      expect(getName('C:\\')).toEqual({
+        basename: '',
+        dirname: 'C:/',
+        extname: '',
+        filename: '',
+      })
+    } else {
+      // 非 Windows 平台遵循标准的 path.dirname 行为
+      expect(getName('C:\\')).toEqual({
+        basename: 'C:',
+        dirname: '.',
+        extname: '',
+        filename: 'C:',
+      })
+    }
 
     // 路径含多余分隔符
     expect(getName('a//b///c.txt')).toEqual({

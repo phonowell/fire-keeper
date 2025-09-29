@@ -10,25 +10,19 @@ type Options = {
 }
 
 /**
- * Removes files and directories with pattern matching support
- * @param {string | string[]} source - Path(s) to remove, can be files, directories, or glob patterns
- * @param {Object} [options] - Configuration options
- * @param {number} [options.concurrency=5] - Maximum concurrent remove operations
- * @returns {Promise<void>} Resolves when all removals complete
- *
+ * Remove files and directories with glob pattern support
+ * @param source - Path(s) to remove (files, directories, or patterns)
+ * @param options - Configuration with concurrency setting
  * @example
- * ```ts
  * remove('temp/file.txt')
- * remove(['logs/error.log', 'cache/'], { concurrency: 3 })
- * ```
+ * remove(['logs/*.log', 'cache/'], { concurrency: 3 })
  */
 const remove = async (
   source: string | string[],
   { concurrency = 5 }: Options = {},
 ): Promise<void> => {
-  const listSource = await glob(source, {
-    onlyFiles: false,
-  })
+  const listSource = await glob(source, { onlyFiles: false })
+
   if (!listSource.length) {
     echo('remove', `no files found matching ${wrapList(source)}`)
     return

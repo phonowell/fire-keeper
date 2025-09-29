@@ -22,28 +22,20 @@ const isListedAsSource = (
   Array.isArray(input) && !!(input as ListSource).__IS_LISTED_AS_SOURCE__
 
 /**
- * Find files using glob patterns with smart caching
- * @param {string | string[] | ListSource} source - Pattern(s) or cached result
- * @param {Object} [options] - Search options
- * @param {boolean} [options.absolute] - Return absolute paths
- * @param {boolean} [options.dot] - Include dotfiles
- * @param {number} [options.deep] - Max directory depth
- * @param {boolean} [options.onlyFiles] - Only match files
- * @param {boolean} [options.onlyDirectories] - Only match directories
- * @returns {Promise<string[]>} Matching paths
- *
+ * Find files using glob patterns with caching support
+ * @param input - Glob pattern(s) or cached result
+ * @param options - Search options (absolute, dot, deep, onlyFiles, etc.)
+ * @returns Promise resolving to array of matching file paths
  * @example
- * // Basic matching with exclusions
- * glob(['src/*.ts', '!src/*.test.ts'])
+ * glob('src/*.ts')                      // All .ts files in src/
+ * glob(['**\/*.js', '!node_modules'])   // JS files excluding node_modules
  */
 const main = async (
   input: string | string[] | ListSource,
   options?: Options,
 ): Promise<ListSource> => {
   if (isListedAsSource(input)) return input
-
-  if (!input) return EMPTY_RESULT
-  if (!input.length) return EMPTY_RESULT
+  if (!input || input.length === 0) return EMPTY_RESULT
 
   const patterns = toArray(input).map(normalizePath).filter(Boolean)
 
@@ -52,8 +44,8 @@ const main = async (
     dot: true,
     ...options,
   })) as ListSource
-  result.__IS_LISTED_AS_SOURCE__ = true
 
+  result.__IS_LISTED_AS_SOURCE__ = true
   return result
 }
 

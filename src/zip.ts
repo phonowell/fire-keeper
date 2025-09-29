@@ -19,60 +19,10 @@ type Options = {
 
 type OptionsRequired = Required<Options>
 
-const execute = async (
-  listSource: string[],
-  target: string,
-  options: OptionsRequired,
-) => {
-  const { base, filename } = options
-
-  const listResource = await glob(listSource)
-
-  await new Promise((resolve) => {
-    const output = fs.createWriteStream(`${target}/${filename}`)
-    const archive = archiver('zip', {
-      zlib: {
-        level: 9,
-      },
-    })
-    let message = ''
-
-    archive.on('end', () => resolve(true))
-
-    archive.on('entry', (e) => (message = renderPath(e.name)))
-
-    archive.on('error', (e) => {
-      console.log(kleur.red(e.message))
-      throw e
-    })
-
-    archive.on('progress', (e) => {
-      if (!message) return
-
-      const gray = kleur.gray(
-        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`,
-      )
-      const magenta = kleur.magenta(message)
-
-      console.log(`${gray} ${magenta}`)
-      message = ''
-    })
-
-    archive.on('warning', (e) => {
-      console.log(kleur.red(e.message))
-      throw e
-    })
-
-    // execute
-    archive.pipe(output)
-
-    for (const src of listResource) {
-      const name = src.replace(base, '')
-      archive.file(src, { name })
-    }
-
-    archive.finalize()
-  })
+const getBase = (listSource: string[]): string => {
+  const [source] = listSource
+  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
+  return getDirname(source)
 }
 
 const toArray = (
@@ -85,28 +35,55 @@ const toArray = (
     target || getDirname(listSource[0]).replace(/\*/g, ''),
   )
 
-  let [base, filename] =
+  const [base, filename] =
     typeof option === 'string'
       ? ['', option]
       : [option.base ?? '', option.filename ?? '']
 
-  base = normalizePath(base || getBase(listSource))
-  if (!filename) filename = `${getBasename(pathTarget)}.zip`
+  const finalBase = normalizePath(base || getBase(listSource))
+  const finalFilename = filename || `${getBasename(pathTarget)}.zip`
 
-  return [
-    listSource,
-    pathTarget,
-    {
-      base,
-      filename,
-    },
-  ]
+  return [listSource, pathTarget, { base: finalBase, filename: finalFilename }]
 }
 
-const getBase = (listSource: string[]): string => {
-  const [source] = listSource
-  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
-  return getDirname(source)
+const execute = async (
+  listSource: string[],
+  target: string,
+  options: OptionsRequired,
+) => {
+  const { base, filename } = options
+  const listResource = await glob(listSource)
+
+  return new Promise<void>((resolve, reject) => {
+    const output = fs.createWriteStream(`${target}/${filename}`)
+    const archive = archiver('zip', { zlib: { level: 9 } })
+    let message = ''
+
+    archive.on('end', () => resolve())
+    archive.on('entry', (e) => (message = renderPath(e.name)))
+    archive.on('error', reject)
+    archive.on('warning', reject)
+
+    archive.on('progress', (e) => {
+      if (!message) return
+
+      const gray = kleur.gray(
+        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`,
+      )
+      const magenta = kleur.magenta(message)
+      console.log(`${gray} ${magenta}`)
+      message = ''
+    })
+
+    archive.pipe(output)
+
+    for (const src of listResource) {
+      const name = src.replace(base, '')
+      archive.file(src, { name })
+    }
+
+    archive.finalize()
+  })
 }
 
 /**
@@ -128,10 +105,10 @@ const zip = async (
   option: string | Options = '',
 ) => {
   await execute(...toArray(source, target, option))
-  echo(
-    'zip',
-    `zipped ${wrapList(source)} to '${target}', as '${typeof option === 'object' ? JSON.stringify(option) : String(option)}'`,
-  )
+
+  const optionStr =
+    typeof option === 'object' ? JSON.stringify(option) : String(option)
+  echo('zip', `zipped ${wrapList(source)} to '${target}', as '${optionStr}'`)
 }
 
 export default zip

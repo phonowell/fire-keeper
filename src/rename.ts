@@ -6,26 +6,23 @@ import normalizePath from './normalizePath.js'
 
 /**
  * Rename a file or directory with path normalization
- * @param {string} source - Source path to rename (file, directory, or symlink)
- * @param {string} target - New name (not full path) for the source
- * @returns {Promise<void>} Resolves when rename completes
- *
+ * @param source - Source path to rename
+ * @param target - New name (basename only, not full path)
  * @example
- * ```ts
- * rename('file.txt', 'backup.txt')
- * rename('src/', 'backup-src') // Preserves directory contents
- * ```
- *
- * @throws {Error} ENOENT (not found), EEXIST (target exists), EPERM (permission denied)
+ * rename('old-file.txt', 'new-file.txt')
+ * rename('src/', 'backup-src')  // Rename directory
  */
 const rename = async (source: string, target: string) => {
   const src = normalizePath(source)
-  await new Promise((resolve, reject) =>
-    fs.rename(src, `${getDirname(src)}/${target}`, (err) => {
+  const destPath = `${getDirname(src)}/${target}`
+
+  await new Promise<void>((resolve, reject) =>
+    fs.rename(src, destPath, (err) => {
       if (err) reject(err)
-      else resolve(undefined)
+      else resolve()
     }),
   )
+
   echo('rename', `renamed '${source}' as '${target}'`)
 }
 

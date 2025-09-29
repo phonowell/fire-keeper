@@ -8,22 +8,19 @@ type Options = {
 }
 
 /**
- * Creates .bak copies of specified files in their original directories
- * @param source - File path(s) or glob pattern(s) to backup
- * @param options - Backup configuration
- * @param options.concurrency - Max concurrent operations (default: 5)
- * @throws {Error} If backup operations fail
+ * Create .bak backup copies of files
+ * @param source - File paths or glob patterns to backup
+ * @param options - Configuration with concurrency setting
  * @example
- * backup('file.txt') // Creates file.txt.bak
- * backup(['src/*.ts'], { concurrency: 2 }) // Backs up 2 files at a time
+ * backup('config.json') // Creates config.json.bak
+ * backup(['*.ts'], { concurrency: 3 })
  */
 const backup = async (
   source: string | string[],
   { concurrency = 5 }: Options = {},
 ): Promise<void> => {
-  const listSource = await glob(source, {
-    onlyFiles: true,
-  })
+  const listSource = await glob(source, { onlyFiles: true })
+
   if (!listSource.length) {
     echo('backup', `no files found matching ${wrapList(source)}`)
     return

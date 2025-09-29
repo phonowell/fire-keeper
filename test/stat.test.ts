@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import link from '../src/link.js'
 import mkdir from '../src/mkdir.js'
 import remove from '../src/remove.js'
 import stat from '../src/stat.js'
@@ -67,22 +66,5 @@ describe('stat - 基础功能测试', () => {
     const filePath = tempFile('not-exist.txt')
     const result = await stat(filePath)
     expect(result).toBeNull()
-  })
-
-  it('应能正确处理符号链接', async () => {
-    if (process.platform === 'win32') {
-      // Windows 下创建符号链接需要管理员权限，跳过测试
-      expect(true).toBe(true)
-      return
-    }
-
-    const targetPath = tempFile('target.txt')
-    const linkPath = tempFile('symlink.txt')
-    await write(targetPath, 'symlink content')
-    await link(targetPath, linkPath)
-    const result = await stat(linkPath)
-    expect(result).not.toBeNull()
-    expect(result?.isFile()).toBe(true)
-    await remove([linkPath, targetPath])
   })
 })

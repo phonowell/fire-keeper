@@ -11,21 +11,12 @@ type Options = {
 }
 
 /**
- * Create directories recursively with proper permissions.
- *
- * @param {string | string[]} source - Directory path(s) to create
- * @param {Object} [options] - Configuration options
- * @param {number} [options.concurrency=5] - Maximum concurrent directory creations
- *
- * @returns {Promise<void>} Resolves when all directories are created
- *
- * @throws {Error} When paths are invalid or permissions deny creation
- *
+ * Create directories recursively with concurrent support
+ * @param source - Directory path(s) to create
+ * @param options - Configuration with concurrency setting
  * @example
- * ```typescript
  * await mkdir('path/to/deep/dir')
- * await mkdir(['dir1', 'dir2', 'path/with/特殊字符'])
- * ```
+ * await mkdir(['dir1', 'dir2'], { concurrency: 3 })
  */
 const mkdir = async (
   source: string | string[],

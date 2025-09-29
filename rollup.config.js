@@ -27,7 +27,6 @@ const input = {
   home: 'src/home.ts',
   isExist: 'src/isExist.ts',
   isSame: 'src/isSame.ts',
-  link: 'src/link.ts',
   mkdir: 'src/mkdir.ts',
   move: 'src/move.ts',
   normalizePath: 'src/normalizePath.ts',

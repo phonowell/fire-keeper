@@ -12,17 +12,12 @@ type Options = {
 }
 
 /**
- * Recovers files from their backup versions (.bak files)
- * @param source - File path(s) to recover (without .bak extension), supports glob patterns
- * @param options - Recovery options
- * @param {number} [options.concurrency=5] - Maximum concurrent file operations
- * @returns Promise<void> Resolves when all recoveries complete
- *
+ * Recover files from their .bak backup versions
+ * @param source - File path(s) to recover (without .bak extension)
+ * @param options - Configuration with concurrency setting
  * @example
- * ```ts
- * await recover(['config.json', 'data.txt']) // Recovers from .bak files
- * await recover('*.txt', { concurrency: 3 }) // Processes max 3 files at once
- * ```
+ * await recover('config.json')        // Restores from config.json.bak
+ * await recover(['*.txt'], { concurrency: 2 })
  */
 const recover = async (
   source: string | string[],
@@ -30,10 +25,9 @@ const recover = async (
 ): Promise<void> => {
   const listSource = await glob(
     toArray(source).map((src) => `${src}.bak`),
-    {
-      onlyFiles: true,
-    },
+    { onlyFiles: true },
   )
+
   if (!listSource.length) {
     echo('recover', `no files found matching ${wrapList(source)}`)
     return
@@ -49,7 +43,8 @@ const recover = async (
 
 const child = async (source: string) => {
   const content = await read(source)
-  await write(source.replace('.bak', ''), content)
+  const targetPath = source.replace('.bak', '')
+  await write(targetPath, content)
   await remove(source)
 }
 
