@@ -11,9 +11,12 @@ const main = async () => {
   await replacePackage()
   await replaceRollup()
   await exec('rollup -c rollup.config.js --bundleConfigAsCjs')
+  await exec('tsc --project tsconfig.declaration.json --skipLibCheck')
 }
 
-const cleanup = () => remove('./dist')
+const cleanup = async () => {
+  await remove('./dist')
+}
 
 const makeIndex = async () => {
   const listModule = await makeListModule()
@@ -42,29 +45,16 @@ const makeListModule = async () => {
 
 const replacePackage = async () => {
   const pkg = await read<{
-    exports?: Record<
-      string,
-      {
-        import: string
-        require: string
-      }
-    >
+    exports?: Record<string, string>
   }>('./package.json')
   if (!pkg) return
 
   const exports: NonNullable<(typeof pkg)['exports']> = {
-    '.': {
-      import: './dist/index.js',
-      require: './dist/cjs/index.js',
-    },
+    '.': './dist/index.js',
   }
   const listModule = await makeListModule()
-  for (const it of listModule) {
-    exports[`./${it}`] = {
-      import: `./dist/${it}.js`,
-      require: `./dist/cjs/${it}.js`,
-    }
-  }
+  for (const it of listModule) exports[`./${it}`] = `./dist/${it}.js`
+
   pkg.exports = exports
 
   await write('./package.json', JSON.stringify(pkg, null, 2))

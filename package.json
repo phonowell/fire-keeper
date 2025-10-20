@@ -6,7 +6,6 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "chokidar": "^4.0.3",
-    "download": "^8.0.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.2",
     "js-yaml": "^4.1.0",
@@ -17,197 +16,72 @@
   },
   "description": "A little helper for automate works.",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/archiver": "^6.0.3",
-    "@types/download": "^8.0.5",
     "@types/fs-extra": "^11.0.4",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.8.1",
     "@types/prompts": "^2.4.9",
     "@types/yargs": "^17.0.33",
-    "@typescript-eslint/eslint-plugin": "^8.44.1",
-    "@typescript-eslint/parser": "^8.44.1",
-    "eslint": "^9.36.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-unused-imports": "^4.2.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^16.4.0",
     "prettier": "^3.6.2",
-    "rollup": "^4.52.3",
+    "rollup": "^4.52.5",
     "rollup-plugin-auto-external": "^2.0.0",
-    "rollup-plugin-ts": "^3.4.5",
+    "@rollup/plugin-typescript": "^12.1.1",
     "tslib": "^2.8.1",
     "tsx": "^4.20.6",
     "typescript": "5.4.5",
     "vitest": "^3.2.4"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.js"
-    },
-    "./argv": {
-      "import": "./dist/argv.js",
-      "require": "./dist/cjs/argv.js"
-    },
-    "./at": {
-      "import": "./dist/at.js",
-      "require": "./dist/cjs/at.js"
-    },
-    "./backup": {
-      "import": "./dist/backup.js",
-      "require": "./dist/cjs/backup.js"
-    },
-    "./clean": {
-      "import": "./dist/clean.js",
-      "require": "./dist/cjs/clean.js"
-    },
-    "./copy": {
-      "import": "./dist/copy.js",
-      "require": "./dist/cjs/copy.js"
-    },
-    "./download": {
-      "import": "./dist/download.js",
-      "require": "./dist/cjs/download.js"
-    },
-    "./echo": {
-      "import": "./dist/echo.js",
-      "require": "./dist/cjs/echo.js"
-    },
-    "./exec": {
-      "import": "./dist/exec.js",
-      "require": "./dist/cjs/exec.js"
-    },
-    "./findIndex": {
-      "import": "./dist/findIndex.js",
-      "require": "./dist/cjs/findIndex.js"
-    },
-    "./flatten": {
-      "import": "./dist/flatten.js",
-      "require": "./dist/cjs/flatten.js"
-    },
-    "./getBasename": {
-      "import": "./dist/getBasename.js",
-      "require": "./dist/cjs/getBasename.js"
-    },
-    "./getDirname": {
-      "import": "./dist/getDirname.js",
-      "require": "./dist/cjs/getDirname.js"
-    },
-    "./getExtname": {
-      "import": "./dist/getExtname.js",
-      "require": "./dist/cjs/getExtname.js"
-    },
-    "./getFilename": {
-      "import": "./dist/getFilename.js",
-      "require": "./dist/cjs/getFilename.js"
-    },
-    "./getName": {
-      "import": "./dist/getName.js",
-      "require": "./dist/cjs/getName.js"
-    },
-    "./glob": {
-      "import": "./dist/glob.js",
-      "require": "./dist/cjs/glob.js"
-    },
-    "./home": {
-      "import": "./dist/home.js",
-      "require": "./dist/cjs/home.js"
-    },
-    "./isExist": {
-      "import": "./dist/isExist.js",
-      "require": "./dist/cjs/isExist.js"
-    },
-    "./isSame": {
-      "import": "./dist/isSame.js",
-      "require": "./dist/cjs/isSame.js"
-    },
-    "./mkdir": {
-      "import": "./dist/mkdir.js",
-      "require": "./dist/cjs/mkdir.js"
-    },
-    "./move": {
-      "import": "./dist/move.js",
-      "require": "./dist/cjs/move.js"
-    },
-    "./normalizePath": {
-      "import": "./dist/normalizePath.js",
-      "require": "./dist/cjs/normalizePath.js"
-    },
-    "./os": {
-      "import": "./dist/os.js",
-      "require": "./dist/cjs/os.js"
-    },
-    "./prompt": {
-      "import": "./dist/prompt.js",
-      "require": "./dist/cjs/prompt.js"
-    },
-    "./read": {
-      "import": "./dist/read.js",
-      "require": "./dist/cjs/read.js"
-    },
-    "./recover": {
-      "import": "./dist/recover.js",
-      "require": "./dist/cjs/recover.js"
-    },
-    "./remove": {
-      "import": "./dist/remove.js",
-      "require": "./dist/cjs/remove.js"
-    },
-    "./rename": {
-      "import": "./dist/rename.js",
-      "require": "./dist/cjs/rename.js"
-    },
-    "./root": {
-      "import": "./dist/root.js",
-      "require": "./dist/cjs/root.js"
-    },
-    "./run": {
-      "import": "./dist/run.js",
-      "require": "./dist/cjs/run.js"
-    },
-    "./runConcurrent": {
-      "import": "./dist/runConcurrent.js",
-      "require": "./dist/cjs/runConcurrent.js"
-    },
-    "./sleep": {
-      "import": "./dist/sleep.js",
-      "require": "./dist/cjs/sleep.js"
-    },
-    "./stat": {
-      "import": "./dist/stat.js",
-      "require": "./dist/cjs/stat.js"
-    },
-    "./toArray": {
-      "import": "./dist/toArray.js",
-      "require": "./dist/cjs/toArray.js"
-    },
-    "./toDate": {
-      "import": "./dist/toDate.js",
-      "require": "./dist/cjs/toDate.js"
-    },
-    "./trimEnd": {
-      "import": "./dist/trimEnd.js",
-      "require": "./dist/cjs/trimEnd.js"
-    },
-    "./watch": {
-      "import": "./dist/watch.js",
-      "require": "./dist/cjs/watch.js"
-    },
-    "./wrapList": {
-      "import": "./dist/wrapList.js",
-      "require": "./dist/cjs/wrapList.js"
-    },
-    "./write": {
-      "import": "./dist/write.js",
-      "require": "./dist/cjs/write.js"
-    },
-    "./zip": {
-      "import": "./dist/zip.js",
-      "require": "./dist/cjs/zip.js"
-    }
+    ".": "./dist/index.js",
+    "./argv": "./dist/argv.js",
+    "./at": "./dist/at.js",
+    "./backup": "./dist/backup.js",
+    "./clean": "./dist/clean.js",
+    "./copy": "./dist/copy.js",
+    "./download": "./dist/download.js",
+    "./echo": "./dist/echo.js",
+    "./exec": "./dist/exec.js",
+    "./findIndex": "./dist/findIndex.js",
+    "./flatten": "./dist/flatten.js",
+    "./getBasename": "./dist/getBasename.js",
+    "./getDirname": "./dist/getDirname.js",
+    "./getExtname": "./dist/getExtname.js",
+    "./getFilename": "./dist/getFilename.js",
+    "./getName": "./dist/getName.js",
+    "./glob": "./dist/glob.js",
+    "./home": "./dist/home.js",
+    "./isExist": "./dist/isExist.js",
+    "./isSame": "./dist/isSame.js",
+    "./mkdir": "./dist/mkdir.js",
+    "./move": "./dist/move.js",
+    "./normalizePath": "./dist/normalizePath.js",
+    "./os": "./dist/os.js",
+    "./prompt": "./dist/prompt.js",
+    "./read": "./dist/read.js",
+    "./recover": "./dist/recover.js",
+    "./remove": "./dist/remove.js",
+    "./rename": "./dist/rename.js",
+    "./root": "./dist/root.js",
+    "./run": "./dist/run.js",
+    "./runConcurrent": "./dist/runConcurrent.js",
+    "./sleep": "./dist/sleep.js",
+    "./stat": "./dist/stat.js",
+    "./toArray": "./dist/toArray.js",
+    "./toDate": "./dist/toDate.js",
+    "./trimEnd": "./dist/trimEnd.js",
+    "./watch": "./dist/watch.js",
+    "./wrapList": "./dist/wrapList.js",
+    "./write": "./dist/write.js",
+    "./zip": "./dist/zip.js"
   },
   "files": [
     "dist/**"
@@ -218,7 +92,6 @@
   ],
   "license": "MIT",
   "main": "./dist/index.js",
-  "module": "./dist/cjs/index.js",
   "name": "fire-keeper",
   "repository": {
     "type": "git",

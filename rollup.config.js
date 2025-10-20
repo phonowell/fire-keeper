@@ -1,11 +1,10 @@
-import { readFileSync } from "fs"
+import { readFileSync } from "fs";
 
-import commonjs from "@rollup/plugin-commonjs"
-import resolve from "@rollup/plugin-node-resolve"
-import autoExternal from "rollup-plugin-auto-external"
-import typescript from "rollup-plugin-ts"
+import typescript from "@rollup/plugin-typescript";
+import resolve from "@rollup/plugin-node-resolve";
+import autoExternal from "rollup-plugin-auto-external";
 
-const pkg = JSON.parse(readFileSync("./package.json").toString())
+const pkg = JSON.parse(readFileSync("./package.json").toString());
 
 const input = {
   argv: 'src/argv.ts',
@@ -49,58 +48,30 @@ const input = {
   write: 'src/write.ts',
   zip: 'src/zip.ts',
   index: 'src/index.ts',
-}
-const config = [
-  {
-    input,
-    output: {
-      exports: "named",
-      dir: "dist",
-      format: "esm",
-      preserveModules: true,
-    },
-    external: [
-      /node_modules/,
-      ...Object.keys(pkg.dependencies ?? {}),
-      ...Object.keys(pkg.peerDependencies ?? {}),
-    ],
-    plugins: [
-      autoExternal(),
-      resolve({
-        extensions: [".ts", ".js"],
-      }),
-      typescript({
-        tsconfig: "./tsconfig.esm.json",
-        transpiler: "typescript",
-      }),
-      commonjs(),
-    ],
-  },
-  {
-    input,
-    output: {
-      exports: "named",
-      dir: "dist/cjs",
-      format: "cjs",
-      preserveModules: true,
-    },
-    external: [
-      /node_modules/,
-      ...Object.keys(pkg.dependencies ?? {}),
-      ...Object.keys(pkg.peerDependencies ?? {}),
-    ],
-    plugins: [
-      autoExternal(),
-      resolve({
-        extensions: [".ts", ".js"],
-      }),
-      typescript({
-        tsconfig: "./tsconfig.cjs.json",
-        transpiler: "typescript",
-      }),
-      commonjs(),
-    ],
-  },
-]
+};
 
-export default config
+const config = {
+  input,
+  output: {
+    exports: "named",
+    dir: "dist",
+    format: "esm",
+    preserveModules: true,
+  },
+  external: [
+    /node_modules/,
+    ...Object.keys(pkg.dependencies ?? {}),
+    ...Object.keys(pkg.peerDependencies ?? {}),
+  ],
+  plugins: [
+    autoExternal(),
+    typescript({
+      declaration: false,
+    }),
+    resolve({
+      extensions: [".ts", ".js"],
+    }),
+  ],
+};
+
+export default config;
