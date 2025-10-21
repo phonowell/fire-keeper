@@ -12,13 +12,9 @@ pnpm i fire-keeper
 ## 使用 | Usage
 
 ```typescript
-import { backup } from 'fire-keeper'
-await backup('./data.txt')
+import { backup } from "fire-keeper";
+await backup("./data.txt");
 ```
-
-## 文档 | Documentation
-
-- [TypeDoc](./docs/README.md)
 
 ## 许可证 | License
 

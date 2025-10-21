@@ -21,7 +21,8 @@ const stat = async (source: string): Promise<fs.Stats | null> => {
   }
 
   return new Promise((resolve, reject) => {
-    fs.stat(listSource[0], (err, stat) => {
+    const filePath = listSource.at(0) ?? ''
+    fs.stat(filePath, (err, stat) => {
       if (err) reject(err)
       else resolve(stat)
     })

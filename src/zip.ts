@@ -20,9 +20,9 @@ type Options = {
 type OptionsRequired = Required<Options>
 
 const getBase = (listSource: string[]): string => {
-  const [source] = listSource
-  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
-  return getDirname(source)
+  const source = listSource.at(0)
+  if (source?.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
+  return getDirname(source ?? '')
 }
 
 const toArray = (
@@ -32,7 +32,7 @@ const toArray = (
 ): [string[], string, OptionsRequired] => {
   const listSource = convertToArray(source).map(normalizePath)
   const pathTarget = normalizePath(
-    target || getDirname(listSource[0]).replace(/\*/g, ''),
+    target || getDirname(listSource.at(0) ?? '').replace(/\*/g, ''),
   )
 
   const [base, filename] =

@@ -32,7 +32,8 @@ describe('mkdir 单元测试', () => {
   })
 
   it('应正常创建单个目录', async () => {
-    const dir = tempDirs[0]
+    const dir = tempDirs.at(0)
+    if (!dir) return
     await mkdir(dir)
     expect(await isExist(dir)).toBe(true)
     expect(echo).toHaveBeenCalledWith(
@@ -42,10 +43,13 @@ describe('mkdir 单元测试', () => {
   })
 
   it('应正常创建多个目录', async () => {
-    const dirs = [tempDirs[1], tempDirs[2]]
+    const dir1 = tempDirs.at(1)
+    const dir2 = tempDirs.at(2)
+    if (!dir1 || !dir2) return
+    const dirs = [dir1, dir2]
     await mkdir(dirs)
-    expect(await isExist(dirs[0])).toBe(true)
-    expect(await isExist(dirs[1])).toBe(true)
+    expect(await isExist(dir1)).toBe(true)
+    expect(await isExist(dir2)).toBe(true)
     expect(echo).toHaveBeenCalledWith(
       'mkdir',
       expect.stringContaining('created'),
@@ -53,13 +57,15 @@ describe('mkdir 单元测试', () => {
   })
 
   it('应支持嵌套目录', async () => {
-    const nested = tempDirs[3]
+    const nested = tempDirs.at(3)
+    if (!nested) return
     await mkdir(nested)
     expect(await isExist(nested)).toBe(true)
   })
 
   it('应过滤空路径', async () => {
-    const valid = tempDirs[4]
+    const valid = tempDirs.at(4)
+    if (!valid) return
     await mkdir(['', valid])
     expect(await isExist(valid)).toBe(true)
   })

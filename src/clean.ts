@@ -21,7 +21,8 @@ const clean = async (source: string | string[]): Promise<void> => {
 
   await remove(source)
 
-  const dirname = getDirname(listSource[0])
+  // TypeScript knows listSource.length > 0 here, but noUncheckedIndexedAccess still requires explicit handling
+  const dirname = getDirname(listSource.at(0) ?? '')
   const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
 
   if (remainingFiles.length > 0) return

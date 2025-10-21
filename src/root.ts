@@ -21,12 +21,13 @@ const root = () => {
   if (parts.some((p) => p === '.' || p === '..'))
     throw new Error('Invalid path: contains relative path components')
 
-  const isWindowsDrivePath = parts.length > 0 && parts[0].match(/^[A-Za-z]:$/)
+  const firstPart = parts.at(0)
+  const isWindowsDrivePath = parts.length > 0 && firstPart?.match(/^[A-Za-z]:$/)
 
   if (isWindowsDrivePath) {
     return parts.length === 1
-      ? `${parts[0]}/`
-      : `${parts[0]}/${parts.slice(1).join('/')}`
+      ? `${firstPart}/`
+      : `${firstPart}/${parts.slice(1).join('/')}`
   }
 
   // Unix path handling - preserve leading slash if original path was absolute

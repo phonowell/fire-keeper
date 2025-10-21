@@ -51,7 +51,7 @@ describe('glob', () => {
   it('只匹配文件', async () => {
     const result = await glob(`${TEMP_DIR}/subdir/*.ts`, { onlyFiles: true })
     expect(result.length).toBe(1)
-    expect(result[0].endsWith('file1.ts')).toBe(true)
+    expect(result.at(0)?.endsWith('file1.ts')).toBe(true)
   })
 
   it('只匹配目录', async () => {
@@ -83,7 +83,7 @@ describe('glob', () => {
     expect((await glob('not_exist_dir/*')).length).toBe(0)
     const result = await glob(`${TEMP_DIR}/subdir/*[a-z]*.ts`)
     expect(result.length).toBe(1)
-    expect(result[0].endsWith('file1.ts')).toBe(true)
+    expect(result.at(0)?.endsWith('file1.ts')).toBe(true)
   })
 
   it('options 组合', async () => {

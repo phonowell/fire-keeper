@@ -34,7 +34,8 @@ describe('at', () => {
   it('嵌套结构与混合路径', () => {
     const data = [{ x: { y: 1 } }, { x: { y: 2 } }]
     expect(at(data, 0)).toEqual({ x: { y: 1 } })
-    expect(at(data[1], 'x', 'y')).toBe(2)
+    const secondItem = data.at(1)
+    if (secondItem) expect(at(secondItem, 'x', 'y')).toBe(2)
     expect(at(data, 2)).toBeUndefined()
     const obj = { a: [{ b: { c: 9 } }, { b: { c: 10 } }] }
     expect(at(obj, 'a.0.b.c')).toBe(9)
@@ -62,8 +63,10 @@ describe('at', () => {
 
   it('数组嵌套对象与数字字符串键', () => {
     const arr = [{ a: 1 }, { a: 2 }]
-    expect(at(arr[0], 'a')).toBe(1)
-    expect(at(arr[1], 'a')).toBe(2)
+    const first = arr.at(0)
+    if (first) expect(at(first, 'a')).toBe(1)
+    const second = arr.at(1)
+    if (second) expect(at(second, 'a')).toBe(2)
     const obj = { '0': 'a', '1': 'b' }
     expect(at(obj, '0')).toBe('a')
     expect(at(obj, '1')).toBe('b')
