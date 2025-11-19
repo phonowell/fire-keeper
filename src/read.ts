@@ -62,13 +62,13 @@ const read = async <
   const listSource = await glob(src)
 
   if (!listSource.length) {
-    echo('read', `'${source}' not existed`)
+    echo('read', `**${source}** not existed`)
     return undefined
   }
 
   src = listSource[0] as S
   const content = await fse.readFile(src)
-  echo('read', `read '${source}'`)
+  echo('read', `read **${source}**`)
 
   if (options?.raw) return content as Result<T, S, R>
 

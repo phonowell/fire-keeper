@@ -12,7 +12,7 @@ const sleep = async (delay: number = 0): Promise<void> => {
 
   await new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-  if (ms > 0) echo('sleep', `slept '${ms} ms'`)
+  if (ms > 0) echo('sleep', `slept **${ms} ms**`)
 }
 
 export default sleep

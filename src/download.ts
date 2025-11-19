@@ -43,7 +43,7 @@ const download = async (
 
   echo(
     'download',
-    `downloaded '${url}' to '${normalizedDir}', as '${filename}'`,
+    `downloaded **${url}** to **${normalizedDir}**, as **${filename}**`,
   )
 }
 

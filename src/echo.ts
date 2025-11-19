@@ -95,8 +95,8 @@ const render = (type: string, message: string): string =>
 
 const renderContent = (input: string): string =>
   renderPath(input)
-    // 'xxx'
-    .replace(/'.*?'/g, (text) => kleur.magenta(text.replace(/'/g, '') || "''"))
+    // **xxx**
+    .replace(/\*\*.*?\*\*/g, (text) => kleur.magenta(text.slice(2, -2)))
 
 const renderPath = (input: string): string =>
   input.replace(regRoot, '.').replace(regHome, '~')

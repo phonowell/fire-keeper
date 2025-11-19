@@ -23,7 +23,7 @@ const rename = async (source: string, target: string) => {
     }),
   )
 
-  echo('rename', `renamed '${source}' as '${target}'`)
+  echo('rename', `renamed **${source}** as **${target}**`)
 }
 
 export default rename

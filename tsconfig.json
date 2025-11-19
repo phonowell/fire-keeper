@@ -17,6 +17,9 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "removeComments": false,
     "resolveJsonModule": true,
     "sourceMap": false,

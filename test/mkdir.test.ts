@@ -1,12 +1,12 @@
-import isExist from 'src/isExist.js'
-import remove from 'src/remove.js'
+import isExist from '@/isExist.js'
+import remove from '@/remove.js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import echo from '../src/echo.js'
-import mkdir from '../src/mkdir.js'
+import echo from '@/echo.js'
+import mkdir from '@/mkdir.js'
 
 // 只 mock echo，其他均用真实依赖
-vi.mock('../src/echo.js')
+vi.mock('@/echo.js')
 
 const TEMP_DIR = `./temp/mkdir`
 const tempDirs = [

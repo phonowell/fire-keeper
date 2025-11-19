@@ -24,7 +24,7 @@ describe('sleep', () => {
     const elapsed = Date.now() - start
     expect(elapsed).toBeGreaterThanOrEqual(45)
     expect(logSpy).toHaveBeenCalled()
-    expect(logSpy.mock.calls.at(0)?.at(0)).toContain('slept 50 ms')
+    expect(logSpy.mock.calls.at(0)?.at(0)).toContain("slept 50 ms")
     logSpy.mockRestore()
   })
 
@@ -47,7 +47,7 @@ describe('sleep', () => {
     const elapsed = Date.now() - start
     expect(elapsed).toBeGreaterThanOrEqual(20)
     expect(logSpy).toHaveBeenCalled()
-    expect(logSpy.mock.calls.at(0)?.at(0)).toContain('slept 25.5 ms')
+    expect(logSpy.mock.calls.at(0)?.at(0)).toContain("slept 25.5 ms")
     logSpy.mockRestore()
   })
 
