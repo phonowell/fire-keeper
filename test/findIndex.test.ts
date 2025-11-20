@@ -66,37 +66,11 @@ describe('findIndex', () => {
     expect(findIndex(bigArr, (x) => x === 9999)).toBe(9999)
   })
 
-  it('Symbol、BigInt、布尔、字符串、嵌套数组、函数、元组', () => {
-    const s1 = Symbol('a')
-    const s2 = Symbol('b')
-    expect(findIndex([s1, s2], (x) => x === s2)).toBe(1)
-    expect(findIndex([s1, s2], (x) => typeof x === 'symbol')).toBe(0)
-
-    const bigs = [BigInt(1), BigInt(2), BigInt(3)]
-    expect(findIndex(bigs, (x) => x === BigInt(2))).toBe(1)
-    expect(findIndex(bigs, (x) => typeof x === 'bigint')).toBe(0)
-
-    expect(findIndex([true, false], (x) => x === false)).toBe(1)
+  it('字符串和嵌套数组', () => {
     expect(findIndex(['a', 'b', 'c'], (x) => x === 'b')).toBe(1)
 
     const arr = [[1], [2, 3], [4]]
     expect(findIndex(arr, (x) => Array.isArray(x) && x.includes(3))).toBe(1)
-
-    const fn1 = () => 1
-    const fn2 = () => 2
-    expect(findIndex([fn1, fn2], (x) => x === fn2)).toBe(1)
-    expect(findIndex([fn1, fn2], (x) => typeof x === 'function')).toBe(0)
-
-    const tuple: [number, string, boolean] = [1, 'a', true]
-    expect(findIndex(tuple, (x) => typeof x === 'string')).toBe(1)
-    expect(findIndex(tuple, (x) => typeof x === 'boolean')).toBe(2)
-  })
-
-  it('泛型推断', () => {
-    const testGeneric = <T>(arr: T[], pred: (v: T) => boolean) =>
-      findIndex(arr, pred)
-    expect(testGeneric<number>([1, 2, 3], (x) => x === 3)).toBe(2)
-    expect(testGeneric<string>(['a', 'b'], (x) => x === 'b')).toBe(1)
   })
 
   it('谓词抛出异常应正确传递', () => {

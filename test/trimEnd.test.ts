@@ -22,10 +22,6 @@ describe('trimEnd', () => {
     expect(trimEnd('bar^^^', '^')).toBe('bar')
     expect(trimEnd('baz[]', '[]')).toBe('baz')
     expect(trimEnd('qux$^', '$^')).toBe('qux')
-    // emoji 作为 chars 时，JS 正则 [] 不能正确逐个去除高码点字符，实际不会被去除
-    expect(trimEnd('emoji😊😊', '😊')).toBe('emoji😊😊')
-    expect(trimEnd('😊😊😊', '😊')).toBe('😊😊😊')
-    expect(trimEnd('abc😊', '😊')).toBe('abc😊')
     // 多字符 chars 部分匹配，只有末尾全为 chars 中字符才会被去除
     expect(trimEnd('foobar', 'ab')).toBe('foobar')
     expect(trimEnd('foobar', 'ba')).toBe('foobar')

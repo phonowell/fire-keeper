@@ -35,6 +35,80 @@
 3. 执行 `pnpm build`，自动重写 `src/index.ts`、`package.json exports`、`rollup.config.js` 输入，不要手动改这些生成段。
 4. 确认新模块已出现在 `package.json` 的 `exports` 中并通过测试。
 
+## 测试规范
+
+> **强制要求**：任何代码修改（新增、更新、重构）都必须同步检查并更新对应测试用例。修改代码而不更新测试是不可接受的。
+
+### 测试原则
+
+- **只做单元测试**：测试单个模块的功能，不测试模块间集成或端到端场景。
+- **不测试第三方库**：不测试 `yargs`、`fast-glob`、`fs-extra`、`path` 等第三方库的功能，只测试项目对它们的封装逻辑。
+- **不测试 JS 原生行为**：不测试 JavaScript 类型系统（Symbol、BigInt 等）、Date 解析、正则表达式等原生行为，只测试项目的业务逻辑。
+- **只测试项目代码本身**：测试用例必须聚焦于项目封装的功能、输入验证、错误处理、跨平台兼容性等。
+
+### 测试内容
+
+**应该测试**：
+
+- 项目封装的业务逻辑（如 `backup` 生成 `.bak` 文件、`copy` 自动生成 `.copy` 后缀）
+- 输入参数验证（如空字符串抛异常、数组参数支持）
+- 错误处理逻辑（如文件不存在时的行为、权限错误处理）
+- 项目特有的功能（如 `glob` 返回的 `ListSource` 类型、`echo` 的路径简化）
+- 跨平台兼容性（如 Windows 路径转换、~/.前缀处理）
+- 并发控制、防抖等项目封装的机制
+
+**不应该测试**：
+
+- 第三方库的基本功能（如 `path.basename` 的详细行为、`fast-glob` 的各种选项）
+- JavaScript 原生类型系统（如各种类型转换、Symbol/BigInt 行为）
+- 操作系统命令的输出（如 `exec` 测试 `ls` 命令的结果）
+- 时间精度（如 `sleep` 测试精确的延迟毫秒数）
+- Node.js API 的异常行为（如 `os.homedir()` 返回 undefined）
+
+### 测试结构
+
+```typescript
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
+import myFunction from "../src/myFunction.js";
+
+describe("myFunction", () => {
+  beforeEach(async () => {
+    // 测试前准备：创建临时目录等
+  });
+
+  afterEach(async () => {
+    // 测试后清理：删除临时文件等
+  });
+
+  it("应正确处理基本功能", () => {
+    // 测试项目的核心功能
+  });
+
+  it("应处理空输入", () => {
+    // 测试边界情况
+  });
+
+  it("应正确处理错误", () => {
+    // 测试错误处理逻辑
+  });
+});
+```
+
+### 测试文件命名
+
+- 测试文件与源文件一一对应：`src/backup.ts` → `test/backup.test.ts`
+- 测试临时文件统一放在 `temp/<模块名>/` 目录下
+- 使用 `beforeEach` 创建临时目录，`afterEach` 清理
+
+### 代码修改时的测试检查清单
+
+✅ 新增功能：添加对应测试用例
+✅ 修改功能：更新相关测试用例
+✅ 重构代码：确保测试仍然通过
+✅ 修复 Bug：添加回归测试用例
+✅ 删除功能：删除对应测试用例
+✅ 运行测试：`pnpm test` 确保全部通过
+
 ## 任务系统（`task/`）
 
 - 入口：`task/index.ts` 使用 `glob(['./task/**/*.js','./task/**/*.ts'])` 动态发现任务 + 交互选择（内部 `prompt()` 包装）。
@@ -135,6 +209,9 @@ export default myFunction;
 - 数组索引访问不检查 `undefined`（因 `noUncheckedIndexedAccess` 启用）。
 - 测试编写假定并行导致状态污染（Vitest 配置为串行执行）。
 - 在 `echo` 输出中使用绝对路径（应该让 `echo` 自动简化为 `.` 或 `~`）。
+- **修改代码后忘记更新测试**（强制要求：代码改动必须同步更新测试用例）。
+- **测试第三方库功能**（如测试 `yargs` 解析、`path.basename` 详细行为，应只测试项目封装）。
+- **测试 JavaScript 原生行为**（如测试 Symbol、BigInt、Date 原生解析，应只测试项目业务逻辑）。
 
 ## ESLint 规则要点
 
@@ -160,4 +237,4 @@ export default myFunction;
 
 ---
 
-**文档最后更新**：项目当前提供 40 个工具模块（见 `package.json.exports`），覆盖文件操作、路径处理、系统执行、CLI 交互、数据处理五大类。
+**文档最后更新**：项目当前提供 40 个工具模块（见 `package.json.exports`），覆盖文件操作、路径处理、系统执行、CLI 交互、数据处理五大类。测试规范已优化，从 274 个测试用例精简至 216 个，聚焦于项目代码本身的单元测试。

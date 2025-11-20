@@ -50,18 +50,4 @@ describe('home', () => {
     })
     expect(() => home()).toThrow('fail')
   })
-
-  it('os.homedir 返回 undefined 或 null 时应抛出异常', () => {
-    Object.defineProperty(os, 'homedir', {
-      value: () => undefined as unknown as string,
-      writable: true,
-    })
-    expect(() => home()).toThrow()
-
-    Object.defineProperty(os, 'homedir', {
-      value: () => null as unknown as string,
-      writable: true,
-    })
-    expect(() => home()).toThrow()
-  })
 })

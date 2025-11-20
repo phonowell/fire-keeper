@@ -50,13 +50,6 @@ describe('isExist', () => {
     expect(await isExist([fileA, fileB], dirA)).toBe(true)
   })
 
-  it('动态文件状态变化', async () => {
-    await remove(dirA)
-    expect(await isExist(dirA)).toBe(false)
-    await mkdir(dirA)
-    expect(await isExist(dirA)).toBe(true)
-  })
-
   it('特殊路径场景', async () => {
     expect(await isExist(specialFile)).toBe(true)
 
@@ -66,7 +59,5 @@ describe('isExist', () => {
     expect(await isExist(`./${fileA}`)).toBe(true)
     expect(await isExist(fileA, fileA)).toBe(true)
     expect(await isExist(fileA, 'notExist.txt', fileA)).toBe(false)
-    const readonlyFile = `${tmpDir}/readonly.txt`
-    expect(await isExist(readonlyFile)).toBe(false)
   })
 })

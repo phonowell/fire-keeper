@@ -36,33 +36,7 @@ describe('toArray', () => {
     expect(toArray(false)).toEqual([false])
   })
 
-  it('应处理 Symbol', () => {
-    const sym = Symbol('s')
-    expect(toArray(sym)).toEqual([sym])
-  })
-
-  it('应处理 BigInt', () => {
-    expect(toArray(BigInt(10))).toEqual([BigInt(10)])
-  })
-
-  it('应处理函数', () => {
-    const fn = () => 1
-    expect(toArray(fn)).toEqual([fn])
-  })
-
   it('应处理嵌套数组', () => {
     expect(toArray([[1, 2]])).toEqual([[1, 2]])
-  })
-
-  it('类型推断应正确', () => {
-    const _numArr = toArray(1)
-    type NumArrType = typeof _numArr
-    const assertNumArr: NumArrType = [1]
-    expect(assertNumArr).toEqual([1])
-
-    const _strArr = toArray(['a', 'b'])
-    type StrArrType = typeof _strArr
-    const assertStrArr: StrArrType = ['a', 'b']
-    expect(assertStrArr).toEqual(['a', 'b'])
   })
 })

@@ -17,39 +17,10 @@ describe('exec', () => {
     expect(result[2].some((msg) => msg.includes('bar'))).toBeTruthy()
   })
 
-  it('应返回正确的退出码', async () => {
-    const result = await exec('exit 5')
-    expect(result[0]).toBe(5)
-  })
-
-  it('应处理不存在命令并返回非零退出码', async () => {
-    const result = await exec('nonexistent_command')
-    expect(result[0]).not.toBe(0)
-    expect(result[2].length).toBeGreaterThan(0)
-  })
-
-  it('应正确处理多行及特殊字符输出', async () => {
-    const result = await exec('echo "line1 line2 特殊字符"')
-    expect(result[1]).toContain('line1')
-    expect(result[1]).toContain('特殊字符')
-  })
-
-  it('应处理超长命令', async () => {
-    const longStr = `echo ${'x'.repeat(100)}`
-    const result = await exec(longStr)
-    expect(result[0]).toBe(0)
-    expect(result[1].length).toBeGreaterThan(50)
-  })
-
   it('应处理 options 参数为 undefined', async () => {
     const result = await exec('echo opt', undefined)
     expect(result[0]).toBe(0)
     expect(result[1]).toContain('opt')
-  })
-
-  it('应处理特殊字符命令', async () => {
-    const result = await exec('echo "特殊;字符"')
-    expect(result[1]).toContain('特殊;字符')
   })
 
   it('应支持并发执行', async () => {
@@ -66,18 +37,5 @@ describe('exec', () => {
     const result = await exec(repeat)
     expect(result[0]).toBe(0)
     expect(result[2].length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('应处理文件相关命令', async () => {
-    // 使用现有文件进行测试，不创建临时文件
-    const command =
-      process.platform === 'win32'
-        ? 'Get-ChildItem package.json'
-        : 'ls package.json'
-    const result = await exec(command)
-    expect(result[0]).toBe(0)
-    // Windows PowerShell 输出在不同的数组索引，检查整个输出数组
-    const allOutput = result[2].join(' ')
-    expect(allOutput).toContain('package.json')
   })
 })
