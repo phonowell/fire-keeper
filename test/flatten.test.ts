@@ -40,7 +40,6 @@ describe('flatten', () => {
     expect(flatten(arr2)).toEqual([undefined, null, undefined])
   })
 
-
   it('路径字符串数组展开', () => {
     const files = ['./package.json', ['./README.md', ['./tsconfig.json']]]
     const flat = flatten(files)

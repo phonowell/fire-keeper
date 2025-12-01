@@ -2,8 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import getName from '../src/getName.js'
 
-import type { GetNameResult } from '../src/getName.js'
-
 describe('getName', () => {
   it('应正确解析常规文件路径', () => {
     expect(getName('path/to/file.txt')).toEqual({

@@ -1,9 +1,9 @@
-import isExist from '@/isExist.js'
-import remove from '@/remove.js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import echo from '@/echo.js'
+import isExist from '@/isExist.js'
 import mkdir from '@/mkdir.js'
+import remove from '@/remove.js'
 
 // 只 mock echo，其他均用真实依赖
 vi.mock('@/echo.js')

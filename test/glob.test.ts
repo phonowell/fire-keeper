@@ -1,5 +1,3 @@
-import path from 'path'
-
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import glob from '../src/glob.js'

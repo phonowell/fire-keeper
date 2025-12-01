@@ -108,7 +108,10 @@ const zip = async (
 
   const optionStr =
     typeof option === 'object' ? JSON.stringify(option) : String(option)
-  echo('zip', `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`)
+  echo(
+    'zip',
+    `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`,
+  )
 }
 
 export default zip

@@ -267,7 +267,7 @@ const getCache = async <T, U>(
   if (!cache) return undefined
 
   const data = at(cache, id)
-  if (!data || type !== data.type) return undefined
+  if (type !== data?.type) return undefined
 
   return data.value as T
 }
