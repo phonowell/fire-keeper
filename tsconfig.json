@@ -36,7 +36,7 @@
     "rollup.config.js",
     "vitest.config.ts",
     "src/**/*",
-    "task/**/*",
+    "tasks/**/*",
     "test/**/*"
   ]
 }

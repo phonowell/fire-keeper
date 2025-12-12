@@ -12,8 +12,8 @@ __generated__
 junit.xml
 
 # TypeScript compiled outputs (tsx cache)
-/task/*.js
-/task/*.d.ts
+/tasks/*.js
+/tasks/*.d.ts
 /test/*.js
 /test/*.d.ts
 vitest.config.js

@@ -72,7 +72,7 @@ const myFunction = async (source: string | string[], { concurrency = 5 }: Option
 
 ### 任务系统
 
-入口 `task/index.ts` 动态发现 · 命名 `subdir@file` → 执行重排 `file/subdir` · 构建流程：测试失败退出 → 重写配置 → 打包
+入口 `tasks/index.ts` 动态发现 · 命名 `subdir@file` → 执行重排 `file/subdir` · 构建流程：测试失败退出 → 重写配置 → 打包
 
 ### ESLint 规则
 
