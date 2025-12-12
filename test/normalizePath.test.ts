@@ -66,4 +66,25 @@ describe('normalizePath', () => {
     const result = normalizePath('!')
     expect(result.startsWith('!')).toBe(true)
   })
+
+  it('应处理以点开头的隐藏文件', () => {
+    const result = normalizePath('.gitignore')
+    const rootDir = root()
+    expect(result).toBe(`${rootDir}/.gitignore`)
+    expect(result.endsWith('/.gitignore')).toBe(true)
+  })
+
+  it('应处理以点开头的隐藏目录', () => {
+    const result = normalizePath('.claude')
+    const rootDir = root()
+    expect(result).toBe(`${rootDir}/.claude`)
+    expect(result.endsWith('/.claude')).toBe(true)
+  })
+
+  it('应处理以点开头的隐藏目录下的路径', () => {
+    const result = normalizePath('.claude/skills')
+    const rootDir = root()
+    expect(result).toBe(`${rootDir}/.claude/skills`)
+    expect(result.endsWith('/.claude/skills')).toBe(true)
+  })
 })

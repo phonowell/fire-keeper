@@ -1,4 +1,4 @@
-import { glob, read, write } from 'fire-keeper'
+import { glob, read, write } from '../src/index.js'
 
 const main = async () => {
   const listSource = await glob(['./src/**/*.ts'])

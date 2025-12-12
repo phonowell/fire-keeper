@@ -52,7 +52,7 @@ const execute = async (
   options: OptionsRequired,
 ) => {
   const { base, filename } = options
-  const listResource = await glob(listSource)
+  const listResource = await glob(listSource, { onlyFiles: true })
 
   return new Promise<void>((resolve, reject) => {
     const output = fs.createWriteStream(`${target}/${filename}`)

@@ -59,7 +59,7 @@ const read = async <
   options?: Options,
 ): Promise<Result<T, S, R> | undefined> => {
   let src = source
-  const listSource = await glob(src)
+  const listSource = await glob(src, { onlyFiles: true })
 
   if (!listSource.length) {
     echo('read', `**${source}** not existed`)

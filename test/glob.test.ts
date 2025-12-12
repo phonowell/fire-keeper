@@ -49,4 +49,41 @@ describe('glob', () => {
     expect(result.length).toBe(1)
     expect(result.at(0)?.endsWith('file1.ts')).toBe(true)
   })
+
+  it('默认只匹配文件，不匹配目录', async () => {
+    const result = await glob(`${TEMP_DIR}/subdir`)
+    expect(result.length).toBe(0)
+  })
+
+  it('使用 onlyFiles: false 可以匹配目录', async () => {
+    const result = await glob(`${TEMP_DIR}/subdir`, { onlyFiles: false })
+    expect(result.length).toBe(1)
+    expect(result.at(0)?.endsWith('/subdir')).toBe(true)
+  })
+
+  it('能够匹配隐藏文件', async () => {
+    const result = await glob(`${TEMP_DIR}/.dotfile`)
+    expect(result.length).toBe(1)
+    expect(result.at(0)?.endsWith('.dotfile')).toBe(true)
+  })
+
+  it('能够匹配隐藏目录中的文件', async () => {
+    const result = await glob(`${TEMP_DIR}/subdir/.hidden`)
+    expect(result.length).toBe(1)
+    expect(result.at(0)?.endsWith('.hidden')).toBe(true)
+  })
+
+  it('使用 onlyFiles: false 可以匹配隐藏目录', async () => {
+    const result = await glob(`${TEMP_DIR}/subdir`, { onlyFiles: false })
+    expect(result.length).toBe(1)
+    expect(result.at(0)?.endsWith('/subdir')).toBe(true)
+  })
+
+  it('使用通配符匹配所有文件（包括隐藏文件）', async () => {
+    const result = await glob(`${TEMP_DIR}/**/*`)
+    expect(result.length).toBeGreaterThan(0)
+    expect(
+      result.some((p) => p.includes('.dotfile') || p.includes('.hidden')),
+    ).toBe(true)
+  })
 })

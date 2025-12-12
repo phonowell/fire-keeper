@@ -7,12 +7,13 @@ import unusedImports from "eslint-plugin-unused-imports"
 
 export default [{
   // 配置要忽略的文件和目录
-  // 包括: 生成的文件、构建产物、依赖包、压缩文件
+  // 包括: 生成的文件、构建产物、依赖包、压缩文件、类型声明文件
   ignores: [
     "src/__generated__",
     "**/dist/**",
     "**/node_modules/**",
-    "**/*.min.js"
+    "**/*.min.js",
+    "**/*.d.ts"
   ],
 }, {
   // 指定要检查的文件类型: TypeScript和TypeScript React文件

@@ -33,7 +33,7 @@ const copy = async (
   target?: Dirname,
   options?: Dirname | Options,
 ): Promise<void> => {
-  const listSource = await glob(source)
+  const listSource = await glob(source, { onlyFiles: true })
 
   if (!listSource.length) {
     echo('copy', `no files found matching ${wrapList(source)}`)

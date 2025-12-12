@@ -21,7 +21,8 @@ const normalizePath = (input: string) => {
   // replace . & ~
   result = result.replace(/\.{2}/g, '__parent_directory__')
 
-  if (result.startsWith('.')) result = result.replace(/\./u, root())
+  if (result.startsWith('./')) result = result.replace(/\.\//u, `${root()}/`)
+  else if (result.startsWith('.')) result = `${root()}/${result}`
   else if (result.startsWith('~')) result = result.replace(/~/u, home())
 
   result = result.replace(/__parent_directory__/g, '..')

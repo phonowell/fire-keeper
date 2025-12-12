@@ -11,6 +11,14 @@
 __generated__
 junit.xml
 
+# TypeScript compiled outputs (tsx cache)
+/task/*.js
+/task/*.d.ts
+/test/*.js
+/test/*.d.ts
+vitest.config.js
+vitest.config.d.ts
+
 # Environment & Config
 !.env.example
 .env
