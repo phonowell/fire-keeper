@@ -1,9 +1,8 @@
-import { watch } from '../src/index.js'
+import { glob } from '../src/index.js'
 
-const main = () => {
-  watch('./src', (file) => {
-    console.log(`File changed: ${file}`)
-  })
+const main = async () => {
+  const list = await glob('.claude/**/*')
+  console.log(list)
 }
 
 export default main

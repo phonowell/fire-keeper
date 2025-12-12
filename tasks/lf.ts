@@ -7,7 +7,7 @@ const main = async () => {
     './src/**/*.js',
     './src/**/*.ts',
     './src/**/*.tsx',
-    './task/*.ts',
+    './tasks/*.ts',
     './test/*.ts',
   ])
   for (const source of listSource) {
