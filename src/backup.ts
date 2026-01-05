@@ -22,7 +22,7 @@ const backup = async (
   const listSource = await glob(source, { onlyFiles: true })
 
   if (!listSource.length) {
-    echo('backup', `no files found matching ${wrapList(source)}`)
+    echo('backup', `no files found matching **${wrapList(source)}**`)
     return
   }
 
@@ -31,7 +31,7 @@ const backup = async (
     filename: (filename) => `${filename}.bak`,
   })
 
-  echo('backup', `backed up ${wrapList(source)}`)
+  echo('backup', `backed up **${wrapList(source)}**`)
 }
 
 export default backup

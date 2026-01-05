@@ -30,7 +30,7 @@ const mkdir = async (
     patterns.map((pattern) => () => fse.ensureDir(pattern)),
   )
 
-  echo('mkdir', `created ${wrapList(source)}`)
+  echo('mkdir', `created **${wrapList(source)}**`)
 }
 
 export default mkdir

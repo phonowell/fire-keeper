@@ -15,7 +15,7 @@ const clean = async (source: string | string[]): Promise<void> => {
   const listSource = await glob(source, { onlyFiles: false })
 
   if (!listSource.length) {
-    echo('clean', `no files found matching ${wrapList(source)}`)
+    echo('clean', `no files found matching **${wrapList(source)}**`)
     return
   }
 

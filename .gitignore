@@ -24,6 +24,7 @@ vitest.config.d.ts
 .env
 .env.*
 /.vscode
+.trae
 
 # System & Temp
 *.log

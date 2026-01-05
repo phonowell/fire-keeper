@@ -24,7 +24,7 @@ const remove = async (
   const listSource = await glob(source, { onlyFiles: false })
 
   if (!listSource.length) {
-    echo('remove', `no files found matching ${wrapList(source)}`)
+    echo('remove', `no files found matching **${wrapList(source)}**`)
     return
   }
 
@@ -33,7 +33,7 @@ const remove = async (
     listSource.map((src) => () => fse.remove(src)),
   )
 
-  echo('remove', `removed ${wrapList(source)}`)
+  echo('remove', `removed **${wrapList(source)}**`)
 }
 
 export default remove

@@ -53,11 +53,14 @@ const copy = async (
 
   // 输出信息
   const targetInfo =
-    target && typeof target === 'string' ? ` to '${target}'` : ''
+    target && typeof target === 'string' ? ` to **${target}**` : ''
   const optionsInfo =
-    options && typeof options === 'string' ? ` as '${options}'` : ''
+    options && typeof options === 'string' ? ` as **${options}**` : ''
 
-  echo('copy', `copied ${wrapList(source)}${targetInfo}${optionsInfo}`.trim())
+  echo(
+    'copy',
+    `copied **${wrapList(source)}**${targetInfo}${optionsInfo}`.trim(),
+  )
 }
 
 const child = async (

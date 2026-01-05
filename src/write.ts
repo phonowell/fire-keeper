@@ -51,7 +51,7 @@ const writeContent = async (
   options: fse.WriteFileOptions,
 ) => {
   await fse.outputFile(normalizePath(source), content, options)
-  echo('write', `wrote ${wrapList(source)}`)
+  echo('write', `wrote **${wrapList(source)}**`)
 }
 
 export default write

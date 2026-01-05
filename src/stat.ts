@@ -16,7 +16,7 @@ const stat = async (source: string): Promise<fs.Stats | null> => {
   const listSource = await glob(source, { onlyFiles: false })
 
   if (!listSource.length) {
-    echo('stat', `${wrapList(source)} not found`)
+    echo('stat', `**${wrapList(source)}** not found`)
     return null
   }
 

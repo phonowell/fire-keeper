@@ -29,7 +29,7 @@ const recover = async (
   )
 
   if (!listSource.length) {
-    echo('recover', `no files found matching ${wrapList(source)}`)
+    echo('recover', `no files found matching **${wrapList(source)}**`)
     return
   }
 
@@ -38,7 +38,7 @@ const recover = async (
     listSource.map((src) => () => child(src)),
   )
 
-  echo('recover', `recovered ${wrapList(source)}`)
+  echo('recover', `recovered **${wrapList(source)}**`)
 }
 
 const child = async (source: string) => {
