@@ -19,8 +19,9 @@ const runConcurrent = async <T>(
     while (currentIndex < tasks.length) {
       const index = currentIndex++
       const task = tasks.at(index)
+      if (!task) continue
       try {
-        if (task) results[index] = await task()
+        results[index] = await task()
       } catch (error) {
         errors.push(error as Error)
         if (options.stopOnError) throw error

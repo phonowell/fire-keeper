@@ -84,27 +84,37 @@ const child = async (
     filename: originalFilename,
   } = getName(source)
 
-  let filename: string
-  if (!options) {
-    filename =
-      dirname === fileSourceDirname
-        ? `${basename}.copy${extname}`
-        : originalFilename
-  } else if (typeof options === 'string') filename = options
-  else if (typeof options === 'function')
-    filename = await options(originalFilename)
-  else if (typeof options.filename === 'string') filename = options.filename
-  else if (typeof options.filename === 'function')
-    filename = await options.filename(originalFilename)
-  else {
-    filename =
-      dirname === fileSourceDirname
-        ? `${basename}.copy${extname}`
-        : originalFilename
+  const defaultFilename =
+    dirname === fileSourceDirname
+      ? `${basename}.copy${extname}`
+      : originalFilename
+
+  // 无 options
+  if (!options)
+    return fse.copy(source, normalizePath(`${dirname}/${defaultFilename}`))
+
+  // options 是字符串（目标文件名）
+  if (typeof options === 'string')
+    return fse.copy(source, normalizePath(`${dirname}/${options}`))
+
+  // options 是函数（异步文件名转换）
+  if (typeof options === 'function') {
+    const filename = await options(originalFilename)
+    return fse.copy(source, normalizePath(`${dirname}/${filename}`))
   }
 
-  // 执行复制
-  await fse.copy(source, normalizePath(`${dirname}/${filename}`))
+  // options 是对象，且 filename 是字符串
+  if (typeof options.filename === 'string')
+    return fse.copy(source, normalizePath(`${dirname}/${options.filename}`))
+
+  // options 是对象，且 filename 是函数
+  if (typeof options.filename === 'function') {
+    const filename = await options.filename(originalFilename)
+    return fse.copy(source, normalizePath(`${dirname}/${filename}`))
+  }
+
+  // options 是对象但无 filename（使用默认）
+  return fse.copy(source, normalizePath(`${dirname}/${defaultFilename}`))
 }
 
 export default copy

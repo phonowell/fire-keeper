@@ -281,7 +281,7 @@ const pickDefault = <T>(list: Choice<T>[], value: unknown = 0): number => {
 
   return Math.max(
     0,
-    findIndex(list, (it) => value === it.value),
+    findIndex(list, (it) => value === it?.value),
   )
 }
 

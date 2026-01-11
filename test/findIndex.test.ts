@@ -4,11 +4,11 @@ import findIndex from '../src/findIndex.js'
 
 describe('findIndex', () => {
   it('基本功能：返回第一个匹配项索引，未命中返回-1', () => {
-    expect(findIndex([1, 2, 3, 4], (x) => x > 2)).toBe(2)
+    expect(findIndex([1, 2, 3, 4], (x) => (x ?? 0) > 2)).toBe(2)
     expect(findIndex([1, 2, 3, 4], (x) => x === 1)).toBe(0)
     expect(findIndex([5], (x) => x === 5)).toBe(0)
     expect(findIndex([5], (x) => x === 1)).toBe(-1)
-    expect(findIndex([1, 2, 3], (x) => x > 5)).toBe(-1)
+    expect(findIndex([1, 2, 3], (x) => (x ?? 0) > 5)).toBe(-1)
     expect(findIndex([], () => true)).toBe(-1)
     expect(
       findIndex([undefined, null], (x) => typeof x === 'number' && x === 1),
@@ -18,12 +18,12 @@ describe('findIndex', () => {
   it('对象数组与类型守卫', () => {
     type User = { id: number }
     const users: User[] = [{ id: 1 }, { id: 2 }, { id: 3 }]
-    expect(findIndex(users, (u) => u.id === 2)).toBe(1)
-    expect(findIndex(users, (u) => u.id === 4)).toBe(-1)
+    expect(findIndex(users, (u) => u?.id === 2)).toBe(1)
+    expect(findIndex(users, (u) => u?.id === 4)).toBe(-1)
 
     type Item = { type: string }
     const items: Item[] = [{ type: 'a' }, { type: 'test' }]
-    const idx = findIndex(items, (x): x is Item => x.type === 'test')
+    const idx = findIndex(items, (x): x is Item => x?.type === 'test')
     expect(idx).toBe(1)
   })
 
@@ -54,8 +54,8 @@ describe('findIndex', () => {
       { a: 2, b: { c: 'x' } },
       { a: 3, b: { c: 'y' } },
     ]
-    expect(findIndex(arr, (x) => x.b?.c === 'y')).toBe(2)
-    expect(findIndex(arr, (x) => x.b?.c === 'z')).toBe(-1)
+    expect(findIndex(arr, (x) => x?.b?.c === 'y')).toBe(2)
+    expect(findIndex(arr, (x) => x?.b?.c === 'z')).toBe(-1)
 
     const nums = [NaN, Infinity, -Infinity, 0]
     expect(findIndex(nums, (x) => Number.isNaN(x))).toBe(0)

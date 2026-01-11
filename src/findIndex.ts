@@ -17,13 +17,13 @@
  */
 const findIndex = <T>(
   list: T[],
-  fn: (value: T, index: number, array: T[]) => boolean,
+  fn: (value: T | undefined, index: number, array: T[]) => boolean,
 ): number => {
   const safeCopy = [...list]
   for (let i = 0; i < list.length; i++) {
     // Always call fn for each index, even if element might be undefined in sparse arrays
     const item = list.at(i)
-    if (fn(item as T, i, safeCopy)) return i
+    if (fn(item, i, safeCopy)) return i
   }
 
   return -1

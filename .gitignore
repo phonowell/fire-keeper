@@ -32,3 +32,4 @@ vitest.config.d.ts
 *.tmp
 .DS_Store
 /temp
+nul

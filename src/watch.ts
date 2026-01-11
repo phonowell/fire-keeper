@@ -1,6 +1,7 @@
 import { watch as w } from 'chokidar'
 import { debounce } from 'radash'
 
+import echo from './echo.js'
 import normalizePath from './normalizePath.js'
 
 type Options = {
@@ -29,7 +30,10 @@ const watch = (
 
   const watcher = w(listSource)
   watcher.on('error', (error) => {
-    console.error('Error watching files:', error)
+    echo(
+      'watch',
+      `Error watching files: ${(error as unknown as Error).message}`,
+    )
   })
 
   EVENTS.forEach((event) => {

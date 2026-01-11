@@ -9,7 +9,7 @@ import getBasename from './getBasename.js'
 import getDirname from './getDirname.js'
 import glob from './glob.js'
 import normalizePath from './normalizePath.js'
-import convertToArray from './toArray.js'
+import toArray from './toArray.js'
 import wrapList from './wrapList.js'
 
 type Options = {
@@ -21,16 +21,17 @@ type OptionsRequired = Required<Options>
 
 const getBase = (listSource: string[]): string => {
   const source = listSource.at(0)
-  if (source?.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
-  return getDirname(source ?? '')
+  if (!source) throw new Error('No source provided for zip operation')
+  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
+  return getDirname(source)
 }
 
-const toArray = (
+const convertToArray = (
   source: string | string[],
   target: string,
   option: string | Options,
 ): [string[], string, OptionsRequired] => {
-  const listSource = convertToArray(source).map(normalizePath)
+  const listSource = toArray(source).map(normalizePath)
   const pathTarget = normalizePath(
     target || getDirname(listSource.at(0) ?? '').replace(/\*/g, ''),
   )
@@ -71,7 +72,7 @@ const execute = async (
         `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`,
       )
       const magenta = kleur.magenta(message)
-      console.log(`${gray} ${magenta}`)
+      console.log(`${gray} ${magenta}`) // 保持使用 console 而非 echo，以避免多余前缀
       message = ''
     })
 
@@ -104,7 +105,7 @@ const zip = async (
   target = '',
   option: string | Options = '',
 ) => {
-  await execute(...toArray(source, target, option))
+  await execute(...convertToArray(source, target, option))
 
   const optionStr =
     typeof option === 'object' ? JSON.stringify(option) : String(option)
