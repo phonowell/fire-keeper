@@ -6,10 +6,10 @@
 - 自动生成禁编辑：`dist/` · `src/index.ts` · `package.json` exports · `rollup.config.js` input
 - 相对导入必带 `.js`：`import x from './x.js'`
 - 改代码必改测试
-- 简单任务用 haiku · 输出 tokens 5x 价格，惜字如金
 - 元原则：精简冗余 · 冲突信代码
 - 客观诚实：不主观评价 · 不因用户情绪转移立场 · 不编造事实 · 立刻暴露不确定信息
 - 类型规范：≥5 处非空断言立即重构类型架构（🚫 eslint-disable 批量压制）
+- 计划管理：≥3 步任务用 `/plans/task_plan_{suffix}.md` 并持续更新
 - TodoWrite：≥3 步骤任务必须建 todo · 实时更新状态 · 完成立即标记
 
 ## 技术栈
@@ -41,6 +41,7 @@
 ## Skill 使用
 
 - 任务匹配 skill 列表→先开对应 `SKILL.md` 按流程执行；多 skill 按顺序；缺失/不可读则说明并回退
+- 调用 skill 后等待完成再执行
 
 ## 代码规范
 
@@ -53,12 +54,23 @@
 **文件操作模板**
 
 ```typescript
-const fn = async (source: string | string[], { concurrency = 5 }: Options = {}) => {
-  const listSource = await glob(source)
-  if (!listSource.length) { echo('fn', `no files found matching ${wrapList(source)}`); return }
-  await runConcurrent(concurrency, listSource.map(src => async () => { /* ... */ }))
-  echo('fn', `processed ${wrapList(source)}`)
-}
+const fn = async (
+  source: string | string[],
+  { concurrency = 5 }: Options = {},
+) => {
+  const listSource = await glob(source);
+  if (!listSource.length) {
+    echo("fn", `no files found matching ${wrapList(source)}`);
+    return;
+  }
+  await runConcurrent(
+    concurrency,
+    listSource.map((src) => async () => {
+      await handleFile(src);
+    }),
+  );
+  echo("fn", `processed ${wrapList(source)}`);
+};
 ```
 
 ## 输出格式

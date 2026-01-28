@@ -1,3 +1,5 @@
+import { lstat, symlink } from 'node:fs/promises'
+
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import isExist from '../src/isExist.js'
@@ -80,5 +82,25 @@ describe('remove', () => {
     expect(await isExist(dir)).toBe(true)
     await remove(dir)
     expect(await isExist(dir)).toBe(false)
+  })
+
+  it('应删除断链符号链接', async () => {
+    const link = tempFile('broken-link')
+    const target = tempFile('missing-target')
+
+    try {
+      await symlink(target, link)
+    } catch (error) {
+      const { code } = error as NodeJS.ErrnoException
+      if (code && ['EPERM', 'EACCES', 'ENOTSUP', 'EINVAL'].includes(code))
+        return
+      throw error
+    }
+
+    const stat = await lstat(link)
+    expect(stat.isSymbolicLink()).toBe(true)
+
+    await remove(link)
+    await expect(lstat(link)).rejects.toThrow()
   })
 })
