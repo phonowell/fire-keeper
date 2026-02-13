@@ -4,6 +4,10 @@ import echo from './echo.js'
 import glob from './glob.js'
 import wrapList from './wrapList.js'
 
+type Options = {
+  echo?: boolean
+}
+
 /**
  * Get file/directory status information
  * @param source - File path, directory path, or glob pattern
@@ -12,11 +16,15 @@ import wrapList from './wrapList.js'
  * const stats = await stat('file.txt')
  * if (stats?.isFile()) console.log(`Size: ${stats.size}`)
  */
-const stat = async (source: string): Promise<fs.Stats | null> => {
+const stat = async (
+  source: string,
+  { echo: shouldEcho = true }: Options = {},
+): Promise<fs.Stats | null> => {
   const listSource = await glob(source, { onlyFiles: false })
 
   if (!listSource.length) {
-    echo('stat', `**${wrapList(source)}** not found`)
+    if (shouldEcho) echo('stat', `**${wrapList(source)}** not found`)
+
     return null
   }
 

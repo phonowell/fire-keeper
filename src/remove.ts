@@ -9,6 +9,7 @@ import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number
+  echo?: boolean
 }
 
 const listDirectSources = async (source: string | string[]) => {
@@ -41,7 +42,7 @@ const listDirectSources = async (source: string | string[]) => {
  */
 const remove = async (
   source: string | string[],
-  { concurrency = 5 }: Options = {},
+  { concurrency = 5, echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   const listSource = await glob(source, {
     onlyFiles: false,
@@ -51,7 +52,9 @@ const remove = async (
   const targets = Array.from(new Set([...listSource, ...directSources]))
 
   if (!targets.length) {
-    echo('remove', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho)
+      echo('remove', `no files found matching **${wrapList(source)}**`)
+
     return
   }
 
@@ -60,7 +63,7 @@ const remove = async (
     targets.map((src) => () => fse.remove(src)),
   )
 
-  echo('remove', `removed **${wrapList(source)}**`)
+  if (shouldEcho) echo('remove', `removed **${wrapList(source)}**`)
 }
 
 export default remove

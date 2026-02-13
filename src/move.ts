@@ -5,6 +5,7 @@ type Dirname = string | ((dirname: string) => string | Promise<string>)
 
 type Options = {
   concurrency?: number
+  echo?: boolean
 }
 
 /**
@@ -19,10 +20,10 @@ type Options = {
 const move = async (
   source: string | string[],
   target: Dirname,
-  { concurrency = 5 }: Options = {},
+  { concurrency = 5, echo: shouldEcho = true }: Options = {},
 ) => {
-  await copy(source, target, { concurrency })
-  await remove(source, { concurrency })
+  await copy(source, target, { concurrency, echo: shouldEcho })
+  await remove(source, { concurrency, echo: shouldEcho })
 }
 
 export default move

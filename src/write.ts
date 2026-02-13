@@ -4,6 +4,10 @@ import echo from './echo.js'
 import normalizePath from './normalizePath.js'
 import wrapList from './wrapList.js'
 
+type EchoOption = {
+  echo?: boolean
+}
+
 /**
  * Write content to file with automatic type handling and path creation
  * @param source - File path (directories created if needed)
@@ -17,14 +21,20 @@ const write = async (
   source: string,
   content: unknown,
   options: fse.WriteFileOptions = {},
+  { echo: shouldEcho = true }: EchoOption = {},
 ): Promise<void> => {
   if (typeof content === 'string' || content instanceof Buffer) {
-    await writeContent(source, content, options)
+    await writeContent(source, content, options, shouldEcho)
     return
   }
 
   if (content instanceof ArrayBuffer || ArrayBuffer.isView(content)) {
-    await writeContent(source, new Uint8Array(content as ArrayBuffer), options)
+    await writeContent(
+      source,
+      new Uint8Array(content as ArrayBuffer),
+      options,
+      shouldEcho,
+    )
     return
   }
 
@@ -33,6 +43,7 @@ const write = async (
       source,
       new Uint8Array(await content.arrayBuffer()),
       options,
+      shouldEcho,
     )
     return
   }
@@ -42,16 +53,17 @@ const write = async (
       ? JSON.stringify(content)
       : String(content)
 
-  await writeContent(source, str, options)
+  await writeContent(source, str, options, shouldEcho)
 }
 
 const writeContent = async (
   source: string,
   content: Uint8Array | string,
   options: fse.WriteFileOptions,
+  shouldEcho: boolean,
 ) => {
   await fse.outputFile(normalizePath(source), content, options)
-  echo('write', `wrote **${wrapList(source)}**`)
+  if (shouldEcho) echo('write', `wrote **${wrapList(source)}**`)
 }
 
 export default write

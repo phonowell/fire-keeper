@@ -17,6 +17,10 @@ type Options = {
   filename?: string
 }
 
+type EchoOption = {
+  echo?: boolean
+}
+
 type OptionsRequired = Required<Options>
 
 const getBase = (listSource: string[]): string => {
@@ -104,15 +108,18 @@ const zip = async (
   source: string | string[],
   target = '',
   option: string | Options = '',
+  { echo: shouldEcho = true }: EchoOption = {},
 ) => {
   await execute(...convertToArray(source, target, option))
 
   const optionStr =
     typeof option === 'object' ? JSON.stringify(option) : String(option)
-  echo(
-    'zip',
-    `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`,
-  )
+  if (shouldEcho) {
+    echo(
+      'zip',
+      `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`,
+    )
+  }
 }
 
 export default zip

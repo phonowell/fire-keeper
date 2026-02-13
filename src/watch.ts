@@ -6,6 +6,7 @@ import normalizePath from './normalizePath.js'
 
 type Options = {
   debounce?: number
+  echo?: boolean
 }
 
 const EVENTS = ['change'] as const
@@ -23,17 +24,19 @@ const EVENTS = ['change'] as const
 const watch = (
   listSource: string | string[],
   callback: (path: string) => void,
-  { debounce: debounceMs = 1e3 }: Options = {},
+  { debounce: debounceMs = 1e3, echo: shouldEcho = true }: Options = {},
 ) => {
   const cb =
     debounceMs > 0 ? debounce({ delay: debounceMs }, callback) : callback
 
   const watcher = w(listSource)
   watcher.on('error', (error) => {
-    echo(
-      'watch',
-      `Error watching files: ${(error as unknown as Error).message}`,
-    )
+    if (shouldEcho) {
+      echo(
+        'watch',
+        `Error watching files: ${(error as unknown as Error).message}`,
+      )
+    }
   })
 
   EVENTS.forEach((event) => {

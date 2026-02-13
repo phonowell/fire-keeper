@@ -13,10 +13,15 @@ type Filename = string | ((filename: string) => string | Promise<string>)
 
 type Options = {
   concurrency?: number
+  echo?: boolean
   filename?: Filename
 }
 
 const DEFAULT_CONCURRENCY = 5
+
+type EchoOption = {
+  echo?: boolean
+}
 
 /**
  * Copy files with concurrent operations and flexible path handling
@@ -32,11 +37,19 @@ const copy = async (
   source: string | string[],
   target?: Dirname,
   options?: Dirname | Options,
+  { echo: parentEcho }: EchoOption = {},
 ): Promise<void> => {
   const listSource = await glob(source, { onlyFiles: true })
+  const shouldEcho =
+    (options && typeof options === 'object' && typeof options.echo === 'boolean'
+      ? options.echo
+      : undefined) ??
+    parentEcho ??
+    true
 
   if (!listSource.length) {
-    echo('copy', `no files found matching ${wrapList(source)}`)
+    if (shouldEcho) echo('copy', `no files found matching ${wrapList(source)}`)
+
     return
   }
 
@@ -57,10 +70,12 @@ const copy = async (
   const optionsInfo =
     options && typeof options === 'string' ? ` as **${options}**` : ''
 
-  echo(
-    'copy',
-    `copied **${wrapList(source)}**${targetInfo}${optionsInfo}`.trim(),
-  )
+  if (shouldEcho) {
+    echo(
+      'copy',
+      `copied **${wrapList(source)}**${targetInfo}${optionsInfo}`.trim(),
+    )
+  }
 }
 
 const child = async (

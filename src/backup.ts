@@ -5,6 +5,7 @@ import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number
+  echo?: boolean
 }
 
 /**
@@ -17,21 +18,24 @@ type Options = {
  */
 const backup = async (
   source: string | string[],
-  { concurrency = 5 }: Options = {},
+  { concurrency = 5, echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   const listSource = await glob(source, { onlyFiles: true })
 
   if (!listSource.length) {
-    echo('backup', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho)
+      echo('backup', `no files found matching **${wrapList(source)}**`)
+
     return
   }
 
   await copy(listSource, '', {
     concurrency,
+    echo: shouldEcho,
     filename: (filename) => `${filename}.bak`,
   })
 
-  echo('backup', `backed up **${wrapList(source)}**`)
+  if (shouldEcho) echo('backup', `backed up **${wrapList(source)}**`)
 }
 
 export default backup

@@ -8,6 +8,7 @@ import wrapList from './wrapList.js'
 
 type Options = {
   concurrency?: number
+  echo?: boolean
 }
 
 /**
@@ -20,7 +21,7 @@ type Options = {
  */
 const mkdir = async (
   source: string | string[],
-  { concurrency = 5 }: Options = {},
+  { concurrency = 5, echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   const patterns = toArray(source).map(normalizePath).filter(Boolean)
   if (!patterns.length) return
@@ -30,7 +31,7 @@ const mkdir = async (
     patterns.map((pattern) => () => fse.ensureDir(pattern)),
   )
 
-  echo('mkdir', `created **${wrapList(source)}**`)
+  if (shouldEcho) echo('mkdir', `created **${wrapList(source)}**`)
 }
 
 export default mkdir

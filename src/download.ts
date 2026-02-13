@@ -8,6 +8,10 @@ import echo from './echo.js'
 import getFilename from './getFilename.js'
 import normalizePath from './normalizePath.js'
 
+type Options = {
+  echo?: boolean
+}
+
 /**
  * Download file from URL with streaming support
  * @param url - Source URL to download from
@@ -21,6 +25,7 @@ const download = async (
   url: string,
   dir: string,
   filename = getFilename(url),
+  { echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   if (!url) throw new TypeError('download: url is required')
   if (!dir) throw new TypeError('download: dir is required')
@@ -41,10 +46,12 @@ const download = async (
     fse.createWriteStream(path.join(normalizedDir, filename)),
   )
 
-  echo(
-    'download',
-    `downloaded **${url}** to **${normalizedDir}**, as **${filename}**`,
-  )
+  if (shouldEcho) {
+    echo(
+      'download',
+      `downloaded **${url}** to **${normalizedDir}**, as **${filename}**`,
+    )
+  }
 }
 
 export default download

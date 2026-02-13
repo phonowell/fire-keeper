@@ -9,6 +9,7 @@ type ItemExtObject = '.json' | '.yaml' | '.yml'
 type ItemExtString = (typeof EXTNAMES)[number]
 
 type Options = {
+  echo?: boolean
   raw?: boolean
 }
 
@@ -58,17 +59,19 @@ const read = async <
   source: S,
   options?: Options,
 ): Promise<Result<T, S, R> | undefined> => {
+  const shouldEcho = options?.echo ?? true
   let src = source
   const listSource = await glob(src, { onlyFiles: true })
 
   if (!listSource.length) {
-    echo('read', `**${source}** not existed`)
+    if (shouldEcho) echo('read', `**${source}** not existed`)
+
     return undefined
   }
 
   src = listSource[0] as S
   const content = await fse.readFile(src)
-  echo('read', `read **${source}**`)
+  if (shouldEcho) echo('read', `read **${source}**`)
 
   if (options?.raw) return content as Result<T, S, R>
 

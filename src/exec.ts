@@ -6,6 +6,7 @@ import echo from './echo.js'
 import os from './os.js'
 
 type Options = {
+  echo?: boolean
   silent?: boolean
 }
 
@@ -29,7 +30,7 @@ const SEPARATOR = os() === 'windows' ? '; ' : '; '
  */
 const exec = (
   cmd: string | string[],
-  { silent = false }: Options = {},
+  { echo: shouldEcho = true, silent = false }: Options = {},
 ): Promise<Result> => {
   const stringCmd = cmd instanceof Array ? cmd.join(SEPARATOR) : cmd
 
@@ -45,7 +46,7 @@ const exec = (
         ]
       : ['/bin/sh', ['-c', stringCmd]]
 
-  if (!silent) echo('exec', stringCmd)
+  if (!silent && shouldEcho) echo('exec', stringCmd)
 
   return new Promise<Result>((resolve) => {
     const cacheAll: string[] = []

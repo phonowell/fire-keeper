@@ -9,6 +9,7 @@ import write from './write.js'
 
 type Options = {
   concurrency?: number
+  echo?: boolean
 }
 
 /**
@@ -21,7 +22,7 @@ type Options = {
  */
 const recover = async (
   source: string | string[],
-  { concurrency = 5 }: Options = {},
+  { concurrency = 5, echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   const listSource = await glob(
     toArray(source).map((src) => `${src}.bak`),
@@ -29,23 +30,25 @@ const recover = async (
   )
 
   if (!listSource.length) {
-    echo('recover', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho)
+      echo('recover', `no files found matching **${wrapList(source)}**`)
+
     return
   }
 
   await runConcurrent(
     concurrency,
-    listSource.map((src) => () => child(src)),
+    listSource.map((src) => () => child(src, shouldEcho)),
   )
 
-  echo('recover', `recovered **${wrapList(source)}**`)
+  if (shouldEcho) echo('recover', `recovered **${wrapList(source)}**`)
 }
 
-const child = async (source: string) => {
-  const content = await read(source)
+const child = async (source: string, shouldEcho: boolean) => {
+  const content = await read(source, { echo: shouldEcho })
   const targetPath = source.replace('.bak', '')
-  await write(targetPath, content)
-  await remove(source)
+  await write(targetPath, content, undefined, { echo: shouldEcho })
+  await remove(source, { echo: shouldEcho })
 }
 
 export default recover
