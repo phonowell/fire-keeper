@@ -42,6 +42,39 @@ await fk.copy("./src", "./dist"); // 复制文件夹
 await fk.remove("./temp"); // 删除文件夹
 ```
 
+## LLM Friendly Summary | LLM 友好摘要
+
+**EN:** Fire Keeper is a pure ESM Node.js/TypeScript filesystem automation toolkit for backup, copy, remove, glob, watch, and concurrent workflows.
+**ZH:** Fire Keeper 是一个纯 ESM 的 Node.js/TypeScript 文件系统自动化工具库，提供备份、复制、删除、匹配、监听与并发执行能力。
+
+### Quickstart | 快速开始
+
+```bash
+pnpm i fire-keeper
+node --input-type=module -e "import backup from 'fire-keeper/backup.js'; await backup('./config.json')"
+```
+
+### Key Capabilities | 核心能力
+
+- EN: file backup/copy/remove; path matching/normalization; concurrent task execution
+- ZH: 文件备份复制删除；路径匹配与规范化；并发任务执行
+
+### Typical Use Cases | 典型场景
+
+- EN: automate build/deploy file pipelines
+- ZH: 自动化构建与部署文件流程
+
+### Keywords | 关键词
+
+- EN: nodejs, typescript, filesystem, file-operations, automation, esm, cli, glob, file-watcher, concurrency
+- ZH: Node.js, TypeScript, 文件系统, 文件操作, 自动化, ESM, 命令行, glob, 文件监听, 并发
+
+### Docs & API | 文档与 API
+
+- Docs: https://github.com/phonowell/fire-keeper/blob/main/usage.md
+- API: https://github.com/phonowell/fire-keeper/blob/main/readme.md
+- Examples: https://github.com/phonowell/fire-keeper/blob/main/readme.md
+
 ## 核心功能 | Core Features
 
 ### 文件操作 | File Operations

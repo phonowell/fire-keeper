@@ -1,0 +1,31 @@
+# llms.txt
+Project: fire-keeper
+Repository: https://github.com/phonowell/fire-keeper
+Homepage: https://github.com/phonowell/fire-keeper
+
+Summary (EN): Pure ESM Node.js/TypeScript filesystem automation toolkit for backup, copy, remove, glob, watch, and concurrent task workflows.
+摘要 (ZH): 纯 ESM 的 Node.js/TypeScript 文件系统自动化工具库，支持备份、复制、删除、匹配、监听和并发任务。
+
+Primary use cases (EN):
+- Build/deploy file workflows (copy, clean, zip)
+- Batch file operations and path normalization
+主要用途 (ZH):
+- 构建/部署文件流转（复制、清理、压缩）
+- 批量文件处理与路径规范化
+
+Keywords (EN): nodejs, typescript, filesystem, file-operations, automation, esm, cli, glob, file-watcher, concurrency
+关键词 (ZH): Node.js, TypeScript, 文件系统, 文件操作, 自动化, ESM, 命令行, glob, 文件监听, 并发
+
+Install (EN): pnpm i fire-keeper
+安装 (ZH): pnpm i fire-keeper
+
+Quick usage (EN):
+- import backup from "fire-keeper/backup.js"; await backup("./config.json")
+快速使用 (ZH):
+- import copy from "fire-keeper/copy.js"; await copy("./src", "./dist")
+
+API/Docs: https://github.com/phonowell/fire-keeper/blob/main/usage.md
+Examples: https://github.com/phonowell/fire-keeper/blob/main/readme.md
+License: MIT
+Citation: none
+Contact: https://github.com/phonowell/fire-keeper/issues
