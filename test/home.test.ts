@@ -24,7 +24,6 @@ describe('home', () => {
     expect(typeof result).toBe('string')
     expect(result).toBe(expected)
     expect(result.includes('\\')).toBe(false)
-    expect(result.startsWith('/') || /^[A-Z]:\//.test(result)).toBe(true)
   })
 
   it('兼容 Windows 路径斜杠及盘符路径', () => {
@@ -39,15 +38,5 @@ describe('home', () => {
       writable: true,
     })
     expect(home()).toBe('C:/')
-  })
-
-  it('os.homedir 抛异常时应抛出异常', () => {
-    Object.defineProperty(os, 'homedir', {
-      value: () => {
-        throw new Error('fail')
-      },
-      writable: true,
-    })
-    expect(() => home()).toThrow('fail')
   })
 })

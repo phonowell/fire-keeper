@@ -76,4 +76,21 @@ describe('echo', () => {
     await echo.freeze(Promise.resolve('freeze-promise'))
     await echo.whisper(Promise.resolve('whisper-promise'))
   })
+
+  it('freeze 失败后应恢复状态', async () => {
+    await expect(
+      echo.freeze(Promise.reject(new Error('freeze failed'))),
+    ).rejects.toThrow('freeze failed')
+    expect(echo.isFrozen).toBe(false)
+    expect(echo.isSilent).toBe(false)
+  })
+
+  it('whisper 失败后应恢复原始状态', async () => {
+    echo.isSilent = true
+    await expect(
+      echo.whisper(Promise.reject(new Error('whisper failed'))),
+    ).rejects.toThrow('whisper failed')
+    expect(echo.isFrozen).toBe(false)
+    expect(echo.isSilent).toBe(true)
+  })
 })

@@ -1,6 +1,7 @@
 import fs from 'fs'
 
 import archiver from 'archiver'
+import fse from 'fs-extra'
 import kleur from 'kleur'
 import { trim } from 'radash'
 
@@ -58,13 +59,15 @@ const execute = async (
 ) => {
   const { base, filename } = options
   const listResource = await glob(listSource, { onlyFiles: true })
+  await fse.ensureDir(target)
 
   return new Promise<void>((resolve, reject) => {
     const output = fs.createWriteStream(`${target}/${filename}`)
     const archive = archiver('zip', { zlib: { level: 9 } })
     let message = ''
 
-    archive.on('end', () => resolve())
+    output.on('close', () => resolve())
+    output.on('error', reject)
     archive.on('entry', (e) => (message = renderPath(e.name)))
     archive.on('error', reject)
     archive.on('warning', reject)

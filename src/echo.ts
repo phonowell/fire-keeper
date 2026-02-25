@@ -55,16 +55,18 @@ const echo = <T>(...args: [T] | [string, T]): T => {
 const freeze = async <T>(
   callback: Promise<T> | (() => Promise<T>),
 ): Promise<T> => {
+  const previousFrozen = echo.isFrozen
+  const previousSilent = echo.isSilent
+
   echo.isFrozen = true
   echo.isSilent = true
 
-  const result =
-    typeof callback === 'function' ? await callback() : await callback
-
-  echo.isFrozen = false
-  echo.isSilent = false
-
-  return result
+  try {
+    return typeof callback === 'function' ? await callback() : await callback
+  } finally {
+    echo.isFrozen = previousFrozen
+    echo.isSilent = previousSilent
+  }
 }
 
 const makeTime = (): string => {
@@ -156,14 +158,14 @@ const resume = (): void => {
 const whisper = async <T>(
   callback: Promise<T> | (() => Promise<T>),
 ): Promise<T> => {
+  const previousSilent = echo.isSilent
   pause()
 
-  const result =
-    typeof callback === 'function' ? await callback() : await callback
-
-  resume()
-
-  return result
+  try {
+    return typeof callback === 'function' ? await callback() : await callback
+  } finally {
+    echo.isSilent = previousSilent
+  }
 }
 
 echo.freeze = freeze

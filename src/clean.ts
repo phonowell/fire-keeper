@@ -30,13 +30,15 @@ const clean = async (
 
   await remove(source, { echo: shouldEcho })
 
-  // TypeScript knows listSource.length > 0 here, but noUncheckedIndexedAccess still requires explicit handling
-  const dirname = getDirname(listSource.at(0) ?? '')
-  const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
+  const listDirname = Array.from(
+    new Set(listSource.map((item) => getDirname(item))),
+  )
 
-  if (remainingFiles.length > 0) return
-
-  await remove(dirname, { echo: shouldEcho })
+  for (const dirname of listDirname) {
+    const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
+    if (remainingFiles.length > 0) continue
+    await remove(dirname, { echo: shouldEcho })
+  }
 }
 
 export default clean

@@ -49,6 +49,21 @@ describe('clean', () => {
     expect(await isExist(TEMP_DIR)).toBe(false)
   })
 
+  it('多个父目录均为空时应全部删除', async () => {
+    const dir1 = `${TEMP_DIR}/a`
+    const dir2 = `${TEMP_DIR}/b`
+    const file1 = `${dir1}/a.txt`
+    const file2 = `${dir2}/b.txt`
+
+    await write(file1, '1')
+    await write(file2, '2')
+
+    await clean([file1, file2])
+
+    expect(await isExist(dir1)).toBe(false)
+    expect(await isExist(dir2)).toBe(false)
+  })
+
   it('无匹配文件时应无异常且目录不变', async () => {
     await clean(`${TEMP_DIR}/notfound.txt`)
     expect(await isExist(TEMP_DIR)).toBe(true)

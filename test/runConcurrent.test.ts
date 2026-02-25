@@ -63,7 +63,13 @@ describe('runConcurrent', () => {
     expect(result).toEqual(['A', 'B', 'C'])
   })
 
-  // 并发数为0属于类型约束外场景，移除该用例
+  it('并发数小于 1 时应抛出 TypeError', async () => {
+    const tasks: Array<() => Promise<number>> = [() => Promise.resolve(1)]
+    await expect(runConcurrent(0, tasks)).rejects.toThrow(
+      'runConcurrent: concurrency must be a positive integer',
+    )
+    await expect(runConcurrent(-1, tasks)).rejects.toThrow(TypeError)
+  })
 
   it('所有任务均失败时应聚合所有错误', async () => {
     const tasks: Array<() => Promise<number>> = [

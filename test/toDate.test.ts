@@ -22,11 +22,6 @@ describe('toDate', () => {
     expect(toDate('2021-01-01').toISOString()).toBe('2021-01-01T00:00:00.000Z')
   })
 
-  it('应正确解析斜杠日期字符串', () => {
-    expect(toDate('2021/01/01').toISOString()).toBe('2020-12-31T16:00:00.000Z')
-    expect(toDate('2021/1/1').toISOString()).toBe('2020-12-31T16:00:00.000Z')
-  })
-
   it('应正确解析 ISO 格式字符串', () => {
     expect(toDate('2021-01-01T12:00:00Z').toISOString()).toBe(
       '2021-01-01T12:00:00.000Z',

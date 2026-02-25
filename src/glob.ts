@@ -1,7 +1,6 @@
 import glob from 'fast-glob'
 
 import normalizePath from './normalizePath.js'
-import run from './run.js'
 import toArray from './toArray.js'
 
 import type { Options } from 'fast-glob'
@@ -10,11 +9,11 @@ type ListSource = string[] & {
   __IS_LISTED_AS_SOURCE__: true
 }
 
-const EMPTY_RESULT: ListSource = run(() => {
+const createEmptyResult = (): ListSource => {
   const result: ListSource = [] as unknown as ListSource
   result.__IS_LISTED_AS_SOURCE__ = true
   return result
-})
+}
 
 const isListedAsSource = (
   input: string | string[] | ListSource,
@@ -35,7 +34,7 @@ const main = async (
   options?: Options,
 ): Promise<ListSource> => {
   if (isListedAsSource(input)) return input
-  if (!input || input.length === 0) return EMPTY_RESULT
+  if (!input || input.length === 0) return createEmptyResult()
 
   const patterns = toArray(input).map(normalizePath).filter(Boolean)
 

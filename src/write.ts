@@ -28,10 +28,15 @@ const write = async (
     return
   }
 
-  if (content instanceof ArrayBuffer || ArrayBuffer.isView(content)) {
+  if (content instanceof ArrayBuffer) {
+    await writeContent(source, new Uint8Array(content), options, shouldEcho)
+    return
+  }
+
+  if (ArrayBuffer.isView(content)) {
     await writeContent(
       source,
-      new Uint8Array(content as ArrayBuffer),
+      new Uint8Array(content.buffer, content.byteOffset, content.byteLength),
       options,
       shouldEcho,
     )

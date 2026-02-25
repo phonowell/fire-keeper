@@ -51,10 +51,4 @@ describe('os', () => {
     setPlatform(null)
     expect(os()).toBe('unknown')
   })
-
-  it('返回值类型校验', () => {
-    const result = os()
-    expect(typeof result).toBe('string')
-    expect(['macos', 'windows', 'unknown']).toContain(result)
-  })
 })

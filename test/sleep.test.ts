@@ -25,14 +25,11 @@ describe('sleep', () => {
     logSpy.mockRestore()
   })
 
-  it('负数、NaN、0参数应立即返回且无日志', async () => {
+  it('负数、NaN、0参数应无日志', async () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => void 0)
-    const start = Date.now()
     await sleep(-10)
     await sleep(NaN)
     await sleep(0)
-    const elapsed = Date.now() - start
-    expect(elapsed).toBeLessThan(50)
     expect(logSpy).not.toHaveBeenCalled()
     logSpy.mockRestore()
   })

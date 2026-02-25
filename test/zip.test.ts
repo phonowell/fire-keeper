@@ -57,4 +57,10 @@ describe('zip - 真实文件系统测试', () => {
     const zipPath = tempFile('zip.zip')
     expect(await isExist(zipPath)).toBe(true)
   })
+
+  it('目标目录不存在时应自动创建', async () => {
+    const targetDir = tempFile('nested/a/b')
+    await zip(tempSrcFile, targetDir, 'nested.zip')
+    expect(await isExist(`${targetDir}/nested.zip`)).toBe(true)
+  })
 })

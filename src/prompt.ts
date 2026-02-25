@@ -175,15 +175,17 @@ const CACHE_PATH = './temp/cache-prompt.json'
 const main = async <T, U extends Type = Type>(
   option: Option<U, T> & { list?: List<T>; type: U },
 ): Promise<T & Result<U, T>> => {
+  const previousSilent = echo.isSilent
   echo.pause()
 
-  const opt: prompts.PromptObject = await formatOption<U, T>(option)
-  const result = (await prompts(opt))[opt.name as string] as T & Result<U, T>
-  await setCache(option, result)
-
-  echo.resume()
-
-  return result
+  try {
+    const opt: prompts.PromptObject = await formatOption<U, T>(option)
+    const result = (await prompts(opt))[opt.name as string] as T & Result<U, T>
+    await setCache(option, result)
+    return result
+  } finally {
+    echo.isSilent = previousSilent
+  }
 }
 
 const formatOption = async <T extends Type, U>(

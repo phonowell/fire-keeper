@@ -36,6 +36,14 @@ describe('glob', () => {
     expect((await glob([])).length).toBe(0)
   })
 
+  it('空输入返回值不应共享引用', async () => {
+    const first = await glob([])
+    first.push('mutated' as never)
+    const second = await glob([])
+    expect(second.length).toBe(0)
+    expect(first).not.toBe(second)
+  })
+
   it('无匹配结果返回空数组', async () => {
     const result = await glob(`${TEMP_DIR}/not-exist.*`)
     expect(Array.isArray(result)).toBe(true)

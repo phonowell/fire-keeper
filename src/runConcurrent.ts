@@ -11,6 +11,9 @@ const runConcurrent = async <T>(
   tasks: (() => Promise<T>)[],
   options: { stopOnError?: boolean } = {},
 ): Promise<T[]> => {
+  if (!Number.isInteger(concurrency) || concurrency < 1)
+    throw new TypeError('runConcurrent: concurrency must be a positive integer')
+
   const results: T[] = new Array(tasks.length)
   const errors: Error[] = []
   let currentIndex = 0
