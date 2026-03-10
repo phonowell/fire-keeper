@@ -26,8 +26,9 @@ const isListedAsSource = (
  * @param options - Search options (absolute, dot, deep, onlyFiles, etc.)
  * @returns Promise resolving to array of matching file paths
  * @example
- * glob('src/*.ts')                      // All .ts files in src/
- * glob(['**\/*.js', '!node_modules'])   // JS files excluding node_modules
+ * glob('src/*.ts')                           // All .ts files in src/
+ * glob(['**\/*.js', '!node_modules'])        // JS files excluding node_modules
+ * glob('src/**\/*', { onlyDirectories: true }) // Directories only
  */
 const main = async (
   input: string | string[] | ListSource,

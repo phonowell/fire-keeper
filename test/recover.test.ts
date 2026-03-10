@@ -64,4 +64,16 @@ describe('recover', () => {
     await recover(file)
     expect(await read(file)).toBe('')
   })
+
+  it('文件名包含 .bak 时应只移除末尾备份后缀', async () => {
+    const file = `${TEMP_DIR}/a.bak.txt`
+    const bak = `${file}.bak`
+    await write(bak, 'bak-in-name')
+
+    await recover(file)
+
+    expect(await read(file)).toBe('bak-in-name')
+    expect(await isExist(`${TEMP_DIR}/a.txt.bak`)).toBe(false)
+    expect(await isExist(bak)).toBe(false)
+  })
 })

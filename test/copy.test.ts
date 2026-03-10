@@ -87,6 +87,17 @@ describe('copy', () => {
     expect(await read(`${newDir}/f.txt`)).toBe('auto')
   })
 
+  it('应支持直接复制目录到目标目录', async () => {
+    const srcDir = `${TEMP_DIR}/folder`
+    const nestedFile = `${srcDir}/nested/a.txt`
+    const dist = `${TEMP_DIR}/dir-dist`
+
+    await write(nestedFile, 'dir-copy')
+    await copy(srcDir, dist)
+
+    expect(await read(`${dist}/folder/nested/a.txt`)).toBe('dir-copy')
+  })
+
   it('覆盖已有文件', async () => {
     const src = `${TEMP_DIR}/g.txt`
     await write(src, 'old')

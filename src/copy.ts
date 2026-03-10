@@ -6,6 +6,7 @@ import getName from './getName.js'
 import glob from './glob.js'
 import normalizePath from './normalizePath.js'
 import runConcurrent from './runConcurrent.js'
+import toArray from './toArray.js'
 import wrapList from './wrapList.js'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
@@ -21,6 +22,26 @@ const DEFAULT_CONCURRENCY = 5
 
 type EchoOption = {
   echo?: boolean
+}
+
+const listDirectSources = async (source: string | string[]) => {
+  const result: string[] = []
+
+  for (const item of toArray(source)) {
+    if (typeof item !== 'string') continue
+
+    const normalized = normalizePath(item)
+    if (!normalized || normalized.startsWith('!')) continue
+
+    try {
+      await fse.lstat(normalized)
+      result.push(normalized)
+    } catch {
+      continue
+    }
+  }
+
+  return result
 }
 
 /**
@@ -39,7 +60,12 @@ const copy = async (
   options?: Dirname | Options,
   { echo: parentEcho }: EchoOption = {},
 ): Promise<void> => {
-  const listSource = await glob(source, { onlyFiles: true })
+  const listSource = Array.from(
+    new Set([
+      ...(await glob(source, { onlyFiles: true, followSymbolicLinks: false })),
+      ...(await listDirectSources(source)),
+    ]),
+  )
   const shouldEcho =
     (options && typeof options === 'object' && typeof options.echo === 'boolean'
       ? options.echo

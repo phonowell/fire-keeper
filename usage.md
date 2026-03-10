@@ -3,7 +3,7 @@
 Node.js/TS 文件系统工具库 · 纯 ESM · Node ≥24
 
 ```typescript
-import backup from "fire-keeper/backup.js";
+import backup from "fire-keeper/backup";
 import * as fk from "fire-keeper"; // 或导入全部
 ```
 
@@ -34,7 +34,7 @@ await backup("./config.json");
 await backup("./src/**/*.ts", { concurrency: 3 });
 ```
 
-**copy**(source, target, { concurrency, filename }): 复制文件/目录
+**copy**(source, target, { concurrency, filename }): 复制文件；直接传目录路径时会递归复制目录
 ```typescript
 await copy("./src/file.txt", "./dist/");
 await copy(["./file1.txt", "./file2.txt"], "./dist/");
@@ -58,7 +58,7 @@ await zip("./src/**/*.ts", "./archive/src.zip");
 
 ### 路径处理
 
-**glob**(pattern, { onlyFiles, onlyDirs }): 匹配文件路径
+**glob**(pattern, { onlyFiles, onlyDirectories }): 匹配文件路径
 ```typescript
 const files = await glob("./src/**/*.ts");
 const onlyFiles = await glob("./src/**/*", { onlyFiles: true });
@@ -66,7 +66,7 @@ const onlyFiles = await glob("./src/**/*", { onlyFiles: true });
 
 **normalizePath**(path): 规范化路径
 ```typescript
-normalizePath("./src/../dist/file.txt"); // => ./dist/file.txt
+normalizePath("./src/../dist/file.txt"); // => /abs/path/to/project/dist/file.txt
 ```
 
 ### 并发执行
@@ -126,10 +126,13 @@ await zip("./dist/**/*", "./build/output.zip");
 
 **监听自动备份**
 ```typescript
-import watch from "fire-keeper/watch.js";
-import backup from "fire-keeper/backup.js";
+import glob from "fire-keeper/glob";
+import watch from "fire-keeper/watch";
+import backup from "fire-keeper/backup";
 
-watch("./src/**/*.ts", async (path) => {
+const files = await glob("./src/**/*.ts");
+
+watch(files, async (path) => {
   await backup(path);
 });
 ```

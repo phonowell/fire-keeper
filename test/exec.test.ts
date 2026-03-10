@@ -1,6 +1,10 @@
+import fs from 'fs'
+
 import { describe, expect, it } from 'vitest'
 
 import exec from '../src/exec.js'
+
+const TEMP_DIR = './temp/exec'
 
 describe('exec', () => {
   it('应正常执行单条命令并返回结果', async () => {
@@ -37,5 +41,36 @@ describe('exec', () => {
     const result = await exec(repeat)
     expect(result[0]).toBe(0)
     expect(result[2].length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('数组命令遇到失败时应停止后续命令并返回失败码', async () => {
+    const result = await exec(
+      [
+        `node -e "console.log('before')"`,
+        `node -e "process.exit(3)"`,
+        `node -e "console.log('after')"`,
+      ],
+      { echo: false, silent: true },
+    )
+
+    expect(result[0]).toBe(3)
+    expect(result[2].some((msg) => msg.includes('before'))).toBe(true)
+    expect(result[2].some((msg) => msg.includes('after'))).toBe(false)
+  })
+
+  it('数组命令应保留同一 shell 上下文', async () => {
+    fs.mkdirSync(TEMP_DIR, { recursive: true })
+
+    try {
+      const result = await exec(
+        ['cd ./temp/exec', `node -e "console.log(process.cwd())"`],
+        { echo: false, silent: true },
+      )
+
+      expect(result[0]).toBe(0)
+      expect(result[1].replace(/\\/g, '/')).toMatch(/\/temp\/exec$/)
+    } finally {
+      fs.rmSync(TEMP_DIR, { force: true, recursive: true })
+    }
   })
 })

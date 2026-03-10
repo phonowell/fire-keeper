@@ -12,7 +12,22 @@ type Options = {
 
 export type Result = [number, string, string[]]
 
-const SEPARATOR = os() === 'windows' ? '; ' : '; '
+const getCommandString = (cmd: string | string[]) => {
+  const commands = Array.isArray(cmd) ? cmd : [cmd]
+  if (!commands.length) return ''
+  if (commands.length === 1) return commands[0]
+
+  if (os() === 'windows') {
+    return commands
+      .map(
+        (command) =>
+          `${command}; if (-not $?) { if ($LASTEXITCODE) { exit $LASTEXITCODE }; exit 1 }`,
+      )
+      .join(' ')
+  }
+
+  return commands.join(' && ')
+}
 
 /**
  * Cross-platform shell command execution with output capture
@@ -22,7 +37,7 @@ const SEPARATOR = os() === 'windows' ? '; ' : '; '
  * @returns {Promise<[number, string, string[]]>} [exitCode, lastOutput, allOutputs]
  *
  * @example
- * // Multiple commands (uses && on Windows, ; on Unix)
+ * // Multiple commands execute in order and stop on first failure
  * await exec(['mkdir dist', 'tsc', 'node dist/index.js'])
  *
  * // Silent background task
@@ -32,8 +47,16 @@ const exec = (
   cmd: string | string[],
   { echo: shouldEcho = true, silent = false }: Options = {},
 ): Promise<Result> => {
-  const stringCmd = cmd instanceof Array ? cmd.join(SEPARATOR) : cmd
+  const command = getCommandString(cmd)
+  if (!command) return Promise.resolve([0, '', []])
 
+  if (!silent && shouldEcho)
+    echo('exec', Array.isArray(cmd) ? cmd.join(' && ') : cmd)
+
+  return executeCommand(command, silent)
+}
+
+const executeCommand = (command: string, silent: boolean): Promise<Result> => {
   const [cmder, arg] =
     os() === 'windows'
       ? [
@@ -41,19 +64,16 @@ const exec = (
           [
             '-NoProfile',
             '-Command',
-            `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${stringCmd}`,
+            `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ${command}`,
           ],
         ]
-      : ['/bin/sh', ['-c', stringCmd]]
-
-  if (!silent && shouldEcho) echo('exec', stringCmd)
+      : ['/bin/sh', ['-c', command]]
 
   return new Promise<Result>((resolve) => {
     const cacheAll: string[] = []
     let cacheLast = ''
 
     const spawnOptions = os() === 'windows' ? { shell: false } : {}
-
     const process = child.spawn(cmder, arg, spawnOptions)
 
     process.stderr.on('data', (data: Uint8Array) => {
@@ -70,7 +90,20 @@ const exec = (
       if (!silent) info('default', message)
     })
 
-    process.on('close', (code: number) => resolve([code, cacheLast, cacheAll]))
+    process.on('error', (error) => {
+      const message = error.message.trim()
+      if (message) {
+        cacheAll.push(message)
+        cacheLast = message
+        if (!silent) info('error', message)
+      }
+
+      resolve([1, cacheLast, cacheAll])
+    })
+
+    process.on('close', (code: number | null) =>
+      resolve([code ?? 1, cacheLast, cacheAll]),
+    )
   })
 }
 

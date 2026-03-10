@@ -20,9 +20,9 @@ Install (EN): pnpm i fire-keeper
 安装 (ZH): pnpm i fire-keeper
 
 Quick usage (EN):
-- import backup from "fire-keeper/backup.js"; await backup("./config.json")
+- import backup from "fire-keeper/backup"; await backup("./config.json")
 快速使用 (ZH):
-- import copy from "fire-keeper/copy.js"; await copy("./src", "./dist")
+- import copy from "fire-keeper/copy"; await copy("./src", "./dist")
 
 API/Docs: https://github.com/phonowell/fire-keeper/blob/main/usage.md
 Examples: https://github.com/phonowell/fire-keeper/blob/main/readme.md

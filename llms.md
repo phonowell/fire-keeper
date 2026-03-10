@@ -24,7 +24,7 @@
 ## Quickstart / 快速开始
 ```bash
 pnpm i fire-keeper
-node --input-type=module -e "import backup from 'fire-keeper/backup.js'; await backup('./config.json')"
+node --input-type=module -e "import backup from 'fire-keeper/backup'; await backup('./config.json')"
 ```
 
 ## Docs & API

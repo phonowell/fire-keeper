@@ -8,12 +8,36 @@ import echo from './echo.js'
 import getFilename from './getFilename.js'
 import normalizePath from './normalizePath.js'
 
+import type { ReadableStream as WebReadableStream } from 'stream/web'
+
 type Options = {
   echo?: boolean
 }
 
+const isNodeReadable = (input: unknown): input is Readable =>
+  input instanceof Readable
+
+const isWebReadable = (
+  input: unknown,
+): input is WebReadableStream<Uint8Array> =>
+  !!input &&
+  typeof (input as WebReadableStream<Uint8Array>).getReader === 'function'
+
+const toReadable = async (response: Response): Promise<Readable> => {
+  if (!response.body) throw new Error('download: response has no body')
+
+  if (isNodeReadable(response.body)) return response.body
+  if (isWebReadable(response.body)) {
+    return Readable.fromWeb(
+      response.body as unknown as WebReadableStream<Uint8Array>,
+    )
+  }
+
+  return Readable.from(Buffer.from(await response.arrayBuffer()))
+}
+
 /**
- * Download file from URL with streaming support
+ * Download file from URL
  * @param url - Source URL to download from
  * @param dir - Target directory path
  * @param filename - Custom filename (auto-detected if omitted)
@@ -24,32 +48,28 @@ type Options = {
 const download = async (
   url: string,
   dir: string,
-  filename = getFilename(url),
+  filename?: string,
   { echo: shouldEcho = true }: Options = {},
 ): Promise<void> => {
   if (!url) throw new TypeError('download: url is required')
   if (!dir) throw new TypeError('download: dir is required')
+  const targetFilename = filename ?? getFilename(url)
 
   const response = await fetch(url)
   if (!response.ok) throw new Error(`download: ${response.statusText}`)
-  if (!response.body) throw new Error('download: response has no body')
-
-  const arrayBuffer = await response.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-  const readableStream = Readable.from(buffer)
 
   const normalizedDir = normalizePath(dir)
   await fse.ensureDir(normalizedDir)
 
   await pipeline(
-    readableStream,
-    fse.createWriteStream(path.join(normalizedDir, filename)),
+    await toReadable(response),
+    fse.createWriteStream(path.join(normalizedDir, targetFilename)),
   )
 
   if (shouldEcho) {
     echo(
       'download',
-      `downloaded **${url}** to **${normalizedDir}**, as **${filename}**`,
+      `downloaded **${url}** to **${normalizedDir}**, as **${targetFilename}**`,
     )
   }
 }

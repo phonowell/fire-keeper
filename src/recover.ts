@@ -46,7 +46,7 @@ const recover = async (
 
 const child = async (source: string, shouldEcho: boolean) => {
   const content = await read(source, { echo: shouldEcho })
-  const targetPath = source.replace('.bak', '')
+  const targetPath = source.endsWith('.bak') ? source.slice(0, -4) : source
   await write(targetPath, content, undefined, { echo: shouldEcho })
   await remove(source, { echo: shouldEcho })
 }

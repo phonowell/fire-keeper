@@ -1,3 +1,5 @@
+import { Readable } from 'stream'
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import download from '../src/download.js'
@@ -7,10 +9,30 @@ import remove from '../src/remove.js'
 
 const TEMP_DIR = './temp/download'
 
-const createMockResponse = (data: number[] = []) => ({
+type MockResponse = {
+  arrayBuffer: () => Promise<ArrayBuffer>
+  body: unknown
+  ok: boolean
+  statusText: string
+}
+
+const createBody = (data: number[] = []) =>
+  Readable.toWeb(Readable.from([Buffer.from(data)]))
+
+const createMockResponse = (data: number[] = []): MockResponse => ({
   ok: true,
-  arrayBuffer: () => new Uint8Array(data).buffer,
-  body: {},
+  arrayBuffer: vi.fn().mockResolvedValue(new Uint8Array(data).buffer),
+  body: createBody(data),
+  statusText: 'OK',
+})
+
+const createFallbackResponse = (
+  body: unknown,
+  arrayBuffer: () => Promise<ArrayBuffer>,
+): MockResponse => ({
+  ok: true,
+  arrayBuffer,
+  body,
   statusText: 'OK',
 })
 
@@ -31,6 +53,7 @@ describe('download', () => {
   })
 
   afterEach(async () => {
+    vi.unstubAllGlobals()
     await remove(TEMP_DIR)
   })
 
@@ -92,7 +115,7 @@ describe('download', () => {
 
   it('无 url 抛 TypeError', async () => {
     await expect(download('', TEMP_DIR)).rejects.toThrow(
-      'getName/error: empty input',
+      'download: url is required',
     )
   })
 
@@ -107,6 +130,7 @@ describe('download', () => {
       ok: false,
       statusText: 'Not Found',
       body: {},
+      arrayBuffer: vi.fn(),
     }
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
     await expect(
@@ -115,11 +139,10 @@ describe('download', () => {
   })
 
   it('fetch 响应无 body 抛 Error', async () => {
-    const mockResponse = {
-      ok: true,
-      body: null,
-      statusText: 'OK',
-    }
+    const mockResponse = createFallbackResponse(
+      null,
+      vi.fn().mockResolvedValue(new Uint8Array().buffer),
+    )
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
     await expect(
       download('http://test.com/file.txt', TEMP_DIR),
@@ -137,18 +160,30 @@ describe('download', () => {
   })
 
   it('fetch 返回 arrayBuffer 抛异常', async () => {
-    const mockResponse = {
-      ok: true,
-      arrayBuffer: () => {
-        throw new Error('arrayBuffer error')
-      },
-      body: {},
-      statusText: 'OK',
-    }
+    const mockResponse = createFallbackResponse(
+      {},
+      vi.fn().mockRejectedValue(new Error('arrayBuffer error')),
+    )
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
     await expect(download('http://test.com/err.txt', TEMP_DIR)).rejects.toThrow(
       'arrayBuffer error',
     )
+  })
+
+  it('优先使用响应流而不是 arrayBuffer', async () => {
+    const arrayBuffer = vi
+      .fn()
+      .mockResolvedValue(new Uint8Array([1, 2, 3]).buffer)
+    const mockResponse = createFallbackResponse(
+      createBody([1, 2, 3]),
+      arrayBuffer,
+    )
+
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
+    await download('http://test.com/stream.txt', TEMP_DIR)
+
+    expect(arrayBuffer).not.toHaveBeenCalled()
+    expect(toArr(await read(`${TEMP_DIR}/stream.txt`))).toEqual([1, 2, 3])
   })
 
   it('同名文件覆盖', async () => {

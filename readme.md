@@ -33,12 +33,12 @@ yarn add fire-keeper
 
 ```typescript
 // 导入单个功能
-import backup from "fire-keeper/backup.js";
+import backup from "fire-keeper/backup";
 await backup("./data.txt"); // 创建 data.txt.bak
 
 // 或导入所有功能
 import * as fk from "fire-keeper";
-await fk.copy("./src", "./dist"); // 复制文件夹
+await fk.copy("./src", "./dist"); // 复制整个目录到 ./dist/src
 await fk.remove("./temp"); // 删除文件夹
 ```
 
@@ -51,7 +51,7 @@ await fk.remove("./temp"); // 删除文件夹
 
 ```bash
 pnpm i fire-keeper
-node --input-type=module -e "import backup from 'fire-keeper/backup.js'; await backup('./config.json')"
+node --input-type=module -e "import backup from 'fire-keeper/backup'; await backup('./config.json')"
 ```
 
 ### Key Capabilities | 核心能力
@@ -83,7 +83,7 @@ node --input-type=module -e "import backup from 'fire-keeper/backup.js'; await b
 创建文件备份
 
 ```typescript
-import backup from "fire-keeper/backup.js";
+import backup from "fire-keeper/backup";
 
 // 备份单个文件
 await backup("./config.json"); // 创建 config.json.bak
@@ -102,7 +102,7 @@ await backup("./data/*.json", { concurrency: 3 });
 复制文件或文件夹
 
 ```typescript
-import copy from "fire-keeper/copy.js";
+import copy from "fire-keeper/copy";
 
 // 复制单个文件
 await copy("./src/file.txt", "./dist/");
@@ -118,7 +118,7 @@ await copy("./src/**/*.ts", "./dist/");
 删除文件或文件夹
 
 ```typescript
-import remove from "fire-keeper/remove.js";
+import remove from "fire-keeper/remove";
 
 // 删除单个文件
 await remove("./temp/file.txt");
@@ -137,7 +137,7 @@ await remove("./temp/");
 从备份文件恢复
 
 ```typescript
-import recover from "fire-keeper/recover.js";
+import recover from "fire-keeper/recover";
 
 // 从备份恢复文件
 await recover("./config.json"); // 使用 config.json.bak 恢复
@@ -147,7 +147,7 @@ await recover("./config.json"); // 使用 config.json.bak 恢复
 创建 ZIP 压缩文件
 
 ```typescript
-import zip from "fire-keeper/zip.js";
+import zip from "fire-keeper/zip";
 
 // 压缩单个文件
 await zip("./file.txt", "./archive/");
@@ -165,7 +165,7 @@ await zip("./src/**/*.ts", "./archive/src.zip");
 匹配文件路径
 
 ```typescript
-import glob from "fire-keeper/glob.js";
+import glob from "fire-keeper/glob";
 
 // 匹配文件
 const files = await glob("./src/**/*.ts");
@@ -174,17 +174,17 @@ const files = await glob("./src/**/*.ts");
 const onlyFiles = await glob("./src/**/*", { onlyFiles: true });
 
 // 只匹配文件夹
-const onlyDirs = await glob("./src/**/*", { onlyDirs: true });
+const onlyDirs = await glob("./src/**/*", { onlyDirectories: true });
 ```
 
 #### normalizePath
 规范化路径
 
 ```typescript
-import normalizePath from "fire-keeper/normalizePath.js";
+import normalizePath from "fire-keeper/normalizePath";
 
 const normalized = normalizePath("./src/../dist/file.txt");
-// 输出: ./dist/file.txt
+// 输出: /abs/path/to/project/dist/file.txt
 ```
 
 ### 并发执行 | Concurrent Execution
@@ -193,7 +193,7 @@ const normalized = normalizePath("./src/../dist/file.txt");
 并发执行任务
 
 ```typescript
-import runConcurrent from "fire-keeper/runConcurrent.js";
+import runConcurrent from "fire-keeper/runConcurrent";
 
 const tasks = [
   () => Promise.resolve(1),
@@ -210,7 +210,7 @@ const results = await runConcurrent(2, tasks); // 最大并发数为 2
 解析命令行参数
 
 ```typescript
-import argv from "fire-keeper/argv.js";
+import argv from "fire-keeper/argv";
 
 const args = await argv();
 console.log(args.name); // --name value
@@ -223,7 +223,8 @@ console.log(args._);    // 位置参数
 监听文件变化
 
 ```typescript
-import watch from "fire-keeper/watch.js";
+import glob from "fire-keeper/glob";
+import watch from "fire-keeper/watch";
 
 // 监听单个文件
 const unwatch = watch("./file.txt", (path) => {
@@ -232,6 +233,12 @@ const unwatch = watch("./file.txt", (path) => {
 
 // 监听多个文件
 watch(["./file1.txt", "./file2.txt"], (path) => {
+  console.log(`${path} 已更改`);
+});
+
+// 监听匹配到的文件（chokidar v4+ 不支持直接传 glob）
+const files = await glob("./src/**/*.ts");
+watch(files, (path) => {
   console.log(`${path} 已更改`);
 });
 
@@ -250,7 +257,7 @@ unwatch();
 查找数组中符合条件的元素索引
 
 ```typescript
-import findIndex from "fire-keeper/findIndex.js";
+import findIndex from "fire-keeper/findIndex";
 
 const arr = [1, 2, 3, 4, 5];
 const index = findIndex(arr, (x) => x > 3);
@@ -261,7 +268,7 @@ const index = findIndex(arr, (x) => x > 3);
 确保值为数组
 
 ```typescript
-import toArray from "fire-keeper/toArray.js";
+import toArray from "fire-keeper/toArray";
 
 const arr1 = toArray(1); // [1]
 const arr2 = toArray([1, 2]); // [1, 2]
