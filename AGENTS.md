@@ -24,6 +24,13 @@
 - `pnpm lint`
 - `pnpm task [name]`
 
+## 发布
+
+- tag 驱动：`package.json` 升 version → `git commit -m "0.0.x"` → `git tag v0.0.x` → `git push origin main --tags`
+- `.github/workflows/release.yml`：tag push → lint/test/build → `npm publish --provenance` → GitHub Release
+- npm 认证 = OIDC trusted publishing（无 token）：npmjs 包 Settings → Trusted Publisher = `phonowell/fire-keeper` + `release.yml`
+- 仅 tag 触发发布且前置全绿；手动兜底 `npm login && pnpm publish --access public`
+
 ## 目录结构
 
 - `src/` 默认导出 · `test/` 对应测试 · `dist/` 自动生成
