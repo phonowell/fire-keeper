@@ -41,7 +41,13 @@ jobs:
         run: pnpm build
 
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if npm view "fire-keeper@${version}" version >/dev/null 2>&1; then
+            echo "fire-keeper@${version} already published, skipping"
+          else
+            npm publish --access public --provenance
+          fi
 
       - name: Resolve tag name
         id: tag
