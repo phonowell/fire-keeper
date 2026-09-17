@@ -1,2 +1,7 @@
+allowBuilds:
+  esbuild: set this to true or false
 onlyBuiltDependencies:
   - esbuild
+overrides:
+  vite: ^8.3.0
+  yaml: ^2.8.3

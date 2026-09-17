@@ -26,3 +26,11 @@
 - yargs 行为事实（已锁测试）：`--flag` 后跟随位置参数会被吞噬为 flag 值；`--` 后参数进 `_`（populate-- 默认关）；`--no-x` → `x:false`
 - prompts 保留理由：无维护中的 ESM 库原生覆盖全部 7 类型（auto/multi/select/text/number/confirm/toggle）；`kleur` 经 prompts 传递存在属正常
 - `noImplicitAny:false` 原为冗余覆盖（strict 隐含 true），删除后零暴露
+
+## 依赖漏洞清零（51→0）
+
+- `archiver` 7→**8**：砍掉 archiver-utils/glob/lodash/readdir-glob@1 子树（glob cmd 注入 + minimatch/brace-expansion ReDoS + lodash 注入与原型污染全消失）；API 变 `new ZipArchive({zlib})`，无 default 导出；`progress` 事件结构不变；`@types/archiver` → ^8
+- `vitest` 4→**5**：修 critical（UI server 任意文件读取）；vite 为 peer，pnpm auto-peer 选中 7.3.1 → 显式 `vite@^8` devDep 绑定（override 对 peer 无效）；顺带 postcss/nanoid/esbuild 升级
+- `tsx` →4.23（esbuild 0.28）；`js-yaml` 4→**5**（自带类型，`import('js-yaml')` 无 default → 改用具名 `load`，删 `@types/js-yaml`）
+- `pnpm-workspace.yaml` overrides：`vite:^8.3.0`（冗余但明示）、`yaml:^2.8.3`（vite 传递依赖）
+- `@types/js-yaml` 移除后 `import('js-yaml')` 类型由包内 `dist/js-yaml.d.ts` 提供

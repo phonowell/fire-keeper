@@ -84,18 +84,17 @@
   },
   "dependencies": {
     "ansis": "^4.4.0",
-    "archiver": "^7.0.1",
+    "archiver": "^8.0.0",
     "chokidar": "^5.0.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.3",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^5.4.2",
     "prompts": "^2.4.2",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/archiver": "^7.0.0",
+    "@types/archiver": "^8.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.3.0",
     "@types/prompts": "^2.4.9",
     "@types/yargs": "^17.0.35",
@@ -104,9 +103,10 @@
     "oxlint-tsgolint": "^7.0.2001",
     "publint": "^0.3.24",
     "tsdown": "^0.23.0",
-    "tsx": "^4.21.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=24.0.0"

@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 
 import ansis from 'ansis'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import fse from 'fs-extra'
 
 import echo, { renderPath } from './echo.js'
@@ -78,7 +78,7 @@ const execute = async (listSource: string[], target: string, options: OptionsReq
 
   return new Promise<void>((resolve, reject) => {
     const output = fs.createWriteStream(`${target}/${filename}`)
-    const archive = archiver('zip', { zlib: { level: 9 } })
+    const archive = new ZipArchive({ zlib: { level: 9 } })
     let message = ''
 
     output.on('close', () => resolve())

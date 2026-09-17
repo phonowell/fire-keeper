@@ -92,8 +92,8 @@ const read = async <T = undefined, S extends string = string, R extends boolean 
   if (extname === '.json') return JSON.parse(String(content)) as Result<T, S, R>
 
   if (['.yaml', '.yml'].includes(extname)) {
-    const jsYaml = (await import('js-yaml')).default
-    return jsYaml.load(content.toString()) as Result<T, S, R>
+    const { load } = await import('js-yaml')
+    return load(content.toString()) as Result<T, S, R>
   }
 
   // 未知扩展名：嗅探内容，二进制返回 Buffer，文本返回 string
