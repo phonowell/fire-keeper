@@ -23,7 +23,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
 
       - name: Latest npm (trusted publishing support)
         run: npm install -g npm@latest
@@ -42,8 +41,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
