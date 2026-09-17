@@ -1,4 +1,4 @@
-import kleur from 'kleur'
+import ansis from 'ansis'
 
 import home from './home.js'
 import root from './root.js'
@@ -7,13 +7,15 @@ type CacheTime = [number, string]
 
 // variable
 
-const cahceTime: CacheTime = [0, '']
+const cacheTime: CacheTime = [0, '']
 const cacheType = new Map<string, string>()
 
-const regHome = new RegExp(`^${home().replace(/\\/g, '\\\\')}`, 'g')
-const regRoot = new RegExp(`^${root().replace(/\\/g, '\\\\')}`, 'g')
+const escapeRegExp = (input: string) => input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-const separator = `${kleur.gray('›')} `
+const regHome = new RegExp(`^${escapeRegExp(home())}`, 'g')
+const regRoot = new RegExp(`^${escapeRegExp(root())}`, 'g')
+
+const separator = `${ansis.gray('›')} `
 
 /**
  * Enhanced console logging with type-based formatting
@@ -52,9 +54,7 @@ const echo = <T>(...args: [T] | [string, T]): T => {
  * await echo.freeze(somePromise)
  * ```
  */
-const freeze = async <T>(
-  callback: Promise<T> | (() => Promise<T>),
-): Promise<T> => {
+const freeze = async <T>(callback: Promise<T> | (() => Promise<T>)): Promise<T> => {
   const previousFrozen = echo.isFrozen
   const previousSilent = echo.isSilent
 
@@ -98,18 +98,17 @@ const render = (type: string, message: string): string =>
 const renderContent = (input: string): string =>
   renderPath(input)
     // **xxx**
-    .replace(/\*\*.*?\*\*/g, (text) => kleur.magenta(text.slice(2, -2)))
+    .replace(/\*\*.*?\*\*/g, (text) => ansis.magenta(text.slice(2, -2)))
 
-const renderPath = (input: string): string =>
-  input.replace(regRoot, '.').replace(regHome, '~')
+const renderPath = (input: string): string => input.replace(regRoot, '.').replace(regHome, '~')
 
 const renderTime = (): string => {
   const ts = Math.floor(Date.now() / 1e3)
-  if (ts === cahceTime[0]) return cahceTime[1]
+  if (ts === cacheTime[0]) return cacheTime[1]
 
-  const result = `${kleur.gray(`[${makeTime()}]`)} `
-  cahceTime[0] = ts
-  cahceTime[1] = result
+  const result = `${ansis.gray(`[${makeTime()}]`)} `
+  cacheTime[0] = ts
+  cacheTime[1] = result
   return result
 }
 
@@ -118,8 +117,7 @@ const renderType = (type: string): string => {
   if (key === 'default') return ''
   if (cacheType.has(key)) return cacheType.get(key) as string
 
-  const content =
-    kleur.cyan().underline(key) + ' '.repeat(Math.max(10 - key.length, 0))
+  const content = ansis.cyan.underline(key) + ' '.repeat(Math.max(10 - key.length, 0))
   cacheType.set(key, content)
   return content
 }
@@ -155,9 +153,7 @@ const resume = (): void => {
  * // Echo is automatically resumed after completion
  * ```
  */
-const whisper = async <T>(
-  callback: Promise<T> | (() => Promise<T>),
-): Promise<T> => {
+const whisper = async <T>(callback: Promise<T> | (() => Promise<T>)): Promise<T> => {
   const previousSilent = echo.isSilent
   pause()
 

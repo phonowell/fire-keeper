@@ -35,12 +35,13 @@ describe('zip - 真实文件系统测试', () => {
     expect(info?.size).toBeGreaterThan(0)
   })
 
-  it('应能压缩目录', async () => {
+  it('应能压缩目录且非空包', async () => {
     await zip(tempSrcDir, TEMP_DIR, 'dir.zip')
     const zipPath = tempFile('dir.zip')
     expect(await isExist(zipPath)).toBe(true)
     const info = await stat(zipPath)
-    expect(info?.size).toBeGreaterThan(0)
+    // 空 zip 约 22 字节；含文件必然更大，防止目录未被展开的回归
+    expect(info?.size).toBeGreaterThan(100)
   })
 
   it('应能压缩多个文件', async () => {

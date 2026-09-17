@@ -92,8 +92,7 @@ describe('remove', () => {
       await symlink(target, link)
     } catch (error) {
       const { code } = error as NodeJS.ErrnoException
-      if (code && ['EPERM', 'EACCES', 'ENOTSUP', 'EINVAL'].includes(code))
-        return
+      if (code && ['EPERM', 'EACCES', 'ENOTSUP', 'EINVAL'].includes(code)) return
       throw error
     }
 

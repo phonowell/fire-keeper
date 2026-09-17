@@ -1,4 +1,3 @@
-import echo from './echo.js'
 import flatten from './flatten.js'
 import normalizePath from './normalizePath.js'
 import read from './read.js'
@@ -29,9 +28,7 @@ function isSame(...args: Source[]): Promise<boolean>
 async function isSame(...args: (Source | EchoOption)[]): Promise<boolean> {
   const last = args.at(-1)
   const options = isEchoOption(last) ? last : {}
-  const listSource = isEchoOption(last)
-    ? (args.slice(0, -1) as Source[])
-    : (args as Source[])
+  const listSource = isEchoOption(last) ? (args.slice(0, -1) as Source[]) : (args as Source[])
 
   const shouldEcho = options.echo ?? true
   const originalGroup = flatten(listSource)
@@ -60,9 +57,7 @@ async function isSame(...args: (Source | EchoOption)[]): Promise<boolean> {
   // 检查文件内容
   let cacheCont: Buffer | undefined
   for (const source of group) {
-    const cont = await echo.freeze(
-      read(source, { echo: shouldEcho, raw: true }),
-    )
+    const cont = await read(source, { echo: false, raw: true })
     if (!cont) return false // 如果文件内容为空，则直接返回 false
 
     if (!cacheCont) {

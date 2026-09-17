@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fse from 'fs-extra'
 
 import echo from './echo.js'
 import getDirname from './getDirname.js'
@@ -24,12 +24,7 @@ const rename = async (
   const src = normalizePath(source)
   const destPath = `${getDirname(src)}/${target}`
 
-  await new Promise<void>((resolve, reject) =>
-    fs.rename(src, destPath, (err) => {
-      if (err) reject(err)
-      else resolve()
-    }),
-  )
+  await fse.move(src, destPath, { overwrite: true })
 
   if (shouldEcho) echo('rename', `renamed **${source}** as **${target}**`)
 }

@@ -1,5 +1,3 @@
-import { get } from 'radash'
-
 type PathType<T, P> = P extends `${infer K}.${infer R}`
   ? K extends keyof T
     ? PathType<T[K], R>
@@ -18,20 +16,12 @@ type DeepKeyOf<T> = T extends object
     }[keyof T]
   : never
 
-type SplitPath<P extends string> = P extends `${infer F}.${infer R}`
-  ? [F, ...SplitPath<R>]
-  : [P]
+type SplitPath<P extends string> = P extends `${infer F}.${infer R}` ? [F, ...SplitPath<R>] : [P]
 
-type PathValue<T, P extends string[]> = P extends [
-  infer F extends string,
-  ...infer R,
-]
+type PathValue<T, P extends string[]> = P extends [infer F extends string, ...infer R]
   ? F extends `${infer Head}.${infer Rest}`
     ? Head extends keyof T
-      ? PathValue<
-          T[Head],
-          [...SplitPath<Rest>, ...(R extends string[] ? R : [])]
-        >
+      ? PathValue<T[Head], [...SplitPath<Rest>, ...(R extends string[] ? R : [])]>
       : undefined
     : F extends keyof T
       ? R extends string[]
@@ -70,7 +60,7 @@ type AtFn = {
 const at: AtFn = (
   input: unknown[] | Record<string, unknown>,
   ...paths: (string | number)[]
-): unknown | undefined => {
+): unknown => {
   if (Array.isArray(input)) {
     const index = paths[0] as number
     return index < 0 ? input[input.length + index] : input[index]
@@ -82,6 +72,20 @@ const at: AtFn = (
       : paths.map(String).join('.').split('.').filter(Boolean).join('.')
 
   return get(input, path)
+}
+
+// 简化版 radash get：支持 'a.b.0.c' 与 'a[0].b' 形式的路径
+const get = (input: Record<string, unknown>, path: string): unknown => {
+  let current: unknown = input
+  const segments = path.replace(/\[([^\]]*)\]/g, '.$1').split('.')
+
+  for (const key of segments) {
+    if (!key) continue
+    if (current === null || typeof current !== 'object') return undefined
+    current = (current as Record<string, unknown>)[key]
+  }
+
+  return current
 }
 
 export default at

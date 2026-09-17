@@ -14,7 +14,7 @@ const runConcurrent = async <T>(
   if (!Number.isInteger(concurrency) || concurrency < 1)
     throw new TypeError('runConcurrent: concurrency must be a positive integer')
 
-  const results: T[] = new Array(tasks.length)
+  const results: T[] = []
   const errors: Error[] = []
   let currentIndex = 0
 
@@ -32,9 +32,7 @@ const runConcurrent = async <T>(
     }
   }
 
-  await Promise.all(
-    Array(Math.min(concurrency, tasks.length)).fill(null).map(worker),
-  )
+  await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, () => worker()))
 
   if (errors.length > 0 && !options.stopOnError)
     throw new AggregateError(errors, 'Some tasks failed to execute')

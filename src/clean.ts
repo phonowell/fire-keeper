@@ -22,23 +22,22 @@ const clean = async (
   const listSource = await glob(source, { onlyFiles: false })
 
   if (!listSource.length) {
-    if (shouldEcho)
-      echo('clean', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho) echo('clean', `no files found matching **${wrapList(source)}**`)
 
     return
   }
 
   await remove(source, { echo: shouldEcho })
 
-  const listDirname = Array.from(
-    new Set(listSource.map((item) => getDirname(item))),
-  )
+  const listDirname = Array.from(new Set(listSource.map((item) => getDirname(item))))
 
-  for (const dirname of listDirname) {
-    const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
-    if (remainingFiles.length > 0) continue
-    await remove(dirname, { echo: shouldEcho })
-  }
+  await Promise.all(
+    listDirname.map(async (dirname) => {
+      const remainingFiles = await glob(`${dirname}/**/*`, { onlyFiles: true })
+      if (remainingFiles.length > 0) return
+      await remove(dirname, { echo: shouldEcho })
+    }),
+  )
 }
 
 export default clean

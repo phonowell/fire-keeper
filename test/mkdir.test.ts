@@ -36,10 +36,7 @@ describe('mkdir 单元测试', () => {
     if (!dir) return
     await mkdir(dir)
     expect(await isExist(dir)).toBe(true)
-    expect(echo).toHaveBeenCalledWith(
-      'mkdir',
-      expect.stringContaining('created'),
-    )
+    expect(echo).toHaveBeenCalledWith('mkdir', expect.stringContaining('created'))
   })
 
   it('应正常创建多个目录', async () => {
@@ -50,10 +47,7 @@ describe('mkdir 单元测试', () => {
     await mkdir(dirs)
     expect(await isExist(dir1)).toBe(true)
     expect(await isExist(dir2)).toBe(true)
-    expect(echo).toHaveBeenCalledWith(
-      'mkdir',
-      expect.stringContaining('created'),
-    )
+    expect(echo).toHaveBeenCalledWith('mkdir', expect.stringContaining('created'))
   })
 
   it('应支持嵌套目录', async () => {

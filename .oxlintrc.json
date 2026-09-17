@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "typescript", "unicorn", "vitest"],
+  "env": {
+    "builtin": true,
+    "node": true
+  },
+  "ignorePatterns": ["dist", "node_modules"],
+  "rules": {
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
+    "@typescript-eslint/explicit-member-accessibility": ["warn", { "accessibility": "no-public" }],
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "import/extensions": ["error", "always", { "ignorePackages": true }],
+    "import/no-duplicates": "warn",
+    "unicorn/prefer-node-protocol": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["test/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "vitest/expect-expect": "off",
+        "vitest/no-conditional-expect": "off",
+        "vitest/require-mock-type-parameters": "off",
+        "vitest/require-to-throw-message": "off",
+        "vitest/valid-expect": ["warn", { "maxArgs": 2 }]
+      }
+    }
+  ]
+}

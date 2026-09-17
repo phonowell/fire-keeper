@@ -131,9 +131,7 @@ describe('write - 基础功能测试', () => {
 
   it('应能处理并发写入同一文件', async () => {
     const filePath = tempFile('concurrent_same.txt')
-    const promises = Array.from({ length: 3 }, (_, i) =>
-      write(filePath, `content ${i}`),
-    )
+    const promises = Array.from({ length: 3 }, (_, i) => write(filePath, `content ${i}`))
 
     await Promise.all(promises)
 
@@ -191,19 +189,13 @@ describe('write - 基础功能测试', () => {
 
     expect(await isExist(filePath)).toBe(true)
     const readBuffer = await read(filePath, { raw: true })
-    expect(new Uint8Array(readBuffer as Buffer)).toEqual(
-      new Uint8Array([50, 60, 70]),
-    )
+    expect(new Uint8Array(readBuffer as Buffer)).toEqual(new Uint8Array([50, 60, 70]))
   })
 
   it('应保持 TypedArray 底层原始字节', async () => {
     const filePath = tempFile('typed_array_bytes.bin')
     const typedArray = new Uint16Array([0x1234, 0xabcd])
-    const expected = new Uint8Array(
-      typedArray.buffer,
-      typedArray.byteOffset,
-      typedArray.byteLength,
-    )
+    const expected = new Uint8Array(typedArray.buffer, typedArray.byteOffset, typedArray.byteLength)
 
     await write(filePath, typedArray)
 

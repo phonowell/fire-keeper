@@ -49,9 +49,7 @@ describe('rename - 真实文件系统测试', () => {
   })
 
   it('重命名不存在的文件应抛出错误', async () => {
-    await expect(
-      rename(tempFile('notexist.txt'), 'renamed.txt'),
-    ).rejects.toThrow()
+    await expect(rename(tempFile('notexist.txt'), 'renamed.txt')).rejects.toThrow()
   })
 
   it('重命名到已存在的目标在某些情况下可能覆盖', async () => {

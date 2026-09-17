@@ -1,9 +1,8 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
+import ansis from 'ansis'
 import archiver from 'archiver'
 import fse from 'fs-extra'
-import kleur from 'kleur'
-import { trim } from 'radash'
 
 import echo, { renderPath } from './echo.js'
 import getBasename from './getBasename.js'
@@ -24,11 +23,26 @@ type EchoOption = {
 
 type OptionsRequired = Required<Options>
 
+const GLOB_CHARS = /[*?{[!]/
+
+// 所有源的公共父目录：glob 取静态前缀，字面路径取 dirname
 const getBase = (listSource: string[]): string => {
-  const source = listSource.at(0)
-  if (!source) throw new Error('No source provided for zip operation')
-  if (source.includes('*')) return trim(source.replace(/\*.*/u, ''), '/')
-  return getDirname(source)
+  const first = listSource.at(0)
+  if (!first) throw new Error('No source provided for zip operation')
+
+  const bases = listSource.map((item) =>
+    GLOB_CHARS.test(item)
+      ? (item.split(GLOB_CHARS)[0] ?? '').replace(/\/+$/u, '')
+      : getDirname(item),
+  )
+
+  const segments = bases.map((base) => base.split('/'))
+  const head = segments.at(0) ?? []
+  let index = 0
+  while (segments.every((parts) => parts[index] !== undefined && parts[index] === head[index]))
+    index++
+
+  return head.slice(0, index).join('/')
 }
 
 const convertToArray = (
@@ -37,14 +51,10 @@ const convertToArray = (
   option: string | Options,
 ): [string[], string, OptionsRequired] => {
   const listSource = toArray(source).map(normalizePath)
-  const pathTarget = normalizePath(
-    target || getDirname(listSource.at(0) ?? '').replace(/\*/g, ''),
-  )
+  const pathTarget = normalizePath(target || getDirname(listSource.at(0) ?? '').replace(/\*/g, ''))
 
   const [base, filename] =
-    typeof option === 'string'
-      ? ['', option]
-      : [option.base ?? '', option.filename ?? '']
+    typeof option === 'string' ? ['', option] : [option.base ?? '', option.filename ?? '']
 
   const finalBase = normalizePath(base || getBase(listSource))
   const finalFilename = filename || `${getBasename(pathTarget)}.zip`
@@ -52,13 +62,18 @@ const convertToArray = (
   return [listSource, pathTarget, { base: finalBase, filename: finalFilename }]
 }
 
-const execute = async (
-  listSource: string[],
-  target: string,
-  options: OptionsRequired,
-) => {
+const execute = async (listSource: string[], target: string, options: OptionsRequired) => {
   const { base, filename } = options
-  const listResource = await glob(listSource, { onlyFiles: true })
+
+  // 字面目录展开为 /** 模式，否则 glob(onlyFiles) 匹配不到任何文件
+  const patterns = await Promise.all(
+    listSource.map(async (src) =>
+      !GLOB_CHARS.test(src) && (await fse.stat(src).catch(() => undefined))?.isDirectory()
+        ? `${src}/**`
+        : src,
+    ),
+  )
+  const listResource = await glob(patterns, { onlyFiles: true })
   await fse.ensureDir(target)
 
   return new Promise<void>((resolve, reject) => {
@@ -69,16 +84,20 @@ const execute = async (
     output.on('close', () => resolve())
     output.on('error', reject)
     archive.on('entry', (e) => (message = renderPath(e.name)))
-    archive.on('error', reject)
-    archive.on('warning', reject)
+    archive.on('error', (error) => {
+      output.destroy()
+      reject(error)
+    })
+    archive.on('warning', (error) => {
+      output.destroy()
+      reject(error)
+    })
 
     archive.on('progress', (e) => {
       if (!message) return
 
-      const gray = kleur.gray(
-        `${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`,
-      )
-      const magenta = kleur.magenta(message)
+      const gray = ansis.gray(`${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`)
+      const magenta = ansis.magenta(message)
       console.log(`${gray} ${magenta}`) // 保持使用 console 而非 echo，以避免多余前缀
       message = ''
     })
@@ -86,11 +105,11 @@ const execute = async (
     archive.pipe(output)
 
     for (const src of listResource) {
-      const name = src.replace(base, '')
+      const name = src.replace(base, '').replace(/^\/+/, '')
       archive.file(src, { name })
     }
 
-    archive.finalize()
+    void archive.finalize()
   })
 }
 
@@ -115,13 +134,9 @@ const zip = async (
 ) => {
   await execute(...convertToArray(source, target, option))
 
-  const optionStr =
-    typeof option === 'object' ? JSON.stringify(option) : String(option)
+  const optionStr = typeof option === 'object' ? JSON.stringify(option) : String(option)
   if (shouldEcho) {
-    echo(
-      'zip',
-      `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`,
-    )
+    echo('zip', `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`)
   }
 }
 

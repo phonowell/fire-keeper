@@ -13,9 +13,7 @@ describe('toDate', () => {
   it('应正确处理时间戳输入', () => {
     expect(toDate(1640995200000).toISOString()).toBe('2022-01-01T00:00:00.000Z')
     // toDate(0) 按实现应抛异常，已在异常用例覆盖，无需断言
-    expect(toDate(253402300799999).toISOString()).toBe(
-      '9999-12-31T23:59:59.999Z',
-    )
+    expect(toDate(253402300799999).toISOString()).toBe('9999-12-31T23:59:59.999Z')
   })
 
   it('应正确解析连字符日期字符串', () => {
@@ -23,15 +21,9 @@ describe('toDate', () => {
   })
 
   it('应正确解析 ISO 格式字符串', () => {
-    expect(toDate('2021-01-01T12:00:00Z').toISOString()).toBe(
-      '2021-01-01T12:00:00.000Z',
-    )
-    expect(toDate('2021-01-01T12:00:00+08:00').toISOString()).toBe(
-      '2021-01-01T04:00:00.000Z',
-    )
-    expect(toDate('2021-01-01T00:00:00.123Z').toISOString()).toBe(
-      '2021-01-01T00:00:00.123Z',
-    )
+    expect(toDate('2021-01-01T12:00:00Z').toISOString()).toBe('2021-01-01T12:00:00.000Z')
+    expect(toDate('2021-01-01T12:00:00+08:00').toISOString()).toBe('2021-01-01T04:00:00.000Z')
+    expect(toDate('2021-01-01T00:00:00.123Z').toISOString()).toBe('2021-01-01T00:00:00.123Z')
   })
 
   // 类型约束外输入不再测试

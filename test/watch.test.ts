@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
@@ -40,7 +40,7 @@ describe('watch', () => {
         }
       }, 50)
     })
-    unwatch()
+    await unwatch()
     expect(called).toContain('watch-test.txt')
   })
 
@@ -65,7 +65,7 @@ describe('watch', () => {
         }
       }, 50)
     })
-    unwatch()
+    await unwatch()
     expect(called).toContain('watch-test.txt')
   })
 
@@ -90,7 +90,7 @@ describe('watch', () => {
         }
       }, 50)
     })
-    unwatch()
+    await unwatch()
     expect(called).toContain('watch-test2.txt')
   })
 
@@ -108,8 +108,33 @@ describe('watch', () => {
     fs.appendFileSync(tempFile, '1')
     fs.appendFileSync(tempFile, '2')
     await new Promise((resolve) => setTimeout(resolve, 500))
-    unwatch()
+    await unwatch()
     expect(count).toBe(1)
+  })
+
+  it('支持 glob 模式监听', async () => {
+    fs.writeFileSync(tempFile, 'init')
+    let called = ''
+    const unwatch = watch(`${TEMP_DIR}/*.txt`, (p) => {
+      called = p
+    })
+    // 等待 glob 解析完成并挂到 watcher
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    fs.appendFileSync(tempFile, 'change')
+    await new Promise((resolve, reject) => {
+      const start = Date.now()
+      const timer = setInterval(() => {
+        if (called) {
+          clearInterval(timer)
+          resolve(null)
+        } else if (Date.now() - start > 2000) {
+          clearInterval(timer)
+          reject(new Error('watch callback not triggered'))
+        }
+      }, 50)
+    })
+    await unwatch()
+    expect(called).toContain('watch-test.txt')
   })
 
   it('返回关闭函数可正常关闭 watcher', async () => {
@@ -119,7 +144,7 @@ describe('watch', () => {
       called = true
     })
     await new Promise((resolve) => setTimeout(resolve, 100))
-    unwatch()
+    await unwatch()
     fs.appendFileSync(tempFile, 'change')
     await new Promise((resolve) => setTimeout(resolve, 300))
     expect(called).toBe(false)

@@ -1,3 +1,5 @@
+import { isUtf8 } from 'node:buffer'
+
 import fse from 'fs-extra'
 
 import echo from './echo.js'
@@ -40,6 +42,18 @@ const EXTNAMES = [
   '.xml',
 ] as const
 
+const SNIFF_BYTES = 8000
+
+const isBinary = (content: Buffer): boolean => {
+  const sample = content.subarray(0, SNIFF_BYTES)
+  if (!isUtf8(sample)) return true
+
+  for (const byte of sample)
+    if (byte <= 8 || (byte >= 14 && byte <= 26) || byte === 127) return true
+
+  return false
+}
+
 /**
  * Read file contents with smart format detection and parsing
  * @template T - Expected type of parsed content (for type-safe JSON/YAML parsing)
@@ -51,11 +65,7 @@ const EXTNAMES = [
  * @returns {Promise<Result<T, S, R> | undefined>} Parsed content based on file extension:
  * text→string, json/yaml→object, raw→Buffer, non-existent→undefined
  */
-const read = async <
-  T = undefined,
-  S extends string = string,
-  R extends boolean = false,
->(
+const read = async <T = undefined, S extends string = string, R extends boolean = false>(
   source: S,
   options?: Options,
 ): Promise<Result<T, S, R> | undefined> => {
@@ -77,8 +87,7 @@ const read = async <
 
   const extname = getExtname(src)
 
-  if (EXTNAMES.includes(extname as ItemExtString))
-    return String(content) as Result<T, S, R>
+  if (EXTNAMES.includes(extname as ItemExtString)) return String(content) as Result<T, S, R>
 
   if (extname === '.json') return JSON.parse(String(content)) as Result<T, S, R>
 
@@ -87,7 +96,10 @@ const read = async <
     return jsYaml.load(content.toString()) as Result<T, S, R>
   }
 
-  return content as Result<T, S, R>
+  // 未知扩展名：嗅探内容，二进制返回 Buffer，文本返回 string
+  if (isBinary(content)) return content as Result<T, S, R>
+
+  return String(content) as Result<T, S, R>
 }
 
 export default read

@@ -58,14 +58,7 @@ type OptionGeneral = {
 }
 
 type OPGeneral = {
-  type:
-    | 'autocomplete'
-    | 'confirm'
-    | 'multiselect'
-    | 'number'
-    | 'select'
-    | 'text'
-    | 'toggle'
+  type: 'autocomplete' | 'confirm' | 'multiselect' | 'number' | 'select' | 'text' | 'toggle'
   name: 'value'
   message: string
 }
@@ -135,18 +128,11 @@ type Result<T extends Type = Type, U = unknown> = T extends 'confirm'
           : never
 
 type Save = {
-  type: Omit<Type, 'multi'>
+  type: Exclude<Type, 'multi'>
   value: unknown
 }
 
-type Type =
-  | 'auto'
-  | 'confirm'
-  | 'multi'
-  | 'number'
-  | 'select'
-  | 'text'
-  | 'toggle'
+type Type = 'auto' | 'confirm' | 'multi' | 'number' | 'select' | 'text' | 'toggle'
 
 // variables
 
@@ -188,9 +174,7 @@ const main = async <T, U extends Type = Type>(
   }
 }
 
-const formatOption = async <T extends Type, U>(
-  option: Option<T, U>,
-): Promise<OP<T, U>> => {
+const formatOption = async <T extends Type, U>(option: Option<T, U>): Promise<OP<T, U>> => {
   if (option.type === 'confirm') {
     const result: OP<'confirm', U> = {
       initial: option.default ?? (await getCache(option)) ?? false,
@@ -213,16 +197,11 @@ const formatOption = async <T extends Type, U>(
     return result as OP<T, U>
   }
 
-  if (
-    option.type === 'auto' ||
-    option.type === 'multi' ||
-    option.type === 'select'
-  ) {
+  if (option.type === 'auto' || option.type === 'multi' || option.type === 'select') {
     const list = transChoice(option.list)
     const result: OP<'select', U> = {
       choices: list,
-      initial:
-        pickDefault(list, option.default ?? (await getCache(option))) || 0,
+      initial: pickDefault(list, option.default ?? (await getCache(option))) || 0,
       message: option.message ?? DEFAULT_MESSAGE_MAP[option.type],
       name: 'value',
       type: transType(option.type),
@@ -240,7 +219,7 @@ const formatOption = async <T extends Type, U>(
     return result as OP<T, U>
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // oxlint-disable-next-line typescript/no-unnecessary-condition
   if (option.type === 'toggle') {
     const result: OP<'toggle', U> = {
       active: option.on ?? 'on',
@@ -253,13 +232,11 @@ const formatOption = async <T extends Type, U>(
     return result as OP<T, U>
   }
 
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  // oxlint-disable-next-line typescript/restrict-template-expressions
   throw new Error(`invalid type '${option.type}'`)
 }
 
-const getCache = async <T, U>(
-  option: Option<Type, U>,
-): Promise<T | undefined> => {
+const getCache = async <T, U>(option: Option<Type, U>): Promise<T | undefined> => {
   const { id, type } = option
 
   if (!id) return undefined

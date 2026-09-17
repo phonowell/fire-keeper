@@ -1,4 +1,4 @@
-import { Readable } from 'stream'
+import { Readable } from 'node:stream'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -16,8 +16,7 @@ type MockResponse = {
   statusText: string
 }
 
-const createBody = (data: number[] = []) =>
-  Readable.toWeb(Readable.from([Buffer.from(data)]))
+const createBody = (data: number[] = []) => Readable.toWeb(Readable.from([Buffer.from(data)]))
 
 const createMockResponse = (data: number[] = []): MockResponse => ({
   ok: true,
@@ -114,9 +113,7 @@ describe('download', () => {
   })
 
   it('无 url 抛 TypeError', async () => {
-    await expect(download('', TEMP_DIR)).rejects.toThrow(
-      'download: url is required',
-    )
+    await expect(download('', TEMP_DIR)).rejects.toThrow('download: url is required')
   })
 
   it('无 dir 抛 TypeError', async () => {
@@ -133,9 +130,7 @@ describe('download', () => {
       arrayBuffer: vi.fn(),
     }
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
-    await expect(
-      download('http://test.com/file.txt', TEMP_DIR),
-    ).rejects.toThrow('Not Found')
+    await expect(download('http://test.com/file.txt', TEMP_DIR)).rejects.toThrow('Not Found')
   })
 
   it('fetch 响应无 body 抛 Error', async () => {
@@ -144,19 +139,14 @@ describe('download', () => {
       vi.fn().mockResolvedValue(new Uint8Array().buffer),
     )
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
-    await expect(
-      download('http://test.com/file.txt', TEMP_DIR),
-    ).rejects.toThrow('download: response has no body')
+    await expect(download('http://test.com/file.txt', TEMP_DIR)).rejects.toThrow(
+      'download: response has no body',
+    )
   })
 
   it('fetch 抛异常', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockRejectedValue(new Error('network error')),
-    )
-    await expect(
-      download('http://test.com/file.txt', TEMP_DIR),
-    ).rejects.toThrow('network error')
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
+    await expect(download('http://test.com/file.txt', TEMP_DIR)).rejects.toThrow('network error')
   })
 
   it('fetch 返回 arrayBuffer 抛异常', async () => {
@@ -165,19 +155,12 @@ describe('download', () => {
       vi.fn().mockRejectedValue(new Error('arrayBuffer error')),
     )
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
-    await expect(download('http://test.com/err.txt', TEMP_DIR)).rejects.toThrow(
-      'arrayBuffer error',
-    )
+    await expect(download('http://test.com/err.txt', TEMP_DIR)).rejects.toThrow('arrayBuffer error')
   })
 
   it('优先使用响应流而不是 arrayBuffer', async () => {
-    const arrayBuffer = vi
-      .fn()
-      .mockResolvedValue(new Uint8Array([1, 2, 3]).buffer)
-    const mockResponse = createFallbackResponse(
-      createBody([1, 2, 3]),
-      arrayBuffer,
-    )
+    const arrayBuffer = vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]).buffer)
+    const mockResponse = createFallbackResponse(createBody([1, 2, 3]), arrayBuffer)
 
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse))
     await download('http://test.com/stream.txt', TEMP_DIR)

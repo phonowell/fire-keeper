@@ -51,6 +51,23 @@ describe('read', () => {
     expect(result).toEqual(Buffer.from([1, 2, 3, 4]))
   })
 
+  it('未知扩展名应嗅探内容：文本返回 string，二进制返回 Buffer', async () => {
+    const logFile = `${TEMP_DIR}/app.log`
+    const envFile = `${TEMP_DIR}/.env`
+    const datFile = `${TEMP_DIR}/data.dat`
+    const utf8File = `${TEMP_DIR}/note.未知`
+
+    await write(logFile, 'line1\nline2\n')
+    await write(envFile, 'KEY=value')
+    await write(datFile, Buffer.from([0, 159, 146, 150, 1, 2]))
+    await write(utf8File, '中文内容')
+
+    expect(await read(logFile)).toBe('line1\nline2\n')
+    expect(await read(envFile)).toBe('KEY=value')
+    expect(Buffer.isBuffer(await read(datFile))).toBe(true)
+    expect(await read(utf8File)).toBe('中文内容')
+  })
+
   it('raw 选项应返回 Buffer', async () => {
     const result = await read(txtFile, { raw: true })
     expect(Buffer.isBuffer(result)).toBe(true)

@@ -1,12 +1,10 @@
 import fse from 'fs-extra'
 
 import echo from './echo.js'
-import getDirname from './getDirname.js'
 import getName from './getName.js'
 import glob from './glob.js'
 import normalizePath from './normalizePath.js'
 import runConcurrent from './runConcurrent.js'
-import toArray from './toArray.js'
 import wrapList from './wrapList.js'
 
 type Dirname = string | ((dirname: string) => string | Promise<string>)
@@ -18,31 +16,14 @@ type Options = {
   filename?: Filename
 }
 
-const DEFAULT_CONCURRENCY = 5
-
 type EchoOption = {
   echo?: boolean
 }
 
-const listDirectSources = async (source: string | string[]) => {
-  const result: string[] = []
+const DEFAULT_CONCURRENCY = 5
 
-  for (const item of toArray(source)) {
-    if (typeof item !== 'string') continue
-
-    const normalized = normalizePath(item)
-    if (!normalized || normalized.startsWith('!')) continue
-
-    try {
-      await fse.lstat(normalized)
-      result.push(normalized)
-    } catch {
-      continue
-    }
-  }
-
-  return result
-}
+const asOptions = (input: unknown): Options | undefined =>
+  typeof input === 'object' && input !== null ? (input as Options) : undefined
 
 /**
  * Copy files with concurrent operations and flexible path handling
@@ -60,18 +41,13 @@ const copy = async (
   options?: Dirname | Options,
   { echo: parentEcho }: EchoOption = {},
 ): Promise<void> => {
-  const listSource = Array.from(
-    new Set([
-      ...(await glob(source, { onlyFiles: true, followSymbolicLinks: false })),
-      ...(await listDirectSources(source)),
-    ]),
-  )
-  const shouldEcho =
-    (options && typeof options === 'object' && typeof options.echo === 'boolean'
-      ? options.echo
-      : undefined) ??
-    parentEcho ??
-    true
+  const listSource = await glob(source, {
+    followSymbolicLinks: false,
+    onlyFiles: false,
+  })
+
+  const optionObject = asOptions(options)
+  const shouldEcho = optionObject?.echo ?? parentEcho ?? true
 
   if (!listSource.length) {
     if (shouldEcho) echo('copy', `no files found matching ${wrapList(source)}`)
@@ -79,83 +55,38 @@ const copy = async (
     return
   }
 
-  const concurrency =
-    options && typeof options === 'object'
-      ? (options.concurrency ?? DEFAULT_CONCURRENCY)
-      : DEFAULT_CONCURRENCY
-
   // 并发复制
   await runConcurrent(
-    concurrency,
+    optionObject?.concurrency ?? DEFAULT_CONCURRENCY,
     listSource.map((src) => () => child(src, target, options)),
   )
 
   // 输出信息
-  const targetInfo =
-    target && typeof target === 'string' ? ` to **${target}**` : ''
-  const optionsInfo =
-    options && typeof options === 'string' ? ` as **${options}**` : ''
+  const targetInfo = target && typeof target === 'string' ? ` to **${target}**` : ''
+  const optionsInfo = options && typeof options === 'string' ? ` as **${options}**` : ''
 
   if (shouldEcho) {
-    echo(
-      'copy',
-      `copied **${wrapList(source)}**${targetInfo}${optionsInfo}`.trim(),
-    )
+    echo('copy', `copied **${wrapList(source)}**${targetInfo}${optionsInfo}`.trim())
   }
 }
 
-const child = async (
-  source: string,
-  target?: Dirname,
-  options?: Dirname | Options,
-) => {
+const child = async (source: string, target?: Dirname, options?: Dirname | Options) => {
+  const { basename, dirname: sourceDirname, extname, filename } = getName(source)
+
   // 目标目录
-  const sourceDirname = getDirname(source)
   const dirname = !target
     ? sourceDirname
     : typeof target === 'string'
       ? target
       : await target(sourceDirname)
 
+  const fallback = dirname === sourceDirname ? `${basename}.copy${extname}` : filename
+
   // 文件名
-  const {
-    basename,
-    dirname: fileSourceDirname,
-    extname,
-    filename: originalFilename,
-  } = getName(source)
+  const option = typeof options === 'object' ? asOptions(options)?.filename : options
+  const name = typeof option === 'function' ? await option(filename) : (option ?? fallback)
 
-  const defaultFilename =
-    dirname === fileSourceDirname
-      ? `${basename}.copy${extname}`
-      : originalFilename
-
-  // 无 options
-  if (!options)
-    return fse.copy(source, normalizePath(`${dirname}/${defaultFilename}`))
-
-  // options 是字符串（目标文件名）
-  if (typeof options === 'string')
-    return fse.copy(source, normalizePath(`${dirname}/${options}`))
-
-  // options 是函数（异步文件名转换）
-  if (typeof options === 'function') {
-    const filename = await options(originalFilename)
-    return fse.copy(source, normalizePath(`${dirname}/${filename}`))
-  }
-
-  // options 是对象，且 filename 是字符串
-  if (typeof options.filename === 'string')
-    return fse.copy(source, normalizePath(`${dirname}/${options.filename}`))
-
-  // options 是对象，且 filename 是函数
-  if (typeof options.filename === 'function') {
-    const filename = await options.filename(originalFilename)
-    return fse.copy(source, normalizePath(`${dirname}/${filename}`))
-  }
-
-  // options 是对象但无 filename（使用默认）
-  return fse.copy(source, normalizePath(`${dirname}/${defaultFilename}`))
+  await fse.copy(source, normalizePath(`${dirname}/${name}`))
 }
 
 export default copy

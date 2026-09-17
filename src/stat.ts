@@ -1,4 +1,6 @@
-import fs from 'fs'
+import type { Stats } from 'node:fs'
+
+import fse from 'fs-extra'
 
 import echo from './echo.js'
 import glob from './glob.js'
@@ -19,22 +21,17 @@ type Options = {
 const stat = async (
   source: string,
   { echo: shouldEcho = true }: Options = {},
-): Promise<fs.Stats | null> => {
+): Promise<Stats | null> => {
   const listSource = await glob(source, { onlyFiles: false })
 
-  if (!listSource.length) {
+  const filePath = listSource.at(0)
+  if (!filePath) {
     if (shouldEcho) echo('stat', `**${wrapList(source)}** not found`)
 
     return null
   }
 
-  return new Promise((resolve, reject) => {
-    const filePath = listSource.at(0) ?? ''
-    fs.stat(filePath, (err, stat) => {
-      if (err) reject(err)
-      else resolve(stat)
-    })
-  })
+  return fse.stat(filePath)
 }
 
 export default stat

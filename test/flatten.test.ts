@@ -32,11 +32,7 @@ describe('flatten', () => {
     )[] = [1, ['a', true], null, undefined]
     expect(flatten(arr)).toEqual([1, 'a', true, null, undefined])
 
-    const arr2: (undefined | null | (undefined | null)[])[] = [
-      undefined,
-      [null],
-      [undefined],
-    ]
+    const arr2: (undefined | null | (undefined | null)[])[] = [undefined, [null], [undefined]]
     expect(flatten(arr2)).toEqual([undefined, null, undefined])
   })
 

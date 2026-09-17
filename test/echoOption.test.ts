@@ -23,8 +23,7 @@ import {
 const TEMP_DIR = './temp/echo-option'
 const tempFile = (name: string) => `${TEMP_DIR}/${name}`
 
-const spyConsole = () =>
-  vi.spyOn(console, 'log').mockImplementation(() => undefined)
+const spyConsole = () => vi.spyOn(console, 'log').mockImplementation(() => undefined)
 
 describe('echo option', () => {
   beforeEach(async () => {
@@ -79,11 +78,7 @@ describe('echo option', () => {
   it('supports echo false in download', async () => {
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(Buffer.from('download'), { status: 200 }),
-        ),
+      vi.fn().mockResolvedValue(new Response(Buffer.from('download'), { status: 200 })),
     )
 
     const spy = spyConsole()

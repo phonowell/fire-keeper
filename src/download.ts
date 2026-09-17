@@ -1,6 +1,7 @@
-import path from 'path'
-import { Readable } from 'stream'
-import { pipeline } from 'stream/promises'
+import path from 'node:path'
+import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
+import type { ReadableStream as WebReadableStream } from 'node:stream/web'
 
 import fse from 'fs-extra'
 
@@ -8,29 +9,21 @@ import echo from './echo.js'
 import getFilename from './getFilename.js'
 import normalizePath from './normalizePath.js'
 
-import type { ReadableStream as WebReadableStream } from 'stream/web'
-
 type Options = {
   echo?: boolean
 }
 
-const isNodeReadable = (input: unknown): input is Readable =>
-  input instanceof Readable
+const isNodeReadable = (input: unknown): input is Readable => input instanceof Readable
 
-const isWebReadable = (
-  input: unknown,
-): input is WebReadableStream<Uint8Array> =>
-  !!input &&
-  typeof (input as WebReadableStream<Uint8Array>).getReader === 'function'
+const isWebReadable = (input: unknown): input is WebReadableStream<Uint8Array> =>
+  !!input && typeof (input as WebReadableStream<Uint8Array>).getReader === 'function'
 
 const toReadable = async (response: Response): Promise<Readable> => {
   if (!response.body) throw new Error('download: response has no body')
 
   if (isNodeReadable(response.body)) return response.body
   if (isWebReadable(response.body)) {
-    return Readable.fromWeb(
-      response.body as unknown as WebReadableStream<Uint8Array>,
-    )
+    return Readable.fromWeb(response.body as unknown as WebReadableStream<Uint8Array>)
   }
 
   return Readable.from(Buffer.from(await response.arrayBuffer()))
@@ -67,10 +60,7 @@ const download = async (
   )
 
   if (shouldEcho) {
-    echo(
-      'download',
-      `downloaded **${url}** to **${normalizedDir}**, as **${targetFilename}**`,
-    )
+    echo('download', `downloaded **${url}** to **${normalizedDir}**, as **${targetFilename}**`)
   }
 }
 

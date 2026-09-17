@@ -6,10 +6,6 @@
  * @example
  * flatten([1, [2, [3]], 4]) // [1, 2, 3, 4]
  */
-const flatten = <T>(array: (T | T[])[]): T[] =>
-  array.reduce<T[]>(
-    (acc, value) => acc.concat(Array.isArray(value) ? flatten(value) : value),
-    [],
-  )
+const flatten = <T>(array: (T | T[])[]): T[] => array.flat(Number.POSITIVE_INFINITY) as T[]
 
 export default flatten

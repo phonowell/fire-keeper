@@ -25,9 +25,7 @@ const root = () => {
   const isWindowsDrivePath = parts.length > 0 && firstPart?.match(/^[A-Za-z]:$/)
 
   if (isWindowsDrivePath) {
-    return parts.length === 1
-      ? `${firstPart}/`
-      : `${firstPart}/${parts.slice(1).join('/')}`
+    return parts.length === 1 ? `${firstPart}/` : `${firstPart}/${parts.slice(1).join('/')}`
   }
 
   // Unix path handling - preserve leading slash if original path was absolute

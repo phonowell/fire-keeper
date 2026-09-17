@@ -10,9 +10,7 @@ describe('findIndex', () => {
     expect(findIndex([5], (x) => x === 1)).toBe(-1)
     expect(findIndex([1, 2, 3], (x) => (x ?? 0) > 5)).toBe(-1)
     expect(findIndex([], () => true)).toBe(-1)
-    expect(
-      findIndex([undefined, null], (x) => typeof x === 'number' && x === 1),
-    ).toBe(-1)
+    expect(findIndex([undefined, null], (x) => typeof x === 'number' && x === 1)).toBe(-1)
   })
 
   it('对象数组与类型守卫', () => {
@@ -40,7 +38,7 @@ describe('findIndex', () => {
   })
 
   it('稀疏数组与全部匹配/不匹配', () => {
-    const arr = [1, , 3]
+    const arr = [1, undefined, 3]
     expect(findIndex(arr, (x) => x === undefined)).toBe(1)
     expect(findIndex(arr, (x) => x === 3)).toBe(2)
     expect(findIndex([1, 1, 1], (x) => x === 1)).toBe(0)
@@ -49,11 +47,7 @@ describe('findIndex', () => {
 
   it('复杂类型、NaN、Infinity、超大数组', () => {
     type Complex = { a: number; b?: { c: string } }
-    const arr: Complex[] = [
-      { a: 1 },
-      { a: 2, b: { c: 'x' } },
-      { a: 3, b: { c: 'y' } },
-    ]
+    const arr: Complex[] = [{ a: 1 }, { a: 2, b: { c: 'x' } }, { a: 3, b: { c: 'y' } }]
     expect(findIndex(arr, (x) => x?.b?.c === 'y')).toBe(2)
     expect(findIndex(arr, (x) => x?.b?.c === 'z')).toBe(-1)
 

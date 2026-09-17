@@ -1,4 +1,4 @@
-import { exec, getBasename, glob, read, remove, write } from '../src/index.js'
+import { exec, getBasename, glob, write } from '../src/index.js'
 
 const main = async () => {
   if (!(await runTasks())) {
@@ -6,16 +6,8 @@ const main = async () => {
     return
   }
 
-  await cleanup()
   await makeIndex()
-  await replacePackage()
-  await replaceRollup()
-  await exec('rollup -c rollup.config.js --bundleConfigAsCjs')
-  await exec('tsc --project tsconfig.declaration.json --skipLibCheck')
-}
-
-const cleanup = async () => {
-  await remove('./dist')
+  await exec('tsdown')
 }
 
 const makeIndex = async () => {
@@ -36,45 +28,9 @@ const makeIndex = async () => {
 const listModuleCache: string[] = []
 const makeListModule = async () => {
   if (!listModuleCache.length) {
-    listModuleCache.push(
-      ...(await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename),
-    )
+    listModuleCache.push(...(await glob(['./src/*.ts', '!**/index.ts'])).map(getBasename))
   }
   return listModuleCache
-}
-
-const replacePackage = async () => {
-  const pkg = await read<{
-    exports?: Record<string, string>
-  }>('./package.json')
-  if (!pkg) return
-
-  const exports: NonNullable<(typeof pkg)['exports']> = {
-    '.': './dist/index.js',
-  }
-  const listModule = await makeListModule()
-  for (const it of listModule) exports[`./${it}`] = `./dist/${it}.js`
-
-  pkg.exports = exports
-
-  await write('./package.json', JSON.stringify(pkg, null, 2))
-}
-
-const replaceRollup = async () => {
-  const listModule = await makeListModule()
-  listModule.push('index')
-
-  const source = './rollup.config.js'
-  const cont = await read(source)
-  if (!cont) return
-
-  const content = cont.replace(
-    /const input = {[\s\S]*?}/,
-    `const input = {\n${listModule
-      .map((it) => `  ${it}: 'src/${it}.ts',`)
-      .join('\n')}\n}`,
-  )
-  await write(source, content)
 }
 
 const runTasks = async () => {

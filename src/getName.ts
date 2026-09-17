@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 
 export type GetNameResult = {
   basename: string
@@ -29,8 +29,7 @@ const getName = (input: string): GetNameResult => {
   // Special handling for edge cases to match expected behavior
 
   // Handle UNC paths: //server/share/file.txt -> //server/share/
-  if (ipt.startsWith('//') && dirname.match(/^\/\/[^/]+\/[^/]+$/))
-    dirname = `${dirname}/`
+  if (ipt.startsWith('//') && dirname.match(/^\/\/[^/]+\/[^/]+$/)) dirname = `${dirname}/`
 
   return { basename, dirname, extname, filename }
 }

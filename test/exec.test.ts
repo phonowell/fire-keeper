@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
 
@@ -28,10 +28,7 @@ describe('exec', () => {
   })
 
   it('应支持并发执行', async () => {
-    const [r1, r2] = await Promise.all([
-      exec('echo concurrent1'),
-      exec('echo concurrent2'),
-    ])
+    const [r1, r2] = await Promise.all([exec('echo concurrent1'), exec('echo concurrent2')])
     expect(r1[1]).toContain('concurrent1')
     expect(r2[1]).toContain('concurrent2')
   })
@@ -62,10 +59,10 @@ describe('exec', () => {
     fs.mkdirSync(TEMP_DIR, { recursive: true })
 
     try {
-      const result = await exec(
-        ['cd ./temp/exec', `node -e "console.log(process.cwd())"`],
-        { echo: false, silent: true },
-      )
+      const result = await exec(['cd ./temp/exec', `node -e "console.log(process.cwd())"`], {
+        echo: false,
+        silent: true,
+      })
 
       expect(result[0]).toBe(0)
       expect(result[1].replace(/\\/g, '/')).toMatch(/\/temp\/exec$/)

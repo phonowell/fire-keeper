@@ -28,9 +28,7 @@ describe('runConcurrent', () => {
       () => Promise.reject(new Error('fail')),
       () => Promise.resolve(3),
     ]
-    await expect(
-      runConcurrent(2, tasks, { stopOnError: true }),
-    ).rejects.toThrow('fail')
+    await expect(runConcurrent(2, tasks, { stopOnError: true })).rejects.toThrow('fail')
   })
 
   it('应聚合所有错误（stopOnError=false）且抛出AggregateError', async () => {

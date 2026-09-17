@@ -9,25 +9,10 @@
  */
 const trimEnd = (source: string, chars?: string) => {
   if (chars === undefined) return source.replace(/\s+$/, '')
+  if (!chars) return source
 
-  // 特殊字符映射，保持原始行为
-  const specialChars: Record<string, string> = {
-    '\n': '\\n',
-    '\r': '\\r',
-    '\t': '\\t',
-    '\f': '\\f',
-    '\v': '\\v',
-  }
-
-  const _chars = chars
-    .split('')
-    .map((char) => {
-      if (char in specialChars) return specialChars[char]
-      return char.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&')
-    })
-    .join('|')
-
-  return source.replace(new RegExp(`[${_chars}]+$`, 'u'), '')
+  const escaped = chars.replace(/[\\^$.*+?()[\]{}|-]/g, '\\$&')
+  return source.replace(new RegExp(`[${escaped}]+$`, 'u'), '')
 }
 
 export default trimEnd

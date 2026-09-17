@@ -44,19 +44,12 @@ const write = async (
   }
 
   if (content instanceof Blob) {
-    await writeContent(
-      source,
-      new Uint8Array(await content.arrayBuffer()),
-      options,
-      shouldEcho,
-    )
+    await writeContent(source, new Uint8Array(await content.arrayBuffer()), options, shouldEcho)
     return
   }
 
   const str =
-    typeof content === 'object' && content !== null
-      ? JSON.stringify(content)
-      : String(content)
+    typeof content === 'object' && content !== null ? JSON.stringify(content) : String(content)
 
   await writeContent(source, str, options, shouldEcho)
 }

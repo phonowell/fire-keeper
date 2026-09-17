@@ -20,12 +20,8 @@ const getAllDependencies = async () => {
 const updateDependencies = async () => {
   const deps = await getAllDependencies()
 
-  const lockedDeps = deps.filter(
-    ([, version]) => !Number.isNaN(Number(version[0])),
-  )
-  const unlockedDeps = deps.filter(([, version]) =>
-    Number.isNaN(Number(version[0])),
-  )
+  const lockedDeps = deps.filter(([, version]) => !Number.isNaN(Number(version[0])))
+  const unlockedDeps = deps.filter(([, version]) => Number.isNaN(Number(version[0])))
 
   const depsToUpdate = unlockedDeps
     .filter(([name]) => {
@@ -40,10 +36,9 @@ const updateDependencies = async () => {
   }
 
   echo(
-    [
-      'These dependencies have been locked:',
-      ...lockedDeps.map((it) => `'${it.join('@')}'`),
-    ].join('\n'),
+    ['These dependencies have been locked:', ...lockedDeps.map((it) => `'${it.join('@')}'`)].join(
+      '\n',
+    ),
   )
 }
 

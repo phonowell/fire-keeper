@@ -1,6 +1,6 @@
-import child from 'child_process'
+import child from 'node:child_process'
 
-import kleur from 'kleur'
+import ansis from 'ansis'
 
 import echo from './echo.js'
 import os from './os.js'
@@ -50,8 +50,7 @@ const exec = (
   const command = getCommandString(cmd)
   if (!command) return Promise.resolve([0, '', []])
 
-  if (!silent && shouldEcho)
-    echo('exec', Array.isArray(cmd) ? cmd.join(' && ') : cmd)
+  if (!silent && shouldEcho) echo('exec', Array.isArray(cmd) ? cmd.join(' && ') : cmd)
 
   return executeCommand(command, silent)
 }
@@ -73,24 +72,20 @@ const executeCommand = (command: string, silent: boolean): Promise<Result> => {
     const cacheAll: string[] = []
     let cacheLast = ''
 
+    const onData = (type: 'default' | 'error') => (data: Uint8Array) => {
+      const message = parseMessage(data)
+      cacheAll.push(message)
+      cacheLast = message
+      if (!silent) info(type, message)
+    }
+
     const spawnOptions = os() === 'windows' ? { shell: false } : {}
-    const process = child.spawn(cmder, arg, spawnOptions)
+    const proc = child.spawn(cmder, arg, spawnOptions)
 
-    process.stderr.on('data', (data: Uint8Array) => {
-      const message = parseMessage(data)
-      cacheAll.push(message)
-      cacheLast = message
-      if (!silent) info('error', message)
-    })
+    proc.stderr.on('data', onData('error'))
+    proc.stdout.on('data', onData('default'))
 
-    process.stdout.on('data', (data: Uint8Array) => {
-      const message = parseMessage(data)
-      cacheAll.push(message)
-      cacheLast = message
-      if (!silent) info('default', message)
-    })
-
-    process.on('error', (error) => {
+    proc.on('error', (error) => {
       const message = error.message.trim()
       if (message) {
         cacheAll.push(message)
@@ -101,15 +96,13 @@ const executeCommand = (command: string, silent: boolean): Promise<Result> => {
       resolve([1, cacheLast, cacheAll])
     })
 
-    process.on('close', (code: number | null) =>
-      resolve([code ?? 1, cacheLast, cacheAll]),
-    )
+    proc.on('close', (code: number | null) => resolve([code ?? 1, cacheLast, cacheAll]))
   })
 }
 
 const info = (type: string, message: string) => {
   if (!message) return
-  console.log(type === 'error' ? kleur.red(message) : kleur.gray(message))
+  console.log(type === 'error' ? ansis.red(message) : ansis.gray(message))
 }
 
 const parseMessage = (buffer: Uint8Array) =>

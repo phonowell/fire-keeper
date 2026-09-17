@@ -14,11 +14,7 @@ const wrapList = (input: unknown) =>
     .map((it): string => {
       if (it === null || it === undefined) return ''
 
-      if (
-        typeof it === 'string' ||
-        typeof it === 'number' ||
-        typeof it === 'boolean'
-      )
+      if (typeof it === 'string' || typeof it === 'number' || typeof it === 'boolean')
         return `**${it}**`
 
       return `**${JSON.stringify(it)}**`

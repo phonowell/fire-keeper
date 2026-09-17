@@ -87,4 +87,12 @@ describe('normalizePath', () => {
     expect(result).toBe(`${rootDir}/.claude/skills`)
     expect(result.endsWith('/.claude/skills')).toBe(true)
   })
+
+  it('不应破坏名为 __parent_directory__ 的字面目录', () => {
+    const rootDir = root()
+    expect(normalizePath('__parent_directory__/x')).toBe(`${rootDir}/__parent_directory__/x`)
+    expect(normalizePath('foo/__parent_directory__/bar')).toBe(
+      `${rootDir}/foo/__parent_directory__/bar`,
+    )
+  })
 })

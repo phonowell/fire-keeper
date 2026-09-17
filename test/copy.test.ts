@@ -53,9 +53,7 @@ describe('copy', () => {
     await copy(src, undefined, 'renamed.txt')
     expect(await read(`${TEMP_DIR}/renamed.txt`)).toBe('rename')
 
-    await copy(src, undefined, (name: string) =>
-      Promise.resolve(`async_${name}`),
-    )
+    await copy(src, undefined, (name: string) => Promise.resolve(`async_${name}`))
     expect(await read(`${TEMP_DIR}/async_c.txt`)).toBe('rename')
 
     await copy(src, undefined, { filename: 'fixed.txt' })
@@ -96,6 +94,18 @@ describe('copy', () => {
     await copy(srcDir, dist)
 
     expect(await read(`${dist}/folder/nested/a.txt`)).toBe('dir-copy')
+  })
+
+  it('glob 模式应同时复制匹配到的目录', async () => {
+    const mix = `${TEMP_DIR}/mix`
+    const dist = `${TEMP_DIR}/mix-dist`
+    await write(`${mix}/a.txt`, 'a')
+    await write(`${mix}/sub/b.txt`, 'b')
+
+    await copy(`${mix}/*`, dist)
+
+    expect(await read(`${dist}/a.txt`)).toBe('a')
+    expect(await read(`${dist}/sub/b.txt`)).toBe('b')
   })
 
   it('覆盖已有文件', async () => {

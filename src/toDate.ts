@@ -18,13 +18,6 @@ const toDate = (input: Date | number | string) => {
     if (typeof input === 'number') return new Date(input)
 
     if (typeof input === 'string') {
-      // 尝试解析 ISO 格式字符串
-      if (input.includes('T')) {
-        const date = new Date(input)
-        if (!isNaN(date.getTime())) return date
-      }
-
-      // 尝试直接解析
       const date = new Date(input)
       if (!isNaN(date.getTime())) return date
 
@@ -35,8 +28,7 @@ const toDate = (input: Date | number | string) => {
     throw new Error('invalid input')
   })()
 
-  if (isNaN(result.getTime()) || result <= new Date(0))
-    throw new Error('invalid input')
+  if (isNaN(result.getTime()) || result <= new Date(0)) throw new Error('invalid input')
 
   return result
 }

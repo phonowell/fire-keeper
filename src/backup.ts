@@ -23,8 +23,7 @@ const backup = async (
   const listSource = await glob(source, { onlyFiles: true })
 
   if (!listSource.length) {
-    if (shouldEcho)
-      echo('backup', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho) echo('backup', `no files found matching **${wrapList(source)}**`)
 
     return
   }

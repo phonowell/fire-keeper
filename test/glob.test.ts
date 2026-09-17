@@ -90,8 +90,6 @@ describe('glob', () => {
   it('使用通配符匹配所有文件（包括隐藏文件）', async () => {
     const result = await glob(`${TEMP_DIR}/**/*`)
     expect(result.length).toBeGreaterThan(0)
-    expect(
-      result.some((p) => p.includes('.dotfile') || p.includes('.hidden')),
-    ).toBe(true)
+    expect(result.some((p) => p.includes('.dotfile') || p.includes('.hidden'))).toBe(true)
   })
 })

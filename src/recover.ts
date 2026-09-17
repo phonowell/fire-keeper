@@ -30,8 +30,7 @@ const recover = async (
   )
 
   if (!listSource.length) {
-    if (shouldEcho)
-      echo('recover', `no files found matching **${wrapList(source)}**`)
+    if (shouldEcho) echo('recover', `no files found matching **${wrapList(source)}**`)
 
     return
   }

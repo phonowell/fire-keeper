@@ -7,7 +7,6 @@
  * toArray('hello')     // ['hello']
  * toArray([1, 2, 3])   // [1, 2, 3] (unchanged)
  */
-const toArray = <T>(input: T | T[]): T[] =>
-  Array.isArray(input) ? input : [input]
+const toArray = <T>(input: T | T[]): T[] => (Array.isArray(input) ? input : [input])
 
 export default toArray

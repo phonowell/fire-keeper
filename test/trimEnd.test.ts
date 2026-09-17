@@ -34,6 +34,13 @@ describe('trimEnd', () => {
     expect(trimEnd('abcxyz', 'xy')).toBe('abcxyz')
   })
 
+  it('chars 不含 | 时不应误删 | 字符', () => {
+    expect(trimEnd('foo|', 'ab')).toBe('foo|')
+    expect(trimEnd('abc||', 'bc')).toBe('abc||')
+    // 显式包含 | 时正常去除
+    expect(trimEnd('a|b|', 'b|')).toBe('a')
+  })
+
   it('边界与特殊情况', () => {
     expect(trimEnd('', '.')).toBe('')
     expect(trimEnd('...', '.')).toBe('')

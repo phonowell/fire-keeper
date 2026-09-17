@@ -1,9 +1,8 @@
 import glob from 'fast-glob'
+import type { Options } from 'fast-glob'
 
 import normalizePath from './normalizePath.js'
 import toArray from './toArray.js'
-
-import type { Options } from 'fast-glob'
 
 type ListSource = string[] & {
   __IS_LISTED_AS_SOURCE__: true
@@ -15,9 +14,7 @@ const createEmptyResult = (): ListSource => {
   return result
 }
 
-const isListedAsSource = (
-  input: string | string[] | ListSource,
-): input is ListSource =>
+const isListedAsSource = (input: string | string[] | ListSource): input is ListSource =>
   Array.isArray(input) && !!(input as ListSource).__IS_LISTED_AS_SOURCE__
 
 /**

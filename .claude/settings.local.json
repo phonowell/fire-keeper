@@ -1,9 +1,5 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(wc:*)",
-      "Bash(ls:*)",
-      "Skill(review-dialogue-quality)"
-    ]
+    "allow": ["Bash(wc:*)", "Bash(ls:*)", "Skill(review-dialogue-quality)"]
   }
 }

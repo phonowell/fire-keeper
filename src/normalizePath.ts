@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 
 import home from './home.js'
 import root from './root.js'
@@ -18,19 +18,11 @@ const normalizePath = (input: string) => {
   const isIgnored = input.startsWith('!')
   let result = isIgnored ? input.slice(1) : input
 
-  // replace . & ~
-  result = result.replace(/\.{2}/g, '__parent_directory__')
-
-  if (result.startsWith('./')) result = result.replace(/\.\//u, `${root()}/`)
+  // replace ~ & .
+  if (result.startsWith('~')) result = `${home()}${result.slice(1)}`
   else if (result.startsWith('.')) result = `${root()}/${result}`
-  else if (result.startsWith('~')) result = result.replace(/~/u, home())
 
-  result = result.replace(/__parent_directory__/g, '..')
-
-  // replace ../ to ./../ at start
-  if (result.startsWith('..')) result = `${root()}/${result}`
-
-  // \\ -> /
+  // \\ -> /, resolve . & ..
   result = path.normalize(result).replace(/\\/g, '/')
 
   // absolute

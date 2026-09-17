@@ -28,9 +28,7 @@ describe('root', () => {
   })
 
   it('路径为 undefined/null/空字符串应抛出异常', () => {
-    spyCwd = vi
-      .spyOn(process, 'cwd')
-      .mockReturnValue(undefined as unknown as string)
+    spyCwd = vi.spyOn(process, 'cwd').mockReturnValue(undefined as unknown as string)
     expect(() => root()).toThrow('Invalid path: path is empty')
     spyCwd.mockReturnValue(null as unknown as string)
     expect(() => root()).toThrow('Invalid path: path is empty')
@@ -40,21 +38,13 @@ describe('root', () => {
 
   it('路径为相对路径应抛出异常', () => {
     spyCwd = vi.spyOn(process, 'cwd').mockReturnValue('.')
-    expect(() => root()).toThrow(
-      'Invalid path: contains relative path components',
-    )
+    expect(() => root()).toThrow('Invalid path: contains relative path components')
     spyCwd.mockReturnValue('..')
-    expect(() => root()).toThrow(
-      'Invalid path: contains relative path components',
-    )
+    expect(() => root()).toThrow('Invalid path: contains relative path components')
     spyCwd.mockReturnValue('/Users/../project')
-    expect(() => root()).toThrow(
-      'Invalid path: contains relative path components',
-    )
+    expect(() => root()).toThrow('Invalid path: contains relative path components')
     spyCwd.mockReturnValue('/Users/./../project')
-    expect(() => root()).toThrow(
-      'Invalid path: contains relative path components',
-    )
+    expect(() => root()).toThrow('Invalid path: contains relative path components')
   })
 
   it('路径含非法字符应抛出异常', () => {
