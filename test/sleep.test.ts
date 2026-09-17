@@ -3,6 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import echo from '../src/echo.js'
 import sleep from '../src/sleep.js'
 
+const stripAnsi = (input: unknown) =>
+  String(input).replace(/\x1b\[[0-9;]*m/g, '')
+
 describe('sleep', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -21,7 +24,7 @@ describe('sleep', () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => void 0)
     await sleep(50)
     expect(logSpy).toHaveBeenCalled()
-    expect(logSpy.mock.calls.at(0)?.at(0)).toContain('slept 50 ms')
+    expect(stripAnsi(logSpy.mock.calls.at(0)?.at(0))).toContain('slept 50 ms')
     logSpy.mockRestore()
   })
 
@@ -38,7 +41,7 @@ describe('sleep', () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => void 0)
     await sleep(25.5)
     expect(logSpy).toHaveBeenCalled()
-    expect(logSpy.mock.calls.at(0)?.at(0)).toContain('slept 25.5 ms')
+    expect(stripAnsi(logSpy.mock.calls.at(0)?.at(0))).toContain('slept 25.5 ms')
     logSpy.mockRestore()
   })
 
