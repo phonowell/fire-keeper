@@ -4,6 +4,7 @@ import echo from '../src/echo.js'
 import sleep from '../src/sleep.js'
 
 const stripAnsi = (input: unknown) =>
+  // oxlint-disable-next-line no-control-regex
   String(input).replace(/\x1b\[[0-9;]*m/g, '')
 
 describe('sleep', () => {
