@@ -69,9 +69,7 @@ describe('echo option', () => {
 
   it('supports echo false in copy', async () => {
     const spy = spyConsole()
-    await copy(`${TEMP_DIR}/missing-*.txt`, undefined, undefined, {
-      echo: false,
-    })
+    await copy(`${TEMP_DIR}/missing-*.txt`, undefined, { echo: false })
     expect(spy).not.toHaveBeenCalled()
   })
 
@@ -186,7 +184,7 @@ describe('echo option', () => {
   it('supports echo false in write', async () => {
     const file = tempFile('write.txt')
     const spy = spyConsole()
-    await write(file, 'write', {}, { echo: false })
+    await write(file, 'write', { echo: false })
     expect(await fse.readFile(file, 'utf8')).toBe('write')
     expect(spy).not.toHaveBeenCalled()
   })
@@ -196,9 +194,15 @@ describe('echo option', () => {
     await fse.ensureDir(targetDir)
 
     const spy = spyConsole()
-    await zip(`${TEMP_DIR}/missing-*.txt`, targetDir, 'a.zip', { echo: false })
+    await zip(`${TEMP_DIR}/missing-*.txt`, targetDir, { filename: 'a.zip', echo: false })
 
     expect(await fse.pathExists(`${targetDir}/a.zip`)).toBe(true)
     expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('rejects the removed trailing echo argument', async () => {
+    await expect(copy('a.txt', undefined, undefined, { echo: false })).rejects.toThrow(TypeError)
+    await expect(write('a.txt', 'x', {}, { echo: false })).rejects.toThrow(TypeError)
+    await expect(zip('a.txt', 'dist', 'a.zip', { echo: false })).rejects.toThrow(TypeError)
   })
 })

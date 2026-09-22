@@ -25,8 +25,8 @@ const normalizePath = (input: string) => {
   // \\ -> /, resolve . & ..
   result = path.normalize(result).replace(/\\/g, '/')
 
-  // absolute
-  if (!path.isAbsolute(result)) result = `${root()}/${result}`
+  // absolute (POSIX path.isAbsolute 不认 Windows 盘符，需额外判断)
+  if (!path.isAbsolute(result) && !/^[A-Za-z]:\//.test(result)) result = `${root()}/${result}`
 
   // ignore?
   if (isIgnored) result = `!${result}`

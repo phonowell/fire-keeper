@@ -13,6 +13,7 @@ type Options = {
 /**
  * Get file/directory status information
  * @param source - File path, directory path, or glob pattern
+ * @param options - { echo? }
  * @returns Promise resolving to fs.Stats object or null if not found
  * @example
  * const stats = await stat('file.txt')

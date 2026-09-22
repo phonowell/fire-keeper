@@ -62,6 +62,7 @@ const isBinary = (content: Buffer): boolean => {
  * @param {S} source - Path to file to read
  * @param {Object} [options] - Read options
  * @param {boolean} [options.raw=false] - Return raw buffer instead of parsed content
+ * @param {boolean} [options.echo] - Silence log output
  * @returns {Promise<Result<T, S, R> | undefined>} Parsed content based on file extension:
  * text→string, json/yaml→object, raw→Buffer, non-existent→undefined
  */

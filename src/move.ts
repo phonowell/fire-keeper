@@ -12,7 +12,7 @@ type Options = {
  * Move files/directories using copy-then-remove strategy
  * @param source - Source path(s) to move
  * @param target - Target directory or path generator function
- * @param options - Configuration with concurrency setting
+ * @param options - { concurrency?, echo? }
  * @example
  * await move('file.txt', 'archive/')
  * await move(['*.log'], name => `backup/${name}`)

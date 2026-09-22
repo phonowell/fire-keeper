@@ -16,10 +16,6 @@ type Options = {
   filename?: Filename
 }
 
-type EchoOption = {
-  echo?: boolean
-}
-
 const DEFAULT_CONCURRENCY = 5
 
 const asOptions = (input: unknown): Options | undefined =>
@@ -29,25 +25,27 @@ const asOptions = (input: unknown): Options | undefined =>
  * Copy files with concurrent operations and flexible path handling
  * @param source - File path(s) or glob pattern(s)
  * @param target - Target directory or path transform function. If empty uses current dir
- * @param options - Target filename or options object with {concurrency?, filename?}
+ * @param options - Filename string/transform, or options object {concurrency?, filename?, echo?}
  * @example
  * copy('src.txt') // Creates src.copy.txt
  * copy('src.txt', 'dist') // Creates dist/src.txt
- * copy('*.ts', 'dist', { filename: f => f.replace('.ts','.js') })
+ * copy('*.ts', 'dist', { filename: f => f.replace('.ts','.js'), echo: false })
  */
 const copy = async (
   source: string | string[],
   target?: Dirname,
   options?: Dirname | Options,
-  { echo: parentEcho }: EchoOption = {},
+  ...rest: unknown[]
 ): Promise<void> => {
+  if (rest.length) throw new TypeError('copy: too many arguments — merge { echo } into options')
+
   const listSource = await glob(source, {
     followSymbolicLinks: false,
     onlyFiles: false,
   })
 
   const optionObject = asOptions(options)
-  const shouldEcho = optionObject?.echo ?? parentEcho ?? true
+  const shouldEcho = optionObject?.echo ?? true
 
   if (!listSource.length) {
     if (shouldEcho) echo('copy', `no files found matching ${wrapList(source)}`)

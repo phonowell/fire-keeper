@@ -1,4 +1,4 @@
-import { exec, getBasename, glob, write } from '../src/index.js'
+import { exec, getBasename, glob, read, write } from '../src/index.js'
 
 const main = async () => {
   if (!(await runTasks())) {
@@ -8,6 +8,38 @@ const main = async () => {
 
   await makeIndex()
   await exec('tsdown')
+  await makeApiDoc()
+}
+
+const makeApiDoc = async () => {
+  const listModule = [...(await makeListModule())].sort()
+  const sections = [
+    '# fire-keeper API',
+    '',
+    '> Auto-generated from `src/*.ts` JSDoc. Do not edit.',
+    '',
+  ]
+
+  for (const mod of listModule) {
+    const content = await read<string>(`./src/${mod}.ts`)
+    if (!content) continue
+
+    const docs = (content.match(/^\/\*\*[\s\S]*?^\s*\*\//gm) ?? [])
+      .map((block) =>
+        block
+          .replace(/^\/\*\*|\*\/$/g, '')
+          .split('\n')
+          .map((line) => line.replace(/^\s*\* ?/, ''))
+          .join('\n')
+          .trim(),
+      )
+      .filter(Boolean)
+    if (!docs.length) continue
+
+    sections.push(`## ${mod}`, '', docs.join('\n\n'), '')
+  }
+
+  await write('./dist/api.md', sections.join('\n'))
 }
 
 const makeIndex = async () => {

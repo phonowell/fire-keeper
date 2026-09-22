@@ -34,6 +34,7 @@ const toReadable = async (response: Response): Promise<Readable> => {
  * @param url - Source URL to download from
  * @param dir - Target directory path
  * @param filename - Custom filename (auto-detected if omitted)
+ * @param options - { echo? }
  * @example
  * download('https://example.com/file.zip', './downloads')
  * download('https://api.com/data', './temp', 'data.json')

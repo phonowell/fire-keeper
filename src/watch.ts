@@ -26,7 +26,7 @@ const debounce = <T extends unknown[]>(fn: (...args: T) => void, delay: number) 
  * Watch files/directories for changes with debounced callback
  * @param listSource - Paths to watch; glob patterns are resolved once at start
  * @param callback - Function called on changes with normalized path
- * @param options - Configuration with debounce timing
+ * @param options - { debounce?, echo? }
  * @returns Function to close the watcher
  * @example
  * watch('src', path => console.log('Changed:', path))

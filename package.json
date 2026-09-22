@@ -1,7 +1,7 @@
 {
   "name": "fire-keeper",
   "version": "0.0.239",
-  "description": "A little helper for automate works.",
+  "description": "A lightweight toolkit for Node.js automation tasks.",
   "keywords": [
     "automation",
     "cli",

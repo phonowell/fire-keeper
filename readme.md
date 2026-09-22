@@ -42,247 +42,68 @@ await fk.copy('./src', './dist') // 复制整个目录到 ./dist/src
 await fk.remove('./temp') // 删除文件夹
 ```
 
-## LLM Friendly Summary | LLM 友好摘要
+## 功能索引 | Function Index
 
-**EN:** Fire Keeper is a pure ESM Node.js/TypeScript filesystem automation toolkit for backup, copy, remove, glob, watch, and concurrent workflows.
-**ZH:** Fire Keeper 是一个纯 ESM 的 Node.js/TypeScript 文件系统自动化工具库，提供备份、复制、删除、匹配、监听与并发执行能力。
+完整签名与示例见各模块 JSDoc；npm 包内含自动生成的 `dist/api.md`（全部 40 个导出）。
 
-### Quickstart | 快速开始
+| 分类 | 函数                                                            | 说明                                            |
+| ---- | --------------------------------------------------------------- | ----------------------------------------------- |
+| 文件 | `backup`                                                        | 创建 `.bak` 备份                                |
+| 文件 | `clean`                                                         | 删除文件并清理空父目录                          |
+| 文件 | `copy`                                                          | 复制文件/目录，支持 glob 与改名                 |
+| 文件 | `download`                                                      | 下载文件到目录                                  |
+| 文件 | `isExist`                                                       | 检查路径是否存在                                |
+| 文件 | `isSame`                                                        | 比较多文件内容是否一致                          |
+| 文件 | `mkdir`                                                         | 递归创建目录                                    |
+| 文件 | `move`                                                          | 移动（copy + remove）                           |
+| 文件 | `read`                                                          | 按扩展名智能读取解析                            |
+| 文件 | `recover`                                                       | 从 `.bak` 恢复                                  |
+| 文件 | `remove`                                                        | 删除文件/目录/通配符                            |
+| 文件 | `rename`                                                        | 重命名（仅 basename）                           |
+| 文件 | `stat`                                                          | 获取文件状态，无匹配返回 `null`                 |
+| 文件 | `write`                                                         | 写入，自动建目录与类型处理                      |
+| 文件 | `zip`                                                           | 创建 ZIP 压缩包                                 |
+| 路径 | `getBasename` `getDirname` `getExtname` `getFilename` `getName` | 路径组件解析                                    |
+| 路径 | `glob`                                                          | 文件匹配，返回可复用 `ListSource`               |
+| 路径 | `home` `root`                                                   | 主目录 / 当前工作目录（正斜杠）                 |
+| 路径 | `normalizePath`                                                 | 规范化路径（`~` `.` `..` `!`）                  |
+| 执行 | `exec`                                                          | 跨平台命令执行（sh / PowerShell）               |
+| 执行 | `run`                                                           | 立即执行函数                                    |
+| 执行 | `runConcurrent`                                                 | 并发任务控制                                    |
+| 执行 | `sleep`                                                         | 延时                                            |
+| CLI  | `argv`                                                          | 命令行参数解析                                  |
+| CLI  | `echo`                                                          | 格式化日志（含 `freeze/whisper/pause/resume`）  |
+| CLI  | `prompt`                                                        | 交互式提示（支持缓存）                          |
+| CLI  | `wrapList`                                                      | 列表格式化输出                                  |
+| 监听 | `watch`                                                         | 文件变更监听（防抖，仅 `change`）               |
+| 工具 | `at`                                                            | 安全取值（数组/嵌套对象）                       |
+| 工具 | `findIndex` `flatten` `toArray` `toDate` `trimEnd`              | 数组/字符串工具                                 |
+| 工具 | `os`                                                            | 系统识别（`macos`/`windows`/`linux`/`unknown`） |
 
-```bash
-pnpm i fire-keeper
-node --input-type=module -e "import backup from 'fire-keeper/backup'; await backup('./config.json')"
-```
+通用约定：文件类 API 的 `source` 均支持 `string | string[]` 与 glob；`options.echo: false` 可静默日志；无匹配时回显并早返回。
 
-### Key Capabilities | 核心能力
-
-- EN: file backup/copy/remove; path matching/normalization; concurrent task execution
-- ZH: 文件备份复制删除；路径匹配与规范化；并发任务执行
-
-### Typical Use Cases | 典型场景
-
-- EN: automate build/deploy file pipelines
-- ZH: 自动化构建与部署文件流程
-
-### Keywords | 关键词
-
-- EN: nodejs, typescript, filesystem, file-operations, automation, esm, cli, glob, file-watcher, concurrency
-- ZH: Node.js, TypeScript, 文件系统, 文件操作, 自动化, ESM, 命令行, glob, 文件监听, 并发
-
-### Docs & API | 文档与 API
-
-- Docs: https://github.com/phonowell/fire-keeper/blob/main/usage.md
-- API: https://github.com/phonowell/fire-keeper/blob/main/readme.md
-- Examples: https://github.com/phonowell/fire-keeper/blob/main/readme.md
-
-## 核心功能 | Core Features
-
-### 文件操作 | File Operations
-
-#### backup
-
-创建文件备份
-
-```typescript
-import backup from 'fire-keeper/backup'
-
-// 备份单个文件
-await backup('./config.json') // 创建 config.json.bak
-
-// 备份多个文件
-await backup(['./file1.txt', './file2.txt'])
-
-// 使用通配符
-await backup('./src/**/*.ts')
-
-// 自定义并发数
-await backup('./data/*.json', { concurrency: 3 })
-```
-
-#### copy
-
-复制文件或文件夹
+## 常用示例 | Examples
 
 ```typescript
-import copy from 'fire-keeper/copy'
+import { backup, copy, remove, zip } from 'fire-keeper'
 
-// 复制单个文件
-await copy('./src/file.txt', './dist/')
-
-// 复制多个文件
-await copy(['./file1.txt', './file2.txt'], './dist/')
-
-// 使用通配符
-await copy('./src/**/*.ts', './dist/')
+await remove('./dist')
+await copy('./src', './dist')
+await zip('./dist/**/*', './build/output.zip')
+await backup('./config.json', { concurrency: 3 })
 ```
 
-#### remove
-
-删除文件或文件夹
-
 ```typescript
-import remove from 'fire-keeper/remove'
+import { glob, runConcurrent, watch } from 'fire-keeper'
 
-// 删除单个文件
-await remove('./temp/file.txt')
-
-// 删除多个文件
-await remove(['./file1.txt', './file2.txt'])
-
-// 使用通配符
-await remove('./logs/*.log')
-
-// 删除文件夹
-await remove('./temp/')
-```
-
-#### recover
-
-从备份文件恢复
-
-```typescript
-import recover from 'fire-keeper/recover'
-
-// 从备份恢复文件
-await recover('./config.json') // 使用 config.json.bak 恢复
-```
-
-#### zip
-
-创建 ZIP 压缩文件
-
-```typescript
-import zip from 'fire-keeper/zip'
-
-// 压缩单个文件
-await zip('./file.txt', './archive/')
-
-// 压缩多个文件
-await zip(['./file1.txt', './file2.txt'], './archive/')
-
-// 使用通配符
-await zip('./src/**/*.ts', './archive/src.zip')
-```
-
-### 路径处理 | Path Handling
-
-#### glob
-
-匹配文件路径
-
-```typescript
-import glob from 'fire-keeper/glob'
-
-// 匹配文件
 const files = await glob('./src/**/*.ts')
-
-// 只匹配文件
-const onlyFiles = await glob('./src/**/*', { onlyFiles: true })
-
-// 只匹配文件夹
-const onlyDirs = await glob('./src/**/*', { onlyDirectories: true })
-```
-
-#### normalizePath
-
-规范化路径
-
-```typescript
-import normalizePath from 'fire-keeper/normalizePath'
-
-const normalized = normalizePath('./src/../dist/file.txt')
-// 输出: /abs/path/to/project/dist/file.txt
-```
-
-### 并发执行 | Concurrent Execution
-
-#### runConcurrent
-
-并发执行任务
-
-```typescript
-import runConcurrent from 'fire-keeper/runConcurrent'
-
-const tasks = [() => Promise.resolve(1), () => Promise.resolve(2), () => Promise.resolve(3)]
-
-const results = await runConcurrent(2, tasks) // 最大并发数为 2
-```
-
-### 命令行工具 | CLI Tools
-
-#### argv
-
-解析命令行参数
-
-```typescript
-import argv from 'fire-keeper/argv'
-
-const args = await argv()
-console.log(args.name) // --name value
-console.log(args._) // 位置参数
-```
-
-### 文件监听 | File Watching
-
-#### watch
-
-监听文件变化
-
-```typescript
-import watch from 'fire-keeper/watch'
-
-// 监听单个文件
-const unwatch = watch('./file.txt', (path) => {
-  console.log(`${path} 已更改`)
-})
-
-// 监听多个文件
-watch(['./file1.txt', './file2.txt'], (path) => {
-  console.log(`${path} 已更改`)
-})
-
-// 监听 glob 匹配到的文件（模式在启动时解析一次）
-watch('./src/**/*.ts', (path) => {
-  console.log(`${path} 已更改`)
-})
-
-// 带防抖选项
-watch(
-  './file.txt',
-  (path) => {
-    console.log(`${path} 已更改`)
-  },
-  { debounce: 300 },
+await runConcurrent(
+  5,
+  files.map((f) => () => process(f)),
 )
 
-// 停止监听
+const unwatch = watch(files, (path) => console.log('changed:', path), { debounce: 300 })
 unwatch()
-```
-
-### 实用工具 | Utilities
-
-#### findIndex
-
-查找数组中符合条件的元素索引
-
-```typescript
-import findIndex from 'fire-keeper/findIndex'
-
-const arr = [1, 2, 3, 4, 5]
-const index = findIndex(arr, (x) => x > 3)
-// 输出: 3
-```
-
-#### toArray
-
-确保值为数组
-
-```typescript
-import toArray from 'fire-keeper/toArray'
-
-const arr1 = toArray(1) // [1]
-const arr2 = toArray([1, 2]) // [1, 2]
-const arr3 = toArray(undefined) // []
 ```
 
 ## 开发指南 | Development
@@ -291,10 +112,11 @@ const arr3 = toArray(undefined) // []
 
 ```
 fire-keeper/
-├── src/          # 源代码
-├── dist/         # 构建输出（自动生成）
+├── src/          # 源代码（JSDoc 即 API 文档源）
+├── dist/         # 构建输出（自动生成，含 api.md）
 ├── test/         # 测试文件
 ├── tasks/        # 构建任务
+├── plans/        # 任务计划
 └── package.json
 ```
 

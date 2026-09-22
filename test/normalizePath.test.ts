@@ -88,6 +88,12 @@ describe('normalizePath', () => {
     expect(result.endsWith('/.claude/skills')).toBe(true)
   })
 
+  it('应将 Windows 盘符路径识别为绝对路径', () => {
+    expect(normalizePath('C:/Users/test')).toBe('C:/Users/test')
+    expect(normalizePath('C:\\Users\\test')).toBe('C:/Users/test')
+    expect(normalizePath('d:\\data')).toBe('d:/data')
+  })
+
   it('不应破坏名为 __parent_directory__ 的字面目录', () => {
     const rootDir = root()
     expect(normalizePath('__parent_directory__/x')).toBe(`${rootDir}/__parent_directory__/x`)

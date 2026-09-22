@@ -14,11 +14,8 @@ import wrapList from './wrapList.js'
 
 type Options = {
   base?: string
-  filename?: string
-}
-
-type EchoOption = {
   echo?: boolean
+  filename?: string
 }
 
 type OptionsRequired = Required<Options>
@@ -53,13 +50,15 @@ const convertToArray = (
   const listSource = toArray(source).map(normalizePath)
   const pathTarget = normalizePath(target || getDirname(listSource.at(0) ?? '').replace(/\*/g, ''))
 
-  const [base, filename] =
-    typeof option === 'string' ? ['', option] : [option.base ?? '', option.filename ?? '']
+  const [base, filename, echo] =
+    typeof option === 'string'
+      ? ['', option, true]
+      : [option.base ?? '', option.filename ?? '', option.echo ?? true]
 
   const finalBase = normalizePath(base || getBase(listSource))
   const finalFilename = filename || `${getBasename(pathTarget)}.zip`
 
-  return [listSource, pathTarget, { base: finalBase, filename: finalFilename }]
+  return [listSource, pathTarget, { base: finalBase, echo, filename: finalFilename }]
 }
 
 const execute = async (listSource: string[], target: string, options: OptionsRequired) => {
@@ -94,7 +93,7 @@ const execute = async (listSource: string[], target: string, options: OptionsReq
     })
 
     archive.on('progress', (e) => {
-      if (!message) return
+      if (!message || !options.echo) return
 
       const gray = ansis.gray(`${Math.round((e.fs.processedBytes * 100) / e.fs.totalBytes)}%`)
       const magenta = ansis.magenta(message)
@@ -117,25 +116,28 @@ const execute = async (listSource: string[], target: string, options: OptionsReq
  * Zip the source to the target.
  * @param source The source file or directory.
  * @param target The target directory.
- * @param option The option.
+ * @param option The option: filename string or { base?, filename?, echo? }
  * @example
  * ```
  * zip('src', 'dist', 'archive.zip')
  * zip('src', 'dist', { base: 'src', filename: 'archive.zip' })
  * zip(['src', 'public'], 'dist', 'archive.zip')
- * zip(['src', 'public'], 'dist', { base: 'src', filename: 'archive.zip' })
+ * zip(['src', 'public'], 'dist', { base: 'src', filename: 'archive.zip', echo: false })
  * ```
  */
 const zip = async (
   source: string | string[],
   target = '',
   option: string | Options = '',
-  { echo: shouldEcho = true }: EchoOption = {},
+  ...rest: unknown[]
 ) => {
-  await execute(...convertToArray(source, target, option))
+  if (rest.length) throw new TypeError('zip: too many arguments — merge { echo } into option')
+
+  const [listSource, pathTarget, options] = convertToArray(source, target, option)
+  await execute(listSource, pathTarget, options)
 
   const optionStr = typeof option === 'object' ? JSON.stringify(option) : String(option)
-  if (shouldEcho) {
+  if (options.echo) {
     echo('zip', `zipped ${wrapList(source)} to **${target}**, as **${optionStr}**`)
   }
 }

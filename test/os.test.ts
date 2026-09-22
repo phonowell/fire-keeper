@@ -39,9 +39,14 @@ describe('os', () => {
     expect(os()).toBe('windows')
   })
 
-  it('未知系统与异常类型', () => {
+  it('Linux 识别', () => {
     setPlatform('linux')
-    expect(os()).toBe('unknown')
+    expect(os()).toBe('linux')
+    setPlatform('Linux')
+    expect(os()).toBe('linux')
+  })
+
+  it('未知系统与异常类型', () => {
     setPlatform('freebsd')
     expect(os()).toBe('unknown')
     setPlatform('')

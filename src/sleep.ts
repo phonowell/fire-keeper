@@ -7,6 +7,7 @@ type Options = {
 /**
  * Sleep for specified milliseconds with optional logging
  * @param delay - Delay in milliseconds (default: 0, negatives treated as 0)
+ * @param options - { echo? }
  * @example
  * await sleep(1000)  // Sleep for 1 second
  * await sleep()      // Minimal delay

@@ -12,6 +12,7 @@ type Options = {
  * Rename a file or directory with path normalization
  * @param source - Source path to rename
  * @param target - New name (basename only, not full path)
+ * @param options - { echo? }
  * @example
  * rename('old-file.txt', 'new-file.txt')
  * rename('src/', 'backup-src')  // Rename directory

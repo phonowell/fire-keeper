@@ -11,7 +11,7 @@ type Options = {
 /**
  * Create .bak backup copies of files
  * @param source - File paths or glob patterns to backup
- * @param options - Configuration with concurrency setting
+ * @param options - { concurrency?, echo? }
  * @example
  * backup('config.json') // Creates config.json.bak
  * backup(['*.ts'], { concurrency: 3 })

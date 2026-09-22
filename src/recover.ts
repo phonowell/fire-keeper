@@ -15,7 +15,7 @@ type Options = {
 /**
  * Recover files from their .bak backup versions
  * @param source - File path(s) to recover (without .bak extension)
- * @param options - Configuration with concurrency setting
+ * @param options - { concurrency?, echo? }
  * @example
  * await recover('config.json')        // Restores from config.json.bak
  * await recover(['*.txt'], { concurrency: 2 })
@@ -45,8 +45,9 @@ const recover = async (
 
 const child = async (source: string, shouldEcho: boolean) => {
   const content = await read(source, { echo: shouldEcho })
+  if (content === undefined) return
   const targetPath = source.endsWith('.bak') ? source.slice(0, -4) : source
-  await write(targetPath, content, undefined, { echo: shouldEcho })
+  await write(targetPath, content, { echo: shouldEcho })
   await remove(source, { echo: shouldEcho })
 }
 

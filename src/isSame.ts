@@ -17,7 +17,7 @@ const isEchoOption = (input: unknown): input is EchoOption =>
 
 /**
  * Compare multiple files for binary content equality
- * @param args - File paths to compare (minimum 2 required)
+ * @param args - File paths to compare (minimum 2 required); optional trailing { echo? }
  * @returns Promise resolving to true if all files have identical content
  * @example
  * await isSame('file1.txt', 'file2.txt')     // Compare two files

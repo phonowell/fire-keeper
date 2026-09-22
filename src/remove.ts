@@ -13,7 +13,7 @@ type Options = {
 /**
  * Remove files and directories with glob pattern support
  * @param source - Path(s) to remove (files, directories, or patterns)
- * @param options - Configuration with concurrency setting
+ * @param options - { concurrency?, echo? }
  * @example
  * remove('temp/file.txt')
  * remove(['logs/*.log', 'cache/'], { concurrency: 3 })

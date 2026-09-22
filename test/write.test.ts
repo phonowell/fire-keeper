@@ -83,6 +83,31 @@ describe('write - 基础功能测试', () => {
     expect(await read(filePath)).toBe(content)
   })
 
+  it('应将 fse 选项透传（encoding 生效）', async () => {
+    const filePath = tempFile('encoding-passthrough.txt')
+
+    await write(filePath, 'aGk=', { encoding: 'base64' })
+
+    expect(await read(filePath)).toBe('hi')
+  })
+
+  it('应兼容旧版字符串与 null options', async () => {
+    const filePath = tempFile('legacy-options.txt')
+
+    await write(filePath, 'aGk=', 'base64' as never)
+    expect(await read(filePath)).toBe('hi')
+
+    await write(filePath, 'hello', null as never)
+    expect(await read(filePath)).toBe('hello')
+  })
+
+  it('应拒绝已移除的尾部 echo 参数', async () => {
+    const filePath = tempFile('legacy-echo-arg.txt')
+
+    await expect(write(filePath, 'x', {}, { echo: false })).rejects.toThrow(TypeError)
+    expect(await isExist(filePath)).toBe(false)
+  })
+
   it('应支持设置文件权限', async () => {
     const filePath = tempFile('permissions.txt')
     const content = 'test permissions'

@@ -34,6 +34,7 @@
 ## 目录结构
 
 - `src/` 默认导出 · `test/` 对应测试 · `dist/` 自动生成
+- API 文档唯一来源 = `src/*.ts` JSDoc → `pnpm build` 生成 `dist/api.md`；勿另建 usage.md/llms.txt 类平行文档
 - `tasks/index.ts` 动态发现；命名 `subdir@file` → 执行 `file/subdir`
 - 临时文件 `temp/<模块>/` + `beforeEach`/`afterEach` 清理
 - `@/*` 仅测试用

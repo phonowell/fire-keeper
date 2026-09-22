@@ -14,7 +14,7 @@ type Options = {
 /**
  * Create directories recursively with concurrent support
  * @param source - Directory path(s) to create
- * @param options - Configuration with concurrency setting
+ * @param options - { concurrency?, echo? }
  * @example
  * await mkdir('path/to/deep/dir')
  * await mkdir(['dir1', 'dir2'], { concurrency: 3 })

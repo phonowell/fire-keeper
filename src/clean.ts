@@ -11,6 +11,7 @@ type Options = {
 /**
  * Remove files and their empty parent directories
  * @param source - File paths or glob patterns to clean
+ * @param options - { echo? }
  * @example
  * clean('temp/debug.log') // Removes file and empty parent dirs
  * clean(['build/*.tmp'])  // Clean all temp files

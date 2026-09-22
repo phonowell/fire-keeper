@@ -34,6 +34,7 @@ const getCommandString = (cmd: string | string[]) => {
  * @param {string | string[]} cmd - Single command or array of commands
  * @param {Object} [options] - Configuration options
  * @param {boolean} [options.silent] - Suppress command output logging
+ * @param {boolean} [options.echo] - Suppress the command echo line
  * @returns {Promise<[number, string, string[]]>} [exitCode, lastOutput, allOutputs]
  *
  * @example
